@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
-import { Map, MapMarker, Circle } from "react-kakao-maps-sdk";
+import { Map, MapMarker, Circle, CustomOverlayMap } from "react-kakao-maps-sdk";
 import { debounce } from "lodash";
-import SearchBar from "./SearchBar";
 import axios from "axios";
 import AccIcon from "../../assets/acc-icon.svg?react";
 
@@ -58,7 +57,7 @@ export default function MainMatching() {
           y: position.lat,
           radius: 2000,
           category_group_code: "FD6",
-          query: "총각네 부추곱창",
+          query: "곱창",
         },
         headers: {
           Authorization: `KakaoAK ${import.meta.env.VITE_APP_RESTAPI_KEY}`,
@@ -96,19 +95,30 @@ export default function MainMatching() {
         >
           {/* 검색 된 마커 표시 */}
           {markers.map((marker) => (
-            <MapMarker
-              key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
-              position={marker.position}
-              onClick={() => setInfo(marker)}
-              image={{
-                src: "../../../public/assets/map-marker.svg",
-                size: { width: 30, height: 30 },
-              }}
-            >
+            <>
+              <MapMarker
+                key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
+                position={marker.position}
+                onClick={() => {
+                  setInfo(marker);
+                  setCenter(marker.position);
+                }}
+                image={{
+                  src: "../../../public/assets/map-marker.svg",
+                  size: { width: 30, height: 30 },
+                }}
+              />
               {info && info.place_name === marker.place_name && (
-                <div>{marker.place_name}</div>
+                <CustomOverlayMap position={marker.position} yAnchor={1.4}>
+                  <div className="drop-shadow-lg">
+                    <div className="bg-white w-[200px] py-5  rounded-md">
+                      <div>{marker.place_name}</div>
+                    </div>
+                    <div className="w-0 h-0 justify-self-center border-l-[10px] border-l-transparent border-t-[12px] border-t-white border-r-[10px] border-r-transparent"></div>
+                  </div>
+                </CustomOverlayMap>
               )}
-            </MapMarker>
+            </>
           ))}
 
           {/* 현위치 표시 */}
@@ -140,7 +150,11 @@ export default function MainMatching() {
             <AccIcon width="25px" />
           </button>
         </div>
-        <SearchBar />
+        {/* 검색바 */}
+        <div className="flex flex-row absolute z-[1] bottom-20 w-1/2 h-10 bg-emerald-600 translate-x-[-50%] left-[50%]">
+          <input />
+          <button className="bg-white rounded-sm px-5">검색</button>
+        </div>
       </div>
     </>
   );
