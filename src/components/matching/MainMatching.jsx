@@ -124,10 +124,10 @@ export default function MainMatching() {
           <Circle
             center={position}
             radius={2000}
-            strokeWeight={0}
+            strokeWeight={1}
             strokeOpacity={0}
             fillColor={"#b2e39d"}
-            fillOpacity={0.5}
+            fillOpacity={0.2}
           />
         </Map>
 
