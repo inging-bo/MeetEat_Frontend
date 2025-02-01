@@ -13,7 +13,8 @@ export default function router() {
       <Route path="/" element={<Main />} />
       <Route path="/account" element={<Account />} />
       <Route path="/account/signup" element={<SignUp />} />
-      <Route path="/mypage/:id" element={<MyPage />} />
+      {/*<Route path="/mypage/:id" element={<MyPage />} />*/}
+      <Route path="/mypage" element={<MyPage />} />
       <Route path="/openchat" element={<OpenChat />} />
     </Routes>
   );
