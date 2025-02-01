@@ -6,8 +6,12 @@ import Header from "./components/layout/Header";
 function App() {
     return (
         <BrowserRouter>
-            <Header />
-            <Router/>
+            <header className="flex flex-col justify-center w-full fixed top-0 h-16">
+                <Header/>
+            </header>
+            <section className="flex justify-center items-center w-full h-dvh">
+                <Router/>
+            </section>
         </BrowserRouter>
     )
 }
