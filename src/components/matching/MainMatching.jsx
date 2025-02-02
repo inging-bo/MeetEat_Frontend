@@ -49,14 +49,38 @@ export default function MainMatching() {
   // 2000m이내 키워드 검색
   const [info, setInfo] = useState();
   const [markers, setMarkers] = useState([]);
+  const [hasMore, setHasMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [preKeyword, setPreKeyword] = useState("");
+  const [key, setKey] = useState(0);
+  const [curText, setCurText] = useState("");
+
+  // input필드 관찰
+  const onChange = (e) => {
+    setCurText(e.target.value);
+    const searchBtn = document.getElementById("search-btn");
+    searchBtn.classList.remove("hidden");
+  };
 
   const searchPlaces = () => {
-    let keyword = document.getElementById("keyword").value;
-
-    if (!keyword.replace(/^\s+|\s+$/g, "")) {
+    if (!curText.replace(/^\s+|\s+$/g, "")) {
       alert("검색어를 입력해주세요!");
       return false;
     }
+
+    const searchBtn = document.getElementById("search-btn");
+    searchBtn.classList.add("hidden");
+
+    // 기존 keyword와 다른 keyword 검색시 기존 marker와 정보 초기화
+    if (curText !== preKeyword && curText !== "") {
+      setMarkers([]);
+      setPage(1);
+      setHasMore(false);
+      setInfo(false);
+      setKey(key + 1);
+    }
+
+    setPreKeyword(curText);
 
     axios
       .get(`https://dapi.kakao.com/v2/local/search/keyword?`, {
@@ -64,8 +88,9 @@ export default function MainMatching() {
           x: position.lng,
           y: position.lat,
           radius: 2000,
-          query: keyword,
+          query: curText,
           sort: "distance",
+          page: page,
         },
         headers: {
           Authorization: `KakaoAK ${import.meta.env.VITE_APP_RESTAPI_KEY}`,
@@ -87,7 +112,16 @@ export default function MainMatching() {
             road_address_name: res.data.documents[i].road_address_name,
           });
         }
-        setMarkers(markers);
+
+        setMarkers((prevMarkers) => [...prevMarkers, ...markers]);
+
+        if (res.data.meta.is_end === false) {
+          setHasMore(true);
+          setPage(page + 1);
+        } else {
+          setHasMore(false);
+          setPage(1);
+        }
       });
   };
 
@@ -123,6 +157,19 @@ export default function MainMatching() {
     keywordInput.value = "";
     keywordInput.disabled = false;
   };
+
+  // 현재 위치 변경 감지시 state 초기화
+  useEffect(() => {
+    setPage(1);
+    setHasMore(false);
+    setMarkers([]);
+    setChoicedPlace("");
+    setIsChoiced(false);
+    setInfo(false);
+    const keywordInput = document.getElementById("keyword");
+    keywordInput.value = "";
+    keywordInput.disabled = false;
+  }, [position]);
 
   return (
     <>
@@ -191,14 +238,26 @@ export default function MainMatching() {
             ))}
 
           {/* 검색 된 리스트 표시 */}
-          <div className="bg-slate-400 bg-opacity-60 text-white absolute z-10 top-1/4 right-10 min-w-[250px] max-w-[250px] rounded-lg max-h-[400px] overflow-y-scroll scrollbar-hide">
+          <div
+            key={key}
+            className="bg-slate-400 bg-opacity-60 text-white absolute z-10 top-1/4 right-10 min-w-[250px] max-w-[250px] rounded-lg max-h-[400px] overflow-y-scroll scrollbar-hide"
+          >
             {!isChoiced &&
               markers.map((marker) => (
                 <>
                   <SearchList marker={marker} />
                 </>
               ))}
-            <button className="py-2 font-bold drop-shadow-md">더보기</button>
+            {hasMore ? (
+              <button
+                className="py-2 font-bold drop-shadow-md"
+                onClick={searchPlaces}
+              >
+                더보기
+              </button>
+            ) : (
+              <></>
+            )}
           </div>
           {/* 선택된 마커만 표시 */}
           {isChoiced && (
@@ -285,8 +344,12 @@ export default function MainMatching() {
 
         {/* 검색바 */}
         <div className="flex flex-row absolute z-[1] bottom-20 w-1/2 h-10 bg-emerald-600 translate-x-[-50%] left-[50%]">
-          <input id="keyword" type="text" />
-          <button className="bg-white rounded-sm px-5" onClick={searchPlaces}>
+          <input id="keyword" type="text" onChange={onChange} value={curText} />
+          <button
+            id="search-btn"
+            className="bg-white rounded-sm px-5"
+            onClick={searchPlaces}
+          >
             검색
           </button>
         </div>
