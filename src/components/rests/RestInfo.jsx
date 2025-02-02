@@ -1,27 +1,49 @@
 export default function RestInfo() {
     return (
-        <div className="max-w-96 min-w-fit flex-1 border-gray-300 border-2 rounded-2xl p-8">
+        <div
+            className="flex flex-col max-w-96 min-w-fit flex-1 justify-between border-gray-300 border-2 rounded-2xl p-8">
             <h1 className="font-bold text-3xl">마이페이지</h1>
             <div>
-                <p>닉네임</p>
-                <span>닉네임</span>
-                <button>변경</button>
+                <p className="pl-1 py-2 text-2xl text-left border-b-2 border-b-gray-300">닉네임</p>
+                <div className="flex between justify-between items-center text-lg p-2">
+                    <span className="">닉네임</span>
+                    <button className="rounded-md border-2 border-b-gray-300 py-1 px-2">변경</button>
+                </div>
             </div>
             <div>
-                <p>한 줄 소개</p>
-                <span>안녕하세요</span>
-                <button>변경</button>
+                <p className="pl-1 py-2 text-2xl text-left border-b-2 border-b-gray-300">한 줄 소개</p>
+                <div className="flex between justify-between items-center text-lg p-2">
+                    <span>안녕하세요</span>
+                    <button className="rounded-md border-2 border-b-gray-300 py-1 px-2">변경</button>
+                </div>
             </div>
             <div>
-                <div><p>메달</p><p>?</p></div>
-                <div>메달표시</div>
+                <div
+                    className="flex gap-1 items-center pl-1 py-2 text-2xl text-left border-b-2 border-b-gray-300">
+                    <p>메달</p>
+                    <div className="relative text-gray-400 flex text-lg justify-center items-center border border-gray-400 rounded-full w-5 h-5 cursor-pointer group">
+                        <span className="cursor-pointer -mr-3 pr-3">?</span>
+                        {/* 도움말 박스 */}
+                        <div className="absolute text-black flex-col gap-1 ml-3 min-w-60 left-full bottom-[-10px] text-base bg-white border border-gray-300 p-4 rounded-md hidden group-hover:block cursor-default">
+                            <h3 className="text-center pb-1">식사 횟수별 메달 안내</h3>
+                            <div className="text-sm text-nowrap"><span>금메달 아이콘</span><span>연간 누적 참여 5회</span></div>
+                            <div className="text-sm text-nowrap"><span>금메달 아이콘</span><span>연간 누적 참여 3회</span></div>
+                            <div className="text-sm text-nowrap"><span>금메달 아이콘</span><span>연간 누적 참여 1회</span></div>
+                            {/* 화살표 모양 */}
+                            <div className="absolute bottom-3 rotate-45 right-[calc(100%-0.35rem)] w-3 h-3 border-l border-b border-gray-300 bg-white"></div>
+                        </div>
+                    </div>
+                </div>
+                <div className="flex items-start text-lg p-2">메달표시</div>
             </div>
             <div>
-                <p>계정 정보</p>
-                <div>비밀번호 변경</div>
-                <div>탈퇴하기</div>
+                <p className="pl-1 py-2 text-2xl text-left border-b-2 border-b-gray-300">계정 정보</p>
+                <div className="flex flex-col items-start text-lg p-2">
+                    <button className="py-1 mb-1">비밀번호 변경</button>
+                    <button className="py-1">탈퇴하기</button>
+                </div>
             </div>
-            <button>로그아웃</button>
+            <button className="font-bold text-lg">로그아웃</button>
         </div>
     )
 }

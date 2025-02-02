@@ -1,11 +1,15 @@
 import RestInfo from "../components/rests/RestInfo.jsx";
 import RestReviews from "../components/rests/RestReviews.jsx";
+import Header from "../components/layout/Header.jsx";
 
 export default function MyPage() {
     return (
-        <div className="flex self-end flex-1 px-6 py-6 h-[calc(100vh-4rem)]">
-            <RestInfo/>
-            <RestReviews/>
-        </div>
+        <>
+            <Header />
+            <div className="flex gap-6 w-full px-6 py-6 h-full max-h-[calc(100%-4rem)]">
+                <RestInfo/>
+                <RestReviews/>
+            </div>
+        </>
     )
 }
