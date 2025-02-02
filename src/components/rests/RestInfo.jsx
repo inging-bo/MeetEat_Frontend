@@ -1,4 +1,5 @@
 import {useState} from "react";
+import {Link} from "react-router-dom";
 
 export default function RestInfo() {
 
@@ -11,7 +12,7 @@ export default function RestInfo() {
         }
 
         function handleInputChange(event) {
-            const { id, value } = event.target;
+            const {id, value} = event.target;
             // 닉네임에만 길이 제한 적용
             if (id === 'nickName') {
                 if (value.length <= 8) {
@@ -152,8 +153,12 @@ export default function RestInfo() {
             <div>
                 <p className="pl-1 py-2 text-2xl text-left border-b-2 border-b-gray-300">계정 정보</p>
                 <div className="flex flex-col items-start text-lg p-2">
-                    <button className="py-1 mb-1">비밀번호 변경</button>
-                    <button className="py-1">탈퇴하기</button>
+                    <button className="py-1">
+                        <Link to="/mypage/changepw">비밀번호 변경</Link>
+                    </button>
+                    <button className="py-1 mb-1">
+                        <Link to="/mypage/deleteid">탈퇴하기</Link>
+                    </button>
                 </div>
             </div>
             <button className="font-bold text-lg">로그아웃</button>
