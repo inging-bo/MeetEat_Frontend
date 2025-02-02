@@ -315,7 +315,7 @@ export default function MainMatching() {
           <MapMarker
             image={{
               src: "../../../public/assets/map-pin.svg",
-              size: { width: 30, height: 30 },
+              size: { width: 20, height: 20 },
             }}
             position={position}
           />
