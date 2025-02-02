@@ -1,8 +1,11 @@
 import { useEffect, useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { Map, MapMarker, Circle, CustomOverlayMap } from "react-kakao-maps-sdk";
 import { debounce } from "lodash";
 import axios from "axios";
 import AccIcon from "../../assets/acc-icon.svg?react";
+import HeaderLogo from "../../assets/header-logo.svg?react";
+import SearchIcon from "../../assets/search.svg?react";
 import SearchList from "./SearchList";
 
 export default function MainMatching() {
@@ -97,6 +100,7 @@ export default function MainMatching() {
         },
       })
       .then((res) => {
+        console.log(res.data);
         let markers = [];
         for (let i = 0; i < res.data.documents.length; i++) {
           markers.push({
@@ -110,6 +114,7 @@ export default function MainMatching() {
             phone: res.data.documents[i].phone,
             place_url: res.data.documents[i].place_url,
             road_address_name: res.data.documents[i].road_address_name,
+            distance: res.data.documents[i].distance,
           });
         }
 
@@ -138,15 +143,14 @@ export default function MainMatching() {
     document.addEventListener("click", handleClickOutside);
   }, [isInfoWindowOpen]);
 
-  // 장소 선택
-  const [choicedPlace, setChoicedPlace] = useState();
+  // 장소, 인원 선택
+  const [choicedPlace, setChoicedPlace] = useState("");
+  const [choicedNumber, setChoicedNumber] = useState(1);
   const [isChoiced, setIsChoiced] = useState(false);
   const choicePlace = (marker) => {
     setChoicedPlace(marker);
     setIsChoiced(true);
-    const keywordInput = document.getElementById("keyword");
-    keywordInput.value = marker.place_name;
-    keywordInput.disabled = true;
+    // 매칭 시작 라우트
   };
 
   // 장소 리셋
@@ -173,6 +177,38 @@ export default function MainMatching() {
 
   return (
     <>
+      <header className="w-full flex justify-center h-[77px] py-[14px]">
+        <div className="flex w-full justify-between max-w-screen-xl">
+          <div>
+            <Link to="/" className="h-full px-4 flex items-center">
+              <HeaderLogo />
+            </Link>
+          </div>
+          {/* 검색바 */}
+          <div className="flex flex-row bg-emerald-600 border border-[#3BB82D] rounded-full relative">
+            <input
+              className="w-[300px] lg:w-[600px] rounded-full pl-5 focus:outline-none"
+              id="keyword"
+              type="text"
+              onChange={onChange}
+              value={curText}
+              placeholder="함께 먹고싶은 식당을 검색해요."
+            />
+            <button
+              id="search-btn"
+              className="absolute px-5 right-0 top-[10px]"
+              onClick={searchPlaces}
+            >
+              <SearchIcon width="22px" />
+            </button>
+          </div>
+          <div>
+            <Link to="/account" className="h-full px-4 flex items-center">
+              로그인
+            </Link>
+          </div>
+        </div>
+      </header>
       <div className="relative w-full h-full">
         <Map
           className="w-full h-full"
@@ -206,31 +242,54 @@ export default function MainMatching() {
                       yAnchor={1.3}
                       id="infoWindow"
                     >
-                      <div className="drop-shadow-lg">
-                        <div className="bg-white p-5 rounded-lg w-[200px]">
-                          <button
-                            className="absolute top-0 right-0 px-[10px]"
-                            onClick={() => {
-                              setInfo(false);
-                              setInfoWindowOpen(false);
-                            }}
-                          >
-                            x
-                          </button>
-                          <div className="break-words whitespace-normal">
-                            {marker.place_name}
+                      <div className="drop-shadow-lg fixed">
+                        <div className="bg-white p-5 rounded-lg w-[320px]">
+                          <div className="text-left">
+                            <div className="flex flex-row justify-between items-start pb-[8px]">
+                              <p className="font-bold text-base max-w-[200px] whitespace-normal">
+                                {marker.place_name}
+                              </p>
+                              <p className="text-sm text-[#555555]">
+                                {marker.category_name.slice(
+                                  marker.category_name.lastIndexOf(">") + 2
+                                )}
+                              </p>
+                            </div>
+                            <p className="text-sm text-[#555555]">
+                              {marker.road_address_name}
+                            </p>
+                            <p className="text-sm pb-2 text-[#555555]">
+                              {marker.phone}
+                            </p>
+                            <p className="text-sm pb-5 text-[#555555]">
+                              내 위치에서 {marker.distance}m
+                            </p>
+                            <hr className="pb-5" />
+                            <div>
+                              <p className="font-bold text-base whitespace-normal pb-2">
+                                방문할 인원을 선택해주세요.
+                              </p>
+                              <div className="flex flex-row justify-between text-sm">
+                                <p>인원</p>
+                                <div className="flex flex-row justify-between">
+                                  <p>-</p>
+                                  <p>1</p>
+                                  <p>+</p>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                           <button
                             id="choiceBtn"
-                            className="bg-green-800 rounded-lg px-2 p-1 mt-3 text-white"
+                            className="bg-[#FF6445] w-full rounded-lg py-2 mt-3 text-white"
                             onClick={() => {
                               choicePlace(marker);
                             }}
                           >
-                            선택
+                            매칭 시작
                           </button>
                         </div>
-                        <div className="w-0 h-0 justify-self-center border-l-[10px] border-l-transparent border-t-[12px] border-t-white border-r-[10px] border-r-transparent"></div>
+                        {/* <div className="w-0 h-0 justify-self-center border-l-[10px] border-l-transparent border-t-[12px] border-t-white border-r-[10px] border-r-transparent"></div> */}
                       </div>
                     </CustomOverlayMap>
                   )}
@@ -240,8 +299,13 @@ export default function MainMatching() {
           {/* 검색 된 리스트 표시 */}
           <div
             key={key}
-            className="bg-slate-400 bg-opacity-60 text-white absolute z-10 top-1/4 right-10 min-w-[250px] max-w-[250px] rounded-lg max-h-[400px] overflow-y-scroll scrollbar-hide"
+            className="bg-white text-black absolute z-10 top-[20%] left-10 min-w-[320px] max-w-[320px] rounded-lg max-h-[650px] overflow-y-scroll scrollbar-hide px-5"
           >
+            {markers.length !== 0 ? (
+              <div className="font-bold py-[15px] text-left">검색결과</div>
+            ) : (
+              <></>
+            )}
             {!isChoiced &&
               markers.map((marker) => (
                 <>
@@ -259,63 +323,12 @@ export default function MainMatching() {
               <></>
             )}
           </div>
-          {/* 선택된 마커만 표시 */}
-          {isChoiced && (
-            <>
-              <MapMarker
-                position={choicedPlace.position}
-                onClick={() => {
-                  setInfo(choicedPlace);
-                  setCenter(choicedPlace.position);
-                  setInfoWindowOpen(true);
-                }}
-                image={{
-                  src: "../../../public/assets/map-marker.svg",
-                  size: { width: 30, height: 30 },
-                }}
-              />
-              {isInfoWindowOpen && (
-                <CustomOverlayMap
-                  position={choicedPlace.position}
-                  yAnchor={1.3}
-                  id="infoWindow"
-                >
-                  <div className="drop-shadow-lg">
-                    <div className="bg-white p-5 rounded-lg w-[200px]">
-                      <button
-                        className="absolute top-0 right-0 px-[10px]"
-                        onClick={() => {
-                          setInfo(false);
-                          setInfoWindowOpen(false);
-                        }}
-                      >
-                        x
-                      </button>
-                      <div className="break-words whitespace-normal">
-                        {choicedPlace.place_name}
-                      </div>
-                      <button
-                        id="resetBtn"
-                        className="bg-green-800 rounded-lg px-2 p-1 mt-3 text-white"
-                        onClick={() => {
-                          resetChoice();
-                        }}
-                      >
-                        다시 선택
-                      </button>
-                    </div>
-                    <div className="w-0 h-0 justify-self-center border-l-[10px] border-l-transparent border-t-[12px] border-t-white border-r-[10px] border-r-transparent"></div>
-                  </div>
-                </CustomOverlayMap>
-              )}
-            </>
-          )}
 
           {/* 현위치 표시 */}
           <MapMarker
             image={{
               src: "../../../public/assets/map-pin.svg",
-              size: { width: 30, height: 30 },
+              size: { width: 20, height: 20 },
             }}
             position={position}
           />
@@ -339,18 +352,6 @@ export default function MainMatching() {
             onClick={setCenterToMyPosition}
           >
             <AccIcon width="25px" />
-          </button>
-        </div>
-
-        {/* 검색바 */}
-        <div className="flex flex-row absolute z-[1] bottom-20 w-1/2 h-10 bg-emerald-600 translate-x-[-50%] left-[50%]">
-          <input id="keyword" type="text" onChange={onChange} value={curText} />
-          <button
-            id="search-btn"
-            className="bg-white rounded-sm px-5"
-            onClick={searchPlaces}
-          >
-            검색
           </button>
         </div>
       </div>
