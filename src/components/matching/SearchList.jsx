@@ -1,5 +1,4 @@
 export default function SearchList({ marker }) {
-  console.log(marker);
   return (
     <a href={marker.place_url} target="_blank">
       <div className="text-left pt-2 px-4">
