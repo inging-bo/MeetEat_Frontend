@@ -39,14 +39,25 @@ export default function MainMatching() {
   );
 
   // 지도가 처음 렌더링되면 중심좌표를 현위치로 설정하고 위치 변화 감지
+  function error(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+  }
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition((pos) => {
-      setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-    });
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+      },
+      error,
+      { enableHighAccuracy: true }
+    );
 
-    navigator.geolocation.watchPosition((pos) => {
-      setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-    });
+    navigator.geolocation.watchPosition(
+      (pos) => {
+        setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+      },
+      error,
+      { enableHighAccuracy: true }
+    );
   }, []);
 
   // 2000m이내 키워드 검색
@@ -289,7 +300,6 @@ export default function MainMatching() {
                             매칭 시작
                           </button>
                         </div>
-                        {/* <div className="w-0 h-0 justify-self-center border-l-[10px] border-l-transparent border-t-[12px] border-t-white border-r-[10px] border-r-transparent"></div> */}
                       </div>
                     </CustomOverlayMap>
                   )}
