@@ -12,10 +12,11 @@ export default function RestInfo() {
 
         function handleInputChange(event) {
             const { id, value } = event.target;
-            console.log(id);
             // 닉네임에만 길이 제한 적용
-            if (id === 'nickname' && value.length <= 8) {
-                setValue(value);
+            if (id === 'nickName') {
+                if (value.length <= 8) {
+                    setValue(value);
+                }
             }
             // 한 줄 소개는 제한 없이 처리
             else if (id === 'introduction') {
@@ -42,7 +43,7 @@ export default function RestInfo() {
         changeField: changeNickname,
         handleInputChange: handleNicknameChange,
         saveField: saveNickname
-    } = useEditableField("nickname");
+    } = useEditableField("nickName");
 
     const {
         value: introduction,
@@ -54,7 +55,7 @@ export default function RestInfo() {
 
     return (
         <div
-            className="flex flex-col max-w-96 flex-1 justify-between border-gray-300 border-2 rounded-2xl p-8">
+            className="flex flex-col max-w-96 min-w-96 flex-1 justify-between border-gray-300 border-2 rounded-2xl p-8">
             <h1 className="font-bold text-3xl">마이페이지</h1>
             {/* 닉네임 수정 */}
             <div>
