@@ -64,6 +64,7 @@ export default function MainMatching() {
           y: position.lat,
           radius: 2000,
           query: keyword,
+          sort: "distance",
         },
         headers: {
           Authorization: `KakaoAK ${import.meta.env.VITE_APP_RESTAPI_KEY}`,
@@ -89,7 +90,7 @@ export default function MainMatching() {
       });
   };
 
-  // 인포윈도우 바깥 클릭시 닫힘힘
+  // 인포윈도우 바깥 클릭시 닫힘
   const [isInfoWindowOpen, setInfoWindowOpen] = useState(false);
   const handleClickOutside = (e) => {
     if (e.target.id.includes("daum-maps")) {
@@ -102,6 +103,26 @@ export default function MainMatching() {
     document.addEventListener("click", handleClickOutside);
   }, [isInfoWindowOpen]);
 
+  // 장소 선택
+  const [choicedPlace, setChoicedPlace] = useState();
+  const [isChoiced, setIsChoiced] = useState(false);
+  const choicePlace = (marker) => {
+    setChoicedPlace(marker);
+    setIsChoiced(true);
+    const keywordInput = document.getElementById("keyword");
+    keywordInput.value = marker.place_name;
+    keywordInput.disabled = true;
+  };
+
+  // 장소 리셋
+  const resetChoice = () => {
+    setChoicedPlace("");
+    setIsChoiced(false);
+    const keywordInput = document.getElementById("keyword");
+    keywordInput.value = "";
+    keywordInput.disabled = false;
+  };
+
   return (
     <>
       <div className="relative w-full h-full">
@@ -113,14 +134,68 @@ export default function MainMatching() {
           onCenterChanged={updateCenterWhenMapMoved}
         >
           {/* 검색 된 마커 표시 */}
-          {markers.map((marker) => (
+          {!isChoiced &&
+            markers.map((marker) => (
+              <>
+                <MapMarker
+                  key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
+                  position={marker.position}
+                  onClick={() => {
+                    setInfo(marker);
+                    setCenter(marker.position);
+                    setInfoWindowOpen(true);
+                  }}
+                  image={{
+                    src: "../../../public/assets/map-marker.svg",
+                    size: { width: 30, height: 30 },
+                  }}
+                />
+                {isInfoWindowOpen &&
+                  info &&
+                  info.place_name === marker.place_name && (
+                    <CustomOverlayMap
+                      position={marker.position}
+                      yAnchor={1.3}
+                      id="infoWindow"
+                    >
+                      <div className="drop-shadow-lg">
+                        <div className="bg-white p-5 rounded-lg w-[200px]">
+                          <button
+                            className="absolute top-0 right-0 px-[10px]"
+                            onClick={() => {
+                              setInfo(false);
+                              setInfoWindowOpen(false);
+                            }}
+                          >
+                            x
+                          </button>
+                          <div className="break-words whitespace-normal">
+                            {marker.place_name}
+                          </div>
+                          <button
+                            id="choiceBtn"
+                            className="bg-green-800 rounded-lg px-2 p-1 mt-3 text-white"
+                            onClick={() => {
+                              choicePlace(marker);
+                            }}
+                          >
+                            선택
+                          </button>
+                        </div>
+                        <div className="w-0 h-0 justify-self-center border-l-[10px] border-l-transparent border-t-[12px] border-t-white border-r-[10px] border-r-transparent"></div>
+                      </div>
+                    </CustomOverlayMap>
+                  )}
+              </>
+            ))}
+          {/* 선택된 마커만 표시 */}
+          {isChoiced && (
             <>
               <MapMarker
-                key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
-                position={marker.position}
+                position={choicedPlace.position}
                 onClick={() => {
-                  setInfo(marker);
-                  setCenter(marker.position);
+                  setInfo(choicedPlace);
+                  setCenter(choicedPlace.position);
                   setInfoWindowOpen(true);
                 }}
                 image={{
@@ -128,35 +203,42 @@ export default function MainMatching() {
                   size: { width: 30, height: 30 },
                 }}
               />
-              {isInfoWindowOpen &&
-                info &&
-                info.place_name === marker.place_name && (
-                  <CustomOverlayMap
-                    position={marker.position}
-                    yAnchor={1.4}
-                    id="infoWindow"
-                  >
-                    <div className="drop-shadow-lg">
-                      <div className="bg-white p-5 rounded-md w-[200px]">
-                        <button
-                          className="absolute top-0 right-0 px-[10px]"
-                          onClick={() => {
-                            setInfo(false);
-                            setInfoWindowOpen(false);
-                          }}
-                        >
-                          x
-                        </button>
-                        <div className="break-words whitespace-normal">
-                          {marker.place_name}
-                        </div>
+              {isInfoWindowOpen && (
+                <CustomOverlayMap
+                  position={choicedPlace.position}
+                  yAnchor={1.3}
+                  id="infoWindow"
+                >
+                  <div className="drop-shadow-lg">
+                    <div className="bg-white p-5 rounded-lg w-[200px]">
+                      <button
+                        className="absolute top-0 right-0 px-[10px]"
+                        onClick={() => {
+                          setInfo(false);
+                          setInfoWindowOpen(false);
+                        }}
+                      >
+                        x
+                      </button>
+                      <div className="break-words whitespace-normal">
+                        {choicedPlace.place_name}
                       </div>
-                      <div className="w-0 h-0 justify-self-center border-l-[10px] border-l-transparent border-t-[12px] border-t-white border-r-[10px] border-r-transparent"></div>
+                      <button
+                        id="resetBtn"
+                        className="bg-green-800 rounded-lg px-2 p-1 mt-3 text-white"
+                        onClick={() => {
+                          resetChoice();
+                        }}
+                      >
+                        다시 선택
+                      </button>
                     </div>
-                  </CustomOverlayMap>
-                )}
+                    <div className="w-0 h-0 justify-self-center border-l-[10px] border-l-transparent border-t-[12px] border-t-white border-r-[10px] border-r-transparent"></div>
+                  </div>
+                </CustomOverlayMap>
+              )}
             </>
-          ))}
+          )}
 
           {/* 현위치 표시 */}
           <MapMarker
@@ -174,7 +256,7 @@ export default function MainMatching() {
             strokeWeight={1}
             strokeOpacity={0}
             fillColor={"#b2e39d"}
-            fillOpacity={0.2}
+            fillOpacity={0.3}
           />
         </Map>
 
@@ -187,9 +269,10 @@ export default function MainMatching() {
             <AccIcon width="25px" />
           </button>
         </div>
+
         {/* 검색바 */}
         <div className="flex flex-row absolute z-[1] bottom-20 w-1/2 h-10 bg-emerald-600 translate-x-[-50%] left-[50%]">
-          <input id="keyword" />
+          <input id="keyword" type="text" />
           <button className="bg-white rounded-sm px-5" onClick={searchPlaces}>
             검색
           </button>
