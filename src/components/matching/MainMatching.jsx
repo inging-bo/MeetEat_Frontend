@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
-import { Map, MapMarker, Circle } from "react-kakao-maps-sdk";
+import { Map, MapMarker, Circle, CustomOverlayMap } from "react-kakao-maps-sdk";
 import { debounce } from "lodash";
-import SearchBar from "./SearchBar";
 import axios from "axios";
 import AccIcon from "../../assets/acc-icon.svg?react";
 
@@ -50,15 +49,21 @@ export default function MainMatching() {
   const [info, setInfo] = useState();
   const [markers, setMarkers] = useState([]);
 
-  useEffect(() => {
+  const searchPlaces = () => {
+    let keyword = document.getElementById("keyword").value;
+
+    if (!keyword.replace(/^\s+|\s+$/g, "")) {
+      alert("검색어를 입력해주세요!");
+      return false;
+    }
+
     axios
       .get(`https://dapi.kakao.com/v2/local/search/keyword?`, {
         params: {
           x: position.lng,
           y: position.lat,
           radius: 2000,
-          category_group_code: "FD6",
-          query: "총각네 부추곱창",
+          query: keyword,
         },
         headers: {
           Authorization: `KakaoAK ${import.meta.env.VITE_APP_RESTAPI_KEY}`,
@@ -82,7 +87,20 @@ export default function MainMatching() {
         }
         setMarkers(markers);
       });
-  }, [position]);
+  };
+
+  // 인포윈도우 바깥 클릭시 닫힘힘
+  const [isInfoWindowOpen, setInfoWindowOpen] = useState(false);
+  const handleClickOutside = (e) => {
+    if (e.target.id.includes("daum-maps")) {
+      setInfoWindowOpen(false);
+      document.removeEventListener("click", handleClickOutside);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+  }, [isInfoWindowOpen]);
 
   return (
     <>
@@ -96,19 +114,48 @@ export default function MainMatching() {
         >
           {/* 검색 된 마커 표시 */}
           {markers.map((marker) => (
-            <MapMarker
-              key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
-              position={marker.position}
-              onClick={() => setInfo(marker)}
-              image={{
-                src: "../../../public/assets/map-marker.svg",
-                size: { width: 30, height: 30 },
-              }}
-            >
-              {info && info.place_name === marker.place_name && (
-                <div>{marker.place_name}</div>
-              )}
-            </MapMarker>
+            <>
+              <MapMarker
+                key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
+                position={marker.position}
+                onClick={() => {
+                  setInfo(marker);
+                  setCenter(marker.position);
+                  setInfoWindowOpen(true);
+                }}
+                image={{
+                  src: "../../../public/assets/map-marker.svg",
+                  size: { width: 30, height: 30 },
+                }}
+              />
+              {isInfoWindowOpen &&
+                info &&
+                info.place_name === marker.place_name && (
+                  <CustomOverlayMap
+                    position={marker.position}
+                    yAnchor={1.4}
+                    id="infoWindow"
+                  >
+                    <div className="drop-shadow-lg">
+                      <div className="bg-white p-5 rounded-md w-[200px]">
+                        <button
+                          className="absolute top-0 right-0 px-[10px]"
+                          onClick={() => {
+                            setInfo(false);
+                            setInfoWindowOpen(false);
+                          }}
+                        >
+                          x
+                        </button>
+                        <div className="break-words whitespace-normal">
+                          {marker.place_name}
+                        </div>
+                      </div>
+                      <div className="w-0 h-0 justify-self-center border-l-[10px] border-l-transparent border-t-[12px] border-t-white border-r-[10px] border-r-transparent"></div>
+                    </div>
+                  </CustomOverlayMap>
+                )}
+            </>
           ))}
 
           {/* 현위치 표시 */}
@@ -140,7 +187,13 @@ export default function MainMatching() {
             <AccIcon width="25px" />
           </button>
         </div>
-        <SearchBar />
+        {/* 검색바 */}
+        <div className="flex flex-row absolute z-[1] bottom-20 w-1/2 h-10 bg-emerald-600 translate-x-[-50%] left-[50%]">
+          <input id="keyword" />
+          <button className="bg-white rounded-sm px-5" onClick={searchPlaces}>
+            검색
+          </button>
+        </div>
       </div>
     </>
   );
