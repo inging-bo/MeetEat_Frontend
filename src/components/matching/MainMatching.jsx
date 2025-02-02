@@ -3,6 +3,7 @@ import { Map, MapMarker, Circle, CustomOverlayMap } from "react-kakao-maps-sdk";
 import { debounce } from "lodash";
 import axios from "axios";
 import AccIcon from "../../assets/acc-icon.svg?react";
+import SearchList from "./SearchList";
 
 export default function MainMatching() {
   // 지도의 중심좌표
@@ -188,6 +189,17 @@ export default function MainMatching() {
                   )}
               </>
             ))}
+
+          {/* 검색 된 리스트 표시 */}
+          <div className="bg-slate-400 bg-opacity-60 text-white absolute z-10 top-1/4 right-10 min-w-[250px] max-w-[250px] rounded-lg max-h-[400px] overflow-y-scroll scrollbar-hide">
+            {!isChoiced &&
+              markers.map((marker) => (
+                <>
+                  <SearchList marker={marker} />
+                </>
+              ))}
+            <button className="py-2 font-bold drop-shadow-md">더보기</button>
+          </div>
           {/* 선택된 마커만 표시 */}
           {isChoiced && (
             <>
@@ -253,10 +265,11 @@ export default function MainMatching() {
           <Circle
             center={position}
             radius={2000}
+            strokeColor={"#81be67"}
             strokeWeight={1}
-            strokeOpacity={0}
+            strokeOpacity={1}
             fillColor={"#b2e39d"}
-            fillOpacity={0.3}
+            fillOpacity={0.23}
           />
         </Map>
 
