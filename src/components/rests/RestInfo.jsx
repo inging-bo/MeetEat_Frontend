@@ -1,8 +1,10 @@
 import {useState} from "react";
 import {Link} from "react-router-dom";
+import TwoBtnModal from "../common/TwoBtnModal.jsx";
 
 export default function RestInfo() {
 
+    // 닉네임, 한 줄 소개 변경
     function useEditableField(initialValue = "") {
         const [value, setValue] = useState(initialValue);  // 상태
         const [isEditing, setIsEditing] = useState(false);  // 수정 가능 여부
@@ -53,6 +55,13 @@ export default function RestInfo() {
         handleInputChange: handleIntroductionChange,
         saveField: saveIntroduction
     } = useEditableField("한 줄 소개를 입력하세요.");
+    // 로그아웃 모달
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // 모달 열고 닫기 함수
+    const toggleModal = () => {
+        setIsModalOpen(!isModalOpen);
+    };
 
     return (
         <div
@@ -161,7 +170,9 @@ export default function RestInfo() {
                     </button>
                 </div>
             </div>
-            <button className="font-bold text-lg">로그아웃</button>
+            <button onClick={toggleModal} className="font-bold text-lg">로그아웃</button>
+            {/* 모달이 열려 있을 때만 표시 */}
+            {isModalOpen && <TwoBtnModal onClose={toggleModal} />}
         </div>
     )
 }
