@@ -8,12 +8,14 @@ import SignUp from "../components/account/SignUp.jsx";
 import ChangePW from "../components/account/ChangePW.jsx";
 import DeleteID from "../components/account/DeleteID.jsx";
 import SuccessNotice from "../components/notice/SuccessNotice.jsx";
+import Matching from "../components/matching/Matching.jsx";
 
 export default function router() {
   return (
     <Routes>
       <Route path="*" element={<Error />} />
       <Route path="/" element={<Main />} />
+      <Route path="/matching" element={<Matching />} />
       <Route path="/account" element={<Account />} />
       <Route path="/account/signup" element={<SignUp />} />
       {/*<Route path="/mypage/:id" element={<MyPage />} />*/}
