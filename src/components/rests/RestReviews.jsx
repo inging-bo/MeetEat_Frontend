@@ -1,10 +1,10 @@
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Link} from "react-router-dom";
 import TwoBtnModal from "../common/TwoBtnModal.jsx";
 
 export default function RestReviews() {
 
-    // 확인용 방문 히스토리
+    // ✅ 확인용 방문 히스토리
     const visitRestList = [
         {
             id: 1,
@@ -27,27 +27,88 @@ export default function RestReviews() {
                 {id: "user5", nickname: "수진"},
             ],
         },
+        {
+            id: 3,
+            place_name: "김밥천국",
+            category_name: "한식",
+            myReview: false,
+            visitors: [
+                {id: "user6", nickname: "철수"},
+                {id: "user7", nickname: "영희"},
+                {id: "user8", nickname: "민수"},
+            ],
+        },
+        {
+            id: 4,
+            place_name: "스타벅스",
+            category_name: "카페",
+            myReview: true,
+            visitors: [
+                {id: "user9", nickname: "지훈"},
+                {id: "user10", nickname: "수진"},
+            ],
+        },
+        {
+            id: 5,
+            place_name: "김밥천국",
+            category_name: "한식",
+            myReview: false,
+            visitors: [
+                {id: "user11", nickname: "철수"},
+                {id: "user12", nickname: "영희"},
+                {id: "user13", nickname: "민수"},
+            ],
+        },
+        {
+            id: 6,
+            place_name: "스타벅스",
+            category_name: "카페",
+            myReview: true,
+            visitors: [
+                {id: "user14", nickname: "지훈"},
+                {id: "user15", nickname: "수진"},
+            ],
+        },
     ];
 
-    // 신고하기 차단하기 팝오버 창 표시
-    // 클릭된 요소의 ID를 관리
+    // ✅ 신고하기 차단하기 팝오버 창 표시
+    // ✅ 클릭된 요소의 ID를 관리
     const [activePopOver, setActivePopOver] = useState(null);
+    const popOverRef = useRef(null); // 현재 열린 popOver의 ref
 
+    // ✅ 팝오버 토글 함수
     const popOver = (id) => {
-        setActivePopOver(activePopOver === id ? null : id);  // Toggle visibility on click
+        setActivePopOver(activePopOver === id ? null : id);
     };
 
-    // 차단, 신고 모달
+    // ✅ 외부 클릭 감지하여 팝오버 닫기
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (popOverRef.current && !popOverRef.current.contains(event.target)) {
+                setActivePopOver(null);
+            }
+        };
+
+        if (activePopOver !== null) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [activePopOver]);
+
+    // ✅ 차단, 신고 모달
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState(null); // 차단 or 신고 구분
 
-    // 모달 열고 닫기 함수
+    // ✅ 모달 열고 닫기 함수
     const toggleModal = (type) => {
         setModalType(type);  // 클릭한 버튼의 타입 저장
         setIsModalOpen(true);
         setActivePopOver(null)
     };
-    // 모달 닫기 함수
+    // ✅ 모달 닫기 함수
     const closeModal = () => {
         setIsModalOpen(false);
         setModalType(null);
@@ -57,12 +118,11 @@ export default function RestReviews() {
         <div className="flex flex-col gap-8 flex-auto min-w-fit border-2 border-gray-300 rounded-2xl p-8">
             <p className="font-bold text-3xl">매칭 히스토리</p>
             {/* 식당 별 매칭 히스토리 박스*/}
-            <ul className="flex flex-col gap-4 overflow-y-scroll scrollbar-hide">
+            <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
                 {/* 방문한 식당이 있으면 방문 한 식당 히스토리 표시*/}
                 {visitRestList.length > 0 ? (
                     // 같이 방문한 사람들 리스트 표시
                     visitRestList.map((visitRest) => (
-
                         <li
                             key={visitRest.id}
                             className="flex flex-col gap-2 border-2 border-gray-300 rounded-2xl p-4">
@@ -92,7 +152,8 @@ export default function RestReviews() {
                                             ···</p>
                                         {activePopOver === visitor.id && (
                                             <div
-                                                className="absolute flex flex-col gap-1 z-10 top-10 right-1 bg-white p-2 border border-gray-300 rounded-lg">
+                                                ref={popOverRef} // ✅ popOverRef 설정
+                                                className="absolute flex flex-col gap-1 z-50 top-10 right-1 bg-white p-2 border border-gray-300 rounded-lg">
                                                 <button onClick={() => toggleModal("block")}
                                                         className="py-1 px-2 rounded-lg hover:bg-gray-200">차단하기
                                                 </button>

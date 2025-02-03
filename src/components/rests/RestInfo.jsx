@@ -172,7 +172,7 @@ export default function RestInfo() {
             </div>
             <button onClick={toggleModal} className="font-bold text-lg">로그아웃</button>
             {/* 모달이 열려 있을 때만 표시 */}
-            {isModalOpen && <TwoBtnModal onClose={toggleModal} />}
+            {isModalOpen && <TwoBtnModal type={"logOut"} onClose={toggleModal} />}
         </div>
     )
 }
