@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Map, MapMarker, Circle, CustomOverlayMap } from "react-kakao-maps-sdk";
 import { debounce } from "lodash";
@@ -40,24 +40,46 @@ export default function MainMatching() {
   );
 
   // 지도가 처음 렌더링되면 중심좌표를 현위치로 설정하고 위치 변화 감지
-  function error(err) {
+  const gpsError = (err) => {
     console.warn(`ERROR(${err.code}): ${err.message}`);
-  }
+  };
+
+  const geolocationOptions = {
+    enableHighAccuracy: true,
+    maximumAge: 5 * 60 * 1000,
+    timeout: 7000,
+  };
+
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        if (
+          pos.coords.latitude !== position.lat ||
+          pos.coords.longitude !== position.lng
+        ) {
+          setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          console.log(position.lat);
+          console.log(position.lng);
+          console.log("====");
+          console.log(pos.coords.latitude);
+          console.log(pos.coords.longitude);
+        }
       },
-      error,
-      { enableHighAccuracy: true }
+      gpsError,
+      geolocationOptions
     );
 
     navigator.geolocation.watchPosition(
       (pos) => {
-        setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        if (
+          pos.coords.latitude !== position.lat ||
+          pos.coords.longitude !== position.lng
+        ) {
+          setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        }
       },
-      error,
-      { enableHighAccuracy: true }
+      gpsError,
+      geolocationOptions
     );
   }, []);
 
@@ -165,17 +187,23 @@ export default function MainMatching() {
   };
 
   // 현재 위치 변경 감지시 state 초기화
+  const isMounted = useRef(false);
   useEffect(() => {
-    setPage(1);
-    setHasMore(false);
-    setMarkers([]);
-    setChoicedPlace("");
-    setIsChoiced(false);
-    setInfo(false);
-    const keywordInput = document.getElementById("keyword");
-    const searchBtn = document.getElementById("search-btn");
-    keywordInput.value = "";
-    searchBtn.classList.remove("hidden");
+    if (isMounted.current) {
+      setPage(1);
+      setHasMore(false);
+      setMarkers([]);
+      setChoicedPlace("");
+      setIsChoiced(false);
+      setInfo(false);
+      setCurText("");
+      const searchBtn = document.getElementById("search-btn");
+      searchBtn.classList.remove("hidden");
+      console.log("effect");
+    } else {
+      isMounted.current = true;
+      return;
+    }
   }, [position]);
 
   return (
