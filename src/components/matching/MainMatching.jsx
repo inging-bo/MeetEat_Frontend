@@ -7,6 +7,7 @@ import AccIcon from "../../assets/acc-icon.svg?react";
 import HeaderLogo from "../../assets/header-logo.svg?react";
 import SearchIcon from "../../assets/search.svg?react";
 import SearchList from "./SearchList";
+import InfoWindow from "./InfoWindow";
 
 export default function MainMatching() {
   // 지도의 중심좌표
@@ -39,14 +40,25 @@ export default function MainMatching() {
   );
 
   // 지도가 처음 렌더링되면 중심좌표를 현위치로 설정하고 위치 변화 감지
+  function error(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+  }
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition((pos) => {
-      setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-    });
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+      },
+      error,
+      { enableHighAccuracy: true }
+    );
 
-    navigator.geolocation.watchPosition((pos) => {
-      setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-    });
+    navigator.geolocation.watchPosition(
+      (pos) => {
+        setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+      },
+      error,
+      { enableHighAccuracy: true }
+    );
   }, []);
 
   // 2000m이내 키워드 검색
@@ -100,7 +112,6 @@ export default function MainMatching() {
         },
       })
       .then((res) => {
-        console.log(res.data);
         let markers = [];
         for (let i = 0; i < res.data.documents.length; i++) {
           markers.push({
@@ -138,7 +149,6 @@ export default function MainMatching() {
       document.removeEventListener("click", handleClickOutside);
     }
   };
-
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
   }, [isInfoWindowOpen]);
@@ -148,18 +158,10 @@ export default function MainMatching() {
   const [choicedNumber, setChoicedNumber] = useState(1);
   const [isChoiced, setIsChoiced] = useState(false);
   const choicePlace = (marker) => {
-    setChoicedPlace(marker);
-    setIsChoiced(true);
+    console.log(marker);
+    // setChoicedPlace(marker);
+    // setIsChoiced(true);
     // 매칭 시작 라우트
-  };
-
-  // 장소 리셋
-  const resetChoice = () => {
-    setChoicedPlace("");
-    setIsChoiced(false);
-    const keywordInput = document.getElementById("keyword");
-    keywordInput.value = "";
-    keywordInput.disabled = false;
   };
 
   // 현재 위치 변경 감지시 state 초기화
@@ -171,44 +173,41 @@ export default function MainMatching() {
     setIsChoiced(false);
     setInfo(false);
     const keywordInput = document.getElementById("keyword");
+    const searchBtn = document.getElementById("search-btn");
     keywordInput.value = "";
-    keywordInput.disabled = false;
+    searchBtn.classList.remove("hidden");
   }, [position]);
 
   return (
     <>
-      <header className="w-full flex justify-center h-[77px] py-[14px]">
-        <div className="flex w-full justify-between max-w-screen-xl">
-          <div>
-            <Link to="/" className="h-full px-4 flex items-center">
-              <HeaderLogo />
-            </Link>
-          </div>
-          {/* 검색바 */}
-          <div className="flex flex-row bg-emerald-600 border border-[#3BB82D] rounded-full relative">
-            <input
-              className="w-[300px] lg:w-[600px] rounded-full pl-5 focus:outline-none"
-              id="keyword"
-              type="text"
-              onChange={onChange}
-              value={curText}
-              placeholder="함께 먹고싶은 식당을 검색해요."
-            />
-            <button
-              id="search-btn"
-              className="absolute px-5 right-0 top-[10px]"
-              onClick={searchPlaces}
-            >
-              <SearchIcon width="22px" />
-            </button>
-          </div>
-          <div>
-            <Link to="/account" className="h-full px-4 flex items-center">
-              로그인
-            </Link>
-          </div>
+      <header className="w-full flex justify-between max-w-screen-xl h-[77px] py-[14px]">
+        <Link to="/" className="h-full px-4 flex items-center">
+          <HeaderLogo />
+        </Link>
+
+        <div className="search-bar flex flex-row bg-emerald-600 border border-[#3BB82D] rounded-full relative">
+          <input
+            className="w-[300px] lg:w-[600px] rounded-full pl-5 focus:outline-none"
+            id="keyword"
+            type="text"
+            onChange={onChange}
+            value={curText}
+            placeholder="함께 먹고싶은 식당을 검색해요."
+          />
+          <button
+            id="search-btn"
+            className="absolute px-5 right-0 top-[10px]"
+            onClick={searchPlaces}
+          >
+            <SearchIcon width="22px" />
+          </button>
         </div>
+
+        <Link to="/account" className="h-full px-4 flex items-center">
+          로그인
+        </Link>
       </header>
+
       <div className="relative w-full h-full">
         <Map
           className="w-full h-full"
@@ -242,55 +241,7 @@ export default function MainMatching() {
                       yAnchor={1.3}
                       id="infoWindow"
                     >
-                      <div className="drop-shadow-lg fixed">
-                        <div className="bg-white p-5 rounded-lg w-[320px]">
-                          <div className="text-left">
-                            <div className="flex flex-row justify-between items-start pb-[8px]">
-                              <p className="font-bold text-base max-w-[200px] whitespace-normal">
-                                {marker.place_name}
-                              </p>
-                              <p className="text-sm text-[#555555]">
-                                {marker.category_name.slice(
-                                  marker.category_name.lastIndexOf(">") + 2
-                                )}
-                              </p>
-                            </div>
-                            <p className="text-sm text-[#555555]">
-                              {marker.road_address_name}
-                            </p>
-                            <p className="text-sm pb-2 text-[#555555]">
-                              {marker.phone}
-                            </p>
-                            <p className="text-sm pb-5 text-[#555555]">
-                              내 위치에서 {marker.distance}m
-                            </p>
-                            <hr className="pb-5" />
-                            <div>
-                              <p className="font-bold text-base whitespace-normal pb-2">
-                                방문할 인원을 선택해주세요.
-                              </p>
-                              <div className="flex flex-row justify-between text-sm">
-                                <p>인원</p>
-                                <div className="flex flex-row justify-between">
-                                  <p>-</p>
-                                  <p>1</p>
-                                  <p>+</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <button
-                            id="choiceBtn"
-                            className="bg-[#FF6445] w-full rounded-lg py-2 mt-3 text-white"
-                            onClick={() => {
-                              choicePlace(marker);
-                            }}
-                          >
-                            매칭 시작
-                          </button>
-                        </div>
-                        {/* <div className="w-0 h-0 justify-self-center border-l-[10px] border-l-transparent border-t-[12px] border-t-white border-r-[10px] border-r-transparent"></div> */}
-                      </div>
+                      <InfoWindow marker={marker} choicePlace={choicePlace} />
                     </CustomOverlayMap>
                   )}
               </>
@@ -299,28 +250,32 @@ export default function MainMatching() {
           {/* 검색 된 리스트 표시 */}
           <div
             key={key}
-            className="bg-white text-black absolute z-10 top-[20%] left-10 min-w-[320px] max-w-[320px] rounded-lg max-h-[650px] overflow-y-scroll scrollbar-hide px-5"
+            className="bg-white text-black absolute z-10 top-[20%] left-10 min-w-[320px] max-w-[320px] rounded-lg max-h-[650px] overflow-y-scroll scrollbar-hide px-5 drop-shadow-2xl"
           >
-            {markers.length !== 0 ? (
+            {markers.length !== 0 && (
               <div className="font-bold py-[15px] text-left">검색결과</div>
-            ) : (
-              <></>
             )}
             {!isChoiced &&
               markers.map((marker) => (
                 <>
-                  <SearchList marker={marker} />
+                  <div
+                    onClick={() => {
+                      setInfo(marker);
+                      setCenter(marker.position);
+                      setInfoWindowOpen(true);
+                    }}
+                  >
+                    <SearchList marker={marker} />
+                  </div>
                 </>
               ))}
-            {hasMore ? (
+            {hasMore && (
               <button
                 className="py-2 font-bold drop-shadow-md"
-                onClick={searchPlaces}
+                onClick={() => searchPlaces()}
               >
                 더보기
               </button>
-            ) : (
-              <></>
             )}
           </div>
 
