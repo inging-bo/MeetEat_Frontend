@@ -57,11 +57,11 @@ export default function RestInfo() {
     } = useEditableField("한 줄 소개를 입력하세요.");
     // 로그아웃 모달
     const [isModalOpen, setIsModalOpen] = useState(false);
+    // 모달 열기
+    const openModal = () => setIsModalOpen(true);
 
-    // 모달 열고 닫기 함수
-    const toggleModal = () => {
-        setIsModalOpen(!isModalOpen);
-    };
+    // 모달 닫기
+    const closeModal = () => setIsModalOpen(false);
 
     return (
         <div
@@ -170,9 +170,9 @@ export default function RestInfo() {
                     </button>
                 </div>
             </div>
-            <button onClick={toggleModal} className="font-bold text-lg">로그아웃</button>
+            <button onClick={openModal} className="font-bold text-lg">로그아웃</button>
             {/* 모달이 열려 있을 때만 표시 */}
-            {isModalOpen && <TwoBtnModal type={"logOut"} onClose={toggleModal} />}
+            {isModalOpen && <TwoBtnModal type="logOut" onClose={closeModal}/>}
         </div>
     )
 }
