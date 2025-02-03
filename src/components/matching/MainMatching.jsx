@@ -6,6 +6,8 @@ import axios from "axios";
 import AccIcon from "../../assets/acc-icon.svg?react";
 import HeaderLogo from "../../assets/header-logo.svg?react";
 import SearchIcon from "../../assets/search.svg?react";
+import ChatIcon from "../../assets/chat-line.svg?react";
+import FoodIcon from "../../assets/food-line.svg?react";
 import SearchList from "./SearchList";
 import InfoWindow from "./InfoWindow";
 
@@ -58,11 +60,6 @@ export default function MainMatching() {
           pos.coords.longitude !== position.lng
         ) {
           setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-          console.log(position.lat);
-          console.log(position.lng);
-          console.log("====");
-          console.log(pos.coords.latitude);
-          console.log(pos.coords.longitude);
         }
       },
       gpsError,
@@ -175,34 +172,21 @@ export default function MainMatching() {
     document.addEventListener("click", handleClickOutside);
   }, [isInfoWindowOpen]);
 
-  // 장소, 인원 선택
-  const [choicedPlace, setChoicedPlace] = useState("");
-  const [choicedNumber, setChoicedNumber] = useState(1);
-  const [isChoiced, setIsChoiced] = useState(false);
-  const choicePlace = (marker) => {
-    console.log(marker);
-    // setChoicedPlace(marker);
-    // setIsChoiced(true);
-    // 매칭 시작 라우트
-  };
-
   // 현재 위치 변경 감지시 state 초기화
+  const [isChoiced, setIsChoiced] = useState(false);
   const isMounted = useRef(false);
   useEffect(() => {
     if (isMounted.current) {
       setPage(1);
       setHasMore(false);
       setMarkers([]);
-      setChoicedPlace("");
       setIsChoiced(false);
       setInfo(false);
       setCurText("");
       const searchBtn = document.getElementById("search-btn");
       searchBtn.classList.remove("hidden");
-      console.log("effect");
     } else {
       isMounted.current = true;
-      return;
     }
   }, [position]);
 
@@ -243,6 +227,8 @@ export default function MainMatching() {
           center={center}
           level={5}
           onCenterChanged={updateCenterWhenMapMoved}
+          disableDoubleClick={true}
+          disableDoubleClickZoom={true}
         >
           {/* 검색 된 마커 표시 */}
           {!isChoiced &&
@@ -269,7 +255,7 @@ export default function MainMatching() {
                       yAnchor={1.3}
                       id="infoWindow"
                     >
-                      <InfoWindow marker={marker} choicePlace={choicePlace} />
+                      <InfoWindow marker={marker} />
                     </CustomOverlayMap>
                   )}
               </>
@@ -329,13 +315,35 @@ export default function MainMatching() {
         </Map>
 
         {/* 현위치로 지도도 이동 버튼 */}
-        <div className="flex flex-col gap-[10px] absolute z-[1] top-0 right-0 p-[10px]">
+        <div className="flex flex-col gap-[10px] absolute z-[1] top-5 right-5 p-[10px]">
           <button
             className="flex justify-center items-center cursor-pointer rounded-full w-[45px] h-[45px] bg-white shadow-[0_0_8px_#00000025]"
             onClick={setCenterToMyPosition}
           >
             <AccIcon width="25px" />
           </button>
+        </div>
+
+        {/* 맛집탐방단, 내돈내산맛집집 */}
+        <div className="flex flex-col gap-[10px] absolute z-[1] bottom-5 right-5 p-[10px]">
+          <Link
+            to="/openchat"
+            className="flex flex-col justify-center items-center rounded-lg w-[80px] h-[80px] bg-[#FF6445] text-white text-sm"
+          >
+            <ChatIcon width="15px" />
+            맛집
+            <br />
+            탐방단
+          </Link>
+          <Link
+            to="meeteatdb"
+            className="flex flex-col justify-center items-center rounded-lg w-[80px] h-[80px] bg-[#FF6445] text-white text-sm"
+          >
+            <FoodIcon width="15px" />
+            내돈내산
+            <br />
+            맛집
+          </Link>
         </div>
       </div>
     </>
