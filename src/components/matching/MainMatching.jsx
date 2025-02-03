@@ -111,7 +111,6 @@ export default function MainMatching() {
         },
       })
       .then((res) => {
-        console.log(res.data);
         let markers = [];
         for (let i = 0; i < res.data.documents.length; i++) {
           markers.push({
@@ -149,7 +148,6 @@ export default function MainMatching() {
       document.removeEventListener("click", handleClickOutside);
     }
   };
-
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
   }, [isInfoWindowOpen]);
@@ -164,15 +162,6 @@ export default function MainMatching() {
     // 매칭 시작 라우트
   };
 
-  // 장소 리셋
-  const resetChoice = () => {
-    setChoicedPlace("");
-    setIsChoiced(false);
-    const keywordInput = document.getElementById("keyword");
-    keywordInput.value = "";
-    keywordInput.disabled = false;
-  };
-
   // 현재 위치 변경 감지시 state 초기화
   useEffect(() => {
     setPage(1);
@@ -182,44 +171,41 @@ export default function MainMatching() {
     setIsChoiced(false);
     setInfo(false);
     const keywordInput = document.getElementById("keyword");
+    const searchBtn = document.getElementById("search-btn");
     keywordInput.value = "";
-    keywordInput.disabled = false;
+    searchBtn.classList.remove("hidden");
   }, [position]);
 
   return (
     <>
-      <header className="w-full flex justify-center h-[77px] py-[14px]">
-        <div className="flex w-full justify-between max-w-screen-xl">
-          <div>
-            <Link to="/" className="h-full px-4 flex items-center">
-              <HeaderLogo />
-            </Link>
-          </div>
-          {/* 검색바 */}
-          <div className="flex flex-row bg-emerald-600 border border-[#3BB82D] rounded-full relative">
-            <input
-              className="w-[300px] lg:w-[600px] rounded-full pl-5 focus:outline-none"
-              id="keyword"
-              type="text"
-              onChange={onChange}
-              value={curText}
-              placeholder="함께 먹고싶은 식당을 검색해요."
-            />
-            <button
-              id="search-btn"
-              className="absolute px-5 right-0 top-[10px]"
-              onClick={searchPlaces}
-            >
-              <SearchIcon width="22px" />
-            </button>
-          </div>
-          <div>
-            <Link to="/account" className="h-full px-4 flex items-center">
-              로그인
-            </Link>
-          </div>
+      <header className="w-full flex justify-between max-w-screen-xl h-[77px] py-[14px]">
+        <Link to="/" className="h-full px-4 flex items-center">
+          <HeaderLogo />
+        </Link>
+
+        <div className="search-bar flex flex-row bg-emerald-600 border border-[#3BB82D] rounded-full relative">
+          <input
+            className="w-[300px] lg:w-[600px] rounded-full pl-5 focus:outline-none"
+            id="keyword"
+            type="text"
+            onChange={onChange}
+            value={curText}
+            placeholder="함께 먹고싶은 식당을 검색해요."
+          />
+          <button
+            id="search-btn"
+            className="absolute px-5 right-0 top-[10px]"
+            onClick={searchPlaces}
+          >
+            <SearchIcon width="22px" />
+          </button>
         </div>
+
+        <Link to="/account" className="h-full px-4 flex items-center">
+          로그인
+        </Link>
       </header>
+
       <div className="relative w-full h-full">
         <Map
           className="w-full h-full"
@@ -311,26 +297,30 @@ export default function MainMatching() {
             key={key}
             className="bg-white text-black absolute z-10 top-[20%] left-10 min-w-[320px] max-w-[320px] rounded-lg max-h-[650px] overflow-y-scroll scrollbar-hide px-5"
           >
-            {markers.length !== 0 ? (
+            {markers.length !== 0 && (
               <div className="font-bold py-[15px] text-left">검색결과</div>
-            ) : (
-              <></>
             )}
             {!isChoiced &&
               markers.map((marker) => (
                 <>
-                  <SearchList marker={marker} />
+                  <div
+                    onClick={() => {
+                      setInfo(marker);
+                      setCenter(marker.position);
+                      setInfoWindowOpen(true);
+                    }}
+                  >
+                    <SearchList marker={marker} />
+                  </div>
                 </>
               ))}
-            {hasMore ? (
+            {hasMore && (
               <button
                 className="py-2 font-bold drop-shadow-md"
                 onClick={searchPlaces}
               >
                 더보기
               </button>
-            ) : (
-              <></>
             )}
           </div>
 
