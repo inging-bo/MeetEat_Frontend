@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Link} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import HidePWIcon from "../../assets/hidePW-icon.svg";
 import ShowPWIcon from "../../assets/showPW-icon.svg";
 
@@ -14,6 +14,20 @@ export default function ChangePW() {
     const togglePWSub = () => {
         setShowPWSub(!showPWSub);
     }
+
+    const navigate = useNavigate();
+    const handleChangePW = async () => {
+        navigate("/successnotice", { state: { message: "변경이 완료되었습니다." } });
+        // 1. 서버에 비밀번호 변경 요청을 보냄 (예제 코드, 실제 요청 필요)
+        // const response = await fetch("/api/delete-account", { method: "POST" });
+
+        // if (response.ok) {
+        //     // 2. 비밀번호 변경 성공 시 성공 페이지로 이동
+        //     navigate("/successnotice", { state: { message: "변경이 완료되었습니다." } });
+        // } else {
+        //     alert("탈퇴에 실패했습니다. 다시 시도해주세요.");
+        // }
+    };
 
     return (
         <form className="flex w-96 justify-center items-center border px-20 py-20 border-gray-300">
@@ -57,7 +71,13 @@ export default function ChangePW() {
 
                            placeholder="닉네임을 입력해주세요" required/>
                 </label>
-                <button type="submit" className="w-full h-11 border border-gray-300">변경하기</button>
+                <button
+                    type="submit"
+                    className="w-full h-11 border border-gray-300"
+                    onClick={handleChangePW}
+                >
+                    변경하기
+                </button>
             </div>
         </form>
     )

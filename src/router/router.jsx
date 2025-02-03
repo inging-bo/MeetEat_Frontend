@@ -7,6 +7,7 @@ import OpenChat from "../views/OpenChat.jsx";
 import SignUp from "../components/account/SignUp.jsx";
 import ChangePW from "../components/account/ChangePW.jsx";
 import DeleteID from "../components/account/DeleteID.jsx";
+import SuccessNotice from "../components/notice/SuccessNotice.jsx";
 
 export default function router() {
   return (
@@ -19,6 +20,7 @@ export default function router() {
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/mypage/changepw" element={<ChangePW />} />
       <Route path="/mypage/deleteid" element={<DeleteID />} />
+      <Route path="/successnotice" element={<SuccessNotice />} />
       <Route path="/openchat" element={<OpenChat />} />
     </Routes>
   );
