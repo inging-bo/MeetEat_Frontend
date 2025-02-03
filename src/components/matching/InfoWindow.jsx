@@ -1,4 +1,25 @@
-export default function InfoWindow({ marker, choicePlace }) {
+import { useState } from "react";
+
+export default function InfoWindow({ marker }) {
+  // 장소, 인원 선택
+  const [choicedPlace, setChoicedPlace] = useState("");
+  const [choicedNumber, setChoicedNumber] = useState(1);
+
+  // 인원 버튼 함수수
+  const minus = () => {
+    if (choicedNumber >= 2) setChoicedNumber(choicedNumber - 1);
+    else setChoicedNumber(1);
+  };
+  const plus = () => {
+    setChoicedNumber(choicedNumber + 1);
+  };
+
+  const choicePlace = (marker) => {
+    console.log(marker);
+    setChoicedPlace(marker);
+    // 매칭 시작 라우트
+  };
+
   return (
     <div className="drop-shadow-lg fixed">
       <div className="bg-white p-5 rounded-lg w-[320px]">
@@ -26,22 +47,29 @@ export default function InfoWindow({ marker, choicePlace }) {
           </p>
           <hr className="pb-5" />
           <div>
-            <p className="font-bold text-base whitespace-normal pb-2">
+            <p className="font-bold text-base whitespace-normal pb-4">
               방문할 인원을 선택해주세요.
             </p>
-            <div className="flex flex-row justify-between text-sm">
+            <div className="flex flex-row justify-between text-sm ">
               <p>인원</p>
-              <div className="flex flex-row justify-between">
-                <p>-</p>
-                <p>1</p>
-                <p>+</p>
+              <div className="flex flex-row items-center justify-between border border-[#E8E8E8] w-[100px] h-[30px] rounded-lg text-[#909090]">
+                <button
+                  className="w-[30px] text-center text-2xl"
+                  onClick={minus}
+                >
+                  -
+                </button>
+                <p>{choicedNumber}</p>
+                <button className="w-[30px] text-center text-xl" onClick={plus}>
+                  +
+                </button>
               </div>
             </div>
           </div>
         </div>
         <button
           id="choiceBtn"
-          className="bg-[#FF6445] w-full rounded-lg py-2 mt-3 text-white"
+          className="bg-[#FF6445] w-full rounded-lg py-2 mt-5 text-white"
           onClick={() => {
             choicePlace(marker);
           }}

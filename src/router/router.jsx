@@ -4,6 +4,7 @@ import Error from "../views/Error.jsx";
 import Account from "../views/Account.jsx";
 import MyPage from "../views/MyPage.jsx";
 import OpenChat from "../views/OpenChat.jsx";
+import MeeteatDb from "../views/MeeteatDb.jsx";
 import SignUp from "../components/account/SignUp.jsx";
 import ChangePW from "../components/account/ChangePW.jsx";
 import DeleteID from "../components/account/DeleteID.jsx";
@@ -24,6 +25,7 @@ export default function router() {
       <Route path="/mypage/deleteid" element={<DeleteID />} />
       <Route path="/successnotice" element={<SuccessNotice />} />
       <Route path="/openchat" element={<OpenChat />} />
+      <Route path="/meeteatdb" element={<MeeteatDb />} />
     </Routes>
   );
 }
