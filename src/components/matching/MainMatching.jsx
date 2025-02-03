@@ -173,7 +173,6 @@ export default function MainMatching() {
   }, [isInfoWindowOpen]);
 
   // 현재 위치 변경 감지시 state 초기화
-  const [isChoiced, setIsChoiced] = useState(false);
   const isMounted = useRef(false);
   useEffect(() => {
     if (isMounted.current) {
@@ -185,8 +184,10 @@ export default function MainMatching() {
       setCurText("");
       const searchBtn = document.getElementById("search-btn");
       searchBtn.classList.remove("hidden");
+      console.log("effect");
     } else {
       isMounted.current = true;
+      return;
     }
   }, [position]);
 
