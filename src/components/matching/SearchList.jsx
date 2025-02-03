@@ -4,7 +4,7 @@ export default function SearchList({ marker }) {
   );
 
   return (
-    <a href={marker.place_url} target="_blank">
+    <div className="searched-item">
       <div className="text-left pt-[10px]">
         <div className="flex flex-row justify-between items-start pb-[8px]">
           <p className="font-bold text-base max-w-[200px]">
@@ -19,6 +19,6 @@ export default function SearchList({ marker }) {
         </p>
         <hr className="" />
       </div>
-    </a>
+    </div>
   );
 }
