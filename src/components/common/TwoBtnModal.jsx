@@ -1,15 +1,21 @@
 import OneBtnModal from "./OneBtnModal.jsx";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
-export default function TwoBtnModal({type, onClose}) {
-
-    // ✅ 모달 외부 클릭 시 모달 닫힘
-    const handleOuterClick = (e) => {
-        // 모달 바깥쪽 클릭 시 onClose 실행
-        if (e.target === e.currentTarget) {
-            onClose();  // 모달 닫기
-        }
-    };
+export default function TwoBtnModal({type,visitorId , problemID, onClose}) {
+    console.log(problemID)
+    const twoModalRef = useRef(null);
+    // 모달이 열릴 때 이벤트 리스너 추가, 닫힐 때 제거
+    useEffect(() => {
+        // 배경 클릭 시 모달 닫기
+        const handleOuterClick = (e) => {
+            // twoModalRef.current가 존재하고, 클릭한 요소가 twoModalRef.current 내부가 아닐 때만 닫기
+            if (twoModalRef.current && !twoModalRef.current.contains(e.target)) {
+                onClose();
+            }
+        };
+        document.addEventListener("mousedown", handleOuterClick);
+        return () => document.removeEventListener("mousedown", handleOuterClick);
+    }, [onClose]);
 
     // ✅ 버튼 별 메세지 선택
     const choiceMessage = (type) => {
@@ -34,11 +40,10 @@ export default function TwoBtnModal({type, onClose}) {
     return (
         <div
             className="flex fixed top-0 left-0 justify-center items-center bg-black/40 z-50 w-full h-full"
-            onClick={handleOuterClick}
         >
             {!showOneBtnModal ? (
                 <div className="w-80 p-10 bg-white rounded-lg drop-shadow-lg"
-                     onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 전파 방지
+                     ref={twoModalRef} // 모달 내부 요소 참조
                 >
                     <div>
                         {/* 클릭한 요소별 다른 메세지 전달 */}
@@ -46,12 +51,13 @@ export default function TwoBtnModal({type, onClose}) {
                     </div>
                     <div className="flex gap-8 justify-center">
                         <button onClick={onClose}>아니요</button>
-                        <button onClick={handleYesClick}>예</button> {/* "예" 클릭 시 상태 변경 */}
+                        <button onClick={handleYesClick}>예</button>
+                        {/* "예" 클릭 시 상태 변경 */}
                     </div>
                 </div>
             ) : (
                 // OneBtnModal 표시
-                <OneBtnModal type={type}/>
+                <OneBtnModal type={type} visitorId={visitorId} problemID={problemID} onClose={onClose}/>
             )}
         </div>
     )
