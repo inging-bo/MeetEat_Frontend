@@ -179,12 +179,10 @@ export default function MainMatching() {
       setPage(1);
       setHasMore(false);
       setMarkers([]);
-      setIsChoiced(false);
       setInfo(false);
       setCurText("");
       const searchBtn = document.getElementById("search-btn");
       searchBtn.classList.remove("hidden");
-      console.log("effect");
     } else {
       isMounted.current = true;
       return;
@@ -232,35 +230,34 @@ export default function MainMatching() {
           disableDoubleClickZoom={true}
         >
           {/* 검색 된 마커 표시 */}
-          {!isChoiced &&
-            markers.map((marker) => (
-              <>
-                <MapMarker
-                  key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
-                  position={marker.position}
-                  onClick={() => {
-                    setInfo(marker);
-                    setCenter(marker.position);
-                    setInfoWindowOpen(true);
-                  }}
-                  image={{
-                    src: "../../../public/assets/map-marker.svg",
-                    size: { width: 30, height: 30 },
-                  }}
-                />
-                {isInfoWindowOpen &&
-                  info &&
-                  info.place_name === marker.place_name && (
-                    <CustomOverlayMap
-                      position={marker.position}
-                      yAnchor={1.3}
-                      id="infoWindow"
-                    >
-                      <InfoWindow marker={marker} />
-                    </CustomOverlayMap>
-                  )}
-              </>
-            ))}
+          {markers.map((marker) => (
+            <>
+              <MapMarker
+                key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
+                position={marker.position}
+                onClick={() => {
+                  setInfo(marker);
+                  setCenter(marker.position);
+                  setInfoWindowOpen(true);
+                }}
+                image={{
+                  src: "../../../public/assets/map-marker.svg",
+                  size: { width: 30, height: 30 },
+                }}
+              />
+              {isInfoWindowOpen &&
+                info &&
+                info.place_name === marker.place_name && (
+                  <CustomOverlayMap
+                    position={marker.position}
+                    yAnchor={1.3}
+                    id="infoWindow"
+                  >
+                    <InfoWindow marker={marker} />
+                  </CustomOverlayMap>
+                )}
+            </>
+          ))}
 
           {/* 검색 된 리스트 표시 */}
           <div
@@ -270,20 +267,19 @@ export default function MainMatching() {
             {markers.length !== 0 && (
               <div className="font-bold py-[15px] text-left">검색결과</div>
             )}
-            {!isChoiced &&
-              markers.map((marker) => (
-                <>
-                  <div
-                    onClick={() => {
-                      setInfo(marker);
-                      setCenter(marker.position);
-                      setInfoWindowOpen(true);
-                    }}
-                  >
-                    <SearchList marker={marker} />
-                  </div>
-                </>
-              ))}
+            {markers.map((marker) => (
+              <>
+                <div
+                  onClick={() => {
+                    setInfo(marker);
+                    setCenter(marker.position);
+                    setInfoWindowOpen(true);
+                  }}
+                >
+                  <SearchList marker={marker} />
+                </div>
+              </>
+            ))}
             {hasMore && (
               <button
                 className="py-2 font-bold drop-shadow-md"
