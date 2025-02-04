@@ -12,7 +12,7 @@ export default function RestReviews() {
             category_name: "한식",
             myReview: false,
             visitors: [
-                {id: "user1", nickname: "철수", report: false, block: false},
+                {id: "user1", nickname: "철수", report: true, block: true},
                 {id: "user2", nickname: "영희", report: false, block: false},
                 {id: "user3", nickname: "민수", report: false, block: false},
             ],
@@ -23,8 +23,8 @@ export default function RestReviews() {
             category_name: "카페",
             myReview: true,
             visitors: [
-                {id: "user4", nickname: "지훈", report: false, block: false},
-                {id: "user5", nickname: "수진", report: false, block: false},
+                {id: "user4", nickname: "지훈", report: true, block: false},
+                {id: "user5", nickname: "수진", report: false, block: true},
             ],
         },
         {
@@ -35,7 +35,7 @@ export default function RestReviews() {
             visitors: [
                 {id: "user6", nickname: "철수", report: false, block: false},
                 {id: "user7", nickname: "영희", report: false, block: false},
-                {id: "user8", nickname: "민수", report: false, block: false},
+                {id: "user8", nickname: "민수", report: true, block: false},
             ],
         },
         {
@@ -45,7 +45,7 @@ export default function RestReviews() {
             myReview: true,
             visitors: [
                 {id: "user9", nickname: "지훈", report: false, block: false},
-                {id: "user10", nickname: "수진", report: false, block: false},
+                {id: "user10", nickname: "수진", report: false, block: true},
             ],
         },
         {
@@ -54,7 +54,7 @@ export default function RestReviews() {
             category_name: "한식",
             myReview: false,
             visitors: [
-                {id: "user11", nickname: "철수", report: false, block: false},
+                {id: "user11", nickname: "철수", report: true, block: false},
                 {id: "user12", nickname: "영희", report: false, block: false},
                 {id: "user13", nickname: "민수", report: false, block: false},
             ],
@@ -176,12 +176,24 @@ export default function RestReviews() {
                                             <div
                                                 ref={popOverRef} // ✅ popOverRef 설정
                                                 className="absolute flex flex-col gap-1 z-50 top-10 right-1 bg-white p-2 border border-gray-300 rounded-lg">
-                                                <button onClick={() => toggleModal("block", visitor.id)}
-                                                        className="py-1 px-2 rounded-lg hover:bg-gray-200">차단하기
-                                                </button>
-                                                <button onClick={() => toggleModal("report", visitor.id)}
-                                                        className="py-1 px-2 rounded-lg hover:bg-gray-200">신고하기
-                                                </button>
+                                                {visitor.block === false ? (
+                                                    <button onClick={() => toggleModal("block", visitor.id)}
+                                                            className="py-1 px-2 rounded-lg hover:bg-gray-200">차단하기
+                                                    </button>
+                                                ) : (
+                                                    <button onClick={() => toggleModal("unBlock", visitor.id)}
+                                                            className="py-1 px-2 rounded-lg hover:bg-gray-200">차단해제
+                                                    </button>
+                                                )}
+                                                {visitor.report === false ? (
+                                                    <button onClick={() => toggleModal("report", visitor.id)}
+                                                            className="py-1 px-2 rounded-lg hover:bg-gray-200">신고하기
+                                                    </button>
+                                                ) : (
+                                                    <button onClick={() => toggleModal("unReport", visitor.id)}
+                                                            className="py-1 px-2 rounded-lg hover:bg-gray-200">신고해제
+                                                    </button>
+                                                )}
                                                 <div
                                                     className="absolute -top-1.5 right-3 rotate-45  w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>
                                             </div>
@@ -197,7 +209,7 @@ export default function RestReviews() {
                 )}
             </ul>
             {/* 모달이 열려 있을 때만 표시 */}
-            {isModalOpen && <TwoBtnModal type={modalType} userId={userId} onClose={closeModal} />}
+            {isModalOpen && <TwoBtnModal type={modalType} userId={userId} onClose={closeModal}/>}
         </div>
     )
 }

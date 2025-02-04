@@ -20,9 +20,13 @@ export default function OneBtnModal({type, onClose}) {
     const choiceYes = (type) => {
         switch (type) {
             case "block" :
-                return "사용자를 차단했습니다."
+                return "사용자를 차단 했습니다."
+            case "unBlock" :
+                return "사용자를 차단 해제했습니다."
             case "report" :
-                return "사용자를 신고하였습니다."
+                return "사용자를 신고 하였습니다."
+            case "unReport" :
+                return "사용자를 신고 해제했습니다."
             case "logOut" :
                 return "로그아웃 되었습니다."
         }
@@ -32,8 +36,12 @@ export default function OneBtnModal({type, onClose}) {
         switch (type) {
             case "block" : blockUser()
                 break
+            case "unBlock" : blockUser()
+                return
             case "report" : reportUser()
                 break
+            case "unReport" : reportUser()
+                return
             case "logOut" : logOut()
                 break
 
