@@ -58,7 +58,7 @@ export default function TwoBtnModal({type, onClose}) {
                 </div>
             ) : (
                 // OneBtnModal 표시
-                <OneBtnModal type={type}/>
+                <OneBtnModal type={type} onClose={onClose}/>
             )}
         </div>
     )
