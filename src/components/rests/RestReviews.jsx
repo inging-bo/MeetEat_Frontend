@@ -12,9 +12,9 @@ export default function RestReviews() {
             category_name: "한식",
             myReview: false,
             visitors: [
-                {id: "user1", nickname: "철수"},
-                {id: "user2", nickname: "영희"},
-                {id: "user3", nickname: "민수"},
+                {id: "user1", nickname: "철수", report: false, block: false},
+                {id: "user2", nickname: "영희", report: false, block: false},
+                {id: "user3", nickname: "민수", report: false, block: false},
             ],
         },
         {
@@ -23,8 +23,8 @@ export default function RestReviews() {
             category_name: "카페",
             myReview: true,
             visitors: [
-                {id: "user4", nickname: "지훈"},
-                {id: "user5", nickname: "수진"},
+                {id: "user4", nickname: "지훈", report: false, block: false},
+                {id: "user5", nickname: "수진", report: false, block: false},
             ],
         },
         {
@@ -33,9 +33,9 @@ export default function RestReviews() {
             category_name: "한식",
             myReview: false,
             visitors: [
-                {id: "user6", nickname: "철수"},
-                {id: "user7", nickname: "영희"},
-                {id: "user8", nickname: "민수"},
+                {id: "user6", nickname: "철수", report: false, block: false},
+                {id: "user7", nickname: "영희", report: false, block: false},
+                {id: "user8", nickname: "민수", report: false, block: false},
             ],
         },
         {
@@ -44,8 +44,8 @@ export default function RestReviews() {
             category_name: "카페",
             myReview: true,
             visitors: [
-                {id: "user9", nickname: "지훈"},
-                {id: "user10", nickname: "수진"},
+                {id: "user9", nickname: "지훈", report: false, block: false},
+                {id: "user10", nickname: "수진", report: false, block: false},
             ],
         },
         {
@@ -54,9 +54,9 @@ export default function RestReviews() {
             category_name: "한식",
             myReview: false,
             visitors: [
-                {id: "user11", nickname: "철수"},
-                {id: "user12", nickname: "영희"},
-                {id: "user13", nickname: "민수"},
+                {id: "user11", nickname: "철수", report: false, block: false},
+                {id: "user12", nickname: "영희", report: false, block: false},
+                {id: "user13", nickname: "민수", report: false, block: false},
             ],
         },
         {
@@ -65,11 +65,21 @@ export default function RestReviews() {
             category_name: "카페",
             myReview: true,
             visitors: [
-                {id: "user14", nickname: "지훈"},
-                {id: "user15", nickname: "수진"},
+                {id: "user14", nickname: "지훈", report: false, block: false},
+                {id: "user15", nickname: "수진", report: false, block: false},
             ],
         },
     ];
+    // 로컬 스토리지에 데이터 저장
+    useEffect(() => {
+        localStorage.setItem("restaurantReviews", JSON.stringify(visitRestList));
+    }, []);
+
+    // 로컬 스토리지에서 데이터 가져오기
+    const [restaurantReviews, setRestaurantReviews] = useState(() => {
+        const storedData = localStorage.getItem("restaurantReviews");
+        return storedData ? JSON.parse(storedData) : [];
+    });
 
     // ✅ 신고하기 차단하기 팝오버 창 표시
     // 클릭된 요소의 ID를 관리
@@ -96,19 +106,17 @@ export default function RestReviews() {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [activePopOver]);
-
     // ✅ 차단, 신고 모달
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState(null); // 차단 or 신고 구분
-    const [selectedVisitorId, setSelectedVisitorId] = useState(null); // 추가
-    const [problemVisitor, setProblemVisitor] = useState(null); // 추가
+    const [userId, setUserId] = useState(null); // 차단 or 신고 구분
 
     // ✅ 모달 열고 닫기 함수
-    const toggleModal = (type, visitorId) => {
+    const toggleModal = (type, id) => {
         setModalType(type);  // 클릭한 버튼의 타입 저장
-        setSelectedVisitorId(visitorId); // ✅ visitor.id 저장
         setIsModalOpen(true);
         setActivePopOver(null)
+        setUserId(id)
     };
     // ✅ 모달 닫기 함수
     const closeModal = () => {
@@ -116,10 +124,15 @@ export default function RestReviews() {
         setModalType(null);
     };
 
-    // ✅
-
-    const problemID = (visitorId) => {
-        setProblemVisitor(visitorId);
+    // ✅ 차단 or 신고 표시
+    const benOrBlock = (visitor) => {
+        if (visitor.report === true && visitor.block === true) {
+            return (<><span className="ml-2 text-white">신고 유저</span><span className="ml-2 text-white">차단 유저</span></>)
+        } else if (visitor.block === true) {
+            return (<span className="ml-2 text-white">차단 유저</span>)
+        } else if (visitor.report === true) {
+            return (<span className="ml-2 text-white">신고 유저</span>)
+        }
     }
 
     return (
@@ -128,9 +141,9 @@ export default function RestReviews() {
             {/* 식당 별 매칭 히스토리 박스*/}
             <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
                 {/* 방문한 식당이 있으면 방문 한 식당 히스토리 표시*/}
-                {visitRestList.length > 0 ? (
+                {restaurantReviews.length > 0 ? (
                     // 같이 방문한 사람들 리스트 표시
-                    visitRestList.map((visitRest) => (
+                    restaurantReviews.map((visitRest) => (
                         <li
                             key={visitRest.id}
                             className="flex flex-col gap-2 border-2 border-gray-300 rounded-2xl p-4">
@@ -149,23 +162,16 @@ export default function RestReviews() {
                             <ul className="flex flex-wrap gap-1">
                                 {visitRest.visitors.map((visitor) => (
                                     <li key={visitor.id}
-                                        className="relative flex justify-between items-center w-[calc(50%-0.25rem)] p-2 rounded-lg">
+                                        className={`relative flex justify-between items-center w-[calc(50%-0.25rem)] p-2 rounded-lg ${visitor.report || visitor.block ? 'bg-black/30' : ''}`}
+                                    >
                                         <p>
-                                            닉네임
+                                            닉네임{benOrBlock(visitor)}
                                         </p>
                                         <p
                                             className=" font-bold tracking-[-0.15rem] [writing-mode:vertical-rl] cursor-pointer"
                                             onClick={() => popOver(visitor.id)}
                                         >
                                             ···</p>
-                                        {/* ✅ visitor.id가 선택된 ID와 같다면 div 추가 */}
-                                        {setProblemVisitor === visitor.id && (
-                                            <div
-                                                className="absolute top-10 right-1 bg-blue-200 p-2 border border-gray-400 rounded-lg">
-                                                ✅ 추가된 DIV (ID: {visitor.id})
-                                            </div>
-                                        )}
-
                                         {activePopOver === visitor.id && (
                                             <div
                                                 ref={popOverRef} // ✅ popOverRef 설정
@@ -182,16 +188,6 @@ export default function RestReviews() {
                                         )}
                                     </li>
                                 ))}
-                                {/*<div*/}
-                                {/*    className="flex justify-between items-center w-[calc(50%-0.25rem)] p-2 rounded-lg bg-gray-500">*/}
-                                {/*    <p className="relative after:absolute after:top-1/2 after:left-full after:content-['차단유저'] after:text-sm after:ml-4 after:text-white after:whitespace-nowrap after:transform after:-translate-y-1/2">닉네임</p>*/}
-                                {/*    <p className="font-bold tracking-[-0.15rem] [writing-mode:vertical-rl] cursor-pointer">···</p>*/}
-                                {/*</div>*/}
-                                {/*<div*/}
-                                {/*    className="flex justify-between items-center w-[calc(50%-0.25rem)] p-2 rounded-lg bg-gray-500">*/}
-                                {/*    <p className="relative after:absolute after:top-1/2 after:left-full after:content-['신고유저'] after:text-sm after:ml-4 after:text-white after:whitespace-nowrap after:transform after:-translate-y-1/2">닉네임</p>*/}
-                                {/*    <p className="font-bold tracking-[-0.15rem] [writing-mode:vertical-rl] cursor-pointer">···</p>*/}
-                                {/*</div>*/}
                             </ul>
                         </li>
                     ))
@@ -201,7 +197,7 @@ export default function RestReviews() {
                 )}
             </ul>
             {/* 모달이 열려 있을 때만 표시 */}
-            {isModalOpen && <TwoBtnModal type={modalType} visitorId={selectedVisitorId} problemID={problemID} onClose={closeModal}/>}
+            {isModalOpen && <TwoBtnModal type={modalType} userId={userId} onClose={closeModal} />}
         </div>
     )
 }
