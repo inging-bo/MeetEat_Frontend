@@ -10,6 +10,7 @@ import ChangePW from "../components/account/ChangePW.jsx";
 import DeleteID from "../components/account/DeleteID.jsx";
 import SuccessNotice from "../components/notice/SuccessNotice.jsx";
 import Matching from "../components/matching/Matching.jsx";
+import MatchingComplete from "../components/matching/MatchingComplete.jsx";
 
 export default function router() {
   return (
@@ -26,6 +27,7 @@ export default function router() {
       <Route path="/successnotice" element={<SuccessNotice />} />
       <Route path="/openchat" element={<OpenChat />} />
       <Route path="/meeteatdb" element={<MeeteatDb />} />
+      <Route path="/matching/complete" element={<MatchingComplete />} />
     </Routes>
   );
 }
