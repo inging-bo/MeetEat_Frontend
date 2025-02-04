@@ -1,16 +1,15 @@
 import OneBtnModal from "./OneBtnModal.jsx";
 import {useEffect, useRef, useState} from "react";
 
-export default function TwoBtnModal({type, onClose}) {
-
-    const modalRef = useRef(null);
-
+export default function TwoBtnModal({type,visitorId , problemID, onClose}) {
+    console.log(problemID)
+    const twoModalRef = useRef(null);
     // 모달이 열릴 때 이벤트 리스너 추가, 닫힐 때 제거
     useEffect(() => {
         // 배경 클릭 시 모달 닫기
         const handleOuterClick = (e) => {
-            // modalRef.current가 존재하고, 클릭한 요소가 modalRef.current 내부가 아닐 때만 닫기
-            if (modalRef.current && !modalRef.current.contains(e.target)) {
+            // twoModalRef.current가 존재하고, 클릭한 요소가 twoModalRef.current 내부가 아닐 때만 닫기
+            if (twoModalRef.current && !twoModalRef.current.contains(e.target)) {
                 onClose();
             }
         };
@@ -44,7 +43,7 @@ export default function TwoBtnModal({type, onClose}) {
         >
             {!showOneBtnModal ? (
                 <div className="w-80 p-10 bg-white rounded-lg drop-shadow-lg"
-                     ref={modalRef} // 모달 내부 요소 참조
+                     ref={twoModalRef} // 모달 내부 요소 참조
                 >
                     <div>
                         {/* 클릭한 요소별 다른 메세지 전달 */}
@@ -58,7 +57,7 @@ export default function TwoBtnModal({type, onClose}) {
                 </div>
             ) : (
                 // OneBtnModal 표시
-                <OneBtnModal type={type} onClose={onClose}/>
+                <OneBtnModal type={type} visitorId={visitorId} problemID={problemID} onClose={onClose}/>
             )}
         </div>
     )

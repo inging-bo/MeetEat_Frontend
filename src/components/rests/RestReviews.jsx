@@ -72,23 +72,22 @@ export default function RestReviews() {
     ];
 
     // ✅ 신고하기 차단하기 팝오버 창 표시
-    // ✅ 클릭된 요소의 ID를 관리
+    // 클릭된 요소의 ID를 관리
     const [activePopOver, setActivePopOver] = useState(null);
     const popOverRef = useRef(null); // 현재 열린 popOver의 ref
 
-    // ✅ 팝오버 토글 함수
+    // 팝오버 토글 함수
     const popOver = (id) => {
         setActivePopOver(activePopOver === id ? null : id);
     };
 
-    // ✅ 외부 클릭 감지하여 팝오버 닫기
+    // 외부 클릭 감지하여 팝오버 닫기
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (popOverRef.current && !popOverRef.current.contains(event.target)) {
                 setActivePopOver(null);
             }
         };
-
         if (activePopOver !== null) {
             document.addEventListener("mousedown", handleClickOutside);
         }
@@ -101,10 +100,13 @@ export default function RestReviews() {
     // ✅ 차단, 신고 모달
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState(null); // 차단 or 신고 구분
+    const [selectedVisitorId, setSelectedVisitorId] = useState(null); // 추가
+    const [problemVisitor, setProblemVisitor] = useState(null); // 추가
 
     // ✅ 모달 열고 닫기 함수
-    const toggleModal = (type) => {
+    const toggleModal = (type, visitorId) => {
         setModalType(type);  // 클릭한 버튼의 타입 저장
+        setSelectedVisitorId(visitorId); // ✅ visitor.id 저장
         setIsModalOpen(true);
         setActivePopOver(null)
     };
@@ -113,6 +115,12 @@ export default function RestReviews() {
         setIsModalOpen(false);
         setModalType(null);
     };
+
+    // ✅
+
+    const problemID = (visitorId) => {
+        setProblemVisitor(visitorId);
+    }
 
     return (
         <div className="flex flex-col gap-8 flex-auto min-w-fit border-2 border-gray-300 rounded-2xl p-8">
@@ -150,14 +158,22 @@ export default function RestReviews() {
                                             onClick={() => popOver(visitor.id)}
                                         >
                                             ···</p>
+                                        {/* ✅ visitor.id가 선택된 ID와 같다면 div 추가 */}
+                                        {setProblemVisitor === visitor.id && (
+                                            <div
+                                                className="absolute top-10 right-1 bg-blue-200 p-2 border border-gray-400 rounded-lg">
+                                                ✅ 추가된 DIV (ID: {visitor.id})
+                                            </div>
+                                        )}
+
                                         {activePopOver === visitor.id && (
                                             <div
                                                 ref={popOverRef} // ✅ popOverRef 설정
                                                 className="absolute flex flex-col gap-1 z-50 top-10 right-1 bg-white p-2 border border-gray-300 rounded-lg">
-                                                <button onClick={() => toggleModal("block")}
+                                                <button onClick={() => toggleModal("block", visitor.id)}
                                                         className="py-1 px-2 rounded-lg hover:bg-gray-200">차단하기
                                                 </button>
-                                                <button onClick={() => toggleModal("report")}
+                                                <button onClick={() => toggleModal("report", visitor.id)}
                                                         className="py-1 px-2 rounded-lg hover:bg-gray-200">신고하기
                                                 </button>
                                                 <div
@@ -185,7 +201,7 @@ export default function RestReviews() {
                 )}
             </ul>
             {/* 모달이 열려 있을 때만 표시 */}
-            {isModalOpen && <TwoBtnModal type={modalType} onClose={closeModal}/>}
+            {isModalOpen && <TwoBtnModal type={modalType} visitorId={selectedVisitorId} problemID={problemID} onClose={closeModal}/>}
         </div>
     )
 }
