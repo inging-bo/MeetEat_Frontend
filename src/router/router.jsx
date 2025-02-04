@@ -13,6 +13,7 @@ import Matching from "../components/matching/Matching.jsx";
 import MatchingComplete from "../components/matching/MatchingComplete.jsx";
 import CheckPlace from "../components/matching/CheckPlace.jsx";
 import ChoicePlace from "../components/matching/ChoicePlace.jsx";
+import WriteReview from "./../components/rests/WriteReview";
 
 export default function router() {
   return (
@@ -22,6 +23,7 @@ export default function router() {
       <Route path="/matching" element={<Matching />} />
       <Route path="/matching/check-place" element={<CheckPlace />} />
       <Route path="/matching/choice-place" element={<ChoicePlace />} />
+      <Route path="/matching/complete" element={<MatchingComplete />} />
       <Route path="/account" element={<Account />} />
       <Route path="/account/signup" element={<SignUp />} />
       {/*<Route path="/mypage/:id" element={<MyPage />} />*/}
@@ -31,7 +33,7 @@ export default function router() {
       <Route path="/successnotice" element={<SuccessNotice />} />
       <Route path="/openchat" element={<OpenChat />} />
       <Route path="/meeteatdb" element={<MeeteatDb />} />
-      <Route path="/matching/complete" element={<MatchingComplete />} />
+      <Route path="/rests/write" element={<WriteReview />} />
     </Routes>
   );
 }
