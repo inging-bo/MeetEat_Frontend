@@ -11,6 +11,8 @@ import DeleteID from "../components/account/DeleteID.jsx";
 import SuccessNotice from "../components/notice/SuccessNotice.jsx";
 import Matching from "../components/matching/Matching.jsx";
 import MatchingComplete from "../components/matching/MatchingComplete.jsx";
+import CheckPlace from "../components/matching/CheckPlace.jsx";
+import ChoicePlace from "../components/matching/ChoicePlace.jsx";
 
 export default function router() {
   return (
@@ -18,6 +20,8 @@ export default function router() {
       <Route path="*" element={<Error />} />
       <Route path="/" element={<Main />} />
       <Route path="/matching" element={<Matching />} />
+      <Route path="/matching/check-place" element={<CheckPlace />} />
+      <Route path="/matching/choice-place" element={<ChoicePlace />} />
       <Route path="/account" element={<Account />} />
       <Route path="/account/signup" element={<SignUp />} />
       {/*<Route path="/mypage/:id" element={<MyPage />} />*/}

@@ -1,8 +1,7 @@
 import { useState } from "react";
 
 export default function InfoWindow({ marker }) {
-  // 장소, 인원 선택
-  const [choicedPlace, setChoicedPlace] = useState("");
+  // 인원 선택
   const [choicedNumber, setChoicedNumber] = useState(1);
 
   // 인원 버튼 함수수
@@ -16,7 +15,6 @@ export default function InfoWindow({ marker }) {
 
   const choicePlace = (marker) => {
     console.log(marker);
-    setChoicedPlace(marker);
     // 매칭 시작 라우트
   };
 
