@@ -1,11 +1,8 @@
 import {useNavigate} from "react-router-dom";
 import {useEffect, useRef} from "react";
 
-export default function OneBtnModal({type,visitorId, problemID, onClose}) {
-    console.log(visitorId)
-    console.log(problemID)
+export default function OneBtnModal({type, onClose}) {
     const oneModalRef = useRef(null);
-
     // ✅ 모달이 열릴 때 이벤트 리스너 추가, 닫힐 때 제거
     useEffect(() => {
         // 배경 클릭 시 모달 닫기
@@ -30,10 +27,8 @@ export default function OneBtnModal({type,visitorId, problemID, onClose}) {
                 return "로그아웃 되었습니다."
         }
     }
-
-    const navigate = useNavigate();
-
-    const typeChk = (type) => {
+    // ✅ 확인 눌러을 때 동작
+    const check = (type) => {
         switch (type) {
             case "block" : blockUser()
                 break
@@ -41,22 +36,24 @@ export default function OneBtnModal({type,visitorId, problemID, onClose}) {
                 break
             case "logOut" : logOut()
                 break
+
         }
     }
 
+    const navigate = useNavigate();
     // ✅ 타입별 실행 변수
         // 차단하시겠습니까? `예` 인경우
     const blockUser = () => {
-        console.log(visitorId)
+        onClose()
     }
         // 신고하시겠습니까? `예` 인경우
     const reportUser = () => {
-        problemID()
-    }
+        onClose()
+    };
         // 로그아웃하시겠습니까? `예` 인경우
     const logOut = () => {
-        console.log(type)
         navigate("/")
+        onClose()
     }
     return (
         <div
@@ -67,7 +64,7 @@ export default function OneBtnModal({type,visitorId, problemID, onClose}) {
                 {choiceYes(type)}
             </div>
             <div className="flex gap-8 justify-center">
-                <button onClick={() => typeChk(type)}>확인</button>
+                <button onClick={() => check(type)}>확인</button>
             </div>
         </div>
     )
