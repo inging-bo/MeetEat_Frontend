@@ -21,8 +21,12 @@ export default function TwoBtnModal({type, userId, onClose}) {
         switch (type) {
             case "block" :
                 return "정말 차단 하시겠습니까?"
+            case "unBlock" :
+                return "정말 차단 해제 하시겠습니까?"
             case "report" :
                 return "정말 신고 하시겠습니까?"
+            case "unReport" :
+                return "정말 신고 해제 하시겠습니까?"
             case "logOut" :
                 return "정말 로그아웃 하시겠습니까?"
         }
@@ -36,7 +40,11 @@ export default function TwoBtnModal({type, userId, onClose}) {
         switch (type) {
             case "block" : blockUser(userId)
                 break
+            case "unBlock" : blockUser(userId)
+                break
             case "report" : reportUser(userId)
+                break
+            case "unReport" : reportUser(userId)
                 break
             case "logOut" : logOut()
                 break
@@ -60,7 +68,7 @@ export default function TwoBtnModal({type, userId, onClose}) {
             return {
                 ...rest,
                 visitors: rest.visitors.map(visitor =>
-                    visitor.id === userId ? { ...visitor, block: true } : visitor
+                    visitor.id === userId ? { ...visitor, block: !visitor.block } : visitor
                 )
             };
         })
@@ -74,7 +82,7 @@ export default function TwoBtnModal({type, userId, onClose}) {
             return {
                 ...rest,
                 visitors: rest.visitors.map(visitor =>
-                    visitor.id === userId ? { ...visitor, report: true } : visitor
+                visitor.id === userId ? { ...visitor, report: !visitor.report } : visitor
                 )
             };
         });
