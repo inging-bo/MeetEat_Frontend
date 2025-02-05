@@ -1,5 +1,11 @@
-import React from "react";
+import RestList from "../components/rests/RestList.jsx"
+import Header from "../components/layout/Header.jsx";
 
 export default function MeeteatDb() {
-  return <div>MeeteatDb</div>;
+    return (
+        <>
+            <Header/>
+            <RestList/>
+        </>
+    )
 }
