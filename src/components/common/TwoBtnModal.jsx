@@ -38,15 +38,20 @@ export default function TwoBtnModal({type, userId, onClose}) {
     // "예" 버튼 클릭 시 OneBtnModal 표시
     const handleYesClick = (type) => {
         switch (type) {
-            case "block" : blockUser(userId)
+            case "block" :
+                blockUser(userId)
                 break
-            case "unBlock" : blockUser(userId)
+            case "unBlock" :
+                blockUser(userId)
                 break
-            case "report" : reportUser(userId)
+            case "report" :
+                reportUser(userId)
                 break
-            case "unReport" : reportUser(userId)
+            case "unReport" :
+                reportUser(userId)
                 break
-            case "logOut" : logOut()
+            case "logOut" :
+                logOut()
                 break
         }
         setShowOneBtnModal(true);
@@ -68,7 +73,7 @@ export default function TwoBtnModal({type, userId, onClose}) {
             return {
                 ...rest,
                 visitors: rest.visitors.map(visitor =>
-                    visitor.id === userId ? { ...visitor, block: !visitor.block } : visitor
+                    visitor.id === userId ? {...visitor, block: !visitor.block} : visitor
                 )
             };
         })
@@ -82,7 +87,7 @@ export default function TwoBtnModal({type, userId, onClose}) {
             return {
                 ...rest,
                 visitors: rest.visitors.map(visitor =>
-                visitor.id === userId ? { ...visitor, report: !visitor.report } : visitor
+                    visitor.id === userId ? {...visitor, report: !visitor.report} : visitor
                 )
             };
         });
@@ -96,27 +101,29 @@ export default function TwoBtnModal({type, userId, onClose}) {
     const logOut = () => {
     }
     return (
-        <div
-            className="flex fixed top-0 left-0 justify-center items-center bg-black/40 z-50 w-full h-full"
-        >
+        <>
             {!showOneBtnModal ? (
-                <div className="w-80 p-10 bg-white rounded-lg drop-shadow-lg"
-                     ref={twoModalRef} // 모달 내부 요소 참조
+                <div
+                    className="flex fixed top-0 left-0 justify-center items-center bg-black/40 z-50 w-full h-full"
                 >
-                    <div>
-                        {/* 클릭한 요소별 다른 메세지 전달 */}
-                        {choiceMessage(type)}
-                    </div>
-                    <div className="flex gap-8 justify-center">
-                        <button onClick={onClose}>아니요</button>
-                        <button onClick={() => handleYesClick(type)}>예</button>
-                        {/* "예" 클릭 시 상태 변경 */}
+                    <div className="w-80 p-10 bg-white rounded-lg drop-shadow-lg"
+                         ref={twoModalRef} // 모달 내부 요소 참조
+                    >
+                        <div>
+                            {/* 클릭한 요소별 다른 메세지 전달 */}
+                            {choiceMessage(type)}
+                        </div>
+                        <div className="flex gap-8 justify-center">
+                            <button onClick={onClose}>아니요</button>
+                            <button onClick={() => handleYesClick(type)}>예</button>
+                            {/* "예" 클릭 시 상태 변경 */}
+                        </div>
                     </div>
                 </div>
             ) : (
                 // OneBtnModal 표시
                 <OneBtnModal type={type} onClose={onClose}/>
             )}
-        </div>
+        </>
     )
 }
