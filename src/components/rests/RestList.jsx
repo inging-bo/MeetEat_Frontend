@@ -4,7 +4,7 @@ import Arrow from "../../assets/updown-arrow-icon.svg?react"
 import FullStar from "../../assets/full-star.svg?react"
 import Review from "../../assets/review.svg?react"
 
-export default function rests() {
+export default function RestList() {
 
     // ✅ 확인용 식당 리스트
     const [restaurants, setRestaurants] = useState([
@@ -75,6 +75,55 @@ export default function rests() {
         },
     ]);
 
+    const [searchFilter, setSearchFilter] = useState("");
+
+    const openSearchFilter = (filter) => {
+        setSearchFilter(searchFilter === "" ? filter : "")
+    }
+
+    const filterList = (type) => {
+        switch (type) {
+            case "category" :
+                return (
+                    <ul className="absolute flex flex-col w-full gap-2 top-full px-2 py-1 z-10 bg-white border border-t-0 rounded-b-md">
+                        <li>한식</li>
+                        <li>중식</li>
+                        <li>일식</li>
+                        <li>양식</li>
+                    </ul>
+                )
+            case "region" :
+                return (
+                    <ul className="absolute flex flex-col w-full gap-2 top-full px-2 py-1 z-10 bg-white border border-t-0 rounded-b-md">
+                        <li>서울</li>
+                        <li>부산</li>
+                        <li>대구</li>
+                        <li>인천</li>
+                        <li>광주</li>
+                        <li>대전</li>
+                        <li>울산</li>
+                        <li>세종</li>
+                        <li>경기</li>
+                        <li>강원</li>
+                        <li>충북</li>
+                        <li>충남</li>
+                        <li>전북</li>
+                        <li>전남</li>
+                        <li>경북</li>
+                        <li>경남</li>
+                        <li>제주</li>
+                    </ul>
+                )
+            case "option" :
+                return (
+                    <ul className="absolute flex flex-col w-full gap-2 top-full px-2 py-1 z-10 bg-white border border-t-0 rounded-b-md">
+                        <li>거리순</li>
+                        <li>평점순</li>
+                    </ul>
+                )
+        }
+    }
+
     return (
         <div className="max-w-6xl flex flex-col mt-24 mb-auto items-center">
             <div className="w-96 mb-7 search-bar border border-[#3BB82D] rounded-full relative">
@@ -82,25 +131,50 @@ export default function rests() {
                     className="w-full h-10 rounded-full pl-5 pr-12 focus:outline-none"
                     id="keyword"
                     type="text"
-                    // onChange={onChange}
-                    // value={curText}
                     placeholder="실제 방문한 식당을 검색해요."
                 />
                 <button
                     id="search-btn"
                     className="absolute px-5 right-0 top-[10px]"
-                    // onClick={searchPlaces}
                 >
                     <SearchIcon width="22px"/>
                 </button>
             </div>
             <div className="flex gap-2 mb-3 ml-auto">
-                <div className="flex gap-2 justify-center items-center px-2 py-1 border border-gray-300 rounded-md">
-                    <p>한식</p><Arrow className=""/></div>
-                <div className="flex gap-2 justify-center items-center px-2 py-1 border border-gray-300 rounded-md">
-                    <p>전체</p><Arrow className=""/></div>
-                <div className="flex gap-2 justify-center items-center px-2 py-1 border border-gray-300 rounded-md">
-                    <p>평점순</p><Arrow className=""/></div>
+                <ul onClick={() => openSearchFilter("category")}
+                    className={`relative flex flex-col bg-white gap-2 justify-center items-center px-2 py-1 border border-gray-300 rounded-md 
+                    ${searchFilter === "category" && "border-b-[transparent] rounded-b-none"}`}
+                >
+                    <li className="flex justify-center gap-2 items-center">한식<Arrow
+                        className={`${searchFilter === "category" ? "rotate-180 duration-300 ease-in-out" : "duration-300"} `}/>
+                    </li>
+                    {searchFilter === "category" && (
+                        filterList("category")
+                    )}
+                </ul>
+                <ul onClick={() => openSearchFilter("region")}
+                    className={`relative flex flex-col bg-white gap-2 justify-center items-center px-2 py-1 border border-gray-300 rounded-md 
+                    ${searchFilter === "region" && "border-b-[transparent] rounded-b-none"}`}
+                >
+                    <li className="flex justify-center gap-2 items-center">전체<Arrow
+                        className={`${searchFilter === "region" ? "rotate-180 duration-300 ease-in-out" : "duration-300"} `}/>
+                    </li>
+                    {searchFilter === "region" && (
+                        filterList("region")
+                    )}
+                </ul>
+                <ul onClick={() => openSearchFilter("option")}
+                    className={`relative flex flex-col bg-white gap-2 justify-center items-center px-2 py-1 border border-gray-300 rounded-md 
+                    ${searchFilter === "option" && "border-b-[transparent] rounded-b-none"}`}
+                >
+                    <li className="flex justify-center gap-2 items-center">평점순<Arrow
+                        className={`${searchFilter === "option" ? "rotate-180 duration-300 ease-in-out" : "duration-300"} `}/>
+                    </li>
+                    {searchFilter === "option" && (
+                        filterList("option")
+                    )}
+                </ul>
+
             </div>
             <ul className="grid grid-cols-[380px_380px_380px] grid-rows-2 gap-7">
                 {restaurants.map((rest, index) => (
