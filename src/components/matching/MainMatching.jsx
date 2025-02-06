@@ -27,13 +27,16 @@ export default function MainMatching() {
   // 브라우저 종료, 새로고침, 뒤로가기의 경우 매칭 취소 api 전송
   // sse의 경우 새로고침시 이전 메세지를 다시 받을 수 없음
   // 새로고침, 창닫기 방지
-  const beforeunloadFunc = (event) => {
-    event.preventDefault();
-    event.returnValue = "";
+  const beforeunloadFunc = (e) => {
+    e.preventDefault();
+    e.returnValue = "";
   };
 
   useEffect(() => {
-    window.addEventListener("beforeunload", beforeunloadFunc);
+    console.log(window.sessionStorage.getItem("isMatched"));
+    if (window.sessionStorage.getItem("isMatching") === "true") {
+      window.addEventListener("beforeunload", beforeunloadFunc);
+    }
     return () => {
       window.removeEventListener("beforeunload", beforeunloadFunc);
     };
@@ -307,7 +310,6 @@ export default function MainMatching() {
                           marker={marker}
                           setIsMatching={setIsMatching}
                           setIsMatched={setIsMatched}
-                          beforeunloadFunc={beforeunloadFunc}
                         />
                       </CustomOverlayMap>
                     )}
