@@ -10,15 +10,33 @@ import ChatIcon from "../../assets/chat-line.svg?react";
 import FoodIcon from "../../assets/food-line.svg?react";
 import SearchList from "./SearchList";
 import InfoWindow from "./InfoWindow";
-import Mathing from "./Matching";
+import Matching from "./Matching";
 
 export default function MainMatching() {
   // 매칭중 확인
   const [isMatching, setIsMatching] = useState("false");
+  const [isMatched, setIsMatched] = useState("false");
+
   useEffect(() => {
     window.sessionStorage.getItem("isMatching") !== null &&
       setIsMatching(window.sessionStorage.getItem("isMatching"));
-    console.log(isMatching);
+    window.sessionStorage.getItem("isMatched") !== null &&
+      setIsMatched(window.sessionStorage.getItem("isMatched"));
+  }, [isMatching, isMatched]);
+
+  // 브라우저 종료, 새로고침, 뒤로가기의 경우 매칭 취소 api 전송
+  // sse의 경우 새로고침시 이전 메세지를 다시 받을 수 없음
+  // 새로고침, 창닫기 방지
+  const beforeunloadFunc = (event) => {
+    event.preventDefault();
+    event.returnValue = "";
+  };
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", beforeunloadFunc);
+    return () => {
+      window.removeEventListener("beforeunload", beforeunloadFunc);
+    };
   }, [isMatching]);
 
   async function apiPOSTCancel() {
@@ -32,16 +50,6 @@ export default function MainMatching() {
       });
   }
 
-  // 새로고침, 창닫기 방지
-  const beforeunloadFunc = (event) => {
-    event.preventDefault();
-    event.returnValue = "";
-  };
-
-  useEffect(() => {
-    window.addEventListener("beforeunload", beforeunloadFunc);
-  }, [isMatching]);
-
   //새로고침 확인을 눌렀을 경우 unload 이벤트 실행
   const unloadFunc = () => {
     setIsMatching("false");
@@ -50,9 +58,6 @@ export default function MainMatching() {
   };
   //unload 이벤트
   window.addEventListener("unload", unloadFunc);
-
-  // 브라우저 종료, 새로고침, 뒤로가기의 경우 매칭 취소 api 전송
-  // sse의 경우 새로고침시 이전 메세지를 다시 받을 수 없음
 
   // 지도의 중심좌표
   const [center, setCenter] = useState({
@@ -301,6 +306,8 @@ export default function MainMatching() {
                           position={position}
                           marker={marker}
                           setIsMatching={setIsMatching}
+                          setIsMatched={setIsMatched}
+                          beforeunloadFunc={beforeunloadFunc}
                         />
                       </CustomOverlayMap>
                     )}
@@ -393,7 +400,7 @@ export default function MainMatching() {
           </div>
         </>
       )}
-      {isMatching === "true" && <Mathing />}
+      {isMatching === "true" && <Matching />}
     </>
   );
 }

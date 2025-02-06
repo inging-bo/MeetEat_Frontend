@@ -30,7 +30,7 @@ export default function CheckPlace() {
 
   return (
     <>
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-10 z-20">
         <h1 className="text-2xl">매칭 가능한 인원을 찾았습니다.</h1>
         <div className="people-container w-[750px] flex flex-col gap-20 py-14 bg-slate-300">
           <div className="people-info flex justify-center gap-20">

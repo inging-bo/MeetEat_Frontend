@@ -1,7 +1,13 @@
 import { useState } from "react";
 import axios from "axios";
 
-export default function InfoWindow({ position, marker, setIsMatching }) {
+export default function InfoWindow({
+  position,
+  marker,
+  setIsMatching,
+  setIsMatched,
+  beforeunloadFunc,
+}) {
   // 인원 선택
   const [choicedNumber, setChoicedNumber] = useState(2);
 
@@ -31,8 +37,29 @@ export default function InfoWindow({ position, marker, setIsMatching }) {
       })
       .then((res) => {
         console.log(res.data);
-        setIsMatching(true);
+        setIsMatching("true");
         window.sessionStorage.setItem("isMatching", "true");
+
+        new ReadableStream({
+          start() {
+            setTimeout(() => {
+              console.log("3초 지남");
+              axios
+                .get("/matching/complete")
+                .then((res) => {
+                  window.removeEventListener("beforeunload", beforeunloadFunc);
+                  console.log(res);
+                  setIsMatched("true");
+                  window.sessionStorage.setItem("isMatched", "true");
+                  window.sessionStorage.setItem("matchingData", res.data);
+                  location.replace("/matching/check-place");
+                })
+                .catch(function (error) {
+                  console.log(error);
+                });
+            }, [3000]);
+          },
+        });
       })
       .catch((err) => {
         console.log(err);
