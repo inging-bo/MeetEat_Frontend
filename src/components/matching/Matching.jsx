@@ -40,7 +40,7 @@ export default function Matching() {
 
   return (
     <>
-      <div className="bg-map relative w-full h-full">
+      <div className="bg-map relative w-full h-full ">
         <div className="bg-black opacity-50 absolute w-full h-full z-10"></div>
         <Map className="w-full h-full" id="map" center={center} level={5}>
           <Circle
