@@ -14,6 +14,10 @@ export default function Login() {
         setShowPW(!showPW);
     }
 
+    const Login = (e) => {
+        e.preventDefault()
+    }
+
     return (
         <form className="flex w-96 justify-center items-center">
             <div className="flex flex-1 flex-col gap-3 justify-center">
@@ -43,11 +47,12 @@ export default function Login() {
                     </label>
                     <span className="text-sm text-[#FF0000] mt-2 h-5">비밀번호가 일치하지 않습니다.</span>
                 </div>
-                <button type="submit" className="w-full h-11 bg-gray-200 rounded-md hover:bg-[#FF6445] hover:text-white">로그인</button>
+                <button type="submit" onClick={Login} className="w-full h-11 bg-gray-200 rounded-md hover:bg-[#FF6445] hover:text-white">로그인</button>
                 <div className="flex gap-3 justify-center text-xs">
                     <Link to="/account/signup"
-                          className="relative border-b-2 text-base text-gray-400 border-transparent hover:text-gray-600 hover:border-gray-400">회원이
-                        아니신가요?</Link>
+                          className="relative border-b-2 text-base text-gray-400 border-transparent hover:text-gray-600 hover:border-gray-400">
+                        회원이 아니신가요?
+                    </Link>
                 </div>
                 <p className="text-sm mt-5">SNS 간편 로그인</p>
                 <div className="flex h-14 justify-center gap-4">

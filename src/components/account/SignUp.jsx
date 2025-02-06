@@ -71,7 +71,7 @@ export default function SignUp() {
                 <div className="relative flex flex-col items-start">
                     <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">비밀번호 확인</span>
                     <label className="relative w-full">
-                        <input type={showPW ? "text" : "password"} name="email"
+                        <input type={showPWSub ? "text" : "password"} name="email"
                                className="w-full h-11 outline-0 border-b px-2 border-gray-300"
                                placeholder="비밀번호를 입력해주세요" required/>
                         <div className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500" onClick={togglePWSub}>
