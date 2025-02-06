@@ -310,7 +310,6 @@ export default function MainMatching() {
                           marker={marker}
                           setIsMatching={setIsMatching}
                           setIsMatched={setIsMatched}
-                          beforeunloadFunc={beforeunloadFunc}
                         />
                       </CustomOverlayMap>
                     )}
