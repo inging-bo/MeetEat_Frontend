@@ -14,10 +14,11 @@ import Mathing from "./Matching";
 
 export default function MainMatching() {
   // 매칭중 확인
-  const [isMatching, setIsMatching] = useState(false);
+  const [isMatching, setIsMatching] = useState("false");
   useEffect(() => {
-    setIsMatching(window.sessionStorage.getItem("isMatching"));
-    console.log(window.sessionStorage.getItem("isMatching"));
+    window.sessionStorage.getItem("isMatching") !== null &&
+      setIsMatching(window.sessionStorage.getItem("isMatching"));
+    console.log(isMatching);
   }, [isMatching]);
 
   async function apiPOSTCancel() {
@@ -31,14 +32,13 @@ export default function MainMatching() {
       });
   }
 
+  // 새로고침, 창닫기 방지
   const beforeunloadFunc = (event) => {
-    //기본 동작 방지
     event.preventDefault();
     event.returnValue = "";
   };
 
   useEffect(() => {
-    //새로고침 이벤트
     window.addEventListener("beforeunload", beforeunloadFunc);
   }, [isMatching]);
 

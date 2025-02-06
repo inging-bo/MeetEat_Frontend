@@ -32,7 +32,7 @@ export default function InfoWindow({ position, marker, setIsMatching }) {
       .then((res) => {
         console.log(res.data);
         setIsMatching(true);
-        window.sessionStorage.setItem("isMatching", true);
+        window.sessionStorage.setItem("isMatching", "true");
       })
       .catch((err) => {
         console.log(err);
