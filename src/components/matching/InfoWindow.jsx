@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import axios from "axios";
 
 export default function InfoWindow({
@@ -25,6 +27,7 @@ export default function InfoWindow({
     }
   };
 
+  const navigate = useNavigate();
   // POST
   async function apiPOSTMatching(lng, lat, size, time, placeInfo) {
     await axios
@@ -47,12 +50,11 @@ export default function InfoWindow({
               axios
                 .get("/matching/complete")
                 .then((res) => {
-                  window.removeEventListener("beforeunload", beforeunloadFunc);
                   console.log(res);
-                  setIsMatched("true");
+                  setIsMatched(true);
                   window.sessionStorage.setItem("isMatched", "true");
                   window.sessionStorage.setItem("matchingData", res.data);
-                  location.replace("/matching/check-place");
+                  navigate("/matching/check-place");
                 })
                 .catch(function (error) {
                   console.log(error);
