@@ -1,0 +1,48 @@
+[
+  {
+    "users": [
+      { "id": 1, "nickName": "닉네임1" },
+      { "id": 2, "nickName": "닉네임2" },
+      { "id": 3, "nickName": "닉네임3" },
+      { "id": 4, "nickName": "닉네임4" }
+    ],
+    "places": [
+      {
+        "id": 1,
+        "name": "식당이름1",
+        "category_name": "카테고리1",
+        "road_address_name": "도로명1",
+        "phone": "폰1",
+        "lon": "lng1",
+        "lat": "lat1"
+      },
+      {
+        "id": 2,
+        "name": "식당이름2",
+        "category_name": "카테고리2",
+        "road_address_name": "도로명2",
+        "phone": "폰2",
+        "lon": "lng2",
+        "lat": "lat2"
+      },
+      {
+        "id": 3,
+        "name": "식당이름3",
+        "category_name": "카테고리3",
+        "road_address_name": "도로명3",
+        "phone": "폰3",
+        "lon": "lng3",
+        "lat": "lat3"
+      },
+      {
+        "id": 4,
+        "name": "식당이름4",
+        "category_name": "카테고리4",
+        "road_address_name": "도로명4",
+        "phone": "폰4",
+        "lon": "lng4",
+        "lat": "lat4"
+      }
+    ]
+  }
+]
