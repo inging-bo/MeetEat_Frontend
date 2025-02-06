@@ -3,6 +3,7 @@ import {useState} from "react";
 import Arrow from "../../assets/updown-arrow-icon.svg?react"
 import FullStar from "../../assets/full-star.svg?react"
 import Review from "../../assets/review.svg?react"
+import RestView from "./RestView.jsx";
 
 export default function RestList() {
 
@@ -202,6 +203,7 @@ export default function RestList() {
                 ))}
                 <li></li>
             </ul>
+            <RestView/>
         </div>
     )
 }
