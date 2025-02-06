@@ -17,7 +17,42 @@ export default function MainMatching() {
   const [isMatching, setIsMatching] = useState(false);
   useEffect(() => {
     setIsMatching(window.sessionStorage.getItem("isMatching"));
+    console.log(window.sessionStorage.getItem("isMatching"));
   }, [isMatching]);
+
+  async function apiPOSTCancel() {
+    await axios
+      .post("/matching/cancel", {})
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  const beforeunloadFunc = (event) => {
+    //기본 동작 방지
+    event.preventDefault();
+    event.returnValue = "";
+  };
+
+  useEffect(() => {
+    //새로고침 이벤트
+    window.addEventListener("beforeunload", beforeunloadFunc);
+  }, [isMatching]);
+
+  //새로고침 확인을 눌렀을 경우 unload 이벤트 실행
+  const unloadFunc = () => {
+    setIsMatching("false");
+    window.sessionStorage.setItem("isMatching", "false");
+    apiPOSTCancel();
+  };
+  //unload 이벤트
+  window.addEventListener("unload", unloadFunc);
+
+  // 브라우저 종료, 새로고침, 뒤로가기의 경우 매칭 취소 api 전송
+  // sse의 경우 새로고침시 이전 메세지를 다시 받을 수 없음
 
   // 지도의 중심좌표
   const [center, setCenter] = useState({
@@ -198,7 +233,7 @@ export default function MainMatching() {
 
   return (
     <>
-      {!isMatching && (
+      {isMatching === "false" && (
         <>
           <header className="w-full flex justify-between max-w-screen-xl h-[77px] py-[14px]">
             <Link to="/" className="h-full px-4 flex items-center">
@@ -358,7 +393,7 @@ export default function MainMatching() {
           </div>
         </>
       )}
-      {isMatching && <Mathing />}
+      {isMatching === "true" && <Mathing />}
     </>
   );
 }

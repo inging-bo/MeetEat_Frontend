@@ -32,4 +32,8 @@ export const handlers = [
 
     return HttpResponse.json(postMatching, { status: 200 });
   }),
+
+  http.post("/matching/cancel", async ({ request }) => {
+    return HttpResponse.json(request, { status: 200 });
+  }),
 ];

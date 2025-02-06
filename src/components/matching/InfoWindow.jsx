@@ -21,7 +21,6 @@ export default function InfoWindow({ position, marker, setIsMatching }) {
 
   // POST
   async function apiPOSTMatching(lng, lat, size, time, placeInfo) {
-    console.log(lng);
     await axios
       .post("/matching/request", {
         userLon: lng,
