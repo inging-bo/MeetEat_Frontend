@@ -59,6 +59,7 @@ export default function CheckPlace() {
     window.sessionStorage.setItem("isMatched", "false");
     apiPOSTCancel();
     window.sessionStorage.removeItem("matchingData");
+    window.sessionStorage.removeItem("isMatching");
   };
   //unload 이벤트
   window.addEventListener("unload", unloadFunc);
@@ -71,7 +72,7 @@ export default function CheckPlace() {
     if (timeLeft <= 0) {
       clearInterval(timer);
       console.log("타이머가 종료되었습니다.");
-      apiPOSTCancel();
+      unloadFunc();
       navigate("/");
     }
 
@@ -79,6 +80,9 @@ export default function CheckPlace() {
       clearInterval(timer);
     };
   }, [timeLeft]);
+
+  // 장소 동의
+  const agreeAll = () => {};
 
   return (
     <>
@@ -101,7 +105,7 @@ export default function CheckPlace() {
         </p>
         <div className="check-container flex flex-row justify-center gap-20">
           <button>거절</button>
-          <button>동의</button>
+          <button onClick={agreeAll}>동의</button>
         </div>
       </div>
     </>

@@ -10,8 +10,8 @@
           "category_name": "카테고리1",
           "road_address_name": "도로명1",
           "phone": "폰1",
-          "lon": "lng1",
-          "lat": "lat1"
+          "lon": "127.02827170358093",
+          "lat": "37.49813943152925"
         }
       ]
     },
@@ -24,8 +24,8 @@
           "category_name": "카테고리2",
           "road_address_name": "도로명2",
           "phone": "폰2",
-          "lon": "lng2",
-          "lat": "lat2"
+          "lon": "127.03450754512691",
+          "lat": "37.48390185679575"
         }
       ]
     },
@@ -38,8 +38,8 @@
           "category_name": "카테고리3",
           "road_address_name": "도로명3",
           "phone": "폰3",
-          "lon": "lng3",
-          "lat": "lat3"
+          "lon": "127.02501696793027",
+          "lat": "37.50462740802899"
         }
       ]
     },
@@ -52,8 +52,8 @@
           "category_name": "카테고리4",
           "road_address_name": "도로명4",
           "phone": "폰4",
-          "lon": "lng4",
-          "lat": "lat4"
+          "lon": "126.77648105378721",
+          "lat": "37.50294094152464"
         }
       ]
     }
