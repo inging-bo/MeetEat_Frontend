@@ -126,7 +126,7 @@ export default function RestList() {
     }
 
     return (
-        <div className="max-w-6xl flex flex-col mt-24 mb-auto items-center">
+        <div className="min-w-fit flex max-xl:ml-auto flex-col mt-24 mb-auto items-center">
             <div className="w-96 mb-7 search-bar border border-[#3BB82D] rounded-full relative">
                 <input
                     className="w-full h-10 rounded-full pl-5 pr-12 focus:outline-none"
@@ -141,7 +141,7 @@ export default function RestList() {
                     <SearchIcon width="22px"/>
                 </button>
             </div>
-            <div className="flex gap-2 mb-3 ml-auto">
+            <div className="flex gap-2 mb-3 ml-auto mr-2">
                 <ul onClick={() => openSearchFilter("category")}
                     className={`relative flex flex-col bg-white gap-2 justify-center items-center px-2 py-1 border border-gray-300 rounded-md 
                     ${searchFilter === "category" && "border-b-[transparent] rounded-b-none"}`}
@@ -177,7 +177,7 @@ export default function RestList() {
                 </ul>
 
             </div>
-            <ul className="grid grid-cols-[380px_380px_380px] grid-rows-2 gap-7">
+            <ul className="grid grid-cols-[408px_408px_408px] grid-rows-2 gap-7">
                 {restaurants.map((rest, index) => (
                     <li key={rest.id}
                         className="flex flex-col items-start bg-white rounded-lg drop-shadow-lg p-4"
@@ -203,7 +203,7 @@ export default function RestList() {
                 ))}
                 <li></li>
             </ul>
-            <RestView/>
+            {/*<RestView/>*/}
         </div>
     )
 }

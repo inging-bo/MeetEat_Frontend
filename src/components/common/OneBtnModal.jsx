@@ -28,8 +28,13 @@ export default function OneBtnModal({type, onClose}) {
             case "unReport" :
                 return "사용자를 신고 해제했습니다."
             case "signUp" :
-                return "회원가입이 완료되었어요. " +
-                    "이제 근처 이웃들과 식사를 즐겨보세요."
+                return (
+                    <>
+                        회원가입이 완료되었어요. <br />
+                        이제 근처 이웃들과 식사를 즐겨보세요.
+                    </>
+                );
+
             case "logOut" :
                 return "로그아웃 되었습니다."
         }
@@ -49,13 +54,16 @@ export default function OneBtnModal({type, onClose}) {
             case "unReport" :
                 reportUser()
                 return
+            case "signUp" :
+                signUp()
+                break
             case "logOut" :
                 logOut()
                 break
 
         }
     }
-
+    console.log(type)
     const navigate = useNavigate();
     // ✅ 타입별 실행 변수
     // 차단하시겠습니까? `예` 인경우
@@ -66,7 +74,11 @@ export default function OneBtnModal({type, onClose}) {
     const reportUser = () => {
         onClose()
     };
-    // 로그아웃하시겠습니까? `예` 인경우
+    // 회원가입이 완료된 경우? `예` 인경우
+    const signUp = () => {
+        navigate("/account")
+        onClose()
+    }    // 로그아웃하시겠습니까? `예` 인경우
     const logOut = () => {
         navigate("/")
         onClose()
@@ -76,7 +88,7 @@ export default function OneBtnModal({type, onClose}) {
             className="flex fixed top-0 left-0 justify-center items-center bg-black/40 z-50 w-full h-full"
         >
             <div
-                className="w-80 p-10 bg-white rounded-lg drop-shadow-lg"
+                className="w-80 p-10 min-w-fit bg-white rounded-lg drop-shadow-lg"
                 ref={oneModalRef}
             >
                 <div>

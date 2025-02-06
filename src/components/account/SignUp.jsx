@@ -27,7 +27,8 @@ export default function SignUp() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState(null); // 차단 or 신고 구분
-    const signUp = (type) => {
+    const signUp = (event, type) => {
+        event.preventDefault(); // 기본 폼 제출 동작 방지
         setIsModalOpen(!isModalOpen);
         setModalType(type);
     }
@@ -39,7 +40,7 @@ export default function SignUp() {
     };
 
     return (
-        <form  onSubmit={handleSubmit}
+        <form
                className="flex w-96 justify-center items-center">
             <Header/>
             <div className="flex flex-1 flex-col gap-3 justify-center">
@@ -92,7 +93,7 @@ export default function SignUp() {
                            placeholder="닉네임을 입력해주세요" required/>
                     <span className="text-sm text-[#FF0000] mt-2 h-5">사용중인 닉네임입니다.</span>
                 </div>
-                <button type="submit" onClick={() => signUp("signUp")} className="w-full h-11 bg-gray-200 rounded-md hover:bg-[#FF6445] hover:text-white">회원가입</button>
+                <button type="submit" onClick={(e) => signUp(e,"signUp")} className="w-full h-11 bg-gray-200 rounded-md hover:bg-[#FF6445] hover:text-white">회원가입</button>
             </div>
             {/* OneBtnModal 표시*/}
             {isModalOpen && <OneBtnModal type={"signUp"} onClose={closeModal}/>}
