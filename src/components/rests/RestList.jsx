@@ -124,6 +124,13 @@ export default function RestList() {
                 )
         }
     }
+    // ✅ 상세조회 모달 관련
+
+    const [restViewModal, setRestViewModal] = useState(false)
+
+    const RestViewToggle = () => {
+      setRestViewModal(!restViewModal)
+    }
 
     return (
         <div className="min-w-fit flex max-xl:ml-auto flex-col mt-24 mb-auto items-center">
@@ -180,7 +187,8 @@ export default function RestList() {
             <ul className="grid grid-cols-[408px_408px_408px] grid-rows-2 gap-7">
                 {restaurants.map((rest, index) => (
                     <li key={rest.id}
-                        className="flex flex-col items-start bg-white rounded-lg drop-shadow-lg p-4"
+                        className="flex flex-col items-start bg-white rounded-lg drop-shadow-lg p-4 cursor-pointer"
+                        onClick={() => RestViewToggle()}
                     >
                         <div className="bg-gray-300 h-40 w-full rounded-lg mb-3">
                             {rest.imgUrl ? rest.imgUrl : ""}
@@ -203,7 +211,9 @@ export default function RestList() {
                 ))}
                 <li></li>
             </ul>
-            {/*<RestView/>*/}
+          {restViewModal && (
+            <RestView close={RestViewToggle}/>
+          )}
         </div>
     )
 }
