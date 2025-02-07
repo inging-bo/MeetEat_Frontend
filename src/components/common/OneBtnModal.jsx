@@ -31,7 +31,7 @@ export default function OneBtnModal({type, onClose}) {
                 return (
                     <>
                         회원가입이 완료되었어요. <br />
-                        이제 근처 이웃들과 식사를 즐겨보세요.
+                        로그인 후 근처 이웃들과 식사를 즐겨보세요.
                     </>
                 );
 
@@ -63,7 +63,6 @@ export default function OneBtnModal({type, onClose}) {
 
         }
     }
-    console.log(type)
     const navigate = useNavigate();
     // ✅ 타입별 실행 변수
     // 차단하시겠습니까? `예` 인경우
