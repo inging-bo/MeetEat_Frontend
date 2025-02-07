@@ -45,6 +45,11 @@ export default function CheckPlace() {
       // 타이머 종료시 최종 매칭 완료 페이지 이동동
       clearInterval(timer);
       console.log("타이머가 종료되었습니다.");
+      window.sessionStorage.removeItem("matchingData");
+      window.sessionStorage.removeItem("tempPosition");
+      const id = JSON.parse(window.sessionStorage.getItem("matchedData")).data
+        .id;
+      navigate(`/matching/complete/${id}`);
     }
 
     return () => {
