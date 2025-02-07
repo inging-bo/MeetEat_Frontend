@@ -147,6 +147,10 @@ export default function CheckPlace() {
     apiDisagree();
     unloadFunc();
     navigate("/");
+    /////////////////////////////////////////
+    // 추후 삭제
+    ////////////////////////////////////////
+    history.go(0);
   };
 
   ///////////////////////////////////////////////////////////////
@@ -171,7 +175,7 @@ export default function CheckPlace() {
   }
   async function apiGetU3() {
     setTimeout(() => {
-      console.log("7초 지남");
+      console.log("9초 지남");
       axios
         .get("/matching/nickname3")
         .then((res) => {
@@ -184,11 +188,11 @@ export default function CheckPlace() {
         .catch(function (error) {
           console.log(error);
         });
-    }, [7000]);
+    }, [9000]);
   }
   async function apiGetU4() {
     setTimeout(() => {
-      console.log("9초 지남");
+      console.log("7초 지남");
       axios
         .get("/matching/nickname4")
         .then((res) => {
@@ -201,7 +205,7 @@ export default function CheckPlace() {
         .catch(function (error) {
           console.log(error);
         });
-    }, [9000]);
+    }, [7000]);
   }
   async function apiAgree() {
     axios

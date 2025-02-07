@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Map, MapMarker, Polyline } from "react-kakao-maps-sdk";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function MatchingComplete() {
@@ -14,6 +15,62 @@ export default function MatchingComplete() {
     lat: 37.503081,
     lng: 127.05,
   });
+
+  const navigate = useNavigate();
+  const [userList, setUserList] = useState([]);
+  const [pickedRest, setPickedRest] = useState([]);
+  const [date, setDate] = useState("");
+  const [distance, setDistance] = useState("");
+  // 초기 설정
+  useEffect(() => {
+    // 유저가 매칭된 상태가 아니라면 메인페이지로 이동
+    if (window.sessionStorage.getItem("isCompleted") !== "true") {
+      return navigate("/");
+    }
+    if (window.sessionStorage.getItem("matchedData") === undefined) {
+      return navigate("/");
+    }
+
+    // 저장된 매칭데이터 저장
+    const jsonCurData = JSON.parse(
+      window.sessionStorage.getItem("matchedData")
+    ).data;
+    setDate(Object.entries(jsonCurData)[1][1]);
+    setUserList(Object.entries(jsonCurData)[3][1].userList);
+    setPickedRest(Object.entries(jsonCurData)[3][1].restaurant);
+    setPositionTo({
+      lat: Object.entries(jsonCurData)[3][1].restaurant.lat,
+      lng: Object.entries(jsonCurData)[3][1].restaurant.lon,
+    });
+    const distance = getDistance(
+      position.lat,
+      position.lng,
+      positionTo.lat,
+      positionTo.lng
+    );
+    setDistance(distance);
+  }, []);
+
+  // 거리계산
+
+  const getDistance = (lat1, lng1, lat2, lng2) => {
+    function deg2rad(deg) {
+      return deg * (Math.PI / 180);
+    }
+    let R = 6371; // Radius of the earth in km
+    let dLat = deg2rad(lat2 - lat1); // deg2rad below
+    let dLon = deg2rad(lng2 - lng1);
+    let a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    let d = R * c;
+    d = Math.round((d / 4.8) * 60);
+    return d;
+  };
 
   // 선 Path
   const [polyPath, setPolyPath] = useState([{}]);
@@ -95,15 +152,18 @@ export default function MatchingComplete() {
       <div className=" flex flex-col gap-5">
         <div className="title-container text-2xl flex flex-col gap-5">
           <h1>매칭이 완료되었습니다.</h1>
-          <h1>20000.00.00 00시 00분까지 해당 위치에 도착해주세요!</h1>
-          <h1>식당1</h1>
+          <h1>
+            오늘 {Number(date.slice(11, 13)) + 1}시 {date.slice(14, 16)}분 까지
+            해당 위치에 도착해주세요!
+          </h1>
+          <h1>{pickedRest.placeName}</h1>
         </div>
         <div className="center-container h-[450px] flex flex-row gap-10 justify-center">
           <Map
             className="map-container min-w-[450px] h-full"
             id="map"
             center={position}
-            level={8}
+            level={5}
           >
             <MapMarker
               image={{
@@ -128,60 +188,22 @@ export default function MatchingComplete() {
             />
           </Map>
           <div className="people-container flex flex-col gap-2 min-w-[450px] h-full overflow-y-scroll scrollbar-hide">
-            <div className="people-item border border-slate-200 text-left rounded-lg p-3">
-              <div className="flex flex-row">
-                <p>닉네임</p>
-                <p>메달</p>
-              </div>
-              <p>한줄소개</p>
-            </div>
-            <div className="people-item border border-slate-200 text-left rounded-lg p-3">
-              <div className="flex flex-row">
-                <p>닉네임</p>
-                <p>메달</p>
-              </div>
-              <p>한줄소개</p>
-            </div>
-            <div className="people-item border border-slate-200 text-left rounded-lg p-3">
-              <div className="flex flex-row">
-                <p>닉네임</p>
-                <p>메달</p>
-              </div>
-              <p>한줄소개</p>
-            </div>
-            <div className="people-item border border-slate-200 text-left rounded-lg p-3">
-              <div className="flex flex-row">
-                <p>닉네임</p>
-                <p>메달</p>
-              </div>
-              <p>한줄소개</p>
-            </div>
-            <div className="people-item border border-slate-200 text-left rounded-lg p-3">
-              <div className="flex flex-row">
-                <p>닉네임</p>
-                <p>메달</p>
-              </div>
-              <p>한줄소개</p>
-            </div>
-            <div className="people-item border border-slate-200 text-left rounded-lg p-3">
-              <div className="flex flex-row">
-                <p>닉네임</p>
-                <p>메달</p>
-              </div>
-              <p>한줄소개</p>
-            </div>
-            <div className="people-item border border-slate-200 text-left rounded-lg p-3">
-              <div className="flex flex-row">
-                <p>닉네임</p>
-                <p>메달</p>
-              </div>
-              <p>한줄소개</p>
-            </div>
+            {userList.map((user) => (
+              <>
+                <div className="people-item border border-slate-200 text-left rounded-lg p-3">
+                  <div className="flex flex-row">
+                    <p>{user.nickname}</p>
+                    <p>메달</p>
+                  </div>
+                  <p>{user.introduce}</p>
+                </div>
+              </>
+            ))}
           </div>
         </div>
         <div className="title-container">
           <div>약속 장소 도착까지 남은 시간</div>
-          <div>00분</div>
+          <div>{distance}분</div>
         </div>
       </div>
     </>

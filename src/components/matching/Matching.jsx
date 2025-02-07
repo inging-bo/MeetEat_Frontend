@@ -1,15 +1,74 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Map, Circle } from "react-kakao-maps-sdk";
 import Logo from "../../assets/header-logo.svg?react";
 import ReactLoading from "react-loading";
+import axios from "axios";
 
-export default function Matching() {
-  // 지도의 중심좌표
-  // 추후 사용자의 매칭 시작 누를 때 좌표로 변경
-  const center = {
-    lat: 37.503081,
-    lng: 127.04158,
-  };
+export default function Matching({
+  setIsMatching,
+  setIsMatched,
+  selectedMarker,
+  position,
+  number,
+}) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const place = {
+      id: selectedMarker.id,
+      name: selectedMarker.place_name,
+      category_name: selectedMarker.category_name,
+      road_address_name: selectedMarker.road_address_name,
+      phone: selectedMarker.phone,
+      lon: selectedMarker.x,
+      lat: selectedMarker.y,
+      place_url: selectedMarker.place_url,
+    };
+    apiPOSTMatching(position.lng, position.lat, number, new Date(), place);
+  }, []);
+
+  // POST
+  async function apiPOSTMatching(lng, lat, size, time, placeInfo) {
+    await axios
+      .post("/matching/request", {
+        userLon: lng,
+        userLat: lat,
+        groupSize: size,
+        matchingStartTime: time,
+        place: placeInfo,
+      })
+      .then((res) => {
+        console.log(res.data);
+        setIsMatching("true");
+        window.sessionStorage.setItem("isMatching", "true");
+        setTimeout(
+          () =>
+            axios
+              .get("/matching/complete")
+              .then((res) => {
+                setIsMatched(true);
+                window.sessionStorage.setItem(
+                  "tempPosition",
+                  JSON.stringify(position)
+                );
+                window.sessionStorage.setItem("isMatched", "true");
+                window.sessionStorage.setItem(
+                  "matchingData",
+                  JSON.stringify(res)
+                );
+                navigate(`/matching/check-place/${res.data.teamId}`);
+              })
+              .catch(function (error) {
+                console.log(error);
+              }),
+          [5000]
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   // 타이머
   const MINUTES_IN_MS = 10 * 60 * 1000;
@@ -31,6 +90,11 @@ export default function Matching() {
       // 타이머 종료시 매칭 취소 api 전송
       clearInterval(timer);
       console.log("타이머가 종료되었습니다.");
+      apiPOSTCancel();
+      window.sessionStorage.removeItem("isMatching");
+      setIsMatching(false);
+      setIsMatched(false);
+      history.go(0);
     }
 
     return () => {
@@ -38,13 +102,32 @@ export default function Matching() {
     };
   }, [timeLeft]);
 
+  async function apiPOSTCancel() {
+    await axios
+      .post("/matching/cancel", {})
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  const cancelMatching = () => {
+    apiPOSTCancel();
+    window.sessionStorage.removeItem("isMatching");
+    setIsMatching(false);
+    setIsMatched(false);
+    history.go(0);
+  };
+
   return (
     <>
       <div className="bg-map relative w-full h-full">
         <div className="bg-black opacity-50 absolute w-full h-full z-10"></div>
-        <Map className="w-full h-full" id="map" center={center} level={5}>
+        <Map className="w-full h-full" id="map" center={position} level={5}>
           <Circle
-            center={center}
+            center={position}
             radius={2000}
             strokeColor={"#81be67"}
             strokeWeight={1}
@@ -69,7 +152,7 @@ export default function Matching() {
           <p>
             {minutes}:{second}
           </p>
-          <button>매칭취소</button>
+          <button onClick={cancelMatching}>매칭취소</button>
         </div>
       </div>
     </>
