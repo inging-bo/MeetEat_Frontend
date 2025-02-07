@@ -1,0 +1,39 @@
+{
+  "message": "모임이 생성되었습니다",
+  "createdAt": "2024-12-20T14:37:15",
+  "id": 455,
+  "matching": {
+    "restaurant": {
+      "id": "식당아이디",
+      "placeName": "식당2",
+      "lat": "위도",
+      "lon": "경도",
+      "addressName": "지번 주소",
+      "roadAddressName": "도로명 주소",
+      "categoryName": "카테고리 그룹명",
+      "rating": "평점"
+    },
+    "userList": [
+      {
+        "id": "유저 아이디1",
+        "nickname": "닉네임",
+        "introduce": "한줄 소개"
+      },
+      {
+        "id": "유저 아이디2",
+        "nickname": "닉네임",
+        "introduce": "한줄 소개"
+      },
+      {
+        "id": "유저 아이디3",
+        "nickname": "닉네임",
+        "introduce": "한줄 소개"
+      },
+      {
+        "id": "유저 아이디4",
+        "nickname": "닉네임",
+        "introduce": "한줄 소개"
+      }
+    ]
+  }
+}

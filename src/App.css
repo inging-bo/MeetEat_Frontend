@@ -23,11 +23,101 @@
   -webkit-animation-fill-mode: both;
 }
 
+.pick-border-3-0 {
+  animation: motion-3 0.3s linear 8 alternate;
+  margin-top: 0;
+  -webkit-animation-fill-mode: both;
+}
+.pick-border-3-1 {
+  animation: motion-3 0.3s linear 8.45 alternate;
+  margin-top: 0;
+  -webkit-animation-fill-mode: both;
+}
+.pick-border-3-2 {
+  animation: motion-3 0.3s linear 9.1 alternate;
+  margin-top: 0;
+  -webkit-animation-fill-mode: both;
+}
+
+.pick-border-4-0 {
+  animation: motion-4 0.3s linear 8 alternate;
+  margin-top: 0;
+  -webkit-animation-fill-mode: both;
+}
+.pick-border-4-1 {
+  animation: motion-4 0.3s linear 8.33 alternate;
+  margin-top: 0;
+  -webkit-animation-fill-mode: both;
+}
+.pick-border-4-2 {
+  animation: motion-4 0.3s linear 8.665 alternate;
+  margin-top: 0;
+  -webkit-animation-fill-mode: both;
+}
+.pick-border-4-3 {
+  animation: motion-4 0.3s linear 9 alternate;
+  margin-top: 0;
+  -webkit-animation-fill-mode: both;
+}
+
+.pick-border-5-0 {
+  animation: motion-5 0.3s linear 8 alternate;
+  margin-top: 0;
+  -webkit-animation-fill-mode: both;
+}
+.pick-border-5-1 {
+  animation: motion-5 0.3s linear 8.25 alternate;
+  margin-top: 0;
+  -webkit-animation-fill-mode: both;
+}
+.pick-border-5-2 {
+  animation: motion-5 0.3s linear 8.5 alternate;
+  margin-top: 0;
+  -webkit-animation-fill-mode: both;
+}
+.pick-border-5-3 {
+  animation: motion-5 0.3s linear 8.75 alternate;
+  margin-top: 0;
+  -webkit-animation-fill-mode: both;
+}
+.pick-border-5-4 {
+  animation: motion-5 0.3s linear 9 alternate;
+  margin-top: 0;
+  -webkit-animation-fill-mode: both;
+}
+
 @keyframes motion-2 {
   0% {
     margin-top: 0px;
   }
   100% {
     margin-top: 105px;
+  }
+}
+
+@keyframes motion-3 {
+  0% {
+    margin-top: 0px;
+  }
+  100% {
+    margin-top: 233px;
+  }
+}
+
+@keyframes motion-4 {
+  0% {
+    margin-top: 0px;
+  }
+  100% {
+    margin-top: 315px;
+  }
+}
+
+@keyframes motion-5 {
+  0% {
+    margin-top: 0px;
+  }
+  100% {
+    margin-top: 417px;
   }
 }
