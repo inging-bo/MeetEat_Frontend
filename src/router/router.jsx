@@ -19,8 +19,8 @@ export default function router() {
     <Routes>
       <Route path="*" element={<Error />} />
       <Route path="/" element={<Main />} />
-      <Route path="/matching/check-place" element={<CheckPlace />} />
-      <Route path="/matching/choice-place" element={<ChoicePlace />} />
+      <Route path="/matching/check-place/:id" element={<CheckPlace />} />
+      <Route path="/matching/choice-place/:id" element={<ChoicePlace />} />
       <Route path="/matching/complete" element={<MatchingComplete />} />
       <Route path="/account" element={<Account />} />
       <Route path="/account/signup" element={<SignUp />} />
