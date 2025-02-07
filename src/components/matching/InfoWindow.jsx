@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
@@ -50,12 +50,16 @@ export default function InfoWindow({
                 .get("/matching/complete")
                 .then((res) => {
                   setIsMatched(true);
+                  window.sessionStorage.setItem(
+                    "tempPosition",
+                    JSON.stringify(position)
+                  );
                   window.sessionStorage.setItem("isMatched", "true");
                   window.sessionStorage.setItem(
                     "matchingData",
                     JSON.stringify(res)
                   );
-                  navigate("/matching/check-place");
+                  navigate(`/matching/check-place/${res.data.teamId}`);
                 })
                 .catch(function (error) {
                   console.log(error);
