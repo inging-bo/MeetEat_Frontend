@@ -8,7 +8,6 @@ export default function CheckPlace() {
   const navigate = useNavigate();
 
   const [position, setPosition] = useState("");
-  const [matchingTime, setMatchingTime] = useState([]);
   const [matchingData, setMatchingData] = useState([]);
   const [user, setUser] = useState(new Map());
 
@@ -33,7 +32,6 @@ export default function CheckPlace() {
       window.sessionStorage.getItem("matchingData")
     ).data;
     setMatchingData(Object.entries(Object.entries(jsonData)[2][1]));
-    setMatchingTime(new Date(Object.entries(jsonData)[0][1]));
     setPosition(jsonPosition);
     const temp = new Map();
     matchingData.map((data) => temp.set(data[1].nickName, false));
@@ -55,7 +53,6 @@ export default function CheckPlace() {
   useEffect(() => {
     user.forEach((value, key) => {
       if (value === true) {
-        console.log("실행");
         document.querySelector(`#${key}waiting`).classList.add("hidden");
         document.querySelector(`#${key}check`).classList.remove("hidden");
       }
@@ -110,7 +107,6 @@ export default function CheckPlace() {
     window.sessionStorage.setItem("isMatched", "false");
     apiPOSTCancel();
     window.sessionStorage.removeItem("position");
-    window.sessionStorage.removeItem("matchingData");
     window.sessionStorage.removeItem("isMatching");
   };
   //unload 이벤트
@@ -192,7 +188,7 @@ export default function CheckPlace() {
   }
   async function apiGetU4() {
     setTimeout(() => {
-      console.log("15초 지남");
+      console.log("9초 지남");
       axios
         .get("/matching/nickname4")
         .then((res) => {
@@ -205,7 +201,7 @@ export default function CheckPlace() {
         .catch(function (error) {
           console.log(error);
         });
-    }, [15000]);
+    }, [9000]);
   }
   async function apiAgree() {
     axios
@@ -239,18 +235,20 @@ export default function CheckPlace() {
   }
   async function apiCompleted() {
     setTimeout(() => {
-      console.log("20초 지남");
+      console.log("12초 지남");
       axios
         .get("/matching/completed")
         .then((res) => {
-          window.sessionStorage.setItem("matchingData", JSON.stringify(res));
-          window.sessionStorage.setItem("isMatching", "false");
+          window.sessionStorage.setItem("matchedData", JSON.stringify(res));
+          window.sessionStorage.removeItem("isMatching");
+          window.sessionStorage.removeItem("isMatched");
+          window.sessionStorage.setItem("isCompleted", "true");
           navigate(`/matching/choice-place/${res.data.id}`);
         })
         .catch(function (error) {
           console.log(error);
         });
-    }, [20000]);
+    }, [12000]);
   }
   ///////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////

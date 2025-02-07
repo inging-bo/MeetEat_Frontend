@@ -33,7 +33,6 @@ export default function MainMatching() {
   };
 
   useEffect(() => {
-    console.log(window.sessionStorage.getItem("isMatched"));
     if (window.sessionStorage.getItem("isMatching") === "true") {
       window.addEventListener("beforeunload", beforeunloadFunc);
     }
@@ -56,7 +55,6 @@ export default function MainMatching() {
   //새로고침 확인을 눌렀을 경우 unload 이벤트 실행
   const unloadFunc = () => {
     setIsMatching("false");
-    window.sessionStorage.setItem("isMatching", "false");
     apiPOSTCancel();
   };
   //unload 이벤트

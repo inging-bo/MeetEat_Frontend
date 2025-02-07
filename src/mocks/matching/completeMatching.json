@@ -7,7 +7,7 @@
       "nickName": "닉네임1",
       "place": [
         {
-          "name": "식당이름1",
+          "name": "식당1",
           "category_name": "카테고리1",
           "road_address_name": "도로명1",
           "phone": "폰1",
@@ -21,7 +21,7 @@
       "nickName": "닉네임2",
       "place": [
         {
-          "name": "식당이름2",
+          "name": "식당2",
           "category_name": "카테고리2",
           "road_address_name": "도로명2",
           "phone": "폰2",
@@ -35,7 +35,7 @@
       "nickName": "닉네임3",
       "place": [
         {
-          "name": "식당이름3",
+          "name": "식당3",
           "category_name": "카테고리3",
           "road_address_name": "도로명3",
           "phone": "폰3",
@@ -49,12 +49,26 @@
       "nickName": "닉네임4",
       "place": [
         {
-          "name": "식당이름4",
+          "name": "식당4",
           "category_name": "카테고리4",
           "road_address_name": "도로명4",
           "phone": "폰4",
-          "lon": "126.77648105378721",
-          "lat": "37.50294094152464"
+          "lon": "127.02501696793027",
+          "lat": "37.50462740802899"
+        }
+      ]
+    },
+    "5": {
+      "id": 5,
+      "nickName": "닉네임5",
+      "place": [
+        {
+          "name": "식당5",
+          "category_name": "카테고리5",
+          "road_address_name": "도로명5",
+          "phone": "폰5",
+          "lon": "127.02501696793027",
+          "lat": "37.50462740802899"
         }
       ]
     }
