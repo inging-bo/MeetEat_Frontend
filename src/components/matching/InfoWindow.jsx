@@ -1,13 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
-import axios from "axios";
-
 export default function InfoWindow({
-  position,
   marker,
   setIsMatching,
-  setIsMatched,
+  setSelectedMarker,
+  setNumber,
 }) {
   // 인원 선택
   const [choicedNumber, setChoicedNumber] = useState(2);
@@ -26,72 +22,10 @@ export default function InfoWindow({
     }
   };
 
-  const navigate = useNavigate();
-  // POST
-  async function apiPOSTMatching(lng, lat, size, time, placeInfo) {
-    await axios
-      .post("/matching/request", {
-        userLon: lng,
-        userLat: lat,
-        groupSize: size,
-        matchingStartTime: time,
-        place: placeInfo,
-      })
-      .then((res) => {
-        console.log(res.data);
-        setIsMatching("true");
-        window.sessionStorage.setItem("isMatching", "true");
-
-        new ReadableStream({
-          start() {
-            setTimeout(() => {
-              console.log("3초 지남");
-              axios
-                .get("/matching/complete")
-                .then((res) => {
-                  setIsMatched(true);
-                  window.sessionStorage.setItem(
-                    "tempPosition",
-                    JSON.stringify(position)
-                  );
-                  window.sessionStorage.setItem("isMatched", "true");
-                  window.sessionStorage.setItem(
-                    "matchingData",
-                    JSON.stringify(res)
-                  );
-                  navigate(`/matching/check-place/${res.data.teamId}`);
-                })
-                .catch(function (error) {
-                  console.log(error);
-                });
-            }, [3000]);
-          },
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  const choicePlace = (marker, position) => {
-    // 매칭 시작 라우트
-    const place = {
-      id: marker.id,
-      name: marker.place_name,
-      category_name: marker.category_name,
-      road_address_name: marker.road_address_name,
-      phone: marker.phone,
-      lon: marker.x,
-      lat: marker.y,
-      place_url: marker.place_url,
-    };
-    apiPOSTMatching(
-      position.lng,
-      position.lat,
-      choicedNumber,
-      new Date(),
-      place
-    );
+  const choicePlace = (marker) => {
+    setIsMatching("true");
+    setSelectedMarker(marker);
+    setNumber(choicedNumber);
   };
 
   return (
@@ -149,7 +83,7 @@ export default function InfoWindow({
             id="choiceBtn"
             className="bg-[#FF6445] w-full rounded-lg py-2 mt-5 text-white"
             onClick={() => {
-              choicePlace(marker, position);
+              choicePlace(marker);
             }}
           >
             매칭 시작

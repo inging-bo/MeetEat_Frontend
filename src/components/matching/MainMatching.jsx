@@ -136,6 +136,8 @@ export default function MainMatching() {
   const [preKeyword, setPreKeyword] = useState("");
   const [key, setKey] = useState(0);
   const [curText, setCurText] = useState("");
+  const [selectedMarker, setSelectedMarker] = useState();
+  const [number, setNumber] = useState(2);
 
   // input필드 관찰
   const onChange = (e) => {
@@ -304,10 +306,10 @@ export default function MainMatching() {
                         id="infoWindow"
                       >
                         <InfoWindow
-                          position={position}
                           marker={marker}
                           setIsMatching={setIsMatching}
-                          setIsMatched={setIsMatched}
+                          setSelectedMarker={setSelectedMarker}
+                          setNumber={setNumber}
                         />
                       </CustomOverlayMap>
                     )}
@@ -400,7 +402,15 @@ export default function MainMatching() {
           </div>
         </>
       )}
-      {isMatching === "true" && <Matching />}
+      {isMatching === "true" && (
+        <Matching
+          setIsMatching={setIsMatching}
+          setIsMatched={setIsMatched}
+          selectedMarker={selectedMarker}
+          position={position}
+          number={number}
+        />
+      )}
     </>
   );
 }
