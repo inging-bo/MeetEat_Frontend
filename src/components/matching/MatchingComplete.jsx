@@ -33,6 +33,22 @@ export default function MatchingComplete() {
       return navigate("/");
     }
 
+    const now = new Date(); // 오늘 날짜
+    const firstDay = new Date(
+      JSON.parse(window.sessionStorage.getItem("matchedData")).data.createdAt
+    ); // 시작 날짜
+    console.log(firstDay);
+    const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
+    const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
+    const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
+    console.log(passedTimeMin + "min");
+    // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
+    if (passedTimeMin >= 60) {
+      const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .data.matching.restaurant.id;
+      return navigate(`/rests/write/${restsId}`);
+    }
+
     // 저장된 매칭데이터 저장
     const jsonCurData = JSON.parse(
       window.sessionStorage.getItem("matchedData")
@@ -47,7 +63,6 @@ export default function MatchingComplete() {
   }, []);
 
   // 거리계산
-
   const getDistance = (lat1, lng1, lat2, lng2) => {
     function deg2rad(deg) {
       return deg * (Math.PI / 180);
@@ -177,7 +192,7 @@ export default function MatchingComplete() {
             />
             <MapMarker
               image={{
-                src: "../../../public/assets/map-pin.svg",
+                src: "../../../public/assets/positionTo.svg",
                 size: { width: 20, height: 20 },
               }}
               position={positionTo}
@@ -205,8 +220,8 @@ export default function MatchingComplete() {
           </div>
         </div>
         <div className="title-container">
-          <div>약속 장소 도착까지 남은 시간</div>
-          <div>{distance}분</div>
+          <div>현재 위치부터 약속 장소 도착까지 소요시간</div>
+          <div>약 {distance}분</div>
         </div>
       </div>
     </>

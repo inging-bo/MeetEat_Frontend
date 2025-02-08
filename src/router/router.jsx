@@ -31,7 +31,7 @@ export default function router() {
       <Route path="/successnotice" element={<SuccessNotice />} />
       <Route path="/openchat" element={<OpenChat />} />
       <Route path="/meeteatdb" element={<MeeteatDb />} />
-      <Route path="/rests/write" element={<WriteReview />} />
+      <Route path="/rests/write/:id" element={<WriteReview />} />
       <Route path="/meeteatdb" element={<MeeteatDb />} />
     </Routes>
   );
