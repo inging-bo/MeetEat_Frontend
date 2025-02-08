@@ -147,7 +147,9 @@ export default function Matching({
             height={64}
             width={64}
           />
-          <p>선택장소에서 00명과</p>
+          <p>
+            {selectedMarker.place_name}에서 {number}명과
+          </p>
           <p>매칭 가능한 인원을 찾고 있습니다</p>
           <p>
             {minutes}:{second}
