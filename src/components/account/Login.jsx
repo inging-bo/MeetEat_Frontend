@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import HeaderLogo from "../../assets/header-logo.svg?react";
 import ShowPWIcon from "../../assets/showPW-icon.svg?react";
 import HidePWIcon from "../../assets/hidePW-icon.svg?react";
@@ -78,6 +78,80 @@ export default function Login() {
   // 로그인 버튼 클릭 시 메시지
   const [message, setMessage] = useState("");
 
+  const navigate = useNavigate();
+
+  // ✅ 서비스별 로그인 URL 설정
+  const OAUTH_PROVIDERS = {
+    kakao: {
+      clientId: import.meta.env.VITE_APP_RESTAPI_KEY,
+      authUrl: "https://kauth.kakao.com/oauth/authorize",
+      redirectUri: "http://localhost:5173/account",
+      state: "", // 카카오는 state가 필요 없음
+    },
+    naver: {
+      clientId: import.meta.env.VITE_NAVER_CLIENT_ID,
+      authUrl: "https://nid.naver.com/oauth2.0/authorize",
+      redirectUri: "http://localhost:5173/account",
+      state: "RANDOM_STATE", // CSRF 방지를 위한 랜덤 값 (임시)
+    },
+  };
+
+  // ✅ OAuth 로그인 요청 (카카오 또는 네이버)
+  const handleOAuthLogin = (provider, event) => {
+    event.preventDefault(); // 기본 동작 방지
+    const { clientId, authUrl, redirectUri, state } = OAUTH_PROVIDERS[provider];
+
+    const queryParams = new URLSearchParams({
+      response_type: "code",
+      client_id: clientId,
+      redirect_uri: redirectUri,
+    });
+
+    if (state) queryParams.append("state", state); // 네이버의 경우 state 추가
+
+    const OAUTH_URL = `${authUrl}?${queryParams.toString()}`;
+    window.location.href = OAUTH_URL; // 로그인 페이지로 이동
+  };
+
+  // ✅ URL에서 인가 코드 가져오기
+  const getAuthorizationCode = () => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("code");
+  };
+
+  // ✅ 로그인 후 토큰 발급 처리
+  const handleOAuthCallback = async () => {
+    const code = getAuthorizationCode();
+    if (!code) {
+      setMessage("인가 코드가 없습니다.");
+      return;
+    }
+
+    // 어떤 제공자인지 확인
+    const provider = window.location.search.includes("state") ? "naver" : "kakao";
+
+    try {
+      const response = await axios.post(`/users/signin/${provider}`, { code });
+
+      if (response.data.accessToken) {
+        window.localStorage.setItem("accessToken", response.data.accessToken);
+        setMessage("로그인 성공!");
+        navigate("/"); // 메인 페이지로 리디렉션
+      } else {
+        setMessage("로그인 실패");
+      }
+    } catch (error) {
+      console.error("로그인 요청 실패:", error);
+      setMessage("로그인 요청 중 오류가 발생했습니다.");
+    }
+  };
+  // ✅ 인가 코드가 있으면 자동으로 처리
+  useEffect(() => {
+    if (window.location.search.includes("code")) {
+      handleOAuthCallback();
+    }
+  }, []);
+
   return (
     <form className="flex w-96 justify-center items-center">
       {/* OneBtnModal 표시*/}
@@ -137,8 +211,8 @@ export default function Login() {
         </div>
         <p className="text-sm mt-5">SNS 간편 로그인</p>
         <div className="flex h-14 justify-center gap-4">
-          <button><NaverIcon className="w-full h-full"/></button>
-          <button><KakaoIcon className="w-full h-full"/></button>
+          <button onClick={(e) => handleOAuthLogin("naver", e)}><NaverIcon className="w-full h-full"/></button>
+          <button onClick={(e) => handleOAuthLogin("kakao", e)}><KakaoIcon className="w-full h-full"/></button>
         </div>
         {/* 에러 메시지 표시 */}
         <p className="text-sm text-[#FF0000] mt-2 min-h-5">{message}</p>
