@@ -270,34 +270,35 @@ export default function MainMatching() {
     <>
       {isMatching === "false" && (
         <>
-          <header className="w-full flex justify-between max-w-screen-xl h-[77px] py-[14px]">
-            <Link to="/" className="h-full px-4 flex items-center">
-              <HeaderLogo />
-            </Link>
+          <header className="fixed top-0 shadow-lg w-full z-50 flex justify-center h-[77px] py-3 bg-white">
+            <div className="flex w-full justify-between max-w-screen-xl">
+              <Link to="/" className="h-full px-4 flex items-center">
+                <HeaderLogo />
+              </Link>
 
-            <div className="search-bar flex flex-row bg-emerald-600 border border-[#3BB82D] rounded-full relative">
-              <input
-                className="w-[300px] lg:w-[600px] rounded-full pl-5 focus:outline-none"
-                id="keyword"
-                type="text"
-                onChange={onChange}
-                value={curText}
-                placeholder="함께 먹고싶은 식당을 검색해요."
-              />
-              <button
-                id="search-btn"
-                className="absolute px-5 right-0 top-[10px]"
-                onClick={searchPlaces}
-              >
-                <SearchIcon width="22px" />
-              </button>
+              <div className="search-bar flex flex-row bg-emerald-600 border border-[#3BB82D] rounded-full relative">
+                <input
+                  className="w-[300px] lg:w-[600px] rounded-full pl-5 focus:outline-none"
+                  id="keyword"
+                  type="text"
+                  onChange={onChange}
+                  value={curText}
+                  placeholder="함께 먹고싶은 식당을 검색해요."
+                />
+                <button
+                  id="search-btn"
+                  className="absolute px-5 right-0 top-[13px]"
+                  onClick={searchPlaces}
+                >
+                  <SearchIcon width="22px" />
+                </button>
+              </div>
+
+              <Link to="/account" className="h-full px-4 flex items-center">
+                로그인
+              </Link>
             </div>
-
-            <Link to="/account" className="h-full px-4 flex items-center">
-              로그인
-            </Link>
           </header>
-
           <div className="relative w-full h-full">
             <Map
               className="w-full h-full"

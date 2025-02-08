@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Map, MapMarker, Polyline } from "react-kakao-maps-sdk";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Info from "../../assets/cancelInfo.svg?react";
 
 export default function MatchingComplete() {
   // 현재 위치
@@ -213,9 +214,23 @@ export default function MatchingComplete() {
     return apiPOSTCancel();
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  function handleClickOutside(e) {
+    const modalBox = document.getElementById("modalBg");
+    if (isModalOpen && modalBox === e.target) {
+      setIsModalOpen(false);
+    }
+  }
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isModalOpen]);
+
   return (
     <>
-      <div className=" flex flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <div className="title-container text-2xl flex flex-col gap-5">
           <h1>매칭이 완료되었습니다.</h1>
           <h1>
@@ -275,12 +290,39 @@ export default function MatchingComplete() {
           <div>약 {distance}분</div>
         </div>
       </div>
-      <button
-        onClick={cancelMatched}
-        className="fixed bottom-0 max-w-3xl w-full h-[60px] text-slate-400"
-      >
-        매칭을 취소하시겠습니까?
-      </button>
+      <div className="flex flex-row fixed bottom-0 max-w-3xl w-full h-[60px] justify-center">
+        <button onClick={() => setIsModalOpen(true)}>
+          <Info className="block my-auto" width="50px" />
+        </button>
+        <button onClick={cancelMatched} className=" text-slate-400">
+          매칭을 취소하시겠습니까?
+        </button>
+      </div>
+      {isModalOpen && (
+        <>
+          <div className="absolute w-full h-full">
+            <div
+              id={"modalBg"}
+              className="bg-black opacity-50 absolute top-0 left-0 w-full h-full z-10"
+            ></div>
+          </div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 drop-shadow-lg z-20">
+            <div className="bg-white p-5 rounded-lg w-[320px] text-left">
+              <p className="font-bold text-base max-w-[200px] pb-3">
+                취소 유의사항
+              </p>
+              <p className="font-semibold text-base max-w-[200px]">
+                매칭 완료 3분 이내 취소
+              </p>
+              <p className="text-sm max-w-[200px] pb-2">→ 패널티 없음</p>
+              <p className="font-semibold text-base max-w-[200px]">
+                매칭 완료 3분 이후 취소
+              </p>
+              <p className="text-sm max-w-[200px]">→ 일주일간 매칭 불가</p>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }
