@@ -6,6 +6,7 @@ import HidePWIcon from "../../assets/hidePW-icon.svg?react";
 import KakaoIcon from "../../assets/Login-icon-kakao.svg?react";
 import NaverIcon from "../../assets/Login-icon-naver.svg?react";
 import axios from "axios";
+import OneBtnModal from "../common/OneBtnModal.jsx";
 
 export default function Login() {
 
@@ -15,31 +16,67 @@ export default function Login() {
   const [hasValue, setHasValue] = useState(false)
 
   // input필드 관찰
-  const emailChange = (e) => {
-    setEmailInput(e.target.value);
-  };
-  const pwChange = (e) => {
-    setPwInput(e.target.value);
-  };
+  const emailChange = (e) => setEmailInput(e.target.value);
+  const pwChange = (e) => setPwInput(e.target.value);
+
   // 입력값 변경 시 hasValue 상태 업데이트
   useEffect(() => {
     setHasValue(emailInput.length > 0 && pwInput.length > 0);
   }, [emailInput, pwInput]);
 
+  // 이메일 형식 검증
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   // 비밀번호 보이기/숨기기
   const [showPW, setShowPW] = useState(false);
-  const togglePW = () => {
-    setShowPW(!showPW);
-  }
+  const togglePW = () => setShowPW(!showPW);
 
-  async function Login(e) {
-    e.preventDefault()
-    await axios
-      .get("/users/list")
-      .then((res) => {
-        console.log(res)
-      })
-  }
+  // ✅ 회원가입 버튼 클릭 시 동작
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState(null); // oneBtn 넘기는 타입용
+
+  // ✅ 모달 닫기 함수
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalType(null);
+  };
+  const login = async (event) => {
+    event.preventDefault(); // 기본 제출 동작 방지
+
+    try {
+      const response = await axios.post("/users/signin", {
+        email: emailInput,
+        password: pwInput,
+      });
+      console.log("로그인 응답 데이터:", response.data);
+
+      // // ✅ 토큰 저장
+      window.localStorage.setItem("accessToken", response.data.accessToken);
+
+      if (response.data.accessToken) {
+        setMessage("로그인 성공!");
+        setIsModalOpen(true);
+        setModalType("signIn");
+
+        // 입력 필드 초기화
+        setEmailInput("");
+        setPwInput("");
+      } else {
+        setMessage("로그인 실패");
+      }
+    } catch (error) {
+      console.error("로그인 요청 실패:", error);
+
+      setMessage(
+        error.response?.data?.message ||
+        "로그인 요청 중 오류가 발생했습니다."
+      );
+    }
+  };
+
+  // 로그인 버튼 클릭 시 메시지
+  const [message, setMessage] = useState("");
 
   return (
     <form className="flex w-96 justify-center items-center">
@@ -58,7 +95,7 @@ export default function Login() {
             onChange={emailChange}
             placeholder="email@example.com" required
           />
-          <span className="text-sm text-[#FF0000] mt-2 h-5">아이디가 일치하지 않습니다.</span>
+          <span className="text-sm text-[#FF0000] mt-2 h-5">{!emailRegex.test(emailInput) && "이메일 형식이 아닙니다."}</span>
         </div>
         <div className="relative flex flex-col items-start">
           <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">비밀번호</span>
@@ -80,11 +117,10 @@ export default function Login() {
               )}
             </div>
           </label>
-          <span className="text-sm text-[#FF0000] mt-2 h-5">비밀번호가 일치하지 않습니다.</span>
         </div>
         <button
           type="submit"
-          onClick={Login}
+          onClick={login}
           className={`w-full h-11 rounded-md ${
             hasValue ? "bg-[#FF6445] text-white" : "bg-gray-200"
           }`}
@@ -102,7 +138,11 @@ export default function Login() {
           <button><NaverIcon className="w-full h-full"/></button>
           <button><KakaoIcon className="w-full h-full"/></button>
         </div>
+        {/* 에러 메시지 표시 */}
+        <p className="text-sm text-[#FF0000] mt-2 min-h-5">{message}</p>
       </div>
+      {/* OneBtnModal 표시*/}
+      {isModalOpen && <OneBtnModal type={modalType} onClose={closeModal}/>}
     </form>
   )
 }
