@@ -60,9 +60,7 @@ export default function MainMatching() {
   };
 
   useEffect(() => {
-    if (window.sessionStorage.getItem("isMatching") === "true") {
-      window.addEventListener("beforeunload", beforeunloadFunc);
-    }
+    window.addEventListener("beforeunload", beforeunloadFunc);
     return () => {
       window.removeEventListener("beforeunload", beforeunloadFunc);
     };
@@ -81,7 +79,9 @@ export default function MainMatching() {
 
   //새로고침 확인을 눌렀을 경우 unload 이벤트 실행
   const unloadFunc = () => {
+    console.log("실행");
     setIsMatching("false");
+    window.sessionStorage.removeItem("isMatching");
     apiPOSTCancel();
   };
   //unload 이벤트
@@ -397,7 +397,7 @@ export default function MainMatching() {
             </Map>
 
             {/* 현위치로 지도도 이동 버튼 */}
-            <div className="flex flex-col gap-[10px] absolute z-[1] top-5 right-5 p-[10px]">
+            <div className="flex flex-col gap-[10px] absolute z-[10] top-20 right-5 p-[10px]">
               <button
                 className="flex justify-center items-center cursor-pointer rounded-full w-[45px] h-[45px] bg-white shadow-[0_0_8px_#00000025]"
                 onClick={setCenterToMyPosition}
