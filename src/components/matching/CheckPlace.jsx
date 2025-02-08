@@ -10,6 +10,7 @@ export default function CheckPlace() {
   const [position, setPosition] = useState("");
   const [matchingData, setMatchingData] = useState([]);
   const [user, setUser] = useState(new Map());
+  const [agree, setAgree] = useState(false);
 
   // 초기 설정
   useEffect(() => {
@@ -33,22 +34,34 @@ export default function CheckPlace() {
     ).data;
     setMatchingData(Object.entries(Object.entries(jsonData)[2][1]));
     setPosition(jsonPosition);
-    const temp = new Map();
-    matchingData.map((data) => temp.set(data[1].nickName, false));
-    setUser(temp);
   }, []);
 
   const isMounted = useRef(false);
   useEffect(() => {
     if (isMounted.current) {
+      matchingData.map((data) =>
+        setUser((pre) => new Map([...pre, [data[1].nickName, false]]))
+      );
       apiGetU2();
       apiGetU3();
       apiGetU4();
-      apiCompleted();
     } else {
       isMounted.current = true;
     }
   }, [matchingData]);
+
+  useEffect(() => {
+    console.log([...user.values()]);
+    if (
+      isMounted.current &&
+      agree &&
+      [...user.values()].indexOf(false) === -1
+    ) {
+      apiCompleted();
+    } else {
+      isMounted.current = true;
+    }
+  }, [user]);
 
   useEffect(() => {
     user.forEach((value, key) => {
@@ -134,6 +147,7 @@ export default function CheckPlace() {
     apiAgree();
     document.querySelector(`#닉네임1waiting`).classList.add("hidden");
     document.querySelector(`#닉네임1check`).classList.remove("hidden");
+    setAgree(true);
     setUser((prev) => {
       const newState = new Map(prev);
       newState.set("닉네임1", true);
@@ -144,8 +158,10 @@ export default function CheckPlace() {
   // 장소 거절
   const handleDisAgree = () => {
     alert("거절을 선택하여 매칭이 종료됩니다");
+    setAgree(false);
     apiDisagree();
     unloadFunc();
+
     navigate("/");
     /////////////////////////////////////////
     // 추후 삭제
@@ -238,21 +254,18 @@ export default function CheckPlace() {
       });
   }
   async function apiCompleted() {
-    setTimeout(() => {
-      console.log("12초 지남");
-      axios
-        .get("/matching/completed")
-        .then((res) => {
-          window.sessionStorage.setItem("matchedData", JSON.stringify(res));
-          window.sessionStorage.removeItem("isMatching");
-          window.sessionStorage.removeItem("isMatched");
-          window.sessionStorage.setItem("isCompleted", "true");
-          navigate(`/matching/choice-place/${res.data.id}`);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }, [12000]);
+    axios
+      .get("/matching/completed")
+      .then((res) => {
+        window.sessionStorage.setItem("matchedData", JSON.stringify(res));
+        window.sessionStorage.removeItem("isMatching");
+        window.sessionStorage.removeItem("isMatched");
+        window.sessionStorage.setItem("isCompleted", "true");
+        navigate(`/matching/choice-place/${res.data.id}`);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
   ///////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////

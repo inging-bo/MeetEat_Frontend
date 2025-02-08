@@ -25,9 +25,11 @@ export default function MatchingComplete() {
   useEffect(() => {
     // 유저가 매칭된 상태가 아니라면 메인페이지로 이동
     if (window.sessionStorage.getItem("isCompleted") !== "true") {
+      console.log("매칭완료된 상태가 아닙니다.");
       return navigate("/");
     }
     if (window.sessionStorage.getItem("matchedData") === undefined) {
+      console.log("매칭완료된 데이터가 없습니다.");
       return navigate("/");
     }
 
@@ -42,13 +44,6 @@ export default function MatchingComplete() {
       lat: Object.entries(jsonCurData)[3][1].restaurant.lat,
       lng: Object.entries(jsonCurData)[3][1].restaurant.lon,
     });
-    const distance = getDistance(
-      position.lat,
-      position.lng,
-      positionTo.lat,
-      positionTo.lng
-    );
-    setDistance(distance);
   }, []);
 
   // 거리계산
@@ -145,6 +140,14 @@ export default function MatchingComplete() {
         });
         console.log(polyPath);
       });
+
+    const distance = getDistance(
+      position.lat,
+      position.lng,
+      positionTo.lat,
+      positionTo.lng
+    );
+    setDistance(distance);
   }, [position]);
 
   return (

@@ -11,8 +11,10 @@ import FoodIcon from "../../assets/food-line.svg?react";
 import SearchList from "./SearchList";
 import InfoWindow from "./InfoWindow";
 import Matching from "./Matching";
+import { useNavigate } from "react-router-dom";
 
 export default function MainMatching() {
+  const navigate = useNavigate();
   // 매칭중 확인
   const [isMatching, setIsMatching] = useState("false");
   const [isMatched, setIsMatched] = useState("false");
@@ -22,6 +24,30 @@ export default function MainMatching() {
       setIsMatching(window.sessionStorage.getItem("isMatching"));
     window.sessionStorage.getItem("isMatched") !== null &&
       setIsMatched(window.sessionStorage.getItem("isMatched"));
+
+    // 매칭 완료된 상태인경우 매칭완료 페이지로 이동
+    if (
+      window.sessionStorage.getItem("isCompleted") === "true" &&
+      window.sessionStorage.getItem("matchedData") !== undefined
+    ) {
+      const now = new Date(); // 오늘 날짜
+      const firstDay = new Date(
+        JSON.parse(
+          window.sessionStorage.getItem("matchedData")
+        ).data.createdAt.slice(0, 10)
+      ); // 시작 날짜
+      const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
+      const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
+      const passedTimeMin = (toNow - toFirst) / 600000; // 첫날부터 오늘까지 지난 시간(밀리 초)
+      // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
+      if (passedTimeMin >= 60) {
+        return navigate(`/rests/write`);
+      }
+      console.log("매칭완료된 상태입니다");
+      const id = JSON.parse(window.sessionStorage.getItem("matchedData")).data
+        .id;
+      return navigate(`/matching/complete/${id}`);
+    }
   }, [isMatching, isMatched]);
 
   // 브라우저 종료, 새로고침, 뒤로가기의 경우 매칭 취소 api 전송
