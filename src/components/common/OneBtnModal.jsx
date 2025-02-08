@@ -1,5 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import {useEffect, useRef} from "react";
+import axios from "axios";
 
 export default function OneBtnModal({type, onClose}) {
   const oneModalRef = useRef(null);
@@ -93,11 +94,21 @@ export default function OneBtnModal({type, onClose}) {
     navigate("/")
     onClose()
   }
-  // 로그아웃하시겠습니까? `예` 인경우
-  const logOut = () => {
-    navigate("/")
-    onClose()
-  }
+  const logOut = async () => {
+    try {
+      const response = await axios.post("/users/signout", {
+        accessToken: "",
+      });
+      console.log("로그인 응답 데이터:", response.data);
+
+      // 토큰값 제거
+      window.localStorage.removeItem("accessToken"); // accessToken 삭제
+      navigate("/")
+      onClose()
+    } catch (error) {
+      console.error("로그아웃 요청 실패!:", error);
+    }
+  };
   return (
     <div
       className="flex fixed top-0 left-0 justify-center items-center bg-black/40 z-50 w-full h-full"

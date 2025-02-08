@@ -23,7 +23,7 @@ export default function SignUp() {
   const nickNameChange = (e) => setNickNameInput(e.target.value);
 
   // 입력값 변경 시 hasValue 상태 업데이트
-    useEffect(() => {
+  useEffect(() => {
     setHasValue(emailInput.length > 0 && pwInput.length > 0 && subPwInput.length > 0 && nickNameInput.length > 0);
   }, [emailInput, pwInput, subPwInput, nickNameInput]);
 
@@ -41,7 +41,7 @@ export default function SignUp() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState(null); // oneBtn 넘기는 타입용
-    // ✅ 모달 닫기 함수
+  // ✅ 모달 닫기 함수
   const closeModal = () => {
     setIsModalOpen(false);
     setModalType(null);

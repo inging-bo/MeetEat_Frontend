@@ -19,18 +19,20 @@ export default function TwoBtnModal({type, userId, onClose}) {
     // ✅ 버튼 별 메세지 선택
     const choiceMessage = (type) => {
         switch (type) {
-            case "block" :
-                return "정말 차단 하시겠습니까?"
-            case "unBlock" :
-                return "정말 차단 해제 하시겠습니까?"
-            case "report" :
-                return "정말 신고 하시겠습니까?"
-            case "unReport" :
-                return "정말 신고 해제 하시겠습니까?"
-            case "logOut" :
-                return "정말 로그아웃 하시겠습니까?"
+            case "block":
+                return "정말 차단 하시겠습니까?";
+            case "unBlock":
+                return "정말 차단 해제 하시겠습니까?";
+            case "report":
+                return "정말 신고 하시겠습니까?";
+            case "unReport":
+                return "정말 신고 해제 하시겠습니까?";
+            case "logOut":
+                return "정말 로그아웃 하시겠습니까?";
+            default:
+                return "정말 실행하시겠습니까?"; // 기본 메시지 추가
         }
-    }
+    };
 
     // ✅ 예 클릭시 모달 구현 위한 곳
     const [showOneBtnModal, setShowOneBtnModal] = useState(false);
@@ -59,11 +61,9 @@ export default function TwoBtnModal({type, userId, onClose}) {
 
     // 1️⃣ localStorage에서 데이터 가져오기
     const restaurantReviews = localStorage.getItem("restaurantReviews");
-    if (!restaurantReviews) return; // 데이터가 없으면 종료
 
     // 2️⃣ JSON 파싱
     const parse = JSON.parse(restaurantReviews);
-
 
     // ✅ 타입별 실행 변수
     // 차단하시겠습니까? `예` 인경우
@@ -106,7 +106,7 @@ export default function TwoBtnModal({type, userId, onClose}) {
                 <div
                     className="flex fixed top-0 left-0 justify-center items-center bg-black/40 z-50 w-full h-full"
                 >
-                    <div className="w-80 p-10 bg-white rounded-lg drop-shadow-lg"
+                    <div className="w-80 p-10 min-w-fit bg-white rounded-lg drop-shadow-lg"
                          ref={twoModalRef} // 모달 내부 요소 참조
                     >
                         <div>

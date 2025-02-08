@@ -80,6 +80,8 @@ export default function Login() {
 
   return (
     <form className="flex w-96 justify-center items-center">
+      {/* OneBtnModal 표시*/}
+      {isModalOpen && <OneBtnModal type={modalType} onClose={closeModal}/>}
       <div className="flex flex-1 flex-col gap-3 justify-center">
         <h1 className="flex justify-center h-8 mb-8">
           <Link to={"/"}><HeaderLogo className="h-full w-full"/></Link>
@@ -102,7 +104,7 @@ export default function Login() {
           <label className="relative w-full">
             <input
               type={showPW ? "text" : "password"}
-              name="email"
+              name="password"
               className="w-full h-11 outline-0 border-b px-2 border-gray-300"
               value={pwInput}
               onChange={pwChange}
@@ -129,7 +131,7 @@ export default function Login() {
         </button>
         <div className="flex gap-3 justify-center text-xs">
           <Link to="/account/signup"
-                className="relative border-b-2 text-base text-gray-400 border-transparent hover:text-gray-600 hover:border-gray-400">
+                className="border-b-2 text-base text-gray-400 border-transparent hover:text-gray-600 hover:border-gray-400">
             회원이 아니신가요?
           </Link>
         </div>
@@ -141,8 +143,6 @@ export default function Login() {
         {/* 에러 메시지 표시 */}
         <p className="text-sm text-[#FF0000] mt-2 min-h-5">{message}</p>
       </div>
-      {/* OneBtnModal 표시*/}
-      {isModalOpen && <OneBtnModal type={modalType} onClose={closeModal}/>}
     </form>
   )
 }
