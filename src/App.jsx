@@ -5,7 +5,7 @@ import Router from "./router/router";
 function App() {
   return (
     <BrowserRouter>
-      <section className="flex flex-col justify-center items-center w-full h-dvh">
+      <section className="relative flex flex-col justify-center items-center w-full h-dvh">
         <Router />
       </section>
     </BrowserRouter>

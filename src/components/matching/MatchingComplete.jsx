@@ -96,6 +96,7 @@ export default function MatchingComplete() {
     timeout: 7000,
   };
 
+  // geolocation API
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -124,6 +125,7 @@ export default function MatchingComplete() {
     );
   }, []);
 
+  // 카카오 모빌리티 API
   useEffect(() => {
     const origin = `${position.lng},${position.lat}`;
     const destination = `${positionTo.lng},${positionTo.lat}`;
@@ -165,6 +167,52 @@ export default function MatchingComplete() {
     setDistance(distance);
   }, [position]);
 
+  // 3분 전 매칭취소
+  async function apiPOSTCancel() {
+    await axios
+      .post("/matching/cancel/illegal", {})
+      .then(() => {
+        navigate("/");
+        window.sessionStorage.removeItem("isMatched");
+        window.sessionStorage.removeItem("isCompleted");
+        window.sessionStorage.removeItem("matchedData");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  // 3분 후 매칭취소
+  async function apiPOSTCancelIllegal() {
+    await axios
+      .post("/matching/cancel/illegal", {})
+      .then(() => {
+        navigate("/");
+        window.sessionStorage.removeItem("isMatched");
+        window.sessionStorage.removeItem("isCompleted");
+        window.sessionStorage.removeItem("matchedData");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  const cancelMatched = () => {
+    const now = new Date();
+    const firstDay = new Date(
+      JSON.parse(window.sessionStorage.getItem("matchedData")).data.createdAt
+    );
+    const toNow = now.getTime();
+    const toFirst = firstDay.getTime();
+    const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000;
+    console.log(passedTimeMin + "min");
+    // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
+    if (passedTimeMin >= 3) {
+      alert("매칭 3분 이후 취소시 패널티가 부과됩니다.");
+      return apiPOSTCancelIllegal();
+    }
+    alert("매칭 3분 이전 취소로 패널티가 부과되지 않습니다.");
+    return apiPOSTCancel();
+  };
+
   return (
     <>
       <div className=" flex flex-col gap-5">
@@ -174,7 +222,10 @@ export default function MatchingComplete() {
             오늘 {Number(date.slice(11, 13)) + 1}시 {date.slice(14, 16)}분 까지
             해당 위치에 도착해주세요!
           </h1>
-          <h1>{pickedRest.placeName}</h1>
+          <h1 className="flex flex-row justify-center gap-5">
+            <div>{pickedRest.placeName}</div>
+            <div>{pickedRest.roadAddressName}</div>
+          </h1>
         </div>
         <div className="center-container h-[450px] flex flex-row gap-10 justify-center">
           <Map
@@ -220,10 +271,16 @@ export default function MatchingComplete() {
           </div>
         </div>
         <div className="title-container">
-          <div>현재 위치부터 약속 장소 도착까지 소요시간</div>
+          <div>현재 위치부터 약속 장소 도착까지</div>
           <div>약 {distance}분</div>
         </div>
       </div>
+      <button
+        onClick={cancelMatched}
+        className="fixed bottom-0 max-w-3xl w-full h-[60px] text-slate-400"
+      >
+        매칭을 취소하시겠습니까?
+      </button>
     </>
   );
 }
