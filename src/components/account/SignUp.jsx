@@ -27,6 +27,9 @@ export default function SignUp() {
     setHasValue(emailInput.length > 0 && pwInput.length > 0 && subPwInput.length > 0 && nickNameInput.length > 0);
   }, [emailInput, pwInput, subPwInput, nickNameInput]);
 
+  // 이메일 형식 검증
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   // 비밀번호 보이기/숨기기
   const [showPW, setShowPW] = useState(false);
   const [showPWSub, setShowPWSub] = useState(false);
@@ -37,30 +40,30 @@ export default function SignUp() {
   // ✅ 회원가입 버튼 클릭 시 동작
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState(null); // 차단 or 신고 구분
-
-  // 회원가입 완료 메시지 상태
+  const [modalType, setModalType] = useState(null); // oneBtn 넘기는 타입용
+    // ✅ 모달 닫기 함수
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalType(null);
+  };
+  // 회원가입 버튼 클릭 시 메시지
   const [message, setMessage] = useState("");
 
   const signUp = async (event) => {
     event.preventDefault(); // 기본 제출 동작 방지
 
-    if (pwInput !== subPwInput) {
-      setMessage("비밀번호가 일치하지 않습니다.");
-      return;
-    }
-
     try {
       const response = await axios.post("/users/signup", {
         email: emailInput,
         password: pwInput,
+        subPassword: subPwInput,
         nickname: nickNameInput,
       });
 
       console.log("회원가입 응답 데이터:", response.data);
 
       if (response.data.success) {
-        setMessage(response.data.message || "회원가입 성공!");
+        setMessage("회원가입 성공!");
         setIsModalOpen(true);
         setModalType("signUp");
 
@@ -70,7 +73,7 @@ export default function SignUp() {
         setSubPwInput("");
         setNickNameInput("");
       } else {
-        setMessage(response.data.message || "회원가입 실패");
+        setMessage("회원가입 실패");
       }
     } catch (error) {
       console.error("회원가입 요청 실패:", error);
@@ -80,12 +83,6 @@ export default function SignUp() {
         "회원가입 요청 중 오류가 발생했습니다."
       );
     }
-  };
-
-  // ✅ 모달 닫기 함수
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setModalType(null);
   };
 
   return (
@@ -105,7 +102,7 @@ export default function SignUp() {
             value={emailInput}
             onChange={emailChange}
             placeholder="email@example.com" required/>
-          <span className="text-sm text-[#FF0000] mt-2 h-5">올바른 이메일 형식이 아닙니다.</span>
+          <span className="text-sm text-[#FF0000] mt-2 h-5">{!emailRegex.test(emailInput) && "이메일 형식이 아닙니다"}</span>
         </div>
         <div className="relative flex flex-col items-start">
           <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">비밀번호</span>
@@ -153,8 +150,8 @@ export default function SignUp() {
                  className=" w-full h-11 px-2 outline-0 border-b border-gray-300  after:left-0 after:text-sm after:text-gray-500 after:block after:content-['한글_6자,_영문_12자까지_입력_가능']"
                  value={nickNameInput}
                  onChange={nickNameChange}
-                 placeholder="닉네임을 입력해주세요" required/>
-          <span className="text-sm text-[#FF0000] mt-2 h-5">사용중인 닉네임입니다.</span>
+                 placeholder="닉네임을 입력해주세요" required
+          />
         </div>
         <button
           type="submit"
@@ -166,10 +163,10 @@ export default function SignUp() {
           회원가입
         </button>
         {/* 에러 메시지 표시 */}
-        {message && <p className="text-sm text-red-500 mt-2">{message}</p>}
+        <p className="text-sm text-[#FF0000] mt-2 min-h-5">{message}</p>
       </div>
       {/* OneBtnModal 표시*/}
-      {isModalOpen && <OneBtnModal type={"signUp"} onClose={closeModal}/>}
+      {isModalOpen && <OneBtnModal type={modalType} onClose={closeModal}/>}
     </form>
   )
 }

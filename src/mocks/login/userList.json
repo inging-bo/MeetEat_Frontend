@@ -1,8 +1,8 @@
 [
   {
-    "email": "existing@user.com",
-    "password": "hashedpassword",
-    "nickname": "oldUser"
+    "email": "123@test.com",
+    "password": "123",
+    "nickname": "123"
   },
   {
     "email": "newuser@google.com",
