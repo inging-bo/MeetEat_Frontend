@@ -18,13 +18,16 @@ export default function MainMatching() {
   // 매칭중 확인
   const [isMatching, setIsMatching] = useState("false");
   const [isMatched, setIsMatched] = useState("false");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    setIsLoggedIn(!!token);
+
     window.sessionStorage.getItem("isMatching") !== null &&
       setIsMatching(window.sessionStorage.getItem("isMatching"));
     window.sessionStorage.getItem("isMatched") !== null &&
       setIsMatched(window.sessionStorage.getItem("isMatched"));
-
     // 매칭 완료된 상태인경우 매칭완료 페이지로 이동
     if (
       window.sessionStorage.getItem("isCompleted") === "true" &&
@@ -293,10 +296,19 @@ export default function MainMatching() {
                   <SearchIcon width="22px" />
                 </button>
               </div>
-
-              <Link to="/account" className="h-full px-4 flex items-center">
-                로그인
-              </Link>
+              {isLoggedIn ? (
+                <>
+                  <Link to="/mypage" className="h-full px-4 flex items-center">
+                    마이페이지
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/account" className="h-full px-4 flex items-center">
+                    로그인
+                  </Link>
+                </>
+              )}
             </div>
           </header>
           <div className="relative w-full h-full">
