@@ -204,7 +204,7 @@ export default function MainMatching() {
           page: page,
         },
         headers: {
-          Authorization: `KakaoAK ${import.meta.env.VITE_APP_RESTAPI_KEY}`,
+          Authorization: `KakaoAK ${import.meta.env.VITE_APP_KAKAO_REST_KEY}`,
         },
       })
       .then((res) => {

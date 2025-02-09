@@ -1,8 +1,8 @@
-import {useNavigate} from "react-router-dom";
-import {useEffect, useRef} from "react";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useRef } from "react";
 import axios from "axios";
 
-export default function OneBtnModal({type, onClose}) {
+export default function OneBtnModal({ type, onClose }) {
   const oneModalRef = useRef(null);
   // ✅ 모달이 열릴 때 이벤트 리스너 추가, 닫힐 때 제거
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function OneBtnModal({type, onClose}) {
     }
   }
   // ✅ 확인 눌러을 때 동작
-  const check = (type) => {
+  const check = async (type) => {
     switch (type) {
       case "block" :
         blockUser()
@@ -69,7 +69,7 @@ export default function OneBtnModal({type, onClose}) {
         signIn()
         break
       case "logOut" :
-        logOut()
+        await logOut()
         break
 
     }

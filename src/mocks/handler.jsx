@@ -208,14 +208,24 @@ export const handlers = [
     }
   }),
 
-  // 로그아웃 요청
-  http.post("/users/signout", async ({ request }) => {
+  // ✅ OAuth 로그인 처리 (카카오, 네이버)
+  http.post("/users/signin/:provider", async ({ request, params }) => {
     try {
-      const { isToken } = await request.json();
-      console.log("입력된 이메일:", isToken);
+      const { provider } = params; // provider = "kakao" 또는 "naver"
+      const { code } = await request.json();
 
-      // 로그인 성공 처리 (성공적인 경우에 토큰을 반환)
-      const accessToken = ""; // 예시로 accessToken을 생성하는 함수
+      console.log(`${provider} 로그인 요청 코드:`, code);
+
+      // 인가 코드가 없을 경우 에러 반환
+      if (!code) {
+        return HttpResponse.json(
+          { error: "invalid_grant", message: "인가 코드가 없습니다." },
+          { status: 400 }
+        );
+      }
+
+      // 인가 코드에 따른 임시 액세스 토큰 발급
+      const accessToken = `accessToken_${provider}`;
 
       // 성공 응답
       return HttpResponse.json(
@@ -223,6 +233,28 @@ export const handlers = [
           ...signInSuccess,
           accessToken: accessToken, // 요청값 반영
         },
+        { status: 200 }
+      );
+    } catch (error) {
+      console.error("OAuth 로그인 처리 중 오류 발생:", error);
+      return HttpResponse.json(
+        { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
+        { status: 500 }
+      );
+    }
+  }),
+
+  // 로그아웃 요청
+  http.post("/users/signout", async ({ request }) => {
+    try {
+      const { isToken } = await request.json();
+      console.log("로그아웃 요청 - 전달된 토큰:", isToken);
+
+      // 클라이언트가 요청한 토큰을 검사하는 로직이 필요할 경우 여기에 추가 가능
+
+      // 성공 응답 (accessToken 삭제)
+      return HttpResponse.json(
+        { message: "로그아웃 성공" }, // 불필요한 데이터 제거
         { status: 200 }
       );
     } catch (error) {
