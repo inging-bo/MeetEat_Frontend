@@ -380,7 +380,6 @@ export const handlers = [
     try {
       const url = new URL(request.url);
       const productId = url.searchParams.get("restaurantId");
-      console.log(productId);
       // 성공 응답
       return HttpResponse.json(restDetailViewList[productId], { status: 200 });
     } catch (error) {

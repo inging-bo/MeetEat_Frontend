@@ -1,5 +1,5 @@
 import SearchIcon from "../../assets/search.svg?react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useInView } from "react-intersection-observer";
 import Arrow from "../../assets/updown-arrow-icon.svg?react";
@@ -11,8 +11,10 @@ import RestView from "./RestView.jsx";
 export default function RestList() {
   // ✅ 확인용 식당 리스트
   const [restaurants, setRestaurants] = useState([]);
+  const [maxPage, setMaxPage] = useState(0);
+  const [page, setPage] = useState("0");
   useEffect(() => {
-    apiPOSTRestsLists();
+    apiPOSTRestsLists(page);
   }, []);
 
   const [searchFilter, setSearchFilter] = useState("");
@@ -97,37 +99,36 @@ export default function RestList() {
   };
 
   // 무한스크롤
-  //   const [page, setPage] = useState("0");
-  //   const VoteList = () => {
-  //     const { ref, inView } = useInView({
-  //       threshold: 0.5,
-  //     });
-  //     const resetStickerInfoState = useResetRecoilState(stickerResultState);
-  //     // ✅ useSWRInfinite 를 사용하여 list 가져오기
-  //     const { voteListResult, isLoading, isError, size, setSize } = useGetCurrentVoteList();
-  //     const { userInfo } = useGetUserData();
+  const observerRef = useRef();
+  const boxRef = useRef(null);
 
-  //     const getMoreItem = useCallback(() => {
-  //       if (voteListResult && voteListResult.result) {
-  //         setSize((prev) => prev + 1);
-  //       }
-  //     }, [voteListResult, setSize]);
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(intersectionObserver); // IntersectionObserver
+    boxRef.current && observerRef.current.observe(boxRef.current);
+  }, [restaurants]);
 
-  //     useEffect(() => {
-  //       resetStickerInfoState();
-  //     }, []);
+  const getInfo = async () => {
+    if (maxPage < Number(page) + 1) return console.log("마지막페이지입니다.");
+    apiPOSTRestsLists(String(Number(page) + 1));
+    setPage((prev) => prev + 1);
+    console.log("info data add...");
+  };
 
-  //     useEffect(() => {
-  //     // ✅ inView 가 true 일때 리스트를 업데~이트
-  //       if (inView && voteListResult?.result) {
-  //         getMoreItem();
-  //       }
-  //     }, [inView]);
+  // IntersectionObserver 설정
+  const intersectionObserver = (entries, io) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        // 관찰하고 있는 entry가 화면에 보여지는 경우
+        io.unobserve(entry.target); // entry 관찰 해제
+        getInfo(); // 데이터 가져오기
+      }
+    });
+  };
 
   //////////////////////////////////////////////////
   // 임시함수
   //////////////////////////////////////////////////
-  async function apiPOSTRestsLists() {
+  async function apiPOSTRestsLists(page) {
     await axios
       .post("/restaurants/search", {
         region: "서울",
@@ -136,11 +137,12 @@ export default function RestList() {
         userY: "위도",
         userX: "경도",
         sorted: "DEFAULT",
-        page: "0",
+        page: page,
         size: "20",
       })
       .then((res) => {
-        setRestaurants(res.data.content);
+        setRestaurants((prev) => [...prev, ...res.data.content]);
+        setMaxPage(res.data.totalPages);
       })
       .catch((err) => {
         console.log(err);
@@ -213,45 +215,84 @@ export default function RestList() {
             {searchFilter === "option" && filterList("option")}
           </ul>
         </div>
-        <ul className="grid grid-cols-[380px_380px_380px] grid-rows-2 gap-7">
-          {restaurants.map((rest) => (
-            <>
-              <li
-                key={rest.id}
-                className="flex flex-col items-start bg-white rounded-lg drop-shadow-lg p-4 cursor-pointer text-left"
-                onClick={() => RestViewToggle(rest)}
-              >
-                <div className="bg-gray-300 h-40 w-full rounded-lg mb-3 content-center justify-items-center">
-                  {rest.imgUrl ? (
-                    <>
-                      <img src={rest.imgUrl}></img>
-                    </>
-                  ) : (
-                    <Logo />
-                  )}
-                </div>
-                <p className="text-lg text-overflow">{rest.place_name}</p>
-                <p className="max-w-[330px] mb-1.5 text-gray-600 text-overflow">
-                  {rest.road_address_name}
-                </p>
-                <div className="flex h-6 gap-2 items-start text-base text-gray-500">
-                  <div className="flex gap-1 h-6">
-                    <span className="flex justify-center items-center ">
-                      <FullStar className="w-full h-full text-[#FF6445]" />
-                    </span>
-                    <span>{rest.rating}</span>
+        <div className="grid grid-cols-[380px_380px_380px] grid-rows-2 gap-7">
+          {restaurants.map((rest, idx) =>
+            restaurants.length - 3 === idx ? (
+              <>
+                <li
+                  key={rest.id}
+                  className="flex flex-col items-start bg-white rounded-lg drop-shadow-lg p-4 cursor-pointer text-left"
+                  onClick={() => RestViewToggle(rest)}
+                  ref={boxRef}
+                >
+                  <div className="bg-gray-300 h-40 w-full rounded-lg mb-3 content-center justify-items-center">
+                    {rest.imgUrl ? (
+                      <>
+                        <img src={rest.imgUrl}></img>
+                      </>
+                    ) : (
+                      <Logo />
+                    )}
                   </div>
-                  <div className="flex gap-1 h-6">
-                    <span className="flex justify-center items-center ">
-                      <Review className="mt-0.5" width="20px" height="20px" />
-                    </span>
-                    <span>{rest.reviews}</span>
+                  <p className="text-lg text-overflow">{rest.place_name}</p>
+                  <p className="max-w-[330px] mb-1.5 text-gray-600 text-overflow">
+                    {rest.road_address_name}
+                  </p>
+                  <div className="flex h-6 gap-2 items-start text-base text-gray-500">
+                    <div className="flex gap-1 h-6">
+                      <span className="flex justify-center items-center ">
+                        <FullStar className="w-full h-full text-[#FF6445]" />
+                      </span>
+                      <span>{rest.rating}</span>
+                    </div>
+                    <div className="flex gap-1 h-6">
+                      <span className="flex justify-center items-center ">
+                        <Review className="mt-0.5" width="20px" height="20px" />
+                      </span>
+                      <span>{rest.reviews}</span>
+                    </div>
                   </div>
-                </div>
-              </li>
-            </>
-          ))}
-        </ul>
+                </li>
+              </>
+            ) : (
+              <>
+                <li
+                  key={rest.id}
+                  className="flex flex-col items-start bg-white rounded-lg drop-shadow-lg p-4 cursor-pointer text-left"
+                  onClick={() => RestViewToggle(rest)}
+                >
+                  <div className="bg-gray-300 h-40 w-full rounded-lg mb-3 content-center justify-items-center">
+                    {rest.imgUrl ? (
+                      <>
+                        <img src={rest.imgUrl}></img>
+                      </>
+                    ) : (
+                      <Logo />
+                    )}
+                  </div>
+                  <p className="text-lg text-overflow">{rest.place_name}</p>
+                  <p className="max-w-[330px] mb-1.5 text-gray-600 text-overflow">
+                    {rest.road_address_name}
+                  </p>
+                  <div className="flex h-6 gap-2 items-start text-base text-gray-500">
+                    <div className="flex gap-1 h-6">
+                      <span className="flex justify-center items-center ">
+                        <FullStar className="w-full h-full text-[#FF6445]" />
+                      </span>
+                      <span>{rest.rating}</span>
+                    </div>
+                    <div className="flex gap-1 h-6">
+                      <span className="flex justify-center items-center ">
+                        <Review className="mt-0.5" width="20px" height="20px" />
+                      </span>
+                      <span>{rest.reviews}</span>
+                    </div>
+                  </div>
+                </li>
+              </>
+            )
+          )}
+        </div>
       </div>
       {restViewModal && (
         <RestView close={RestViewToggle} pickedRest={pickedRest} star={star} />
