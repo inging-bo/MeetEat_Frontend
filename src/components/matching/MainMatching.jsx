@@ -350,6 +350,7 @@ export default function MainMatching() {
                           setIsMatching={setIsMatching}
                           setSelectedMarker={setSelectedMarker}
                           setNumber={setNumber}
+                          isLoggedIn={isLoggedIn}
                         />
                       </CustomOverlayMap>
                     )}

@@ -4,6 +4,7 @@ export default function InfoWindow({
   setIsMatching,
   setSelectedMarker,
   setNumber,
+  isLoggedIn,
 }) {
   // 인원 선택
   const [choicedNumber, setChoicedNumber] = useState(2);
@@ -23,6 +24,7 @@ export default function InfoWindow({
   };
 
   const choicePlace = (marker) => {
+    if (!isLoggedIn) return alert("로그인 후 이용 가능한 서비스 입니다.");
     setIsMatching("true");
     setSelectedMarker(marker);
     setNumber(choicedNumber);
