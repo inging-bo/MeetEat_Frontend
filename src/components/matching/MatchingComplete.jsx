@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Map, MapMarker, Polyline } from "react-kakao-maps-sdk";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Info from "../../assets/cancelInfo.svg?react";
 
 export default function MatchingComplete() {
   // 현재 위치
@@ -197,6 +196,7 @@ export default function MatchingComplete() {
       });
   }
   const cancelMatched = () => {
+    console.log("dd");
     const now = new Date();
     const firstDay = new Date(
       JSON.parse(window.sessionStorage.getItem("matchedData")).data.createdAt
@@ -207,7 +207,7 @@ export default function MatchingComplete() {
     console.log(passedTimeMin + "min");
     // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
     if (passedTimeMin >= 3) {
-      alert("매칭 3분 이후 취소시 패널티가 부과됩니다.");
+      alert("매칭 3분 이후 취소로 패널티가 부과됩니다.");
       return apiPOSTCancelIllegal();
     }
     alert("매칭 3분 이전 취소로 패널티가 부과되지 않습니다.");
@@ -230,21 +230,24 @@ export default function MatchingComplete() {
 
   return (
     <>
-      <div className="flex flex-col gap-5">
-        <div className="title-container text-2xl flex flex-col gap-5">
-          <h1>매칭이 완료되었습니다.</h1>
+      <div className="bg-map relative w-full h-full">
+        <div className="bg-black/40 absolute w-full h-full z-10"></div>
+        <Map id="map" className="w-full h-full" center={position} level={5} />
+      </div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[520px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center py-[40px] flex flex-col gap-5">
+        <div className="title-container text-xl flex flex-col  font-semibold">
+          <h1>{pickedRest.placeName}에서</h1>
           <h1>
-            오늘 {Number(date.slice(11, 13)) + 1}시 {date.slice(14, 16)}분 까지
-            해당 위치에 도착해주세요!
+            오늘 {Number(date.slice(11, 13)) + 1}시 {date.slice(14, 16)}분에
+            만나요 !
           </h1>
-          <h1 className="flex flex-row justify-center gap-5">
-            <div>{pickedRest.placeName}</div>
-            <div>{pickedRest.roadAddressName}</div>
-          </h1>
+          <div className="font-normal text-base pt-2">
+            {pickedRest.roadAddressName}까지 내 위치에서 {distance}분
+          </div>
         </div>
-        <div className="center-container h-[450px] flex flex-row gap-10 justify-center">
+        <div className="center-container h-[300px] flex flex-row gap-10 justify-center">
           <Map
-            className="map-container min-w-[450px] h-full"
+            className="map-container min-w-[300px] h-full"
             id="map"
             center={position}
             level={5}
@@ -271,7 +274,7 @@ export default function MatchingComplete() {
               strokeStyle={"solid"} // 선의 스타일입니다
             />
           </Map>
-          <div className="people-container flex flex-col gap-2 min-w-[450px] h-full overflow-y-scroll scrollbar-hide">
+          <div className="people-container flex flex-col gap-2 min-w-[370px] h-full overflow-y-scroll scrollbar-hide">
             {userList.map((user) => (
               <>
                 <div className="people-item border border-slate-200 text-left rounded-lg p-3">
@@ -285,31 +288,27 @@ export default function MatchingComplete() {
             ))}
           </div>
         </div>
-        <div className="title-container">
-          <div>현재 위치부터 약속 장소 도착까지</div>
-          <div>약 {distance}분</div>
+        <div className="flex flex-row fixed bottom-0 max-w-3xl w-full h-[60px] justify-center text-[#555555] z-50">
+          <button onClick={() => setIsModalOpen(true)}>
+            매칭을 취소하시겠습니까?
+          </button>
         </div>
-      </div>
-      <div className="flex flex-row fixed bottom-0 max-w-3xl w-full h-[60px] justify-center">
-        <button onClick={() => setIsModalOpen(true)}>
-          <Info className="block my-auto" width="50px" />
-        </button>
-        <button onClick={cancelMatched} className=" text-slate-400">
-          매칭을 취소하시겠습니까?
-        </button>
       </div>
       {isModalOpen && (
         <>
-          <div className="absolute w-full h-full">
+          <div className="absolute w-full h-full z-50">
             <div
               id={"modalBg"}
-              className="bg-black opacity-50 absolute top-0 left-0 w-full h-full z-10"
+              className="bg-black/30 absolute top-0 left-0 w-full h-full z-10"
             ></div>
           </div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 drop-shadow-lg z-20">
-            <div className="bg-white p-5 rounded-lg w-[320px] text-left">
-              <p className="font-bold text-base max-w-[200px] pb-3">
-                취소 유의사항
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 drop-shadow-lg z-50">
+            <div className="bg-white p-7 rounded-lg w-[420px] text-left">
+              <p className="font-bold text-[18px] text-center max-w-[420px]">
+                매칭 취소시 패널티가 부과될 수 있습니다.
+              </p>
+              <p className="font-bold text-[18px] text-center max-w-[420px] pb-5">
+                매칭을 취소하시겠습니까?
               </p>
               <p className="font-semibold text-base max-w-[200px]">
                 매칭 완료 3분 이내 취소
@@ -319,6 +318,10 @@ export default function MatchingComplete() {
                 매칭 완료 3분 이후 취소
               </p>
               <p className="text-sm max-w-[200px]">→ 일주일간 매칭 불가</p>
+              <div className="flex flex-row justify-center gap-20 pt-6">
+                <button onClick={() => setIsModalOpen(false)}>아니오</button>
+                <button onClick={cancelMatched}>네</button>
+              </div>
             </div>
           </div>
         </>

@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { StaticMap } from "react-kakao-maps-sdk";
+import CheckTitle from "../../assets/check-title.svg?react";
 import Waiting from "../../assets/waiting.svg?react";
 import Check from "../../assets/check.svg?react";
 
@@ -34,6 +36,7 @@ export default function CheckPlace() {
     ).data;
     setMatchingData(Object.entries(Object.entries(jsonData)[2][1]));
     setPosition(jsonPosition);
+    console.log(jsonPosition);
   }, []);
 
   const isMounted = useRef(false);
@@ -272,17 +275,29 @@ export default function CheckPlace() {
 
   return (
     <>
-      <div className="flex flex-col gap-10 z-20">
-        <h1>
-          <p className="text-2xl pb-2">매칭 가능한 인원을 찾았습니다.</p>
-          <p className="text-2xl pb-2">
-            아래 장소 중 랜덤으로 한 곳이 선택됩니다.
+      <div className="bg-map relative w-full h-full">
+        <div className="bg-black/40 absolute w-full h-full z-10"></div>
+        <StaticMap
+          id="map"
+          className="w-full h-full"
+          center={JSON.parse(window.sessionStorage.getItem("tempPosition"))}
+          level={5}
+        />
+      </div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[525px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center py-[40px]">
+        <div className="place-items-center ">
+          <CheckTitle />
+          <p className="text-xl pb-1 pt-[30px] font-semibold">
+            매칭 인원을 찾았어요.
           </p>
-          <p className="text-2xl pb-2">
+          <p className="text-xl pb-3 font-semibold">
             모든 인원 동의시 매칭이 계속 진행됩니다.
           </p>
-        </h1>
-        <div className="people-container w-[750px] flex flex-col gap-20 py-14 bg-slate-300">
+          <p className="pb-5">
+            남은시간 {minutes}:{second}
+          </p>
+        </div>
+        <div className="people-container w-[700px] h-[200px] flex flex-col justify-center gap-4 py-3 bg-[#F8F8F8] rounded-lg text-[#555555] text-[14px]">
           {matchingData.map((item, idx) => (
             <>
               <div key={idx} className="people-info flex justify-center gap-20">
@@ -294,7 +309,7 @@ export default function CheckPlace() {
                 <Check
                   id={item[1].nickName + `check`}
                   width="25px"
-                  className="check hidden"
+                  className="check hidden text-[#FF6445]"
                 />
                 <p>{item[1].nickName}</p>
                 <p>{item[1].place[0].name}</p>
@@ -312,12 +327,16 @@ export default function CheckPlace() {
             </>
           ))}
         </div>
-        <p>
-          {minutes}:{second}
-        </p>
-        <div className="check-container flex flex-row justify-center gap-20">
-          <button onClick={handleDisAgree}>거절</button>
-          <button onClick={handleAgree}>동의</button>
+        <div className="check-container flex flex-col justify-center ">
+          <button
+            onClick={handleAgree}
+            className="w-[200px] pt-1 pb-[6px] bg-[#A2A2A2] rounded-lg text-white text-[16px] mt-4 mb-3 hover:bg-[#FF6445]"
+          >
+            모든 장소에 대해 동의
+          </button>
+          <button onClick={handleDisAgree} className="text-[14px]">
+            매칭취소
+          </button>
         </div>
       </div>
     </>
