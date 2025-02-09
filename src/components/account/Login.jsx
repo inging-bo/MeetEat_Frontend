@@ -9,11 +9,10 @@ import axios from "axios";
 import OneBtnModal from "../common/OneBtnModal.jsx";
 
 export default function Login() {
-
   // 이메일 패스워드 값 유무 확인 용
-  const [emailInput, setEmailInput] = useState("")
-  const [pwInput, setPwInput] = useState("")
-  const [hasValue, setHasValue] = useState(false)
+  const [emailInput, setEmailInput] = useState("");
+  const [pwInput, setPwInput] = useState("");
+  const [hasValue, setHasValue] = useState(false);
 
   // input필드 관찰
   const emailChange = (e) => setEmailInput(e.target.value);
@@ -69,8 +68,7 @@ export default function Login() {
       console.error("로그인 요청 실패:", error);
 
       setMessage(
-        error.response?.data?.message ||
-        "로그인 요청 중 오류가 발생했습니다."
+        error.response?.data?.message || "로그인 요청 중 오류가 발생했습니다."
       );
     }
   };
@@ -83,7 +81,7 @@ export default function Login() {
   // ✅ 서비스별 로그인 URL 설정
   const OAUTH_PROVIDERS = {
     kakao: {
-      clientId: import.meta.env.VITE_APP_RESTAPI_KEY,
+      clientId: import.meta.env.VITE_APP_KAKAO_REST_KEY,
       authUrl: "https://kauth.kakao.com/oauth/authorize",
       redirectUri: "http://localhost:5173/account",
       state: "", // 카카오는 state가 필요 없음
@@ -128,7 +126,9 @@ export default function Login() {
     }
 
     // 어떤 제공자인지 확인
-    const provider = window.location.search.includes("state") ? "naver" : "kakao";
+    const provider = window.location.search.includes("state")
+      ? "naver"
+      : "kakao";
 
     try {
       const response = await axios.post(`/users/signin/${provider}`, { code });
@@ -155,26 +155,35 @@ export default function Login() {
   return (
     <form className="flex w-96 justify-center items-center">
       {/* OneBtnModal 표시*/}
-      {isModalOpen && <OneBtnModal type={modalType} onClose={closeModal}/>}
+      {isModalOpen && <OneBtnModal type={modalType} onClose={closeModal} />}
       <div className="flex flex-1 flex-col gap-3 justify-center">
         <h1 className="flex justify-center h-8 mb-8">
-          <Link to={"/"}><HeaderLogo className="h-full w-full"/></Link>
+          <Link to={"/"}>
+            <HeaderLogo className="h-full w-full" />
+          </Link>
         </h1>
         {/* 이메일 형식일 때 통과 하도록 적기 */}
         <div className="flex flex-col items-start">
-          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">이메일</span>
+          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
+            이메일
+          </span>
           <input
             type="email"
             name="email"
             className="w-full h-11 outline-0 px-2 border-b border-gray-300"
             value={emailInput}
             onChange={emailChange}
-            placeholder="email@example.com" required
+            placeholder="email@example.com"
+            required
           />
-          <span className="text-sm text-[#FF0000] mt-2 h-5">{!emailRegex.test(emailInput) && "이메일 형식이 아닙니다."}</span>
+          <span className="text-sm text-[#FF0000] mt-2 h-5">
+            {!emailRegex.test(emailInput) && "이메일 형식이 아닙니다."}
+          </span>
         </div>
         <div className="relative flex flex-col items-start">
-          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">비밀번호</span>
+          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
+            비밀번호
+          </span>
           <label className="relative w-full">
             <input
               type={showPW ? "text" : "password"}
@@ -182,14 +191,17 @@ export default function Login() {
               className="w-full h-11 outline-0 border-b px-2 border-gray-300"
               value={pwInput}
               onChange={pwChange}
-              placeholder="비밀번호를 입력해주세요" required
+              placeholder="비밀번호를 입력해주세요"
+              required
             />
-            <div className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
-                 onClick={togglePW}>
+            <div
+              className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
+              onClick={togglePW}
+            >
               {showPW ? (
-                <ShowPWIcon className="w-full h-full"/>
+                <ShowPWIcon className="w-full h-full" />
               ) : (
-                <HidePWIcon className="w-full h-full"/>
+                <HidePWIcon className="w-full h-full" />
               )}
             </div>
           </label>
@@ -204,19 +216,25 @@ export default function Login() {
           로그인
         </button>
         <div className="flex gap-3 justify-center text-xs">
-          <Link to="/account/signup"
-                className="border-b-2 text-base text-gray-400 border-transparent hover:text-gray-600 hover:border-gray-400">
+          <Link
+            to="/account/signup"
+            className="border-b-2 text-base text-gray-400 border-transparent hover:text-gray-600 hover:border-gray-400"
+          >
             회원이 아니신가요?
           </Link>
         </div>
         <p className="text-sm mt-5">SNS 간편 로그인</p>
         <div className="flex h-14 justify-center gap-4">
-          <button onClick={(e) => handleOAuthLogin("naver", e)}><NaverIcon className="w-full h-full"/></button>
-          <button onClick={(e) => handleOAuthLogin("kakao", e)}><KakaoIcon className="w-full h-full"/></button>
+          <button onClick={(e) => handleOAuthLogin("naver", e)}>
+            <NaverIcon className="w-full h-full" />
+          </button>
+          <button onClick={(e) => handleOAuthLogin("kakao", e)}>
+            <KakaoIcon className="w-full h-full" />
+          </button>
         </div>
         {/* 에러 메시지 표시 */}
         <p className="text-sm text-[#FF0000] mt-2 min-h-5">{message}</p>
       </div>
     </form>
-  )
+  );
 }
