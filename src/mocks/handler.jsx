@@ -10,6 +10,8 @@ import signUpSuccess from "./login/signUpSuccess.json";
 import signInSuccess from "./login/signInSuccess.json";
 import profile from "./mypage/profile.json";
 import restReviewList from "./rests/restReviewList.json";
+import restList from "./rests/restList.json";
+import restDetailViewList from "./rests/restDetailView.json";
 
 const matching = new Map();
 const userListDB = [...userList];
@@ -294,8 +296,8 @@ export const handlers = [
 
     return HttpResponse.json(profile, { status: 200 });
   }),
-
-
+  
+  // 식당 리뷰 조회
   http.post("/restaurants/review", async ({ request }) => {
     try {
       const { matchingHistoryId, restaurantId, starRate, description, imgs } =
@@ -325,6 +327,59 @@ export const handlers = [
     } catch (e) {
       return HttpResponse.json(
         { message: "서버에 오류발생 어쩌구" },
+        { status: 500 }
+      );
+    }
+  }),
+
+  // 식당 조회
+  http.post("/restaurants/search", async ({ request }) => {
+    try {
+      const {
+        region,
+        categoryName,
+        placeName,
+        userY,
+        userX,
+        sorted,
+        page,
+        size,
+      } = await request.json();
+      if (
+        !region ||
+        !categoryName ||
+        !userY ||
+        !userX ||
+        !sorted ||
+        !page ||
+        !size
+      ) {
+        return HttpResponse.json(
+          { message: "입력 형식이 유효하지 않습니다." },
+          { status: 400 }
+        );
+      }
+      return HttpResponse.json(restList, { status: 200 });
+    } catch (e) {
+      return HttpResponse.json(
+        { message: "서버에 오류발생 어쩌구" },
+        { status: 500 }
+      );
+    }
+  }),
+
+  // 식당 상세 조회
+  http.get("/restaurants", ({ request }) => {
+    try {
+      const url = new URL(request.url);
+      const productId = url.searchParams.get("restaurantId");
+      console.log(productId);
+      // 성공 응답
+      return HttpResponse.json(restDetailViewList[productId], { status: 200 });
+    } catch (error) {
+      console.error("OAuth 로그인 처리 중 오류 발생:", error);
+      return HttpResponse.json(
+        { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
         { status: 500 }
       );
     }

@@ -1,22 +1,149 @@
-[
-  {
-    "region": "서울",
-    "categoryName": "한식",
-    "placeName": "국밥",
-    "userX": "129.3487781",
-    "userY": "35.6424539",
-    "sorted": "DEFAULT",
-    "page": "1",
-    "size:": "10"
+{
+  "content": [
+    {
+      "id": "1",
+      "kakaomaps_id": "카카오맵스아이디",
+      "place_name": "에버그릭",
+      "phone": "식당전화번호",
+      "y": "위도",
+      "x": "경도",
+      "address_name": "지번 주소",
+      "road_address_name": "서울 관악구 은천로 178 1층",
+      "category_name": "카테고리 그룹명",
+      "rating": "3"
+    },
+    {
+      "id": "2",
+      "kakaomaps_id": "카카오맵스아이디",
+      "place_name": "미자네",
+      "phone": "식당전화번호",
+      "y": "위도",
+      "x": "경도",
+      "address_name": "지번 주소",
+      "road_address_name": "서울 관악구 신림로 59길 14 원조민속 순대타운 3층 31 7호, 318호",
+      "category_name": "카테고리 그룹명",
+      "rating": "4.5"
+    },
+    {
+      "id": "3",
+      "kakaomaps_id": "카카오맵스아이디",
+      "place_name": "정남옥 서울대입구점",
+      "phone": "식당전화번호",
+      "y": "위도",
+      "x": "경도",
+      "address_name": "지번 주소",
+      "road_address_name": "서울 관악구 관악로 148 1층",
+      "category_name": "카테고리 그룹명",
+      "rating": "4"
+    },
+    {
+      "id": "4",
+      "kakaomaps_id": "카카오맵스아이디",
+      "place_name": "아우네장터순대국 봉천점",
+      "phone": "식당전화번호",
+      "y": "위도",
+      "x": "경도",
+      "address_name": "지번 주소",
+      "road_address_name": "서울 관악구 봉천로 490",
+      "category_name": "카테고리 그룹명",
+      "rating": "5"
+    },
+    {
+      "id": "5",
+      "kakaomaps_id": "카카오맵스아이디",
+      "place_name": "완산정",
+      "phone": "식당전화번호",
+      "y": "위도",
+      "x": "경도",
+      "address_name": "지번 주소",
+      "road_address_name": "서울 관악구 봉천로 484 2층",
+      "category_name": "카테고리 그룹명",
+      "rating": "4.2"
+    },
+    {
+      "id": "6",
+      "kakaomaps_id": "카카오맵스아이디",
+      "place_name": "제주국수임당 본점",
+      "phone": "식당전화번호",
+      "y": "위도",
+      "x": "경도",
+      "address_name": "지번 주소",
+      "road_address_name": "서울 관악구 관악로12길 5 2층",
+      "category_name": "카테고리 그룹명",
+      "rating": "4"
+    },
+    {
+      "id": "7",
+      "kakaomaps_id": "카카오맵스아이디",
+      "place_name": "식당이름",
+      "phone": "식당전화번호",
+      "y": "위도",
+      "x": "경도",
+      "address_name": "지번 주소",
+      "road_address_name": "도로명 주소",
+      "category_name": "카테고리 그룹명",
+      "rating": "4.3"
+    },
+    {
+      "id": "8",
+      "kakaomaps_id": "카카오맵스아이디",
+      "place_name": "식당이름",
+      "phone": "식당전화번호",
+      "y": "위도",
+      "x": "경도",
+      "address_name": "지번 주소",
+      "road_address_name": "도로명 주소",
+      "category_name": "카테고리 그룹명",
+      "rating": "3.3"
+    },
+    {
+      "id": "9",
+      "kakaomaps_id": "카카오맵스아이디",
+      "place_name": "식당이름",
+      "phone": "식당전화번호",
+      "y": "위도",
+      "x": "경도",
+      "address_name": "지번 주소",
+      "road_address_name": "도로명 주소",
+      "category_name": "카테고리 그룹명",
+      "rating": "3.2"
+    },
+    {
+      "id": "10",
+      "kakaomaps_id": "카카오맵스아이디",
+      "place_name": "식당이름",
+      "phone": "식당전화번호",
+      "y": "위도",
+      "x": "경도",
+      "address_name": "지번 주소",
+      "road_address_name": "도로명 주소",
+      "category_name": "카테고리 그룹명",
+      "rating": "4"
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 20,
+    "sort": {
+      "empty": false,
+      "sorted": true,
+      "unsorted": false
+    },
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
   },
-  {
-    "region": "서울",
-    "categoryName": "한식",
-    "placeName": "국밥",
-    "userX": "129.3487781",
-    "userY": "35.6424539",
-    "sorted": "DEFAULT",
-    "page": "1",
-    "size:": "10"
-  }
-]
+  "last": false,
+  "totalPages": 2,
+  "totalElements": 24,
+  "first": true,
+  "size": 20,
+  "number": 0,
+  "sort": {
+    "empty": false,
+    "sorted": true,
+    "unsorted": false
+  },
+  "numberOfElements": 20,
+  "empty": false
+}
