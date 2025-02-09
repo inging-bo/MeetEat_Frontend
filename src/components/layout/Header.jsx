@@ -22,6 +22,7 @@ export default function Header() {
       window.removeEventListener("storage", checkLoginStatus); // 클린업
     };
   }, []);
+
   return (
     <header className="fixed top-0 shadow-lg w-full z-50 flex justify-center min-h-[77px] bg-white">
       <div className="flex w-full justify-between max-w-screen-xl">

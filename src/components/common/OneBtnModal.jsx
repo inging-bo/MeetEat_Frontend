@@ -96,15 +96,30 @@ export default function OneBtnModal({ type, onClose }) {
   }
   const logOut = async () => {
     try {
-      const response = await axios.post("/users/signout", {
-        accessToken: "",
-      });
-      console.log("로그인 응답 데이터:", response.data);
+      const accessToken = window.localStorage.getItem("accessToken"); // 저장된 토큰 가져오기
+
+      if (!accessToken) {
+        console.error("로그아웃 요청 실패: 토큰이 없습니다.");
+        return;
+      }
+
+      const response = await axios.post(
+        "/users/signout",
+        {}, // 본문 필요 없음
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 추가
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("로그아웃 응답 데이터:", response.data);
 
       // 토큰값 제거
       window.localStorage.removeItem("accessToken"); // accessToken 삭제
-      navigate("/")
-      onClose()
+      navigate("/");
+      onClose();
     } catch (error) {
       console.error("로그아웃 요청 실패!:", error);
     }
