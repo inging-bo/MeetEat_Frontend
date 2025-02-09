@@ -8,9 +8,11 @@ import agreeUser4 from "./matching/agreeUser4.json";
 import userList from "./login/userList.json";
 import signUpSuccess from "./login/signUpSuccess.json";
 import signInSuccess from "./login/signInSuccess.json";
+import restReviewList from "./rests/restReviewList.json";
 
 const matching = new Map();
 const userListDB = [...userList];
+const reviewList = [...restReviewList];
 
 export const handlers = [
   // 처음에 구글, cdn등의 경고가 뜨는걸 막기위해 해당 응답들에대한 지연추가
@@ -260,6 +262,40 @@ export const handlers = [
     } catch (error) {
       return HttpResponse.json(
         "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+        { status: 500 }
+      );
+    }
+  }),
+
+  http.post("/restaurants/review", async ({ request }) => {
+    try {
+      const { matchingHistoryId, restaurantId, starRate, description, imgs } =
+        await request.json();
+      if (!matchingHistoryId || !restaurantId || !starRate || !description) {
+        return HttpResponse.json(
+          { message: "입력 형식이 유효하지 않습니다." },
+          { status: 400 }
+        );
+      }
+      const newReview = {
+        matchingHistoryId,
+        restaurantId,
+        starRate,
+        description,
+        imgs,
+      };
+      reviewList.push(newReview);
+      console.log(reviewList);
+
+      return HttpResponse.json(
+        {
+          message: "성공적으로 업로드 어쩌구",
+        },
+        { status: 200 }
+      );
+    } catch (e) {
+      return HttpResponse.json(
+        { message: "서버에 오류발생 어쩌구" },
         { status: 500 }
       );
     }

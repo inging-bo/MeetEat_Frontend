@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import EmptyStar from "../../assets/empty-star.svg?react";
 import FullStar from "../../assets/full-star.svg?react";
 export default function WriteReview() {
@@ -14,8 +16,9 @@ export default function WriteReview() {
       imageUrlLists.push(currentImageUrl);
     }
 
-    if (imageUrlLists.length > 10) {
-      imageUrlLists = imageUrlLists.slice(0, 10);
+    if (imageUrlLists.length > 7) {
+      imageUrlLists = imageUrlLists.slice(0, 7);
+      alert("사진은 최대 7장까지 첨부 가능합니다.");
     }
     setImageList(imageUrlLists);
   };
@@ -43,6 +46,42 @@ export default function WriteReview() {
     return result;
   };
 
+  const navigate = useNavigate();
+  const handleWriteNext = () => {
+    alert("해당 리뷰는 마이페이지에서 다시 작성하실 수 있습니다.");
+    window.sessionStorage.removeItem("isCompleted");
+    window.sessionStorage.removeItem("isMatched");
+    window.sessionStorage.removeItem("matchedData");
+    navigate("/");
+  };
+
+  const handleWriteComplete = () => {
+    const jsonCurData = JSON.parse(
+      window.sessionStorage.getItem("matchedData")
+    ).data;
+    const matchedId = Object.entries(jsonCurData)[2][1];
+    const restId = Object.entries(jsonCurData)[3][1].restaurant.id;
+    const textareaValue = document.getElementById("textarea").value;
+    apiRestReviewWrite(matchedId, restId, textareaValue);
+  };
+
+  async function apiRestReviewWrite(matchedId, restId, textareaValue) {
+    await axios
+      .post("/restaurants/review", {
+        matchingHistoryId: matchedId,
+        restaurantId: restId,
+        starRate: starScore,
+        description: textareaValue,
+        imgs: imageList,
+      })
+      .then(() => {
+        alert("작성 완료되었습니다.");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   return (
     <>
       <div className="h-fit">
@@ -55,7 +94,8 @@ export default function WriteReview() {
         </div>
         <div className="flex flex-col items-end gap-5 my-10">
           <textarea
-            className="w-full h-[150px]"
+            id="textarea"
+            className="w-full h-[150px] resize-none border-none"
             placeholder="방문후기를 작성해주세요
 다른 사용자들의 식당 선정시 도움이 됩니다"
           ></textarea>
@@ -63,7 +103,7 @@ export default function WriteReview() {
         <hr className="pb-2" />
 
         <div className="img-container flex flex-row gap-3 w-[500px] relative">
-          <label htmlFor="inputFile" onChange={handleAddImages}>
+          <label htmlFor="inputFile">
             <div className="w-[100px] h-[100px] content-center bg-[#81be67] text-white p-2 px-4 rounded-lg">
               사진 선택
             </div>
@@ -71,7 +111,7 @@ export default function WriteReview() {
               id="inputFile"
               type="file"
               multiple
-              accept="image/*"
+              accept="image/jpg,image/jpeg,image/png,image/raw,image/heic,image/heif"
               className="hidden"
               onChange={handleAddImages}
             />
@@ -94,10 +134,16 @@ export default function WriteReview() {
           </div>
         </div>
         <div className="flex flex-row pt-2 justify-between w-full">
-          <button className="w-[47%] p-2 bg-[#81be67] text-white rounded-lg">
+          <button
+            onClick={handleWriteNext}
+            className="w-[47%] p-2 bg-[#81be67] text-white rounded-lg"
+          >
             다음에 작성하기
           </button>
-          <button className="w-[47%] p-2 bg-[#81be67] text-white rounded-lg">
+          <button
+            onClick={handleWriteComplete}
+            className="w-[47%] p-2 bg-[#81be67] text-white rounded-lg"
+          >
             작성완료
           </button>
         </div>
