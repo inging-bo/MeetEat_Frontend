@@ -8,11 +8,13 @@ import agreeUser4 from "./matching/agreeUser4.json";
 import userList from "./login/userList.json";
 import signUpSuccess from "./login/signUpSuccess.json";
 import signInSuccess from "./login/signInSuccess.json";
+import profile from "./mypage/profile.json";
 import restReviewList from "./rests/restReviewList.json";
 
 const matching = new Map();
 const userListDB = [...userList];
 const reviewList = [...restReviewList];
+let profileData = { ...profile }; // profile을 객체로 유지
 
 export const handlers = [
   // 처음에 구글, cdn등의 경고가 뜨는걸 막기위해 해당 응답들에대한 지연추가
@@ -249,23 +251,50 @@ export const handlers = [
   // 로그아웃 요청
   http.post("/users/signout", async ({ request }) => {
     try {
-      const { isToken } = await request.json();
-      console.log("로그아웃 요청 - 전달된 토큰:", isToken);
+      // Authorization 헤더에서 Bearer 토큰 추출
+      const authHeader = request.headers.get("Authorization");
 
-      // 클라이언트가 요청한 토큰을 검사하는 로직이 필요할 경우 여기에 추가 가능
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return HttpResponse.json(
+          { message: "토큰이 없거나 잘못된 형식입니다." },
+          { status: 401 }
+        );
+      }
 
-      // 성공 응답 (accessToken 삭제)
+      const accessToken = authHeader.split(" ")[1]; // "Bearer TOKEN_VALUE" → TOKEN_VALUE
+      console.log("로그아웃 요청 - 전달된 토큰:", accessToken);
+
+      // 여기에서 토큰 유효성을 검증하는 로직을 추가할 수도 있음
+      // 예: 만료된 토큰인지 확인, 블랙리스트에 추가 등
+
       return HttpResponse.json(
-        { message: "로그아웃 성공" }, // 불필요한 데이터 제거
+        { message: "로그아웃 성공" },
         { status: 200 }
       );
     } catch (error) {
       return HttpResponse.json(
-        "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+        { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
         { status: 500 }
       );
     }
   }),
+
+  // 프로필 조회
+  http.get("/users/profile", () => {
+    return HttpResponse.json(profile, { status: 200 });
+  }),
+  // 프로필 업데이트 (닉네임 또는 소개 수정)
+  http.put("/users/profile", async ({ request }) => {
+    const body = await request.json(); // 요청 바디 데이터 가져오기
+
+    // 기존 profile 객체를 업데이트
+    profileData = { ...profile, ...body };
+
+    console.log(profileData)
+
+    return HttpResponse.json(profile, { status: 200 });
+  }),
+
 
   http.post("/restaurants/review", async ({ request }) => {
     try {

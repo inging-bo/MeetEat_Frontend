@@ -24,15 +24,14 @@ export default function router() {
       <Route path="/matching/complete/:id" element={<MatchingComplete />} />
       <Route path="/account" element={<Account />} />
       <Route path="/account/signup" element={<SignUp />} />
-      {/*<Route path="/mypage/:id" element={<MyPage />} />*/}
-      <Route path="/mypage" element={<MyPage />} />
+      <Route path="/mypage/" element={<MyPage />} />
+      <Route path="/mypage/:id" element={<MyPage />} />
       <Route path="/mypage/changepw" element={<ChangePW />} />
       <Route path="/mypage/deleteid" element={<DeleteID />} />
       <Route path="/successnotice" element={<SuccessNotice />} />
       <Route path="/openchat" element={<OpenChat />} />
       <Route path="/meeteatdb" element={<MeeteatDb />} />
       <Route path="/rests/write/:id" element={<WriteReview />} />
-      <Route path="/meeteatdb" element={<MeeteatDb />} />
     </Routes>
   );
 }
