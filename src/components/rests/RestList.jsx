@@ -14,26 +14,6 @@ export default function RestList() {
     apiPOSTRestsLists();
   }, []);
 
-  async function apiPOSTRestsLists() {
-    await axios
-      .post("/restaurants/search", {
-        region: "서울",
-        categoryName: "전체",
-        placeName: "",
-        userY: "위도",
-        userX: "경도",
-        sorted: "DEFAULT",
-        page: "1",
-        size: "10",
-      })
-      .then((res) => {
-        setRestaurants(res.data.content);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
   const [searchFilter, setSearchFilter] = useState("");
 
   const openSearchFilter = (filter) => {
@@ -82,13 +62,49 @@ export default function RestList() {
         );
     }
   };
-  // ✅ 상세조회 모달 관련
+
   const [restViewModal, setRestViewModal] = useState(false);
   const [pickedRest, setPickedRest] = useState("");
+  const [star, setStar] = useState(new Array(5).fill(false));
+
   const RestViewToggle = (rest) => {
-    apiPOSTRestDetailView(rest.id);
+    setStar(new Array(5).fill(false));
+    if (!restViewModal) {
+      let temp = [...star];
+      for (let i = 0; i < 5; i++) {
+        if (rest.rating >= i + 1) {
+          temp[i] = true;
+        }
+        console.log(temp);
+        setStar(temp);
+      }
+      apiPOSTRestDetailView(rest.id - 1);
+    }
     setRestViewModal(!restViewModal);
   };
+
+  //////////////////////////////////////////////////
+  // 임시함수
+  //////////////////////////////////////////////////
+  async function apiPOSTRestsLists() {
+    await axios
+      .post("/restaurants/search", {
+        region: "서울",
+        categoryName: "전체",
+        placeName: "",
+        userY: "위도",
+        userX: "경도",
+        sorted: "DEFAULT",
+        page: "1",
+        size: "10",
+      })
+      .then((res) => {
+        setRestaurants(res.data.content);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   async function apiPOSTRestDetailView(restId) {
     await axios
@@ -157,7 +173,7 @@ export default function RestList() {
           </ul>
         </div>
         <ul className="grid grid-cols-[380px_380px_380px] grid-rows-2 gap-7">
-          {restaurants.map((rest, idx) => (
+          {restaurants.map((rest) => (
             <>
               <li
                 key={rest.id}
@@ -197,7 +213,7 @@ export default function RestList() {
         </ul>
       </div>
       {restViewModal && (
-        <RestView close={RestViewToggle} pickedRest={pickedRest} />
+        <RestView close={RestViewToggle} pickedRest={pickedRest} star={star} />
       )}
     </>
   );
