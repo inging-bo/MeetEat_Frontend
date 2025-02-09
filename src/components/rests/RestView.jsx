@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import FullStar from "../../assets/full-star.svg?react";
 import Cancel from "../../assets/cancel-icon.svg?react";
@@ -6,25 +5,11 @@ import Logo from "../../assets/header-logo.svg?react";
 
 export default function RestView({ close, pickedRest, star }) {
   const center = { lat: pickedRest.x, lng: pickedRest.y };
-  // 스크롤방지
-  useEffect(() => {
-    console.log(pickedRest);
-    document.body.style.cssText = `
-      position: fixed;
-      top: -${window.scrollY}px;
-      overflow-y: scroll;
-      width: 100%;`;
-    return () => {
-      const scrollY = document.body.style.top;
-      document.body.style.cssText = "";
-      window.scrollTo(0, parseInt(scrollY || "0", 10) * -1);
-    };
-  }, []);
 
   return (
     <>
-      <div className="bg-black/[0.1] absolute top-0 left-0 w-full h-full z-50 overflow-hidden"></div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex bg-white p-8 rounded-lg w-[1024px] max-lg:w-full h-[664px] overflow-hidden z-50">
+      <div className="bg-black/[0.1] fixed top-0 left-0 w-screen h-screen z-50 overflow-hidden"></div>
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex bg-white p-8 rounded-lg w-[1024px] max-lg:w-full h-[664px] overflow-hidden z-50">
         <div className="flex flex-col gap-5 items-start max-w-[340px]">
           <div className="w-[340px] h-[200px] bg-gray-300 rounded-lg text-left content-center justify-items-center">
             {pickedRest.imgUrl ? (

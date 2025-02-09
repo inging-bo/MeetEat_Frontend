@@ -1,6 +1,7 @@
 import SearchIcon from "../../assets/search.svg?react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useInView } from "react-intersection-observer";
 import Arrow from "../../assets/updown-arrow-icon.svg?react";
 import FullStar from "../../assets/full-star.svg?react";
 import Logo from "../../assets/header-logo.svg?react";
@@ -66,7 +67,20 @@ export default function RestList() {
   const [restViewModal, setRestViewModal] = useState(false);
   const [pickedRest, setPickedRest] = useState("");
   const [star, setStar] = useState(new Array(5).fill(false));
-
+  useEffect(() => {
+    if (restViewModal) {
+      document.body.style.cssText = `
+          position: fixed;
+          top: -${window.scrollY}px;
+          overflow-y: scroll;
+          width: 100%;`;
+      return () => {
+        const scrollY = document.body.style.top;
+        document.body.style.cssText = "";
+        window.scrollTo(0, parseInt(scrollY || "0", 10) * -1);
+      };
+    }
+  }, [restViewModal]);
   const RestViewToggle = (rest) => {
     setStar(new Array(5).fill(false));
     if (!restViewModal) {
@@ -75,13 +89,40 @@ export default function RestList() {
         if (rest.rating >= i + 1) {
           temp[i] = true;
         }
-        console.log(temp);
         setStar(temp);
       }
       apiPOSTRestDetailView(rest.id - 1);
     }
     setRestViewModal(!restViewModal);
   };
+
+  // 무한스크롤
+  //   const [page, setPage] = useState("0");
+  //   const VoteList = () => {
+  //     const { ref, inView } = useInView({
+  //       threshold: 0.5,
+  //     });
+  //     const resetStickerInfoState = useResetRecoilState(stickerResultState);
+  //     // ✅ useSWRInfinite 를 사용하여 list 가져오기
+  //     const { voteListResult, isLoading, isError, size, setSize } = useGetCurrentVoteList();
+  //     const { userInfo } = useGetUserData();
+
+  //     const getMoreItem = useCallback(() => {
+  //       if (voteListResult && voteListResult.result) {
+  //         setSize((prev) => prev + 1);
+  //       }
+  //     }, [voteListResult, setSize]);
+
+  //     useEffect(() => {
+  //       resetStickerInfoState();
+  //     }, []);
+
+  //     useEffect(() => {
+  //     // ✅ inView 가 true 일때 리스트를 업데~이트
+  //       if (inView && voteListResult?.result) {
+  //         getMoreItem();
+  //       }
+  //     }, [inView]);
 
   //////////////////////////////////////////////////
   // 임시함수
@@ -95,8 +136,8 @@ export default function RestList() {
         userY: "위도",
         userX: "경도",
         sorted: "DEFAULT",
-        page: "1",
-        size: "10",
+        page: "0",
+        size: "20",
       })
       .then((res) => {
         setRestaurants(res.data.content);
