@@ -3,7 +3,6 @@ import HeaderLogo from "../../assets/header-logo.svg?react";
 import { useState, useEffect } from "react";
 
 export default function Header() {
-
   // ✅ 회원가입 버튼 클릭 시 동작
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -24,18 +23,21 @@ export default function Header() {
     };
   }, []);
   return (
-    <header className="fixed top-0 shadow-lg w-full z-50 flex justify-center h-16">
+    <header className="fixed top-0 shadow-lg w-full z-50 flex justify-center h-[77px]">
       <div className="flex w-full justify-between max-w-screen-xl">
         <div>
           <Link to="/" className="h-full px-4 flex items-center">
-            <HeaderLogo/>
+            <HeaderLogo />
           </Link>
         </div>
 
         {/* 로그인 or 마이 페이지 */}
         <div>
           {isLoggedIn ? (
-            <Link to="/mypage" className="h-full px-4 flex items-center cursor-pointer">
+            <Link
+              to="/mypage"
+              className="h-full px-4 flex items-center cursor-pointer"
+            >
               마이페이지
             </Link>
           ) : (
