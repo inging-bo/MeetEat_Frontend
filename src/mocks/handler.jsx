@@ -11,6 +11,8 @@ import signInSuccess from "./login/signInSuccess.json";
 import profile from "./mypage/profile.json";
 import restReviewList from "./rests/restReviewList.json";
 import restList from "./rests/restList.json";
+import restList2 from "./rests/restList2.json";
+import restList3 from "./rests/restList3.json";
 import restDetailViewList from "./rests/restDetailView.json";
 
 const matching = new Map();
@@ -269,10 +271,7 @@ export const handlers = [
       // 여기에서 토큰 유효성을 검증하는 로직을 추가할 수도 있음
       // 예: 만료된 토큰인지 확인, 블랙리스트에 추가 등
 
-      return HttpResponse.json(
-        { message: "로그아웃 성공" },
-        { status: 200 }
-      );
+      return HttpResponse.json({ message: "로그아웃 성공" }, { status: 200 });
     } catch (error) {
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
@@ -292,11 +291,11 @@ export const handlers = [
     // 기존 profile 객체를 업데이트
     profileData = { ...profile, ...body };
 
-    console.log(profileData)
+    console.log(profileData);
 
     return HttpResponse.json(profile, { status: 200 });
   }),
-  
+
   // 식당 리뷰 조회
   http.post("/restaurants/review", async ({ request }) => {
     try {
@@ -359,7 +358,15 @@ export const handlers = [
           { status: 400 }
         );
       }
-      return HttpResponse.json(restList, { status: 200 });
+
+      if (page === "0") return HttpResponse.json(restList, { status: 200 });
+      if (page === "1") return HttpResponse.json(restList2, { status: 200 });
+      if (page === "2") return HttpResponse.json(restList3, { status: 200 });
+      else
+        return HttpResponse.json(
+          { message: "잘못된 페이지 번호입니다." },
+          { status: 500 }
+        );
     } catch (e) {
       return HttpResponse.json(
         { message: "서버에 오류발생 어쩌구" },

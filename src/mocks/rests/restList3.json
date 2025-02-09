@@ -1,0 +1,65 @@
+{
+  "content": [
+    {
+      "id": "20",
+      "kakaomaps_id": "카카오맵스아이디",
+      "place_name": "에버그릭",
+      "phone": "식당전화번호",
+      "y": "위도",
+      "x": "경도",
+      "address_name": "지번 주소",
+      "road_address_name": "서울 관악구 은천로 178 1층",
+      "category_name": "카테고리 그룹명",
+      "rating": "3"
+    },
+    {
+      "id": "21",
+      "kakaomaps_id": "카카오맵스아이디",
+      "place_name": "미자네",
+      "phone": "식당전화번호",
+      "y": "위도",
+      "x": "경도",
+      "address_name": "지번 주소",
+      "road_address_name": "서울 관악구 신림로 59길 14 원조민속 순대타운 3층 31 7호, 318호",
+      "category_name": "카테고리 그룹명",
+      "rating": "4.5"
+    },
+    {
+      "id": "22",
+      "kakaomaps_id": "카카오맵스아이디",
+      "place_name": "정남옥 서울대입구점",
+      "phone": "식당전화번호",
+      "y": "위도",
+      "x": "경도",
+      "address_name": "지번 주소",
+      "road_address_name": "서울 관악구 관악로 148 1층",
+      "category_name": "카테고리 그룹명",
+      "rating": "4"
+    }
+  ],
+  "pageable": {
+    "pageNumber": 2,
+    "pageSize": 4,
+    "sort": {
+      "empty": false,
+      "sorted": true,
+      "unsorted": false
+    },
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": true,
+  "totalPages": 3,
+  "totalElements": 44,
+  "first": false,
+  "size": 40,
+  "number": 0,
+  "sort": {
+    "empty": false,
+    "sorted": true,
+    "unsorted": false
+  },
+  "numberOfElements": 4,
+  "empty": false
+}
