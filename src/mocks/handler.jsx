@@ -295,6 +295,39 @@ export const handlers = [
 
     return HttpResponse.json(profile, { status: 200 });
   }),
+  // 비밀번호 변경하기
+  http.post("/users/change-password", async ({ request }) => {
+    try {
+      const { currentPassword, newPassword } = await request.json();
+      // Authorization 헤더에서 Bearer 토큰 추출
+      const authHeader = request.headers.get("Authorization");
+      const accessToken = authHeader.split(" ")[1]; // "Bearer TOKEN_VALUE" → TOKEN_VALUE
+
+      console.log("변경하기 요청 - 전달된 토큰:", accessToken);
+
+      if (!accessToken) {
+        return HttpResponse.json({}, { status: 401 }
+        );
+      }
+
+      // 현재 비밀번호 검증
+      if (currentPassword !== "1234") { // 임시 현재 비밀번호
+        return HttpResponse.json({}, { status: 400 });
+      }
+
+      // 새 비밀번호 유효성 검증
+      if (newPassword.length < 3) {
+        return HttpResponse.json({}, { status: 402 });
+      }
+
+      // 비밀번호 변경 성공 응답
+      return HttpResponse.json({}, { status: 200 });
+
+    } catch (error) {
+      // 오류 응답 반환
+      return HttpResponse.json({}, { status: 500 });
+    }
+  }),
 
   // 식당 리뷰 조회
   http.post("/restaurants/review", async ({ request }) => {

@@ -130,7 +130,7 @@ export default function RestInfo() {
               autoFocus
             />
           ) : (
-            <span className="w-full flex-1 text-left border border-transparent">{introduce}</span>
+            <span className="flex-1 text-left border border-transparent">{introduce}</span>
           )}
           {isEditingIntroduction ? (
             <button className="rounded-md border-2 border-b-gray-300 py-1 px-2" onClick={saveIntroduction}>

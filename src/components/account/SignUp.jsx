@@ -86,87 +86,89 @@ export default function SignUp() {
   };
 
   return (
-    <form
-      className="flex w-96 justify-center items-center">
+    <>
       <Header/>
-      <div className="flex flex-1 flex-col gap-3 justify-center">
-        <h1 className="flex justify-center h-8 mb-8">
-          <Link to={"/"}><HeaderLogo className="h-full w-full"/></Link>
-        </h1>
-        <div className="flex flex-col items-start">
-          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">이메일</span>
-          <input
-            type="email"
-            name="email"
-            className="w-full h-11 outline-0 px-2 border-b border-gray-300"
-            value={emailInput}
-            onChange={emailChange}
-            placeholder="email@example.com" required/>
-          <span className="text-sm text-[#FF0000] mt-2 h-5">{!emailRegex.test(emailInput) && "이메일 형식이 아닙니다"}</span>
-        </div>
-        <div className="relative flex flex-col items-start">
-          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">비밀번호</span>
-          <label className="relative w-full">
+      <form
+        className="flex w-96 justify-center items-center">
+        <div className="flex flex-1 flex-col gap-3 justify-center">
+          <h1 className="flex justify-center h-8 mb-8">
+            <Link to={"/"}><HeaderLogo className="h-full w-full"/></Link>
+          </h1>
+          <div className="flex flex-col items-start">
+            <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">이메일</span>
             <input
-              type={showPW ? "text" : "password"} name="password"
-              className="w-full h-11 outline-0 border-b px-2 border-gray-300"
-              value={pwInput}
-              onChange={pwChange}
-              placeholder="비밀번호를 입력해주세요" required
+              type="email"
+              name="email"
+              className="w-full h-11 outline-0 px-2 border-b border-gray-300"
+              value={emailInput}
+              onChange={emailChange}
+              placeholder="email@example.com" required/>
+            <span className="text-sm text-[#FF0000] mt-2 h-5">{!emailRegex.test(emailInput) && "이메일 형식이 아닙니다"}</span>
+          </div>
+          <div className="relative flex flex-col items-start">
+            <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">비밀번호</span>
+            <label className="relative w-full">
+              <input
+                type={showPW ? "text" : "password"} name="password"
+                className="w-full h-11 outline-0 border-b px-2 border-gray-300"
+                value={pwInput}
+                onChange={pwChange}
+                placeholder="비밀번호를 입력해주세요" required
+              />
+              <div className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
+                   onClick={togglePW}>
+                {showPW ? (
+                  <ShowPWIcon className="w-full h-full"/>
+                ) : (
+                  <HidePWIcon className="w-full h-full"/>
+                )}
+              </div>
+            </label>
+          </div>
+          <div className="relative flex flex-col items-start">
+            <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">비밀번호 확인</span>
+            <label className="relative w-full">
+              <input
+                type={showPWSub ? "text" : "password"} name="password"
+                className="w-full h-11 outline-0 border-b px-2 border-gray-300"
+                value={subPwInput}
+                onChange={subPwChange}
+                placeholder="비밀번호를 입력해주세요" required
+              />
+              <div className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500" onClick={togglePWSub}>
+                {showPWSub ? (
+                  <ShowPWIcon className="w-full h-full"/>
+                ) : (
+                  <HidePWIcon className="w-full h-full"/>
+                )}
+              </div>
+            </label>
+            <span className="text-sm text-[#FF0000] mt-2 h-5">{pwInput !== subPwInput && "비밀번호가 일치하지 않습니다."}</span>
+          </div>
+          <div className="flex flex-col items-start">
+            <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">닉네임</span>
+            <input type="text" name="nickName"
+                   className=" w-full h-11 px-2 outline-0 border-b border-gray-300  after:left-0 after:text-sm after:text-gray-500 after:block after:content-['한글_6자,_영문_12자까지_입력_가능']"
+                   value={nickNameInput}
+                   onChange={nickNameChange}
+                   placeholder="닉네임을 입력해주세요" required
             />
-            <div className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
-                 onClick={togglePW}>
-              {showPW ? (
-                <ShowPWIcon className="w-full h-full"/>
-              ) : (
-                <HidePWIcon className="w-full h-full"/>
-              )}
-            </div>
-          </label>
+          </div>
+          <button
+            type="submit"
+            onClick={(e) => signUp(e, "signUp")}
+            className={`w-full h-11 rounded-md hover:bg-[#FF6445] hover:text-white ${
+              hasValue ? "bg-[#FF6445] text-white" : "bg-gray-200"
+            }`}
+          >
+            회원가입
+          </button>
+          {/* 에러 메시지 표시 */}
+          <p className="text-sm text-[#FF0000] mt-2 min-h-5">{message}</p>
         </div>
-        <div className="relative flex flex-col items-start">
-          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">비밀번호 확인</span>
-          <label className="relative w-full">
-            <input
-              type={showPWSub ? "text" : "password"} name="password"
-              className="w-full h-11 outline-0 border-b px-2 border-gray-300"
-              value={subPwInput}
-              onChange={subPwChange}
-              placeholder="비밀번호를 입력해주세요" required
-            />
-            <div className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500" onClick={togglePWSub}>
-              {showPWSub ? (
-                <ShowPWIcon className="w-full h-full"/>
-              ) : (
-                <HidePWIcon className="w-full h-full"/>
-              )}
-            </div>
-          </label>
-          <span className="text-sm text-[#FF0000] mt-2 h-5">{pwInput !== subPwInput && "비밀번호가 일치하지 않습니다."}</span>
-        </div>
-        <div className="flex flex-col items-start">
-          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">닉네임</span>
-          <input type="text" name="nickName"
-                 className=" w-full h-11 px-2 outline-0 border-b border-gray-300  after:left-0 after:text-sm after:text-gray-500 after:block after:content-['한글_6자,_영문_12자까지_입력_가능']"
-                 value={nickNameInput}
-                 onChange={nickNameChange}
-                 placeholder="닉네임을 입력해주세요" required
-          />
-        </div>
-        <button
-          type="submit"
-          onClick={(e) => signUp(e, "signUp")}
-          className={`w-full h-11 rounded-md hover:bg-[#FF6445] hover:text-white ${
-            hasValue ? "bg-[#FF6445] text-white" : "bg-gray-200"
-          }`}
-        >
-          회원가입
-        </button>
-        {/* 에러 메시지 표시 */}
-        <p className="text-sm text-[#FF0000] mt-2 min-h-5">{message}</p>
-      </div>
-      {/* OneBtnModal 표시*/}
-      {isModalOpen && <OneBtnModal type={modalType} onClose={closeModal}/>}
-    </form>
+        {/* OneBtnModal 표시*/}
+        {isModalOpen && <OneBtnModal type={modalType} onClose={closeModal}/>}
+      </form>
+    </>
   )
 }
