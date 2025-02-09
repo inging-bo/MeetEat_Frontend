@@ -23,7 +23,7 @@ export default function Header() {
     };
   }, []);
   return (
-    <header className="fixed top-0 shadow-lg w-full z-50 flex justify-center h-[77px]">
+    <header className="fixed top-0 shadow-lg w-full z-50 flex justify-center min-h-[77px] bg-white">
       <div className="flex w-full justify-between max-w-screen-xl">
         <div>
           <Link to="/" className="h-full px-4 flex items-center">
