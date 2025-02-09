@@ -1,0 +1,17 @@
+{
+  "recommendations": [
+    "formulahendry.auto-close-tag",
+    "steoates.autoimport",
+    "nucllear.vscode-extension-auto-import",
+    "formulahendry.auto-rename-tag",
+    "streetsidesoftware.code-spell-checker",
+    "bierner.color-info",
+    "anseki.vscode-color",
+    "kamikillerto.vscode-colorize",
+    "pranaygp.vscode-css-peek",
+    "esbenp.prettier-vscode",
+    "csstools.postcss",
+    "xabikos.reactsnippets",
+    "burkeholland.simple-react-snippets"
+  ]
+}
