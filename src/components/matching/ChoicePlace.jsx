@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { StaticMap } from "react-kakao-maps-sdk";
+import CheckTitle from "../../assets/check-title.svg?react";
 
 export default function CheckPlace() {
   const navigate = useNavigate();
@@ -91,9 +93,26 @@ export default function CheckPlace() {
 
   return (
     <>
-      <div className="flex flex-col gap-10">
-        <h1 className="text-2xl">매칭 장소를 선택 중 입니다다.</h1>
-        <div className="people-container w-[750px] flex flex-col gap-20 py-14 bg-slate-300 relative">
+      <div className="bg-map relative w-full h-full">
+        <div className="bg-black/40 absolute w-full h-full z-10"></div>
+        <StaticMap
+          id="map"
+          className="w-full h-full"
+          center={JSON.parse(window.sessionStorage.getItem("tempPosition"))}
+          level={5}
+        />
+      </div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[412px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center py-[40px] will-change-transform">
+        <div className="place-items-center ">
+          <CheckTitle />
+          <p className="text-xl pb-1 pt-[30px] font-semibold">
+            방문할 음식점을 선택하는 중이에요.
+          </p>
+          <p className="text-xl pb-3 font-semibold">
+            {second}초 뒤에 음식점이 공개됩니다!
+          </p>
+        </div>
+        <div className="people-container w-[700px] h-[200px] flex flex-col justify-center gap-4 py-3 bg-[#F8F8F8] rounded-lg text-[#555555] text-[14px] relative">
           {matchingData.map((item) => (
             <>
               <div className="people-info flex justify-center gap-20">
@@ -111,11 +130,8 @@ export default function CheckPlace() {
               </div>
             </>
           ))}
-
-          <div className="pick-border w-[650px] h-[50px] absolute top-[68px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 border border-slate-600 rounded-lg"></div>
+          <div className="pick-border w-[650px] h-[35px] absolute top-[68px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 border border-[#FF6445] rounded-lg"></div>
         </div>
-        <p>5초 후 매칭 결과 확인 페이지로 넘어갑니다</p>
-        <p>{second}</p>
       </div>
     </>
   );

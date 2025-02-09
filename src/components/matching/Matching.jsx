@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Map, Circle } from "react-kakao-maps-sdk";
-import Logo from "../../assets/header-logo.svg?react";
 import ReactLoading from "react-loading";
 import axios from "axios";
 
@@ -13,6 +12,9 @@ export default function Matching({
   number,
 }) {
   const navigate = useNavigate();
+  const categoryName = selectedMarker.category_name.slice(
+    selectedMarker.category_name.lastIndexOf(">") + 2
+  );
 
   useEffect(() => {
     const place = {
@@ -116,6 +118,7 @@ export default function Matching({
   const cancelMatching = () => {
     apiPOSTCancel();
     window.sessionStorage.removeItem("isMatching");
+    window.sessionStorage.removeItem("isMatched");
     setIsMatching(false);
     setIsMatched(false);
     history.go(0);
@@ -124,7 +127,7 @@ export default function Matching({
   return (
     <>
       <div className="bg-map relative w-full h-full">
-        <div className="bg-black opacity-50 absolute w-full h-full z-10"></div>
+        <div className="bg-black/40 absolute w-full h-full z-10"></div>
         <Map className="w-full h-full" id="map" center={position} level={5}>
           <Circle
             center={position}
@@ -137,25 +140,41 @@ export default function Matching({
           />
         </Map>
       </div>
-      <div className="matching-container absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white rounded-lg drop-shadow-2xl z-20">
-        <p className="py-10">현재 00명과 함께 매칭중</p>
-        <div className="info-container absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center gap-7 h-full">
-          <Logo />
+      <div className="matching-container absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] bg-white rounded-lg drop-shadow-2xl z-20">
+        <div className="info-container absolute top-[47%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center gap-4 w-full h-full">
           <ReactLoading
-            type={"bubbles"}
-            color={"#555555"}
-            height={64}
-            width={64}
+            type={"spin"}
+            color={"#FF6445"}
+            height={40}
+            width={40}
           />
-          <p>
-            {selectedMarker.place_name}에서 {number}명과
+          <p className="text-xl font-bold pt-5">
+            {number}명의 인원과 매칭할 수 있는
+            <br /> 주변 사람들을 찾고 있어요
           </p>
-          <p>매칭 가능한 인원을 찾고 있습니다</p>
-          <p>
-            {minutes}:{second}
+          <p className="text-base">
+            남은시간 {minutes}:{second}
           </p>
-          <button onClick={cancelMatching}>매칭취소</button>
+          <div className="bg-[#F8F8F8] w-[310px] h-[90px] rounded-lg">
+            <div className="flex flex-row items-center pt-[12px] pb-[5px] px-[16px] text-left">
+              <p className="max-w-[200px] text-overflow">
+                {selectedMarker.place_name}
+              </p>
+              <p className="max-w-[90px] text-overflow text-[12px] text-[#A2A2A2] pl-2">
+                {categoryName}
+              </p>
+            </div>
+            <p className="text-[#555555] text-left text-[14px] px-[16px]">
+              {selectedMarker.road_address_name}
+            </p>
+          </div>
         </div>
+        <button
+          className="absolute bottom-5 left-1/2 transform -translate-x-1/2 text-[#555555] text-[14px]"
+          onClick={cancelMatching}
+        >
+          매칭취소
+        </button>
       </div>
     </>
   );
