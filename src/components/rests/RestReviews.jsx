@@ -131,7 +131,7 @@ export default function RestReviews() {
   };
 
   return (
-    <div className="flex flex-col gap-8 flex-auto min-w-fit border-2 border-gray-300 rounded-2xl p-8">
+    <div className="flex flex-col gap-8 flex-auto min-w-fit border-2 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl p-8">
       <p className="font-bold text-3xl">매칭 히스토리</p>
       {/* 식당 별 매칭 히스토리 박스*/}
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">

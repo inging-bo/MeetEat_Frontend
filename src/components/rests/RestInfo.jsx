@@ -81,65 +81,69 @@ export default function RestInfo() {
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="flex flex-col max-w-96 min-w-96 flex-1 justify-between border-gray-300 border-2 rounded-2xl p-8">
-      <h1 className="font-bold text-3xl">마이페이지</h1>
+    <div className="flex flex-col w-[380px] max-w-[380px] flex-1 justify-between border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-10">
+      <h1 className="font-bold text-[28px] text-left">마이페이지</h1>
 
       {/* 닉네임 수정 */}
-      <div>
-        <p className="pl-1 py-2 text-2xl text-left border-b-2 border-b-gray-300">닉네임</p>
-        <div className="relative flex gap-2 justify-between items-center text-lg p-2">
+      <div className="flex flex-col gap-2">
+        <div className="text-[15px] flex items-center justify-between">
+          <span>닉네임</span>
+          {isEditingNickname ? (
+            <button className="rounded-md border border-black px-1.5" onClick={saveNickname}>
+              완료
+            </button>
+          ) : (
+            <button className="text-[#909090] rounded-md border border-b-[#909090] px-1.5" onClick={changeNickname}>
+              수정
+            </button>
+          )}
+        </div>
+        <div
+          className="relative flex h-10 justify-between items-center text-[15px] text-left border-b border-b-[#EAEAEA] bg-[#F8F8F8]">
           {isEditingNickname ? (
             <>
               <input
                 type="text"
                 id="nickName"
-                className="relative w-full flex-1 text-left outline-none border border-gray-300 pl-2 py-2 -my-2 rounded-lg"
+                className="flex-1 text-left outline-none pl-2 py-2 bg-inherit rounded-lg"
                 value={nickname}
                 onChange={handleNicknameChange}
                 autoFocus
               />
-              <span className="absolute top-full text-xs text-gray-400">최대 8자리</span>
+              <span className="absolute top-full pt-1 text-xs text-gray-400">최대 8자리만 가능합니다.</span>
             </>
           ) : (
-            <span className="w-full flex-1 text-left border border-transparent">{nickname}</span>
-          )}
-
-          {isEditingNickname ? (
-            <button className="rounded-md border-2 border-b-gray-300 py-1 px-2" onClick={saveNickname}>
-              완료
-            </button>
-          ) : (
-            <button className="rounded-md border-2 border-b-gray-300 py-1 px-2" onClick={changeNickname}>
-              변경
-            </button>
+            <span className="flex-1 pl-2 py-2 text-[#909090]">{nickname}</span>
           )}
         </div>
       </div>
 
       {/* 한 줄 소개 수정 */}
-      <div>
-        <p className="pl-1 py-2 text-2xl text-left border-b-2 border-b-gray-300">한 줄 소개</p>
-        <div className="flex gap-2 justify-between items-center text-lg p-2">
+      <div className="flex flex-col gap-2">
+        <div className="text-[15px] flex items-center justify-between">
+          <span>짧은 소개</span>
+          {isEditingIntroduction ? (
+            <button className="rounded-md border border-black px-1.5" onClick={saveIntroduction}>
+              완료
+            </button>
+          ) : (
+            <button className="text-[#909090] rounded-md border border-b-[#909090] px-1.5" onClick={changeIntroduction}>
+              수정
+            </button>
+          )}
+        </div>
+        <div className="flex h-10 justify-between items-center text-[15px] text-left border-b border-b-[#EAEAEA] bg-[#F8F8F8]">
           {isEditingIntroduction ? (
             <input
               type="text"
               id="introduce"
-              className="w-full flex-1 text-left outline-none border border-gray-300 pl-2 py-2 -my-2 rounded-lg"
+              className="flex-1 outline-none pl-2 py-2 bg-inherit rounded-lg"
               value={introduce}
               onChange={handleIntroductionChange}
               autoFocus
             />
           ) : (
-            <span className="flex-1 text-left border border-transparent">{introduce}</span>
-          )}
-          {isEditingIntroduction ? (
-            <button className="rounded-md border-2 border-b-gray-300 py-1 px-2" onClick={saveIntroduction}>
-              완료
-            </button>
-          ) : (
-            <button className="rounded-md border-2 border-b-gray-300 py-1 px-2" onClick={changeIntroduction}>
-              변경
-            </button>
+            <span className="flex-1 pl-2 py-2 text-[#909090]">{introduce}</span>
           )}
         </div>
       </div>
