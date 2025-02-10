@@ -1,19 +1,20 @@
 import {useNavigate} from "react-router-dom";
+import axios from "axios";
 
 export default function DeleteID() {
 
     const navigate = useNavigate();
     const handleDelete = async () => {
-        navigate("/successnotice", { state: { message: "탈퇴가 완료되었습니다." } });
-        // 1. 서버에 탈퇴 요청을 보냄 (예제 코드, 실제 요청 필요)
-        // const response = await fetch("/api/delete-account", { method: "POST" });
+      try {
+        const response = await axios.delete("/users/withdrawal")
 
-        // if (response.ok) {
-        //     // 2. 탈퇴 성공 시 성공 페이지로 이동
-        //     navigate("/successnotice", { state: { message: "탈퇴가 완료되었습니다." } });
-        // } else {
-        //     alert("탈퇴에 실패했습니다. 다시 시도해주세요.");
-        // }
+        if (response) {
+        navigate("/successnotice", { state: { message: "탈퇴가 완료되었습니다." } });
+        window.localStorage.removeItem("accessToken")
+        }
+      } catch (e) {
+        alert("탈퇴에 실패했습니다. 다시 시도해주세요.");
+      }
     };
 
     return (

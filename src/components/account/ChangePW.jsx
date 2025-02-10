@@ -158,8 +158,9 @@ export default function ChangePW() {
               )}
             </div>
           </label>
-          <spaNewPwInput
-            className="text-sm text-[#FF0000] mt-2 h-5">{newPwInput !== subNewPwInput && "비밀번호가 일치하지 않습니다."}</spaNewPwInput>
+          <div
+            className="text-sm text-[#FF0000] mt-2 h-5">{newPwInput !== subNewPwInput && "비밀번호가 일치하지 않습니다."}
+          </div>
         </div>
         <button
           type="submit"
