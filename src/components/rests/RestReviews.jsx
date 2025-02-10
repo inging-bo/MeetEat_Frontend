@@ -1,86 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import TwoBtnModal from "../common/TwoBtnModal.jsx";
+import axios from "axios";
 
 export default function RestReviews() {
   // ✅ 확인용 방문 히스토리
-  const [visit, setVisit] = useState([
-    {
-      id: 1,
-      place_name: "김밥천국",
-      category_name: "한식",
-      myReview: false,
-      visitors: [
-        { id: "user1", nickname: "철수", report: true, block: true },
-        { id: "user2", nickname: "영희", report: false, block: false },
-        { id: "user3", nickname: "민수", report: false, block: false },
-      ],
-    },
-    {
-      id: 2,
-      place_name: "스타벅스",
-      category_name: "카페",
-      myReview: true,
-      visitors: [
-        { id: "user4", nickname: "지훈", report: true, block: false },
-        { id: "user5", nickname: "수진", report: false, block: true },
-      ],
-    },
-    {
-      id: 3,
-      place_name: "김밥천국",
-      category_name: "한식",
-      myReview: false,
-      visitors: [
-        { id: "user6", nickname: "철수", report: false, block: false },
-        { id: "user7", nickname: "영희", report: false, block: false },
-        { id: "user8", nickname: "민수", report: true, block: false },
-      ],
-    },
-    {
-      id: 4,
-      place_name: "스타벅스",
-      category_name: "카페",
-      myReview: true,
-      visitors: [
-        { id: "user9", nickname: "지훈", report: false, block: false },
-        { id: "user10", nickname: "수진", report: false, block: true },
-      ],
-    },
-    {
-      id: 5,
-      place_name: "김밥천국",
-      category_name: "한식",
-      myReview: false,
-      visitors: [
-        { id: "user11", nickname: "철수", report: true, block: false },
-        { id: "user12", nickname: "영희", report: false, block: false },
-        { id: "user13", nickname: "민수", report: false, block: false },
-      ],
-    },
-    {
-      id: 6,
-      place_name: "스타벅스",
-      category_name: "카페",
-      myReview: true,
-      visitors: [
-        { id: "user14", nickname: "지훈", report: false, block: false },
-        { id: "user15", nickname: "수진", report: false, block: false },
-      ],
-    },
-  ]);
+  const [visit, setVisit] = useState([])
 
-  // 로컬스토리지 사용하지 않아서 주석처리했습니다.
-  // // 로컬 스토리지에 데이터 저장
-  // useEffect(() => {
-  //   localStorage.setItem("restaurantReviews", JSON.stringify(visit));
-  // }, []);
 
-  // // 로컬 스토리지에서 데이터 가져오기
-  // const [restaurantReviews, setRestaurantReviews] = useState(() => {
-  //   const storedData = localStorage.getItem("restaurantReviews");
-  //   return storedData ? JSON.parse(storedData) : [];
-  // });
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get("/restaurants/myreview", {
+          matchingHistoryId: 1,
+        });
+        setVisit(response.data);
+      } catch (error) {
+        console.error("프로필 정보를 가져오는데 실패했습니다", error);
+      }
+    };
+    fetchProfile();
+  }, []); // 🔥 최초 한 번만 실행
 
   // ✅ 신고하기 차단하기 팝오버 창 표시
   // 클릭된 요소의 ID를 관리
@@ -121,30 +61,51 @@ export default function RestReviews() {
     setUserId(id);
   };
 
-  // 수정 부분 확인해주세요.
+  // 수정 을 다시 좀 했습니다.
   const [showOneBtnModal, setShowOneBtnModal] = useState(false);
-  const changeState = (type, id) => {
+
+  const changeState = async (type, id) => {
     let visitIdx = 0;
     let idIdx = 0;
-    let copyArr = visit;
-    visit.map((visitItem, idx) => {
-      [...visitItem.visitors].map((item, itemIndex) => {
+    let copyArr = [...visit]; // ✅ 배열을 복사하여 변경
+
+    visit.forEach((visitItem, idx) => {
+      visitItem.visitors.forEach((item, itemIndex) => {
         if (item.id === id) {
           visitIdx = idx;
           idIdx = itemIndex;
         }
       });
     });
-    if (type === "block" || type === "unBlock") {
-      copyArr[visitIdx].visitors[idIdx].block =
-        !copyArr[visitIdx].visitors[idIdx].block;
-    } else {
-      copyArr[visitIdx].visitors[idIdx].report =
-        !copyArr[visitIdx].visitors[idIdx].report;
+
+    const user = copyArr[visitIdx].visitors[idIdx];
+
+    try {
+      if (type === "block") {
+        const newBlockState = !user.block; // 차단 상태 변경
+        await axios.post(`/ban?bannedId=${id}`); // 차단 요청
+        user.block = newBlockState;
+      } else if (type === "unBlock") {
+        const newBlockState = !user.block; // 차단 해제 상태 변경
+        await axios.delete(`/ban?bannedId=${id}`); // 차단 해제 요청
+        user.block = newBlockState;
+      } else if (type === "report") {
+        const newReportState = !user.report; // 신고 상태 변경
+        await axios.post(`/report?reportedId=${id}`); // 신고 요청
+        user.report = newReportState;
+      } else if (type === "unReport") {
+        const newReportState = !user.report; // 신고 해제 상태 변경
+        await axios.delete(`/report?reportedId=${id}`); // 신고 해제 요청
+        user.report = newReportState;
+      }
+
+      setVisit(copyArr); // ✅ 상태 업데이트
+      setShowOneBtnModal(true);
+    } catch (error) {
+      console.error("서버 요청 실패:", error);
     }
-    setVisit(copyArr);
-    setShowOneBtnModal(true);
   };
+
 
   // ✅ 모달 닫기 함수
   const closeModal = () => {

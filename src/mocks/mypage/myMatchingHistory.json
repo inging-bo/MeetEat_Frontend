@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "place_name": "김밥천국",
+    "category_name": "한식",
+    "myReview": false,
+    "visitors": [
+      { "id": "user1", "nickname": "철수", "report": true, "block": true },
+      { "id": "user2", "nickname": "영희", "report": false, "block": false },
+      { "id": "user3", "nickname": "민수", "report": false, "block": false }
+    ]
+  },
+  {
+    "id": 2,
+    "place_name": "스타벅스",
+    "category_name": "카페",
+    "myReview": true,
+    "visitors": [
+      { "id": "user4", "nickname": "지훈", "report": true, "block": false },
+      { "id": "user5", "nickname": "수진", "report": false, "block": true }
+    ]
+  },
+  {
+    "id": 3,
+    "place_name": "김밥천국",
+    "category_name": "한식",
+    "myReview": false,
+    "visitors": [
+      { "id": "user6", "nickname": "철수", "report": false, "block": false },
+      { "id": "user7", "nickname": "영희", "report": false, "block": false },
+      { "id": "user8", "nickname": "민수", "report": true, "block": false }
+    ]
+  },
+  {
+    "id": 4,
+    "place_name": "스타벅스",
+    "category_name": "카페",
+    "myReview": true,
+    "visitors": [
+      { "id": "user9", "nickname": "지훈", "report": false, "block": false },
+      { "id": "user10", "nickname": "수진", "report": false, "block": true }
+    ]
+  },
+  {
+    "id": 5,
+    "place_name": "김밥천국",
+    "category_name": "한식",
+    "myReview": false,
+    "visitors": [
+      { "id": "user11", "nickname": "철수", "report": true, "block": false },
+      { "id": "user12", "nickname": "영희", "report": false, "block": false },
+      { "id": "user13", "nickname": "민수", "report": false, "block": false }
+    ]
+  },
+  {
+    "id": 6,
+    "place_name": "스타벅스",
+    "category_name": "카페",
+    "myReview": true,
+    "visitors": [
+      { "id": "user14", "nickname": "지훈", "report": false, "block": false },
+      { "id": "user15", "nickname": "수진", "report": false, "block": false }
+    ]
+  }
+]
