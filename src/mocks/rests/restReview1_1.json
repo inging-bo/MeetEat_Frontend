@@ -1,0 +1,130 @@
+{
+  "content": [
+    {
+      "id": "1",
+      "rating": "5",
+      "description": "",
+      "imgUrl": "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F9a0d0869adaeecbefd793a76b9cafcaa95a4e7a1%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F979d220168b2eb0f24dd2f48a2705cc02acb67e0%3Foriginal",
+      "nickname": "홍길동",
+      "createdAt": "2025-02-08 11:11:11"
+    },
+    {
+      "id": "2",
+      "rating": "5",
+      "description": "진짜 그릭요거트 엄청 많이 먹어봤는데 여기 요거트가 산미 별로 없고 딱 원하는 맛이라 맛있게 먹었습니다! 그리고 무화과토핑 완죠니 푸짐하게 주셔서 기분 좋았어요🥹",
+      "imgUrl": "",
+      "nickname": "김철수",
+      "createdAt": "2024-10-22 11:11:11"
+    },
+    {
+      "id": "3",
+      "rating": "1",
+      "description": "추석당일만 휴무라고 써져잇길래 갔더니 문 닫아서 허탕쳤네요 공지는 좀 제대로 손님입장을 하나도 고려하지 않는 곳이네요",
+      "imgUrl": "",
+      "nickname": "박저저저",
+      "createdAt": "2024-09-16 11:11:11"
+    },
+    {
+      "id": "4",
+      "rating": "5",
+      "description": "",
+      "imgUrl": "",
+      "nickname": "김어쩌쩌",
+      "createdAt": "2024-06-18 11:11:11"
+    },
+    {
+      "id": "5",
+      "rating": "5",
+      "description": "맛나요! 더 많이 알려졌음 좋겠다고 생각하는 집",
+      "imgUrl": "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fbb41a7653e127b022b2d656db6af6c9ba0b74da3%3Foriginal",
+      "nickname": "박면",
+      "createdAt": "2023-11-18 11:11:11"
+    },
+    {
+      "id": "1",
+      "rating": "5",
+      "description": "",
+      "imgUrl": "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F9a0d0869adaeecbefd793a76b9cafcaa95a4e7a1%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F979d220168b2eb0f24dd2f48a2705cc02acb67e0%3Foriginal",
+      "nickname": "홍길동",
+      "createdAt": "2025-02-08 11:11:11"
+    },
+    {
+      "id": "2",
+      "rating": "5",
+      "description": "진짜 그릭요거트 엄청 많이 먹어봤는데 여기 요거트가 산미 별로 없고 딱 원하는 맛이라 맛있게 먹었습니다! 그리고 무화과토핑 완죠니 푸짐하게 주셔서 기분 좋았어요🥹",
+      "imgUrl": "",
+      "nickname": "김철수",
+      "createdAt": "2024-10-22 11:11:11"
+    },
+    {
+      "id": "3",
+      "rating": "1",
+      "description": "추석당일만 휴무라고 써져잇길래 갔더니 문 닫아서 허탕쳤네요 공지는 좀 제대로 손님입장을 하나도 고려하지 않는 곳이네요",
+      "imgUrl": "",
+      "nickname": "박저저저",
+      "createdAt": "2024-09-16 11:11:11"
+    },
+    {
+      "id": "4",
+      "rating": "5",
+      "description": "",
+      "imgUrl": "",
+      "nickname": "김어쩌쩌",
+      "createdAt": "2024-06-18 11:11:11"
+    },
+    {
+      "id": "5",
+      "rating": "5",
+      "description": "맛나요! 더 많이 알려졌음 좋겠다고 생각하는 집",
+      "imgUrl": "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fbb41a7653e127b022b2d656db6af6c9ba0b74da3%3Foriginal",
+      "nickname": "박면",
+      "createdAt": "2023-11-18 11:11:11"
+    },
+    {
+      "id": "6",
+      "rating": "5",
+      "description": "",
+      "imgUrl": "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F9a0d0869adaeecbefd793a76b9cafcaa95a4e7a1%3Foriginal,https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F979d220168b2eb0f24dd2f48a2705cc02acb67e0%3Foriginal",
+      "nickname": "홍길동",
+      "createdAt": "2025-02-08 11:11:11"
+    },
+    {
+      "id": "7",
+      "rating": "5",
+      "description": "진짜 그릭요거트 엄청 많이 먹어봤는데 여기 요거트가 산미 별로 없고 딱 원하는 맛이라 맛있게 먹었습니다! 그리고 무화과토핑 완죠니 푸짐하게 주셔서 기분 좋았어요🥹",
+      "imgUrl": "",
+      "nickname": "김철수",
+      "createdAt": "2024-10-22 11:11:11"
+    },
+    {
+      "id": "8",
+      "rating": "1",
+      "description": "추석당일만 휴무라고 써져잇길래 갔더니 문 닫아서 허탕쳤네요 공지는 좀 제대로 손님입장을 하나도 고려하지 않는 곳이네요",
+      "imgUrl": "",
+      "nickname": "박저저저",
+      "createdAt": "2024-09-16 11:11:11"
+    },
+    {
+      "id": "9",
+      "rating": "5",
+      "description": "",
+      "imgUrl": "",
+      "nickname": "김어쩌쩌",
+      "createdAt": "2024-06-18 11:11:11"
+    },
+    {
+      "id": "10",
+      "rating": "5",
+      "description": "맛나요! 더 많이 알려졌음 좋겠다고 생각하는 집",
+      "imgUrl": "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fbb41a7653e127b022b2d656db6af6c9ba0b74da3%3Foriginal",
+      "nickname": "박면",
+      "createdAt": "2023-11-18 11:11:11"
+    }
+  ],
+  "page": {
+    "size": "10",
+    "number": "0",
+    "totalElements": "12",
+    "totalPages": "2"
+  }
+}
