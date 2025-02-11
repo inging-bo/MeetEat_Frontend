@@ -94,6 +94,7 @@ export default function RestList() {
         setStar(temp);
       }
       apiPOSTRestDetailView(rest.id - 1);
+      setCenter({ lat: rest.x, lng: rest.y });
     }
     setRestViewModal(!restViewModal);
   };
@@ -160,10 +161,12 @@ export default function RestList() {
       });
   }
 
+  const [center, setCenter] = useState({});
+
   return (
     <>
       <div className="absolute top-40 min-w-fit flex max-xl:ml-auto flex-col mb-auto items-center">
-        <div className="w-96 mb-7 search-bar border border-[#3BB82D] rounded-full relative">
+        <div className="w-72 md:w-96 mb-7 search-bar border border-[#3BB82D] rounded-full relative">
           <input
             className="w-full h-10 rounded-full pl-5 pr-12 focus:outline-none"
             id="keyword"
@@ -215,20 +218,23 @@ export default function RestList() {
             {searchFilter === "option" && filterList("option")}
           </ul>
         </div>
-        <div className="grid grid-cols-[380px_380px_380px] grid-rows-2 gap-7">
+        <div className="grid sm:grid-cols-[350px] min-[750px]:grid-cols-[350px_350px] min-[1150px]:grid-cols-[350px_350px_350px] gap-7 pb-10">
           {restaurants.map((rest, idx) =>
             restaurants.length - 3 === idx ? (
               <>
                 <li
                   key={rest.id}
-                  className="flex flex-col items-start bg-white rounded-lg drop-shadow-lg p-4 cursor-pointer text-left"
+                  className="flex flex-col w-[340px] items-start bg-white rounded-lg drop-shadow-lg p-4 cursor-pointer text-left"
                   onClick={() => RestViewToggle(rest)}
                   ref={boxRef}
                 >
                   <div className="bg-gray-300 h-40 w-full rounded-lg mb-3 content-center justify-items-center">
-                    {rest.imgUrl ? (
+                    {rest.thumbnail ? (
                       <>
-                        <img src={rest.imgUrl}></img>
+                        <img
+                          src={rest.thumbnail}
+                          className="w-full max-h-40 object-cover rounded-lg"
+                        ></img>
                       </>
                     ) : (
                       <Logo />
@@ -258,13 +264,16 @@ export default function RestList() {
               <>
                 <li
                   key={rest.id}
-                  className="flex flex-col items-start bg-white rounded-lg drop-shadow-lg p-4 cursor-pointer text-left"
+                  className="flex flex-col w-[340px] items-start bg-white rounded-lg drop-shadow-lg p-4 cursor-pointer text-left"
                   onClick={() => RestViewToggle(rest)}
                 >
                   <div className="bg-gray-300 h-40 w-full rounded-lg mb-3 content-center justify-items-center">
-                    {rest.imgUrl ? (
+                    {rest.thumbnail ? (
                       <>
-                        <img src={rest.imgUrl}></img>
+                        <img
+                          src={rest.thumbnail}
+                          className="w-full max-h-40 object-cover rounded-lg"
+                        ></img>
                       </>
                     ) : (
                       <Logo />
@@ -295,7 +304,12 @@ export default function RestList() {
         </div>
       </div>
       {restViewModal && (
-        <RestView close={RestViewToggle} pickedRest={pickedRest} star={star} />
+        <RestView
+          center={center}
+          close={RestViewToggle}
+          pickedRest={pickedRest}
+          star={star}
+        />
       )}
     </>
   );
