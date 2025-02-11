@@ -307,12 +307,12 @@ export const handlers = [
       console.log("변경하기 요청 - 전달된 토큰:", accessToken);
 
       if (!accessToken) {
-        return HttpResponse.json({}, { status: 401 }
-        );
+        return HttpResponse.json({}, { status: 401 });
       }
 
       // 현재 비밀번호 검증
-      if (currentPassword !== "1234") { // 임시 현재 비밀번호
+      if (currentPassword !== "1234") {
+        // 임시 현재 비밀번호
         return HttpResponse.json({}, { status: 400 });
       }
 
@@ -323,7 +323,6 @@ export const handlers = [
 
       // 비밀번호 변경 성공 응답
       return HttpResponse.json({}, { status: 200 });
-
     } catch (error) {
       // 오류 응답 반환
       return HttpResponse.json({}, { status: 500 });
@@ -332,11 +331,8 @@ export const handlers = [
 
   // 회원 탈퇴
   http.delete("/users/withdrawal", async () => {
-    return HttpResponse.json(
-      {}, { status: 200 }
-    )
+    return HttpResponse.json({}, { status: 200 });
   }),
-
 
   // ✅ 차단 API 핸들러
   http.post("/ban", async ({ request }) => {
@@ -372,7 +368,6 @@ export const handlers = [
         { message: "차단 상태가 변경되었습니다.", data: myMatchingHistory },
         { status: 200 }
       );
-
     } catch (error) {
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
@@ -415,7 +410,6 @@ export const handlers = [
         { message: "차단이 해제되었습니다.", data: myMatchingHistory },
         { status: 200 }
       );
-
     } catch (error) {
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
@@ -457,15 +451,14 @@ export const handlers = [
         { message: "신고 상태가 변경되었습니다.", data: myMatchingHistory },
         { status: 200 }
       );
-
     } catch (error) {
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
         { status: 500 }
       );
     }
-
   }),
+
   // ✅ 신고 API 핸들러 (DELETE 요청)
   http.delete("/report", async ({ request }) => {
     try {
@@ -480,7 +473,7 @@ export const handlers = [
       }
 
       let isUpdated = false;
-      console.log("gd")
+      console.log("gd");
       myMatchingHistory.forEach((history) => {
         history.visitors.forEach((visitor) => {
           if (visitor.id === reportedId) {
@@ -500,21 +493,18 @@ export const handlers = [
         { message: "신고 상태가 변경되었습니다.", data: myMatchingHistory },
         { status: 200 }
       );
-
     } catch (error) {
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
         { status: 500 }
       );
     }
-
   }),
+
   // 나의 식당 후기 조회
   http.get("/restaurants/myreview", async () => {
-    return HttpResponse.json(myMatchingHistory, { status: 200 }
-    );
+    return HttpResponse.json(myMatchingHistory, { status: 200 });
   }),
-
 
   // 식당 리뷰 조회
   http.post("/restaurants/review", async ({ request }) => {
@@ -578,15 +568,49 @@ export const handlers = [
           { status: 400 }
         );
       }
-
-      if (page === "0") return HttpResponse.json(restList, { status: 200 });
-      if (page === "1") return HttpResponse.json(restList2, { status: 200 });
-      if (page === "2") return HttpResponse.json(restList3, { status: 200 });
-      else
-        return HttpResponse.json(
-          { message: "잘못된 페이지 번호입니다." },
-          { status: 500 }
-        );
+      if (page === "0") {
+        if (placeName === "") {
+          return HttpResponse.json(restList, { status: 200 });
+        } else {
+          const temp = { ...restList };
+          const tempContent = temp.content;
+          const filtered = tempContent.filter((item) =>
+            item.place_name.includes(placeName)
+          );
+          temp.content = filtered;
+          return HttpResponse.json(temp, { status: 200 });
+        }
+      }
+      if (page === "1") {
+        if (placeName === "")
+          return HttpResponse.json(restList2, { status: 200 });
+        else {
+          const contents = restList2.content;
+          const filtered = contents.filter((item) =>
+            item.place_name.includes(placeName)
+          );
+          return HttpResponse.json(restList2.replace("content", filtered), {
+            status: 200,
+          });
+        }
+      }
+      if (page === "2") {
+        if (placeName === "")
+          return HttpResponse.json(restList3, { status: 200 });
+        else {
+          const contents = restList3.content;
+          const filtered = contents.filter((item) =>
+            item.place_name.includes(placeName)
+          );
+          return HttpResponse.json(restList3.replace("content", filtered), {
+            status: 200,
+          });
+        }
+      }
+      return HttpResponse.json(
+        { message: "잘못된 페이지 번호입니다." },
+        { status: 500 }
+      );
     } catch (e) {
       return HttpResponse.json(
         { message: "서버에 오류발생 어쩌구" },
