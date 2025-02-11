@@ -45,7 +45,7 @@ export default function Login() {
 
       if (response.data.accessToken) {
         setMessage("로그인 성공!");
-        modalStore.openModal("oneBtn", "signIn")
+        modalStore.openModal("oneBtn", { type : "signIn"})
 
         // 입력 필드 초기화
         setEmailInput("");

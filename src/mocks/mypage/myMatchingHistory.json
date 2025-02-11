@@ -11,21 +11,20 @@
         "matchingCount": 5,
         "description" : "맛있어요",
         "report": true,
-        "block": true },
+        "ban": true
+      },
       {
         "id": "user2",
         "nickname": "영희",
         "matchingCount": 1,
-        "description" : "냠냠",
-        "report": false,
-        "block": false },
+        "description" : "냠냠"
+      },
       {
         "id": "user3",
         "nickname": "민수",
         "matchingCount": 2,
-        "description" : "배고파",
-        "report": false,
-        "block": false }
+        "description" : "배고파"
+      }
     ]
   },
   {
@@ -39,15 +38,15 @@
         "nickname": "지훈",
         "matchingCount": 1,
         "description" : "굿굿",
-        "report": true,
-        "block": false },
+        "report": true
+      },
       {
         "id": "user5",
         "nickname": "수진",
         "matchingCount": 1,
         "description" : "짱짱",
-        "report": false,
-        "block": true }
+        "ban": true
+      }
     ]
   },
   {
@@ -60,23 +59,21 @@
         "id": "user6",
         "nickname": "철수",
         "matchingCount": 2,
-        "description" : "짱장",
-        "report": false,
-        "block": false },
+        "description" : "짱장"
+      },
       {
         "id": "user7",
         "nickname": "영희",
         "matchingCount": 8,
-        "description" : "맛있어요",
-        "report": false,
-        "block": false },
+        "description" : "맛있어요"
+      },
       {
         "id": "user8",
         "nickname": "민수",
         "matchingCount": 10,
         "description" : "맛있어요",
-        "report": true,
-        "block": false }
+        "report": true
+      }
     ]
   },
   {
@@ -89,16 +86,15 @@
         "id": "user9",
         "nickname": "지훈",
         "matchingCount": 1,
-        "description" : "맛있어요",
-        "report": false,
-        "block": false },
+        "description" : "맛있어요"
+      },
       {
         "id": "user10",
         "nickname": "수진",
         "matchingCount": 2,
         "description" : "맛있어요",
-        "report": false,
-        "block": true }
+        "ban": true
+      }
     ]
   },
   {
@@ -112,22 +108,20 @@
         "nickname": "철수",
         "matchingCount": 3,
         "description" : "맛있어요",
-        "report": true,
-        "block": false },
+        "report": true
+      },
       {
         "id": "user12",
         "nickname": "영희",
         "matchingCount": 1,
-        "description" : "맛있어요",
-        "report": false,
-        "block": false },
+        "description" : "맛있어요"
+      },
       {
         "id": "user13",
         "nickname": "민수",
         "matchingCount": 2,
-        "description" : "맛있어요",
-        "report": false,
-        "block": false }
+        "description" : "맛있어요"
+      }
     ]
   },
   {
@@ -140,16 +134,14 @@
         "id": "user14",
         "nickname": "지훈",
         "matchingCount": 3,
-        "description" : "맛있어요",
-        "report": false,
-        "block": false },
+        "description" : "맛있어요"
+      },
       {
         "id": "user15",
         "nickname": "수진",
         "matchingCount": 4,
-        "description" : "맛있어요",
-        "report": false,
-        "block": false }
+        "description" : "맛있어요"
+      }
     ]
   }
 ]

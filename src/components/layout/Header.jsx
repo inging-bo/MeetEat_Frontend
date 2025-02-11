@@ -39,7 +39,7 @@ export default function Header() {
               // 현재 경로가 "/mypage"를 포함하면 로그아웃 버튼 표시
               <>
                 <button
-                  onClick={() => modalStore.openModal("twoBtn", "logOut")}
+                  onClick={() => modalStore.openModal("twoBtn", { type : "logOut" })}
                   className="h-full px-4 flex items-center"
                 >
                   로그아웃

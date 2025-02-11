@@ -7,18 +7,18 @@ const Modal = observer(() => {
   if (!modalStore.isOpen) return null;
 
   const { modalStyle, modalProps } = modalStore;
-  const { type, id } = modalProps; // modalProps에서 type과 id 추출
+  const { type, userId } = modalProps; // modalProps에서 type과 userId 추출
 
   // modalType에 따른 다른 모달 내용 처리
   const renderModalContent = () => {
     switch (modalStyle) {
       case 'oneBtn':
         return (
-          <OneBtnModal type={type} userId={id}/>
+          <OneBtnModal type={type} userId={userId}/>
         );
       case 'twoBtn':
         return (
-          <TwoBtnModal type={type} userId={id}/>
+          <TwoBtnModal type={type} userId={userId}/>
         );
       default:
         return <p>오타나 파일 확인하세요</p>;
