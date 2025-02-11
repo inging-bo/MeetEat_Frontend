@@ -1,45 +1,48 @@
 {
   "content": [
     {
-      "id": "40",
+      "id": "41",
       "kakaomaps_id": "카카오맵스아이디",
       "place_name": "에버그릭",
       "phone": "식당전화번호",
-      "y": "위도",
-      "x": "경도",
+      "x": "37.484824",
+      "y": "126.937320",
       "address_name": "지번 주소",
       "road_address_name": "서울 관악구 은천로 178 1층",
       "category_name": "카테고리 그룹명",
-      "rating": "3"
-    },
-    {
-      "id": "41",
-      "kakaomaps_id": "카카오맵스아이디",
-      "place_name": "미자네",
-      "phone": "식당전화번호",
-      "y": "위도",
-      "x": "경도",
-      "address_name": "지번 주소",
-      "road_address_name": "서울 관악구 신림로 59길 14 원조민속 순대타운 3층 31 7호, 318호",
-      "category_name": "카테고리 그룹명",
-      "rating": "4.5"
+      "rating": "3",
+      "thumbnail": "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2F9a0d0869adaeecbefd793a76b9cafcaa95a4e7a1%3Foriginal"
     },
     {
       "id": "42",
       "kakaomaps_id": "카카오맵스아이디",
+      "place_name": "미자네",
+      "phone": "식당전화번호",
+      "x": "37.485107",
+      "y": "126.928925",
+      "address_name": "지번 주소",
+      "road_address_name": "서울 관악구 신림로 59길 14 원조민속 순대타운 3층 31 7호, 318호",
+      "category_name": "카테고리 그룹명",
+      "rating": "4.5",
+      "thumbnail": "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2F36018BF9980F41E09EF3D304FDAD1612"
+    },
+    {
+      "id": "43",
+      "kakaomaps_id": "카카오맵스아이디",
       "place_name": "정남옥 서울대입구점",
       "phone": "식당전화번호",
-      "y": "위도",
-      "x": "경도",
+      "x": "37.478554",
+      "y": "126.952583",
       "address_name": "지번 주소",
       "road_address_name": "서울 관악구 관악로 148 1층",
       "category_name": "카테고리 그룹명",
-      "rating": "4"
+      "rating": "4",
+      "thumbnail": "https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flocal%2FkakaomapPhoto%2Freview%2Fee184281e849313056fa39c0c1be0854a842443b%3Foriginal"
     }
   ],
   "pageable": {
-    "pageNumber": 2,
-    "pageSize": 4,
+    "pageNumber": 3,
+    "pageSize": 3,
     "sort": {
       "empty": false,
       "sorted": true,
