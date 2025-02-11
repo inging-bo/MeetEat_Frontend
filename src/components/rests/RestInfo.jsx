@@ -20,10 +20,11 @@ export default function RestInfo() {
         const response = await axios.get("/users/profile");
         setProfile(response.data);
         setNicknameData(response.data.nickname || "");
-        setIntroductionData(response.data.introduce || "한 줄 소개를 입력하세요.");
-        setMatchingCount(response.data.matchingCount)
+        setIntroductionData(
+          response.data.introduce || "한 줄 소개를 입력하세요."
+        );
+        setMatchingCount(response.data.matchingCount);
         navigate(`/mypage/${response.data.id}`);
-
       } catch (error) {
         console.error("프로필 정보를 가져오는데 실패했습니다", error);
       }
@@ -53,7 +54,9 @@ export default function RestInfo() {
 
     async function saveField() {
       try {
-        const response = await axios.put("/users/profile", { [fieldKey]: value });
+        const response = await axios.put("/users/profile", {
+          [fieldKey]: value,
+        });
         updateFunction(response.data[fieldKey]); // 응답받은 값으로 업데이트
         setIsEditing(false);
       } catch (error) {
@@ -69,7 +72,7 @@ export default function RestInfo() {
     isEditing: isEditingNickname,
     changeField: changeNickname,
     handleInputChange: handleNicknameChange,
-    saveField: saveNickname
+    saveField: saveNickname,
   } = useEditableField(nicknameData, setNicknameData, "nickname");
 
   const {
@@ -77,33 +80,26 @@ export default function RestInfo() {
     isEditing: isEditingIntroduction,
     changeField: changeIntroduction,
     handleInputChange: handleIntroductionChange,
-    saveField: saveIntroduction
+    saveField: saveIntroduction,
   } = useEditableField(introductionData, setIntroductionData, "introduce");
 
   // 매칭 횟수별 메달 표시
   const viewMedal = () => {
     if (matchingCount >= 5) {
-      return (
-        <GoldMedal/>
-      )
+      return <GoldMedal />;
     } else if (matchingCount >= 3) {
-      return (
-        <SilverMedal/>
-      )
+      return <SilverMedal />;
     } else if (matchingCount >= 1) {
-      return (
-        <BronzeMedal/>
-      )
+      return <BronzeMedal />;
     } else {
       return (
         <span className="pl-2 pt-2">매칭을 하면 메달을 얻을 수 있어요!</span>
-      )
+      );
     }
-  }
+  };
 
   return (
-    <div
-      className="flex flex-col gap-10 w-[380px] min-w-[380px] max-w-[380px] flex-1 justify-start border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-10">
+    <div className="flex flex-col gap-10 w-[380px] min-w-[380px] max-w-[380px] flex-1 justify-start border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-10">
       <h1 className="font-bold text-[28px] text-left">마이페이지</h1>
 
       {/* 닉네임 수정 */}
@@ -111,17 +107,22 @@ export default function RestInfo() {
         <div className="text-[15px] flex items-center justify-between">
           <span className="font-bold">닉네임</span>
           {isEditingNickname ? (
-            <button className="rounded-md border border-black px-1.5" onClick={saveNickname}>
+            <button
+              className="rounded-md border border-black px-1.5"
+              onClick={saveNickname}
+            >
               완료
             </button>
           ) : (
-            <button className="text-[#909090] rounded-md border border-[#909090] px-1.5" onClick={changeNickname}>
+            <button
+              className="text-[#909090] rounded-md border border-[#909090] px-1.5"
+              onClick={changeNickname}
+            >
               수정
             </button>
           )}
         </div>
-        <div
-          className="relative flex h-10 justify-between items-center text-[15px] text-left border-b border-b-[#EAEAEA] bg-[#F8F8F8]">
+        <div className="relative flex h-10 justify-between items-center text-[15px] text-left border-b border-b-[#EAEAEA] bg-[#F8F8F8]">
           {isEditingNickname ? (
             <>
               <input
@@ -132,7 +133,9 @@ export default function RestInfo() {
                 onChange={handleNicknameChange}
                 autoFocus
               />
-              <span className="absolute top-full pt-1 text-xs text-gray-400">최대 8자리만 가능합니다.</span>
+              <span className="absolute top-full pt-1 text-xs text-gray-400">
+                최대 8자리만 가능합니다.
+              </span>
             </>
           ) : (
             <span className="flex-1 pl-2 py-2 text-[#909090]">{nickname}</span>
@@ -145,17 +148,22 @@ export default function RestInfo() {
         <div className="text-[15px] flex items-center justify-between">
           <span className="font-bold">짧은 소개</span>
           {isEditingIntroduction ? (
-            <button className="rounded-md border border-black px-1.5" onClick={saveIntroduction}>
+            <button
+              className="rounded-md border border-black px-1.5"
+              onClick={saveIntroduction}
+            >
               완료
             </button>
           ) : (
-            <button className="text-[#909090] rounded-md border border-[#909090] px-1.5" onClick={changeIntroduction}>
+            <button
+              className="text-[#909090] rounded-md border border-[#909090] px-1.5"
+              onClick={changeIntroduction}
+            >
               수정
             </button>
           )}
         </div>
-        <div
-          className="flex h-10 justify-between items-center text-[15px] text-left border-b border-b-[#EAEAEA] bg-[#F8F8F8]">
+        <div className="flex h-10 justify-between items-center text-[15px] text-left border-b border-b-[#EAEAEA] bg-[#F8F8F8]">
           {isEditingIntroduction ? (
             <input
               type="text"
@@ -172,24 +180,31 @@ export default function RestInfo() {
       </div>
       {/* 메달 표시 */}
       <div>
-        <div
-          className="flex gap-1 items-center text-[15px] text-left border-b-gray-300">
+        <div className="flex gap-1 items-center text-[15px] text-left border-b-gray-300">
           <p className="font-bold">메달</p>
-          <div
-            className="relative text-gray-400 flex justify-center items-center bg-[#CDCDCD] rounded-full w-5 h-5 cursor-pointer group">
-            <span className="text-sm text-white cursor-pointer -mr-5 pr-5">?</span>
+          <div className="relative text-gray-400 flex justify-center items-center bg-[#CDCDCD] rounded-full w-5 h-5 cursor-pointer group">
+            <span className="text-sm text-white cursor-pointer -mr-5 pr-5">
+              ?
+            </span>
             {/* 도움말 박스 */}
-            <div
-              className="absolute text-black flex-col gap-1 ml-3 min-w-min left-full bottom-[-10px] text-base bg-white border border-gray-300 p-4 rounded-md hidden group-hover:block cursor-default">
+            <div className="absolute text-black flex-col gap-1 ml-3 min-w-min left-full bottom-[-10px] text-base bg-white border border-gray-300 p-4 rounded-md hidden group-hover:block cursor-default">
               <h3 className="text-center pb-1">식사 횟수별 메달 안내</h3>
               <div className="flex flex-col">
-                <div className="flex items-center text-sm text-nowrap"><GoldMedal/><span>연간 누적 참여 5회</span></div>
-                <div className="flex items-center text-sm text-nowrap"><SilverMedal/><span>연간 누적 참여 3회</span></div>
-                <div className="flex items-center text-sm text-nowrap"><BronzeMedal/><span>연간 누적 참여 1회</span></div>
+                <div className="flex items-center text-sm text-nowrap">
+                  <GoldMedal />
+                  <span>연간 누적 참여 5회</span>
+                </div>
+                <div className="flex items-center text-sm text-nowrap">
+                  <SilverMedal />
+                  <span>연간 누적 참여 3회</span>
+                </div>
+                <div className="flex items-center text-sm text-nowrap">
+                  <BronzeMedal />
+                  <span>연간 누적 참여 1회</span>
+                </div>
               </div>
               {/* 화살표 모양 */}
-              <div
-                className="absolute bottom-3 rotate-45 right-[calc(100%-0.35rem)] w-3 h-3 border-l border-b border-gray-300 bg-white"></div>
+              <div className="absolute bottom-3 rotate-45 right-[calc(100%-0.35rem)] w-3 h-3 border-l border-b border-gray-300 bg-white"></div>
             </div>
           </div>
         </div>
