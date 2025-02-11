@@ -1,7 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import HeaderLogo from "../../assets/header-logo.svg?react";
-import { useState, useEffect } from "react";
-import TwoBtnModal from "../common/TwoBtnModal.jsx";
+import {useState, useEffect} from "react";
+import modalStore from "../../store/modalStore.js";
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -22,17 +22,13 @@ export default function Header() {
     };
   }, []);
   const location = useLocation(); // 현재 경로 가져오기
-  // 로그아웃 모달
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
 
   return (
-    <header className="fixed top-0 shadow-lg w-full z-50 flex justify-center min-h-[77px] bg-white">
+    <header className="fixed top-0 shadow-lg w-full flex justify-center min-h-[77px] bg-white">
       <div className="flex w-full justify-between max-w-screen-xl">
         <div>
           <Link to="/" className="h-full px-4 flex items-center">
-            <HeaderLogo />
+            <HeaderLogo/>
           </Link>
         </div>
 
@@ -41,9 +37,15 @@ export default function Header() {
           {isLoggedIn ? (
             location.pathname.includes("/mypage") ? (
               // 현재 경로가 "/mypage"를 포함하면 로그아웃 버튼 표시
-              <button onClick={openModal} className="h-full px-4 flex items-center">
-                로그아웃
-              </button>
+              <>
+                <button
+                  onClick={() => modalStore.openModal("twoBtn", { type : "logOut" })}
+                  className="h-full px-4 flex items-center"
+                >
+                  로그아웃
+                </button>
+              </>
+
             ) : (
               // 그렇지 않으면 마이페이지 링크 표시
               <Link to="/mypage" className="h-full px-4 flex items-center cursor-pointer">
@@ -57,10 +59,7 @@ export default function Header() {
             </Link>
           )}
         </div>
-        {/* 모달 */}
-        {isModalOpen && <TwoBtnModal type="logOut" onClose={closeModal}/>}
       </div>
-
     </header>
   );
 }

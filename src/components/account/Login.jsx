@@ -6,7 +6,7 @@ import HidePWIcon from "../../assets/hidePW-icon.svg?react";
 import KakaoIcon from "../../assets/Login-icon-kakao.svg?react";
 import NaverIcon from "../../assets/Login-icon-naver.svg?react";
 import axios from "axios";
-import OneBtnModal from "../common/OneBtnModal.jsx";
+import modalStore from "../../store/modalStore.js";
 
 export default function Login() {
   // 이메일 패스워드 값 유무 확인 용
@@ -30,16 +30,6 @@ export default function Login() {
   const [showPW, setShowPW] = useState(false);
   const togglePW = () => setShowPW(!showPW);
 
-  // ✅ 회원가입 버튼 클릭 시 동작
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState(null); // oneBtn 넘기는 타입용
-
-  // ✅ 모달 닫기 함수
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setModalType(null);
-  };
   const login = async (event) => {
     event.preventDefault(); // 기본 제출 동작 방지
 
@@ -55,8 +45,7 @@ export default function Login() {
 
       if (response.data.accessToken) {
         setMessage("로그인 성공!");
-        setIsModalOpen(true);
-        setModalType("signIn");
+        modalStore.openModal("oneBtn", { type : "signIn"})
 
         // 입력 필드 초기화
         setEmailInput("");
@@ -154,8 +143,6 @@ export default function Login() {
 
   return (
     <form className="flex w-96 justify-center items-center">
-      {/* OneBtnModal 표시*/}
-      {isModalOpen && <OneBtnModal type={modalType} onClose={closeModal} />}
       <div className="flex flex-1 flex-col gap-3 justify-center">
         <h1 className="flex justify-center h-8 mb-8">
           <Link to={"/"}>

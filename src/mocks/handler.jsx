@@ -336,6 +336,7 @@ export const handlers = [
     return HttpResponse.json({}, { status: 200 });
   }),
 
+
   // ✅ 차단 API 핸들러
   http.post("/ban", async ({ request }) => {
     try {
@@ -353,7 +354,7 @@ export const handlers = [
       myMatchingHistory.forEach((history) => {
         history.visitors.forEach((visitor) => {
           if (visitor.id === bannedId) {
-            visitor.block = true; // 차단 상태 변경
+            visitor.ban = true; // 차단 추가
             isUpdated = true;
           }
         });
@@ -367,7 +368,7 @@ export const handlers = [
       }
 
       return HttpResponse.json(
-        { message: "차단 상태가 변경되었습니다.", data: myMatchingHistory },
+        { message: "차단 상태가 추가되었습니다.", data: myMatchingHistory },
         { status: 200 }
       );
     } catch (error) {
@@ -394,8 +395,8 @@ export const handlers = [
       let isUpdated = false;
       myMatchingHistory.forEach((history) => {
         history.visitors.forEach((visitor) => {
-          if (visitor.id === bannedId) {
-            visitor.block = false; // 차단 해제 (삭제와 같은 동작)
+          if (visitor.id === bannedId && visitor.ban) {
+            delete visitor.ban; // 차단 해제
             isUpdated = true;
           }
         });
@@ -409,9 +410,10 @@ export const handlers = [
       }
 
       return HttpResponse.json(
-        { message: "차단이 해제되었습니다.", data: myMatchingHistory },
+        { message: "차단 상태가 해제되었습니다.", data: myMatchingHistory },
         { status: 200 }
       );
+
     } catch (error) {
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
@@ -437,7 +439,7 @@ export const handlers = [
       myMatchingHistory.forEach((history) => {
         history.visitors.forEach((visitor) => {
           if (visitor.id === reportedId) {
-            visitor.report = true; // 신고 상태 변경
+            visitor.report = true; // 신고 추가
             isUpdated = true;
           }
         });
@@ -449,8 +451,9 @@ export const handlers = [
           { status: 404 }
         );
       }
+
       return HttpResponse.json(
-        { message: "신고 상태가 변경되었습니다.", data: myMatchingHistory },
+        { message: "신고 상태가 추가되었습니다.", data: myMatchingHistory },
         { status: 200 }
       );
     } catch (error) {
@@ -475,11 +478,10 @@ export const handlers = [
       }
 
       let isUpdated = false;
-      console.log("gd");
       myMatchingHistory.forEach((history) => {
         history.visitors.forEach((visitor) => {
-          if (visitor.id === reportedId) {
-            visitor.report = false; // 신고 상태 변경
+          if (visitor.id === reportedId && visitor.report) {
+            delete visitor.report; // 차단 해제
             isUpdated = true;
           }
         });
@@ -491,8 +493,9 @@ export const handlers = [
           { status: 404 }
         );
       }
+
       return HttpResponse.json(
-        { message: "신고 상태가 변경되었습니다.", data: myMatchingHistory },
+        { message: "신고 상태가 해제되었습니다.", data: myMatchingHistory },
         { status: 200 }
       );
     } catch (error) {

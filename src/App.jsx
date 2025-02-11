@@ -1,6 +1,7 @@
 import "./App.css";
 import { BrowserRouter } from "react-router-dom";
 import Router from "./router/router";
+import Modal from './components/modal/ModalContainer.jsx';
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <section className="relative flex flex-col justify-center items-center w-full h-dvh">
         <Router />
       </section>
+      <Modal/>
     </BrowserRouter>
   );
 }
