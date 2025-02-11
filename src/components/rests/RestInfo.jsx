@@ -103,7 +103,7 @@ export default function RestInfo() {
 
   return (
     <div
-      className="flex flex-col gap-10 w-[380px] min- max-w-[380px] flex-1 justify-start border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-10">
+      className="flex flex-col gap-10 w-[380px] min-w-[380px] max-w-[380px] flex-1 justify-start border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-10">
       <h1 className="font-bold text-[28px] text-left">마이페이지</h1>
 
       {/* 닉네임 수정 */}

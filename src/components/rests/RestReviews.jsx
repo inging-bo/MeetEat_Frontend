@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import TwoBtnModal from "../common/TwoBtnModal.jsx";
 import axios from "axios";
+import GoldMedal from "../../assets/Medal-Gold.svg?react";
+import SilverMedal from "../../assets/Medal-Silver.svg?react";
+import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
 
 export default function RestReviews() {
   // ✅ 확인용 방문 히스토리
@@ -21,7 +24,6 @@ export default function RestReviews() {
     };
     fetchProfile();
   }, []); // 🔥 최초 한 번만 실행
-  console.log(visit);
 
   // ✅ 신고하기 차단하기 팝오버 창 표시
   // 클릭된 요소의 ID를 관리
@@ -99,7 +101,6 @@ export default function RestReviews() {
         await axios.delete(`/report?reportedId=${id}`); // 신고 해제 요청
         user.report = newReportState;
       }
-
       setVisit(copyArr); // ✅ 상태 업데이트
       setShowOneBtnModal(true);
     } catch (error) {
@@ -120,16 +121,37 @@ export default function RestReviews() {
     if (visitor.report === true && visitor.block === true) {
       return (
         <>
-          <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md">신고 유저</span>
-          <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md">차단 유저</span>
+          <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">신고 유저</span>
+          <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">차단 유저</span>
         </>
       );
     } else if (visitor.block === true) {
-      return <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md">차단 유저</span>;
+      return <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">차단 유저</span>;
     } else if (visitor.report === true) {
-      return <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md">신고 유저</span>;
+      return <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">신고 유저</span>;
     }
   };
+
+  // 매칭 횟수별 메달 표시
+  const viewMedal = (matchingCount) => {
+    if (matchingCount >= 5) {
+      return (
+        <GoldMedal width="16px" height="16px"/>
+      )
+    } else if (matchingCount >= 3) {
+      return (
+        <SilverMedal width="16px" height="16px"/>
+      )
+    } else if (matchingCount >= 1) {
+      return (
+        <BronzeMedal width="16px" height="16px"/>
+      )
+    } else {
+      return (
+        <></>
+      )
+    }
+  }
 
   return (
     <div
@@ -165,15 +187,15 @@ export default function RestReviews() {
                 {visitItem.visitors.map((visitor) => (
                   <li
                     key={visitor.id}
-                    className={`relative flex text-sm justify-between items-center bg-[#F8F8F8] w-[calc(50%-5px)] p-3 rounded-lg`}
+                    className={`relative flex text-sm justify-between items-center bg-[#F8F8F8] flex-[1_1_calc(50%-5px)] p-3 rounded-lg`}
                   >
                     <div className="w-full flex flex-col gap-1">
-                      <div className="flex">
-                        <p>
+                      <div className="flex gap-0.5">
+                        <p className="whitespace-nowrap">
                           {visitor.nickname}
                         </p>
-                        <div>
-                          {visitor.matchingCount}
+                        <div className="flex flex-1 flex-shrink-0 items-center">
+                          <div>{viewMedal(visitor.matchingCount)}</div>
                           {benOrBlock(visitor)}
                         </div>
                       </div>

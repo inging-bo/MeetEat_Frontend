@@ -467,7 +467,7 @@ export const handlers = [
 
   }),
   // ✅ 신고 API 핸들러 (DELETE 요청)
-  http.post("/report", async ({ request }) => {
+  http.delete("/report", async ({ request }) => {
     try {
       const url = new URL(request.url);
       const reportedId = url.searchParams.get("reportedId"); // reportedId 가져오기
@@ -480,6 +480,7 @@ export const handlers = [
       }
 
       let isUpdated = false;
+      console.log("gd")
       myMatchingHistory.forEach((history) => {
         history.visitors.forEach((visitor) => {
           if (visitor.id === reportedId) {

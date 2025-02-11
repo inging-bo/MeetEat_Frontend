@@ -37,7 +37,7 @@
       {
         "id": "user4",
         "nickname": "지훈",
-        "matchingCount": 0,
+        "matchingCount": 1,
         "description" : "굿굿",
         "report": true,
         "block": false },
