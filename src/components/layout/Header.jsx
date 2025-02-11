@@ -1,10 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import HeaderLogo from "../../assets/header-logo.svg?react";
 import { useState, useEffect } from "react";
+import TwoBtnModal from "../common/TwoBtnModal.jsx";
 
 export default function Header() {
-  // ✅ 회원가입 버튼 클릭 시 동작
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // 컴포넌트가 처음 렌더링될 때 localStorage에서 accessToken 확인
@@ -22,6 +21,11 @@ export default function Header() {
       window.removeEventListener("storage", checkLoginStatus); // 클린업
     };
   }, []);
+  const location = useLocation(); // 현재 경로 가져오기
+  // 로그아웃 모달
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   return (
     <header className="fixed top-0 shadow-lg w-full z-50 flex justify-center min-h-[77px] bg-white">
@@ -35,19 +39,28 @@ export default function Header() {
         {/* 로그인 or 마이 페이지 */}
         <div>
           {isLoggedIn ? (
-            <Link
-              to="/mypage"
-              className="h-full px-4 flex items-center cursor-pointer"
-            >
-              마이페이지
-            </Link>
+            location.pathname.includes("/mypage") ? (
+              // 현재 경로가 "/mypage"를 포함하면 로그아웃 버튼 표시
+              <button onClick={openModal} className="h-full px-4 flex items-center">
+                로그아웃
+              </button>
+            ) : (
+              // 그렇지 않으면 마이페이지 링크 표시
+              <Link to="/mypage" className="h-full px-4 flex items-center cursor-pointer">
+                마이페이지
+              </Link>
+            )
           ) : (
+            // 로그인하지 않은 경우 로그인 링크 표시
             <Link to="/account" className="h-full px-4 flex items-center">
               로그인
             </Link>
           )}
         </div>
+        {/* 모달 */}
+        {isModalOpen && <TwoBtnModal type="logOut" onClose={closeModal}/>}
       </div>
+
     </header>
   );
 }

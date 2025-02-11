@@ -1,86 +1,28 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import TwoBtnModal from "../common/TwoBtnModal.jsx";
+import axios from "axios";
+import GoldMedal from "../../assets/Medal-Gold.svg?react";
+import SilverMedal from "../../assets/Medal-Silver.svg?react";
+import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
 
 export default function RestReviews() {
   // ✅ 확인용 방문 히스토리
-  const [visit, setVisit] = useState([
-    {
-      id: 1,
-      place_name: "김밥천국",
-      category_name: "한식",
-      myReview: false,
-      visitors: [
-        { id: "user1", nickname: "철수", report: true, block: true },
-        { id: "user2", nickname: "영희", report: false, block: false },
-        { id: "user3", nickname: "민수", report: false, block: false },
-      ],
-    },
-    {
-      id: 2,
-      place_name: "스타벅스",
-      category_name: "카페",
-      myReview: true,
-      visitors: [
-        { id: "user4", nickname: "지훈", report: true, block: false },
-        { id: "user5", nickname: "수진", report: false, block: true },
-      ],
-    },
-    {
-      id: 3,
-      place_name: "김밥천국",
-      category_name: "한식",
-      myReview: false,
-      visitors: [
-        { id: "user6", nickname: "철수", report: false, block: false },
-        { id: "user7", nickname: "영희", report: false, block: false },
-        { id: "user8", nickname: "민수", report: true, block: false },
-      ],
-    },
-    {
-      id: 4,
-      place_name: "스타벅스",
-      category_name: "카페",
-      myReview: true,
-      visitors: [
-        { id: "user9", nickname: "지훈", report: false, block: false },
-        { id: "user10", nickname: "수진", report: false, block: true },
-      ],
-    },
-    {
-      id: 5,
-      place_name: "김밥천국",
-      category_name: "한식",
-      myReview: false,
-      visitors: [
-        { id: "user11", nickname: "철수", report: true, block: false },
-        { id: "user12", nickname: "영희", report: false, block: false },
-        { id: "user13", nickname: "민수", report: false, block: false },
-      ],
-    },
-    {
-      id: 6,
-      place_name: "스타벅스",
-      category_name: "카페",
-      myReview: true,
-      visitors: [
-        { id: "user14", nickname: "지훈", report: false, block: false },
-        { id: "user15", nickname: "수진", report: false, block: false },
-      ],
-    },
-  ]);
+  const [visit, setVisit] = useState([]);
 
-  // 로컬스토리지 사용하지 않아서 주석처리했습니다.
-  // // 로컬 스토리지에 데이터 저장
-  // useEffect(() => {
-  //   localStorage.setItem("restaurantReviews", JSON.stringify(visit));
-  // }, []);
-
-  // // 로컬 스토리지에서 데이터 가져오기
-  // const [restaurantReviews, setRestaurantReviews] = useState(() => {
-  //   const storedData = localStorage.getItem("restaurantReviews");
-  //   return storedData ? JSON.parse(storedData) : [];
-  // });
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get("/restaurants/myreview", {
+          matchingHistoryId: 1,
+        });
+        setVisit(response.data);
+      } catch (error) {
+        console.error("프로필 정보를 가져오는데 실패했습니다", error);
+      }
+    };
+    fetchProfile();
+  }, []); // 🔥 최초 한 번만 실행
 
   // ✅ 신고하기 차단하기 팝오버 창 표시
   // 클릭된 요소의 ID를 관리
@@ -121,29 +63,48 @@ export default function RestReviews() {
     setUserId(id);
   };
 
-  // 수정 부분 확인해주세요.
+  // 수정 을 다시 좀 했습니다.
   const [showOneBtnModal, setShowOneBtnModal] = useState(false);
-  const changeState = (type, id) => {
+
+  const changeState = async (type, id) => {
     let visitIdx = 0;
     let idIdx = 0;
-    let copyArr = visit;
-    visit.map((visitItem, idx) => {
-      [...visitItem.visitors].map((item, itemIndex) => {
+    let copyArr = [...visit]; // ✅ 배열을 복사하여 변경
+
+    visit.forEach((visitItem, idx) => {
+      visitItem.visitors.forEach((item, itemIndex) => {
         if (item.id === id) {
           visitIdx = idx;
           idIdx = itemIndex;
         }
       });
     });
-    if (type === "block" || type === "unBlock") {
-      copyArr[visitIdx].visitors[idIdx].block =
-        !copyArr[visitIdx].visitors[idIdx].block;
-    } else {
-      copyArr[visitIdx].visitors[idIdx].report =
-        !copyArr[visitIdx].visitors[idIdx].report;
+
+    const user = copyArr[visitIdx].visitors[idIdx];
+
+    try {
+      if (type === "block") {
+        const newBlockState = !user.block; // 차단 상태 변경
+        await axios.post(`/ban?bannedId=${id}`); // 차단 요청
+        user.block = newBlockState;
+      } else if (type === "unBlock") {
+        const newBlockState = !user.block; // 차단 해제 상태 변경
+        await axios.delete(`/ban?bannedId=${id}`); // 차단 해제 요청
+        user.block = newBlockState;
+      } else if (type === "report") {
+        const newReportState = !user.report; // 신고 상태 변경
+        await axios.post(`/report?reportedId=${id}`); // 신고 요청
+        user.report = newReportState;
+      } else if (type === "unReport") {
+        const newReportState = !user.report; // 신고 해제 상태 변경
+        await axios.delete(`/report?reportedId=${id}`); // 신고 해제 요청
+        user.report = newReportState;
+      }
+      setVisit(copyArr); // ✅ 상태 업데이트
+      setShowOneBtnModal(true);
+    } catch (error) {
+      console.error("서버 요청 실패:", error);
     }
-    setVisit(copyArr);
-    setShowOneBtnModal(true);
   };
 
   // ✅ 모달 닫기 함수
@@ -158,138 +119,203 @@ export default function RestReviews() {
     if (visitor.report === true && visitor.block === true) {
       return (
         <>
-          <span className="ml-2 text-white">신고 유저</span>
-          <span className="ml-2 text-white">차단 유저</span>
+          <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
+            신고 유저
+          </span>
+          <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
+            차단 유저
+          </span>
         </>
       );
     } else if (visitor.block === true) {
-      return <span className="ml-2 text-white">차단 유저</span>;
+      return (
+        <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
+          차단 유저
+        </span>
+      );
     } else if (visitor.report === true) {
-      return <span className="ml-2 text-white">신고 유저</span>;
+      return (
+        <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
+          신고 유저
+        </span>
+      );
     }
   };
 
+  // 매칭 횟수별 메달 표시
+  const viewMedal = (matchingCount) => {
+    if (matchingCount >= 5) {
+      return <GoldMedal width="16px" height="16px" />;
+    } else if (matchingCount >= 3) {
+      return <SilverMedal width="16px" height="16px" />;
+    } else if (matchingCount >= 1) {
+      return <BronzeMedal width="16px" height="16px" />;
+    } else {
+      return <></>;
+    }
+  };
+
+  // 뒤쪽 스크롤 방지
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.cssText = `
+          position: fixed;
+          top: -${window.scrollY}px;
+          overflow-y: scroll;
+          width: 100%;`;
+      return () => {
+        const scrollY = document.body.style.top;
+        document.body.style.cssText = "";
+        window.scrollTo(0, parseInt(scrollY || "0", 10) * -1);
+      };
+    }
+  }, [isModalOpen]);
+
   return (
-    <div className="flex flex-col gap-8 flex-auto min-w-fit border-2 border-gray-300 rounded-2xl p-8">
-      <p className="font-bold text-3xl">매칭 히스토리</p>
-      {/* 식당 별 매칭 히스토리 박스*/}
-      <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
-        {/* 방문한 식당이 있으면 방문 한 식당 히스토리 표시*/}
-        {visit.length > 0 ? (
-          // 같이 방문한 사람들 리스트 표시
-          visit.map((visitItem) => (
-            <li
-              key={visitItem.id}
-              className="flex flex-col gap-2 border-2 border-gray-300 rounded-2xl p-4"
-            >
-              <div className="flex justify-between items-center border-b-2 border-b-gray-300 pb-2">
-                <div className="flex flex-shrink-0 items-end">
-                  <span className="text-xl">{visitItem.place_name}</span>
-                  <span className="text-sm text-gray-400 pl-2">
-                    {visitItem.category_name}
+    <>
+      <div className="flex flex-col gap-10 flex-auto min-w-fit border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl py-10 px-14">
+        <p className="font-bold text-[28px] text-left">나의 방문기록</p>
+        {/* 식당 별 매칭 히스토리 박스*/}
+        <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
+          {/* 방문한 식당이 있으면 방문 한 식당 히스토리 표시*/}
+          {visit.length > 0 ? (
+            // 같이 방문한 사람들 리스트 표시
+            visit.map((visitItem) => (
+              <li
+                key={visitItem.id}
+                className="flex flex-col gap-4 rounded-2xl"
+              >
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-shrink-0 items-end">
+                    <span>{visitItem.place_name}</span>
+                    <span className="text-sm text-gray-400 pl-2">
+                      {visitItem.category_name}
+                    </span>
+                  </div>
+                  <span className="flex flex-shrink-0 text-[15px] text-[#909090] border border-[#909090] px-1.5 rounded-md">
+                    {visitItem.myReview === true ? (
+                      <Link>리뷰 확인하기</Link>
+                    ) : (
+                      <Link>리뷰 작성하기</Link>
+                    )}
                   </span>
                 </div>
-                <span className="flex flex-shrink-0">
-                  {visitItem.myReview === true ? (
-                    <Link>리뷰 확인하기</Link>
-                  ) : (
-                    <Link>리뷰 작성하기</Link>
-                  )}
-                </span>
-              </div>
-              <ul className="flex flex-wrap gap-1">
-                {visitItem.visitors.map((visitor) => (
-                  <li
-                    key={visitor.id}
-                    className={`relative flex justify-between items-center w-[calc(50%-0.25rem)] p-2 rounded-lg ${visitor.report || visitor.block ? "bg-black/30" : ""}`}
-                  >
-                    <p>
-                      {visitor.nickname}
-                      {benOrBlock(visitor)}
-                    </p>
-                    <p
-                      className=" font-bold tracking-[-0.15rem] [writing-mode:vertical-rl] cursor-pointer"
-                      onClick={() => popOver(visitor.id)}
+                <ul className="flex flex-wrap gap-2.5">
+                  {visitItem.visitors.map((visitor) => (
+                    <li
+                      key={visitor.id}
+                      className={`relative flex text-sm justify-between items-center bg-[#F8F8F8] flex-[1_1_calc(50%-5px)] p-3 rounded-lg`}
                     >
-                      ···
-                    </p>
-                    {activePopOver === visitor.id && (
-                      <div
-                        ref={popOverRef} // ✅ popOverRef 설정
-                        className="absolute flex flex-col gap-1 z-50 top-10 right-1 bg-white p-2 border border-gray-300 rounded-lg"
-                      >
-                        {visitor.block === false ? (
-                          <button
-                            onClick={() => toggleModal("block", visitor.id)}
-                            className="py-1 px-2 rounded-lg hover:bg-gray-200"
-                          >
-                            차단하기
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => toggleModal("unBlock", visitor.id)}
-                            className="py-1 px-2 rounded-lg hover:bg-gray-200"
-                          >
-                            차단해제
-                          </button>
-                        )}
-                        {visitor.report === false ? (
-                          <button
-                            onClick={() => toggleModal("report", visitor.id)}
-                            className="py-1 px-2 rounded-lg hover:bg-gray-200"
-                          >
-                            신고하기
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => toggleModal("unReport", visitor.id)}
-                            className="py-1 px-2 rounded-lg hover:bg-gray-200"
-                          >
-                            신고해제
-                          </button>
-                        )}
-                        <div className="absolute -top-1.5 right-3 rotate-45  w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>
+                      <div className="w-full flex flex-col gap-1">
+                        <div className="flex gap-0.5">
+                          <p className="whitespace-nowrap">
+                            {visitor.nickname}
+                          </p>
+                          <div className="flex flex-1 flex-shrink-0 items-center">
+                            <div>{viewMedal(visitor.matchingCount)}</div>
+                            {benOrBlock(visitor)}
+                          </div>
+                        </div>
+                        <div className="text-left text-[#555555]">
+                          {visitor.description}
+                        </div>
                       </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))
-        ) : (
-          /* 방문한 식당이 없을 때 보일 화면 */
-          <div className="text-2xl text-gray-500">방문한 식당이 없습니다.</div>
-        )}
-      </ul>
-
-      {/* 모달이 열려 있을 때만 표시 */}
-      {/* {isModalOpen && (
-        <TwoBtnModal type={modalType} userId={userId} onClose={closeModal} />
-      )} */}
-
-      {/* 아래부분 컴포넌트화 필요 */}
-      {isModalOpen && (
-        <div className="flex fixed top-0 left-0 justify-center items-center bg-black/40 z-50 w-full h-full">
-          {!showOneBtnModal ? (
-            <div className="w-80 p-10 bg-white rounded-lg drop-shadow-lg">
-              <div>정말{modalType}하시겠습니까?</div>
-              <div className="flex closeModal(true)-8 justify-center">
-                <button onClick={closeModal}>아니요</button>
-                <button onClick={() => changeState(modalType, userId)}>
-                  예
-                </button>
-              </div>
-            </div>
+                      <div>
+                        <p
+                          className="font-bold tracking-[-0.15rem] [writing-mode:vertical-rl] cursor-pointer"
+                          onClick={() => popOver(visitor.id)}
+                        >
+                          ···
+                        </p>
+                        {activePopOver === visitor.id && (
+                          <div
+                            ref={popOverRef} // ✅ popOverRef 설정
+                            className="absolute flex flex-col gap-1 z-50 top-10 right-1 bg-white p-2 border border-gray-300 rounded-lg"
+                          >
+                            {visitor.block === false ? (
+                              <button
+                                onClick={() => toggleModal("block", visitor.id)}
+                                className="py-1 px-2 rounded-lg hover:bg-gray-200"
+                              >
+                                차단하기
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() =>
+                                  toggleModal("unBlock", visitor.id)
+                                }
+                                className="py-1 px-2 rounded-lg hover:bg-gray-200"
+                              >
+                                차단해제
+                              </button>
+                            )}
+                            {visitor.report === false ? (
+                              <button
+                                onClick={() =>
+                                  toggleModal("report", visitor.id)
+                                }
+                                className="py-1 px-2 rounded-lg hover:bg-gray-200"
+                              >
+                                신고하기
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() =>
+                                  toggleModal("unReport", visitor.id)
+                                }
+                                className="py-1 px-2 rounded-lg hover:bg-gray-200"
+                              >
+                                신고해제
+                              </button>
+                            )}
+                            <div className="absolute -top-1.5 right-3 rotate-45  w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>
+                          </div>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))
           ) : (
-            <div className="w-80 p-10 bg-white rounded-lg drop-shadow-lg">
-              <div>사용자를{modalType}했습니다.</div>
-              <div className="flex gap-8 justify-center">
-                <button onClick={closeModal}>확인</button>
-              </div>
+            /* 방문한 식당이 없을 때 보일 화면 */
+            <div className="text-2xl text-gray-500">
+              방문한 식당이 없습니다.
             </div>
           )}
-        </div>
+        </ul>
+
+        {/* 모달이 열려 있을 때만 표시 */}
+        {/* {isModalOpen && (
+        <TwoBtnModal type={modalType} userId={userId} onClose={closeModal} />
+      )} */}
+      </div>
+      {/* 아래부분 컴포넌트화 필요 */}
+      {isModalOpen && (
+        <>
+          <div className="bg-black/[0.1] fixed top-0 left-0 w-screen h-screen z-50 overflow-hidden"></div>
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex bg-white rounded-lg z-50">
+            {!showOneBtnModal ? (
+              <div className="w-80 p-10 bg-white rounded-lg drop-shadow-lg">
+                <div>정말{modalType}하시겠습니까?</div>
+                <div className="flex closeModal(true)-8 justify-center">
+                  <button onClick={closeModal}>아니요</button>
+                  <button onClick={() => changeState(modalType, userId)}>
+                    예
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="w-80 p-10 bg-white rounded-lg drop-shadow-lg">
+                <div>사용자를{modalType}했습니다.</div>
+                <div className="flex gap-8 justify-center">
+                  <button onClick={closeModal}>확인</button>
+                </div>
+              </div>
+            )}
+          </div>
+        </>
       )}
-    </div>
+    </>
   );
 }

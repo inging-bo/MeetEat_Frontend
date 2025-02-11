@@ -9,6 +9,7 @@ import userList from "./login/userList.json";
 import signUpSuccess from "./login/signUpSuccess.json";
 import signInSuccess from "./login/signInSuccess.json";
 import profile from "./mypage/profile.json";
+import myMatchingHistory from "./mypage/myMatchingHistory.json";
 import restReviewList from "./rests/restReviewList.json";
 import restList from "./rests/restList.json";
 import restList2 from "./rests/restList2.json";
@@ -335,6 +336,185 @@ export const handlers = [
       {}, {status: 200}
     )
   }),
+
+
+  // ✅ 차단 API 핸들러
+  http.post("/ban", async ({ request }) => {
+    try {
+      const url = new URL(request.url);
+      const bannedId = url.searchParams.get("bannedId"); // bannedId 가져오기
+
+      if (!bannedId) {
+        return HttpResponse.json(
+          {message: "bannedId가 필요합니다."},
+          {status: 400}
+        );
+      }
+
+      let isUpdated = false;
+      myMatchingHistory.forEach((history) => {
+        history.visitors.forEach((visitor) => {
+          if (visitor.id === bannedId) {
+            visitor.block = true; // 차단 상태 변경
+            isUpdated = true;
+          }
+        });
+      });
+
+      if (!isUpdated) {
+        return HttpResponse.json(
+          {message: "잘못된 요청입니다."},
+          {status: 400}
+        );
+      }
+
+      return HttpResponse.json(
+        {message: "차단 상태가 변경되었습니다.", data: myMatchingHistory},
+        {status: 200}
+      );
+
+    } catch (error) {
+      return HttpResponse.json(
+        {message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요."},
+        {status: 500}
+      );
+    }
+  }),
+
+  // ✅ 차단 API 핸들러 (DELETE 요청)
+  http.delete("/ban", async ({ request }) => {
+    try {
+      const url = new URL(request.url);
+      const bannedId = url.searchParams.get("bannedId"); // bannedId 가져오기
+
+      if (!bannedId) {
+        return HttpResponse.json(
+          {message: "bannedId가 필요합니다."},
+          {status: 400}
+        );
+      }
+
+      let isUpdated = false;
+      myMatchingHistory.forEach((history) => {
+        history.visitors.forEach((visitor) => {
+          if (visitor.id === bannedId) {
+            visitor.block = false; // 차단 해제 (삭제와 같은 동작)
+            isUpdated = true;
+          }
+        });
+      });
+
+      if (!isUpdated) {
+        return HttpResponse.json(
+          {message: "잘못된 요청입니다."},
+          {status: 400}
+        );
+      }
+
+      return HttpResponse.json(
+        {message: "차단이 해제되었습니다.", data: myMatchingHistory},
+        {status: 200}
+      );
+
+    } catch (error) {
+      return HttpResponse.json(
+        {message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요."},
+        {status: 500}
+      );
+    }
+  }),
+
+  // ✅ 신고 API 핸들러
+  http.post("/report", async ({ request }) => {
+    try {
+      const url = new URL(request.url);
+      const reportedId = url.searchParams.get("reportedId"); // reportedId 가져오기
+
+      if (!reportedId) {
+        return HttpResponse.json(
+          {message: "reportedId가 필요합니다."},
+          {status: 400}
+        );
+      }
+
+      let isUpdated = false;
+      myMatchingHistory.forEach((history) => {
+        history.visitors.forEach((visitor) => {
+          if (visitor.id === reportedId) {
+            visitor.report = true; // 신고 상태 변경
+            isUpdated = true;
+          }
+        });
+      });
+
+      if (!isUpdated) {
+        return HttpResponse.json(
+          {message: "해당 ID의 방문자를 찾을 수 없습니다."},
+          {status: 404}
+        );
+      }
+      return HttpResponse.json(
+        {message: "신고 상태가 변경되었습니다.", data: myMatchingHistory},
+        {status: 200}
+      );
+
+    } catch (error) {
+      return HttpResponse.json(
+        {message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요."},
+        {status: 500}
+      );
+    }
+
+  }),
+  // ✅ 신고 API 핸들러 (DELETE 요청)
+  http.delete("/report", async ({ request }) => {
+    try {
+      const url = new URL(request.url);
+      const reportedId = url.searchParams.get("reportedId"); // reportedId 가져오기
+
+      if (!reportedId) {
+        return HttpResponse.json(
+          {message: "reportedId가 필요합니다."},
+          {status: 400}
+        );
+      }
+
+      let isUpdated = false;
+      console.log("gd")
+      myMatchingHistory.forEach((history) => {
+        history.visitors.forEach((visitor) => {
+          if (visitor.id === reportedId) {
+            visitor.report = false; // 신고 상태 변경
+            isUpdated = true;
+          }
+        });
+      });
+
+      if (!isUpdated) {
+        return HttpResponse.json(
+          {message: "해당 ID의 방문자를 찾을 수 없습니다."},
+          {status: 404}
+        );
+      }
+      return HttpResponse.json(
+        {message: "신고 상태가 변경되었습니다.", data: myMatchingHistory},
+        {status: 200}
+      );
+
+    } catch (error) {
+      return HttpResponse.json(
+        {message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요."},
+        {status: 500}
+      );
+    }
+
+  }),
+  // 나의 식당 후기 조회
+  http.get("/restaurants/myreview", async () => {
+    return HttpResponse.json(myMatchingHistory, {status: 200}
+    );
+  }),
+
 
   // 식당 리뷰 조회
   http.post("/restaurants/review", async ({request}) => {
