@@ -1,4 +1,3 @@
-import SearchIcon from "../../assets/search.svg?react";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Arrow from "../../assets/updown-arrow-icon.svg?react";
@@ -102,20 +101,26 @@ export default function RestList() {
   const sorted = ["거리순", "평점순"];
 
   // 입력 값이 변경될 때마다 타이머 설정
+  const isMounted = useRef(false);
   useEffect(() => {
-    const delayDebounceTimer = setTimeout(() => {
-      setRestaurants([]);
-      setPage("0");
-      apiPOSTRestsLists(
-        regionName,
-        categoryName,
-        placeName,
-        position,
-        sortedName,
-        "0"
-      );
-    }, 1000); // 디바운스 지연 시간
-    return () => clearTimeout(delayDebounceTimer);
+    if (isMounted.current) {
+      const delayDebounceTimer = setTimeout(() => {
+        setRestaurants([]);
+        setPage("0");
+        apiPOSTRestsLists(
+          regionName,
+          categoryName,
+          placeName,
+          position,
+          sortedName,
+          "0"
+        );
+      }, 1000); // 디바운스 지연 시간
+      return () => clearTimeout(delayDebounceTimer);
+    } else {
+      isMounted.current = true;
+      return;
+    }
   }, [placeName]);
 
   function handleInputChange(event) {
@@ -249,9 +254,6 @@ export default function RestList() {
             type="text"
             placeholder="실제 방문한 식당을 검색해요."
           />
-          <button id="search-btn" className="absolute px-4 right-0 top-[8px]">
-            <SearchIcon width="22px" />
-          </button>
         </div>
         <div className="flex gap-2 mb-3 ml-auto mr-2">
           <ul

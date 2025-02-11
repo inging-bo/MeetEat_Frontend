@@ -14,6 +14,8 @@ import restReviewList from "./rests/restReviewList.json";
 import restList from "./rests/restList.json";
 import restList2 from "./rests/restList2.json";
 import restList3 from "./rests/restList3.json";
+import restReview1_1 from "./rests/restReview1_1.json";
+import restReview1_2 from "./rests/restReview1_2.json";
 import restDetailViewList from "./rests/restDetailView.json";
 
 const matching = new Map();
@@ -628,6 +630,26 @@ export const handlers = [
       return HttpResponse.json(restDetailViewList[productId], { status: 200 });
     } catch (error) {
       console.error("OAuth 로그인 처리 중 오류 발생:", error);
+      return HttpResponse.json(
+        { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
+        { status: 500 }
+      );
+    }
+  }),
+  // 식당 리뷰 조회
+  http.get("/restaurants/1", async ({ request }) => {
+    try {
+      const url = new URL(request.url);
+      const page = url.searchParams.get("page");
+      const restId = url.searchParams.get("id");
+      if (page === "0") {
+        return HttpResponse.json(restReview1_1, { status: 200 });
+      }
+      if (page === "1") {
+        return HttpResponse.json(restReview1_2, { status: 200 });
+      }
+    } catch (error) {
+      console.error(error);
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
         { status: 500 }
