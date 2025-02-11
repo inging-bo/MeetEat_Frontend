@@ -13,12 +13,15 @@ export default function RestView({ center, close, pickedRest, star }) {
   return (
     <>
       <div className="bg-black/[0.1] fixed top-0 left-0 w-screen h-screen z-50 overflow-hidden"></div>
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex bg-white p-8 rounded-lg w-[1024px] max-lg:w-full h-[664px] overflow-hidden z-50">
-        <div className="flex flex-col gap-5 items-start max-w-[340px]">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex bg-white p-8 rounded-lg w-[1024px] max-lg:w-full h-[700px] overflow-hidden z-50">
+        <div className="flex flex-col gap-5 justify-between items-start max-w-[340px]">
           <div className="w-[340px] h-[200px] bg-gray-300 rounded-lg text-left content-center justify-items-center">
-            {pickedRest.imgUrl ? (
+            {pickedRest.thumbnail ? (
               <>
-                <img src={pickedRest.imgUrl}></img>
+                <img
+                  src={pickedRest.thumbnail}
+                  className="w-full h-[200px] object-cover rounded-lg"
+                ></img>
               </>
             ) : (
               <Logo />
