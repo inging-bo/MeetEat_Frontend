@@ -46,7 +46,17 @@ export default function MatchingComplete() {
     if (passedTimeMin >= 60) {
       const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .data.matching.restaurant.id;
-      return navigate(`/rests/write/${restsId}`);
+      const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .data.matching.restaurant.placeName;
+      const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .data.id;
+      return navigate(`/rests/write/${restsId}`, {
+        state: {
+          restId: `${restsId}`,
+          restName: `${restsName}`,
+          matchedId: `${matchedId}`,
+        },
+      });
     }
 
     // 저장된 매칭데이터 저장

@@ -1,9 +1,14 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import EmptyStar from "../../assets/empty-star.svg?react";
 import FullStar from "../../assets/full-star.svg?react";
+import { Map } from "react-kakao-maps-sdk";
+
 export default function WriteReview() {
+  const location = useLocation();
+  const info = { ...location.state };
+
   // 이미지 핸들러
   const [imageList, setImageList] = useState([]);
   const handleAddImages = (e) => {
@@ -30,7 +35,7 @@ export default function WriteReview() {
     for (let i = 0; i < 5; i++) {
       result.push(
         <span
-          className="w-[50px]"
+          className="w-[50px] text-[#FF6445]"
           key={i + 1}
           onClick={() => setStarScore(i + 1)}
         >
@@ -56,13 +61,8 @@ export default function WriteReview() {
   };
 
   const handleWriteComplete = () => {
-    const jsonCurData = JSON.parse(
-      window.sessionStorage.getItem("matchedData")
-    ).data;
-    const matchedId = Object.entries(jsonCurData)[2][1];
-    const restId = Object.entries(jsonCurData)[3][1].restaurant.id;
     const textareaValue = document.getElementById("textarea").value;
-    apiRestReviewWrite(matchedId, restId, textareaValue);
+    apiRestReviewWrite(info.matchedId, info.restId, textareaValue);
   };
 
   async function apiRestReviewWrite(matchedId, restId, textareaValue) {
@@ -82,71 +82,110 @@ export default function WriteReview() {
       });
   }
 
+  // 지도가 처음 렌더링되면 중심좌표를 현위치로 설정하고 위치 변화 감지\
+  const [position, setPosition] = useState({
+    lat: 37.503081,
+    lng: 127.05,
+  });
+  const gpsError = (err) => {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+  };
+  const geolocationOptions = {
+    enableHighAccuracy: true,
+    maximumAge: 5 * 60 * 1000,
+    timeout: 7000,
+  };
+  // geolocation API
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        if (
+          pos.coords.latitude !== position.lat ||
+          pos.coords.longitude !== position.lng
+        ) {
+          setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        }
+      },
+      gpsError,
+      geolocationOptions
+    );
+  }, []);
+
   return (
     <>
-      <div className="h-fit">
-        <h1 className="text-2xl">식당이름</h1>
+      <div className="bg-map relative w-full h-full">
+        <div className="bg-black/40 absolute w-full h-full z-10"></div>
+        <Map id="map" className="w-full h-full" center={position} level={5} />
+      </div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[550px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center flex flex-col gap-3 pt-14">
+        <h1 className="text-2xl font-bold">{info.restName}</h1>
         <div>
-          <h1 className="text-2xl">식당평점</h1>
-          <div className="stars flex flex-row justify-center">
+          <div className="stars flex flex-row justify-center pb-2">
             {handleRatingStar()}
           </div>
         </div>
-        <div className="flex flex-col items-end gap-5 my-10">
-          <textarea
-            id="textarea"
-            className="w-full h-[150px] resize-none border-none"
-            placeholder="방문후기를 작성해주세요
+        <textarea
+          id="textarea"
+          className="w-[400px] h-[100px] resize-none border p-2"
+          placeholder="방문후기를 작성해주세요
 다른 사용자들의 식당 선정시 도움이 됩니다"
-          ></textarea>
-        </div>
-        <hr className="pb-2" />
+        ></textarea>
 
-        <div className="img-container flex flex-row gap-3 w-[500px] relative">
-          <label htmlFor="inputFile">
-            <div className="w-[100px] h-[100px] content-center bg-[#81be67] text-white p-2 px-4 rounded-lg">
-              사진 선택
-            </div>
-            <input
-              id="inputFile"
-              type="file"
-              multiple
-              accept="image/jpg,image/jpeg,image/png,image/raw,image/heic,image/heif"
-              className="hidden"
-              onChange={handleAddImages}
-            />
-          </label>
-          <div className="flex flex-row max-w-[500px] gap-3 overflow-x-scroll scrollbar-hide">
+        <label htmlFor="inputFile">
+          <div className="w-[400px] h-[35px] content-center border p-1 px-4 rounded-lg">
+            사진 첨부
+          </div>
+          <input
+            id="inputFile"
+            type="file"
+            multiple
+            accept="image/jpg,image/jpeg,image/png,image/raw,image/heic,image/heif"
+            className="hidden"
+            onChange={handleAddImages}
+          />
+        </label>
+        <div className="img-container flex flex-row gap-3 w-[400px] relative">
+          <div className="flex flex-row max-w-[400px] gap-3 overflow-x-scroll scrollbar-hide">
             {imageList.length === 0 && (
-              <div className="w-[100px] h-[100px] content-center rounded-lg border border-slate-200 text-slate-200 text-3xl ">
-                +
-              </div>
+              <>
+                <label htmlFor="inputFile">
+                  <div className="w-[100px] h-[100px] content-center rounded-lg border border-slate-200 text-slate-200 text-3xl ">
+                    +
+                  </div>
+                  <input
+                    id="inputFile"
+                    type="file"
+                    multiple
+                    accept="image/jpg,image/jpeg,image/png,image/raw,image/heic,image/heif"
+                    className="hidden"
+                    onChange={handleAddImages}
+                  />
+                </label>
+              </>
             )}
             {imageList.map((image, idx) => (
               <>
                 <img
                   src={image}
                   alt={`미리보기${idx}`}
-                  className="w-[100px] h-[100px] object-contain rounded-lg border border-slate-200"
+                  className="w-[100px] h-[100px] object-cover rounded-lg border border-slate-200"
                 />
               </>
             ))}
           </div>
         </div>
-        <div className="flex flex-row pt-2 justify-between w-full">
-          <button
-            onClick={handleWriteNext}
-            className="w-[47%] p-2 bg-[#81be67] text-white rounded-lg"
-          >
-            다음에 작성하기
-          </button>
-          <button
-            onClick={handleWriteComplete}
-            className="w-[47%] p-2 bg-[#81be67] text-white rounded-lg"
-          >
-            작성완료
-          </button>
-        </div>
+        <button
+          onClick={handleWriteComplete}
+          className="w-[400px] p-2 bg-[#FF6445] text-white rounded-lg"
+        >
+          작성완료
+        </button>
+        <button
+          onClick={handleWriteNext}
+          className="absolute bottom-2 w-[400px] p-2  text-[#555555] text-sm"
+        >
+          다음에 작성할게요.
+        </button>
       </div>
     </>
   );
