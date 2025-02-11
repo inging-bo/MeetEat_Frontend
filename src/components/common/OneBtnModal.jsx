@@ -1,21 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef } from "react";
 import axios from "axios";
+import modalStore from "../../store/modalStore.js";
 
-export default function OneBtnModal({ type, onClose }) {
-  const oneModalRef = useRef(null);
-  // ✅ 모달이 열릴 때 이벤트 리스너 추가, 닫힐 때 제거
-  useEffect(() => {
-    // 배경 클릭 시 모달 닫기
-    const handleOuterClick = (e) => {
-      // oneModalRef.current가 존재하고, 클릭한 요소가 oneModalRef.current 내부가 아닐 때만 닫기
-      if (oneModalRef.current && !oneModalRef.current.contains(e.target)) {
-        onClose();
-      }
-    };
-    document.addEventListener("mousedown", handleOuterClick);
-    return () => document.removeEventListener("mousedown", handleOuterClick);
-  }, [onClose]);
+export default function OneBtnModal({ type, userId }) {
 
   // ✅ 버튼 별 메세지 선택
   const choiceYes = (type) => {
@@ -78,21 +65,22 @@ export default function OneBtnModal({ type, onClose }) {
   // ✅ 타입별 실행 변수
   // 차단하시겠습니까? `예` 인경우
   const blockUser = () => {
-    onClose()
+    // onClose()
   }
   // 신고하시겠습니까? `예` 인경우
   const reportUser = () => {
-    onClose()
+    // onClose()
   };
   // 회원가입이 완료된 경우? `예` 인경우
   const signUp = () => {
     navigate("/account")
-    onClose()
+    // onClose()
   }
   // 로그인이 완료된 경우? `예` 인경우
   const signIn = () => {
+    modalStore.closeModal()
     navigate("/")
-    onClose()
+    // onClose()
   }
   const logOut = async () => {
     try {
@@ -119,27 +107,20 @@ export default function OneBtnModal({ type, onClose }) {
       // 토큰값 제거
       window.localStorage.removeItem("accessToken"); // accessToken 삭제
       navigate("/");
-      onClose();
+      modalStore.closeModal()
     } catch (error) {
       console.error("로그아웃 요청 실패!:", error);
     }
   };
   return (
-    <div
-      className="flex fixed top-0 left-0 justify-center items-center bg-black/40 z-50 w-full h-full"
-    >
-      <div
-        className="w-80 p-10 min-w-fit bg-white rounded-lg drop-shadow-lg"
-        ref={oneModalRef}
-      >
-        <div>
-          {choiceYes(type)}
-        </div>
-        <div className="flex gap-8 justify-center">
-          <button onClick={() => check(type)}>확인</button>
-        </div>
+    <>
+      <div>
+        {choiceYes(type)}
       </div>
-    </div>
+      <div className="flex gap-8 justify-center">
+        <button onClick={() => check(type)}>확인</button>
+      </div>
+    </>
   )
 }
 

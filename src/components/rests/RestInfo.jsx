@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import TwoBtnModal from "../common/TwoBtnModal.jsx";
 import axios from "axios";
 import GoldMedal from "../../assets/Medal-Gold.svg?react";
 import SilverMedal from "../../assets/Medal-Silver.svg?react";
@@ -105,7 +104,6 @@ export default function RestInfo() {
     <div
       className="flex flex-col gap-10 w-[380px] min-w-[380px] max-w-[380px] flex-1 justify-start border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-10">
       <h1 className="font-bold text-[28px] text-left">마이페이지</h1>
-
       {/* 닉네임 수정 */}
       <div className="flex flex-col gap-2">
         <div className="text-[15px] flex items-center justify-between">

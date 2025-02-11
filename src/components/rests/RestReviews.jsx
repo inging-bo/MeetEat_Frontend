@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import TwoBtnModal from "../common/TwoBtnModal.jsx";
 import axios from "axios";
 import GoldMedal from "../../assets/Medal-Gold.svg?react";
 import SilverMedal from "../../assets/Medal-Silver.svg?react";
 import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
+import modalStore from "../../store/modalStore.js";
 
 export default function RestReviews() {
   // ✅ 확인용 방문 히스토리
@@ -51,69 +51,10 @@ export default function RestReviews() {
     };
   }, [activePopOver]);
 
-  // ✅ 차단, 신고 모달
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState(null); // 차단 or 신고 구분
-  const [userId, setUserId] = useState(null); // 차단 or 신고 구분
-
   // ✅ 모달 열고 닫기 함수
   const toggleModal = (type, id) => {
-    setModalType(type); // 클릭한 버튼의 타입 저장
-    setIsModalOpen(true);
+    modalStore.openModal("twoBtn", { type, id });
     setActivePopOver(null);
-    setUserId(id);
-  };
-
-  // 수정 을 다시 좀 했습니다.
-  const [showOneBtnModal, setShowOneBtnModal] = useState(false);
-
-  const changeState = async (type, id) => {
-    let visitIdx = 0;
-    let idIdx = 0;
-    let copyArr = [...visit]; // ✅ 배열을 복사하여 변경
-
-    visit.forEach((visitItem, idx) => {
-      visitItem.visitors.forEach((item, itemIndex) => {
-        if (item.id === id) {
-          visitIdx = idx;
-          idIdx = itemIndex;
-        }
-      });
-    });
-
-    const user = copyArr[visitIdx].visitors[idIdx];
-
-    try {
-      if (type === "block") {
-        const newBlockState = !user.block; // 차단 상태 변경
-        await axios.post(`/ban?bannedId=${id}`); // 차단 요청
-        user.block = newBlockState;
-      } else if (type === "unBlock") {
-        const newBlockState = !user.block; // 차단 해제 상태 변경
-        await axios.delete(`/ban?bannedId=${id}`); // 차단 해제 요청
-        user.block = newBlockState;
-      } else if (type === "report") {
-        const newReportState = !user.report; // 신고 상태 변경
-        await axios.post(`/report?reportedId=${id}`); // 신고 요청
-        user.report = newReportState;
-      } else if (type === "unReport") {
-        const newReportState = !user.report; // 신고 해제 상태 변경
-        await axios.delete(`/report?reportedId=${id}`); // 신고 해제 요청
-        user.report = newReportState;
-      }
-      setVisit(copyArr); // ✅ 상태 업데이트
-      setShowOneBtnModal(true);
-    } catch (error) {
-      console.error("서버 요청 실패:", error);
-    }
-  };
-
-
-  // ✅ 모달 닫기 함수
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setModalType(null);
-    setShowOneBtnModal(false);
   };
 
   // ✅ 차단 or 신고 표시
@@ -261,35 +202,6 @@ export default function RestReviews() {
           <div className="text-2xl text-gray-500">방문한 식당이 없습니다.</div>
         )}
       </ul>
-
-      {/* 모달이 열려 있을 때만 표시 */}
-      {/* {isModalOpen && (
-        <TwoBtnModal type={modalType} userId={userId} onClose={closeModal} />
-      )} */}
-
-      {/* 아래부분 컴포넌트화 필요 */}
-      {isModalOpen && (
-        <div className="flex fixed top-0 left-0 justify-center items-center bg-black/40 z-50 w-full h-full">
-          {!showOneBtnModal ? (
-            <div className="w-80 p-10 bg-white rounded-lg drop-shadow-lg">
-              <div>정말{modalType}하시겠습니까?</div>
-              <div className="flex closeModal(true)-8 justify-center">
-                <button onClick={closeModal}>아니요</button>
-                <button onClick={() => changeState(modalType, userId)}>
-                  예
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="w-80 p-10 bg-white rounded-lg drop-shadow-lg">
-              <div>사용자를{modalType}했습니다.</div>
-              <div className="flex gap-8 justify-center">
-                <button onClick={closeModal}>확인</button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }
