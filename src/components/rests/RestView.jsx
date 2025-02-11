@@ -1,14 +1,66 @@
+import { useState } from "react";
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import FullStar from "../../assets/full-star.svg?react";
 import Cancel from "../../assets/cancel-icon.svg?react";
 import Logo from "../../assets/header-logo.svg?react";
 import { useEffect, useRef } from "react";
+import RestReviewItem from "./RestReviewItem";
+import axios from "axios";
 
 export default function RestView({ center, close, pickedRest, star }) {
   const mapRef = useRef(null);
   useEffect(() => {
     mapRef.current?.relayout();
+    apiPOSTRestsLists(pickedRest.restaurantId, "0", "10");
   }, []);
+
+  // 무한스크롤
+  const [reviews, setReviews] = useState([]);
+  const [page, setPage] = useState("0");
+  const [maxNumber, setMaxNumber] = useState(0);
+  const observerRef = useRef();
+  const boxRef = useRef(null);
+
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(intersectionObserver); // IntersectionObserver
+    if (boxRef.current) {
+      observerRef.current.observe(boxRef.current);
+      return () => observerRef.current && observerRef.current.disconnect();
+    }
+  }, [reviews]);
+
+  const getInfo = async () => {
+    if (maxNumber > Number(page) * 10 && maxNumber < (Number(page) + 1) * 10)
+      return console.log("마지막페이지입니다.");
+    apiPOSTRestsLists(pickedRest.restaurantId, String(Number(page) + 1), 10);
+    setPage((prev) => prev + 1);
+    console.log("info data add...");
+  };
+
+  // IntersectionObserver 설정
+  const intersectionObserver = (entries, io) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        // 관찰하고 있는 entry가 화면에 보여지는 경우
+        io.unobserve(entry.target); // entry 관찰 해제
+        getInfo(); // 데이터 가져오기
+      }
+    });
+  };
+
+  async function apiPOSTRestsLists(restId, page, size) {
+    await axios
+      .get(`/restaurants/1`, {
+        params: { restId: restId, page: page, size: size },
+      })
+      .then((res) => {
+        setReviews((prev) => [...prev, ...res.data.content]);
+        setMaxNumber(res.data.page.totalElements);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   return (
     <>
@@ -82,136 +134,19 @@ export default function RestView({ center, close, pickedRest, star }) {
         <div className="w-0.5 bg-gray-100 mx-8"></div>
         <div className="flex gap-6 flex-col flex-1 overflow-hidden">
           <div className="text-xl font-bold text-left">방문자 리뷰</div>
-          <div className="flex flex-col overflow-y-scroll scrollbar-hide overflow-x-hidden min-w-40 h-[548px]">
+          <div className="flex flex-col overflow-y-scroll scrollbar-hide overflow-x-hidden min-w-40 h-[600px]">
             <ul className="flex flex-col gap-6">
-              <li className="flex flex-col gap-2 items-start">
-                <p className="font-bold">맛도리</p>
-                <div className="flex gap-1">
-                  <div className="flex">
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                  </div>
-                  <span className="text-gray-400 text-sm">2025.01.13</span>
-                </div>
-                <p className="text-sm text-gray-500">
-                  반찬까지 맛있다맛있다맛있다맛있다요
-                </p>
-                <ul className="flex gap-2 max-w-[554px] overflow-x-scroll scrollbar-hide">
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg">
-                    마우스 슬라이드 기능 넣기
-                  </li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                </ul>
-              </li>
-              <li className="flex flex-col gap-2 items-start">
-                <p className="font-bold">맛도리</p>
-                <div className="flex gap-1">
-                  <div className="flex">
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                  </div>
-                  <span className="text-gray-400 text-sm">2025.01.13</span>
-                </div>
-                <p className="text-sm text-gray-500">
-                  반찬까지 맛있다맛있다맛있다맛있다요
-                </p>
-                <ul className="flex gap-2 max-w-[554px] overflow-x-scroll scrollbar-hide">
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg">
-                    마우스 슬라이드 기능 넣기
-                  </li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                </ul>
-              </li>
-              <li className="flex flex-col gap-2 items-start">
-                <p className="font-bold">맛도리</p>
-                <div className="flex gap-1">
-                  <div className="flex">
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                  </div>
-                  <span className="text-gray-400 text-sm">2025.01.13</span>
-                </div>
-                <p className="text-sm text-gray-500">
-                  반찬까지 맛있다맛있다맛있다맛있다요
-                </p>
-                <ul className="flex gap-2 max-w-[554px] overflow-x-scroll scrollbar-hide">
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg">
-                    마우스 슬라이드 기능 넣기
-                  </li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                </ul>
-              </li>
-              <li className="flex flex-col gap-2 items-start">
-                <p className="font-bold">맛도리</p>
-                <div className="flex gap-1">
-                  <div className="flex">
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                  </div>
-                  <span className="text-gray-400 text-sm">2025.01.13</span>
-                </div>
-                <p className="text-sm text-gray-500">
-                  반찬까지 맛있다맛있다맛있다맛있다요
-                </p>
-                <ul className="flex gap-2 max-w-[554px] overflow-x-scroll scrollbar-hide">
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg">
-                    마우스 슬라이드 기능 넣기
-                  </li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                </ul>
-              </li>
-              <li className="flex flex-col gap-2 items-start">
-                <p className="font-bold">맛도리</p>
-                <div className="flex gap-1">
-                  <div className="flex">
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                    <FullStar width="16px" className="text-[#FF6445]" />
-                  </div>
-                  <span className="text-gray-400 text-sm">2025.01.13</span>
-                </div>
-                <p className="text-sm text-gray-500">
-                  반찬까지 맛있다맛있다맛있다맛있다요
-                </p>
-                <ul className="flex gap-2 max-w-[554px] overflow-x-scroll scrollbar-hide">
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg">
-                    마우스 슬라이드 기능 넣기
-                  </li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                  <li className="shrink-0 w-[100px] h-[100px] bg-gray-300 rounded-lg"></li>
-                </ul>
-              </li>
+              {reviews.map((review, idx) =>
+                reviews.length - 1 === idx ? (
+                  <>
+                    <RestReviewItem review={review} ref={boxRef} />
+                  </>
+                ) : (
+                  <>
+                    <RestReviewItem review={review} />
+                  </>
+                )
+              )}
             </ul>
           </div>
         </div>

@@ -1,4 +1,3 @@
-import SearchIcon from "../../assets/search.svg?react";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Arrow from "../../assets/updown-arrow-icon.svg?react";
