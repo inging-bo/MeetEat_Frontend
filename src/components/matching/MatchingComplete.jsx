@@ -41,13 +41,33 @@ export default function MatchingComplete() {
     const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
     const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
     const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
-    console.log(passedTimeMin + "min");
-    // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
-    if (passedTimeMin >= 60) {
+
+    const goReviewPage = () => {
       const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .data.matching.restaurant.id;
-      return navigate(`/rests/write/${restsId}`);
+      const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .data.matching.restaurant.placeName;
+      const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .data.id;
+      return navigate(`/rests/write/${restsId}`, {
+        state: {
+          restId: `${restsId}`,
+          restName: `${restsName}`,
+          matchedId: `${matchedId}`,
+        },
+      });
+    };
+
+    // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
+    if (passedTimeMin >= 60) {
+      clearTimeout(timer);
+      goReviewPage();
     }
+
+    // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
+    let timer = setTimeout(() => {
+      goReviewPage;
+    }, [360000]);
 
     // 저장된 매칭데이터 저장
     const jsonCurData = JSON.parse(
