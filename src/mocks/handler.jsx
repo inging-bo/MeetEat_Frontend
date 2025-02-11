@@ -568,15 +568,49 @@ export const handlers = [
           { status: 400 }
         );
       }
-
-      if (page === "0") return HttpResponse.json(restList, { status: 200 });
-      if (page === "1") return HttpResponse.json(restList2, { status: 200 });
-      if (page === "2") return HttpResponse.json(restList3, { status: 200 });
-      else
-        return HttpResponse.json(
-          { message: "잘못된 페이지 번호입니다." },
-          { status: 500 }
-        );
+      if (page === "0") {
+        if (placeName === "") {
+          return HttpResponse.json(restList, { status: 200 });
+        } else {
+          const temp = { ...restList };
+          const tempContent = temp.content;
+          const filtered = tempContent.filter((item) =>
+            item.place_name.includes(placeName)
+          );
+          temp.content = filtered;
+          return HttpResponse.json(temp, { status: 200 });
+        }
+      }
+      if (page === "1") {
+        if (placeName === "")
+          return HttpResponse.json(restList2, { status: 200 });
+        else {
+          const contents = restList2.content;
+          const filtered = contents.filter((item) =>
+            item.place_name.includes(placeName)
+          );
+          return HttpResponse.json(restList2.replace("content", filtered), {
+            status: 200,
+          });
+        }
+      }
+      if (page === "2") {
+        if (placeName === "")
+          return HttpResponse.json(restList3, { status: 200 });
+        else {
+          const contents = restList3.content;
+          const filtered = contents.filter((item) =>
+            item.place_name.includes(placeName)
+          );
+          return HttpResponse.json(restList3.replace("content", filtered), {
+            status: 200,
+          });
+        }
+      }
+      return HttpResponse.json(
+        { message: "잘못된 페이지 번호입니다." },
+        { status: 500 }
+      );
     } catch (e) {
       return HttpResponse.json(
         { message: "서버에 오류발생 어쩌구" },

@@ -2,9 +2,13 @@ import { Map, MapMarker } from "react-kakao-maps-sdk";
 import FullStar from "../../assets/full-star.svg?react";
 import Cancel from "../../assets/cancel-icon.svg?react";
 import Logo from "../../assets/header-logo.svg?react";
+import { useEffect, useRef } from "react";
 
-export default function RestView({ close, pickedRest, star }) {
-  const center = { lat: pickedRest.x, lng: pickedRest.y };
+export default function RestView({ center, close, pickedRest, star }) {
+  const mapRef = useRef(null);
+  useEffect(() => {
+    mapRef.current?.relayout();
+  }, []);
 
   return (
     <>
@@ -59,6 +63,7 @@ export default function RestView({ close, pickedRest, star }) {
                 id="map"
                 center={center}
                 level={3}
+                ref={mapRef}
               >
                 <MapMarker
                   position={center}
