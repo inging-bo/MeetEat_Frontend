@@ -6,6 +6,7 @@ import SilverMedal from "../../assets/Medal-Silver.svg?react";
 import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
 import modalStore from "../../store/modalStore.js";
 import visitStore from "../../store/visitStore.js";
+import axios from "axios";
 
 const RestReviews = observer(() => {
   useEffect(() => {
@@ -39,10 +40,85 @@ const RestReviews = observer(() => {
   }, [activePopOver]);
 
   // ✅ 모달 열고 닫기 함수
-  const toggleModal = (type, userId ) => {
-    modalStore.openModal("twoBtn", { type, userId });
+  const toggleModal = async (type, userId) => {
+    try {
+      // type에 맞는 메시지 설정
+      let modalMessage = "";
+      switch (type) {
+        case "ban":
+          modalMessage = `${userId}를 차단하시겠습니까?`;
+          break;
+        case "unBan":
+          modalMessage = `${userId}를 차단 해제하시겠습니까?`;
+          break;
+        case "report":
+          modalMessage = `${userId}를 신고하시겠습니까?`;
+          break;
+        case "unReport":
+          modalMessage = `${userId}를 신고 해제하시겠습니까?`;
+          break;
+        default:
+          modalMessage = "해당 작업을 진행하시겠습니까?";
+          break;
+      }
+
+      // 첫 번째 모달 띄우기 (확인 및 취소 버튼 모달)
+      modalStore.openModal("twoBtn", {
+        message: modalMessage,
+        onConfirm: async () => {
+          try {
+            let response;
+            // 서버 요청 전송
+            if (type === "ban") {
+              response = await axios.post(`/ban?bannedId=${userId}`); // 차단 요청
+            } else if (type === "unBan") {
+              response = await axios.delete(`/ban?bannedId=${userId}`); // 차단 해제 요청
+            } else if (type === "report") {
+              response = await axios.post(`/report?reportedId=${userId}`); // 신고 요청
+            } else if (type === "unReport") {
+              response = await axios.delete(`/report?reportedId=${userId}`); // 신고 해제 요청
+            }
+            console.log("gd")
+            // 요청 성공 시 visit 데이터 갱신
+            if (response.status === 200) {
+              // 두 번째 모달 띄우기 (성공 메시지)
+              switch (type) {
+                case "ban":
+                  modalStore.openModal("oneBtn", {
+                    message: `${userId}를 차단했습니다.`,
+                  });
+                  break;
+                case "unBan":
+                  modalStore.openModal("oneBtn", {
+                    message: `${userId}를 차단 해제했습니다.`,
+                  });
+                  break;
+                case "report":
+                  modalStore.openModal("oneBtn", {
+                    message: `${userId}를 신고했습니다.`,
+                  });
+                  break;
+                case "unReport":
+                  modalStore.openModal("oneBtn", {
+                    message: `${userId}를 신고 해제했습니다.`,
+                  });
+                  break;
+                default:
+                  break;
+              }
+              await visitStore.fetchVisitData();
+            }
+          } catch (error) {
+            console.error("서버 요청 실패:", error);
+          }
+        }
+      });
+    } catch (error) {
+      console.error("모달 열기 실패:", error);
+    }
     setActivePopOver(null);
   };
+
 
   const banOrReport = (visitor) => {
     if (visitor.report && visitor.ban) {
@@ -74,18 +150,19 @@ const RestReviews = observer(() => {
   // 매칭 횟수별 메달 표시
   const viewMedal = (matchingCount) => {
     if (matchingCount >= 5) {
-      return <GoldMedal width="16px" height="16px" />;
+      return <GoldMedal width="16px" height="16px"/>;
     } else if (matchingCount >= 3) {
-      return <SilverMedal width="16px" height="16px" />;
+      return <SilverMedal width="16px" height="16px"/>;
     } else if (matchingCount >= 1) {
-      return <BronzeMedal width="16px" height="16px" />;
+      return <BronzeMedal width="16px" height="16px"/>;
     } else {
       return <></>;
     }
   };
 
   return (
-    <div className="flex flex-col gap-10 flex-auto min-w-fit border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl py-10 px-14">
+    <div
+      className="flex flex-col gap-10 flex-auto min-w-fit border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl py-10 px-14">
       <p className="font-bold text-[28px] text-left">나의 방문기록</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
         {visitStore.visit.length > 0 ? (
@@ -98,7 +175,8 @@ const RestReviews = observer(() => {
                     {visitItem.category_name}
                   </span>
                 </div>
-                <span className="flex flex-shrink-0 text-[15px] text-[#909090] border border-[#909090] px-1.5 rounded-md">
+                <span
+                  className="flex flex-shrink-0 text-[15px] text-[#909090] border border-[#909090] px-1.5 rounded-md">
                   {visitItem.myReview ? (
                     <Link>리뷰 확인하기</Link>
                   ) : (
@@ -167,7 +245,8 @@ const RestReviews = observer(() => {
                               신고하기
                             </button>
                           )}
-                          <div className="absolute -top-1.5 right-3 rotate-45  w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>
+                          <div
+                            className="absolute -top-1.5 right-3 rotate-45  w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>
                         </div>
                       )}
                     </div>

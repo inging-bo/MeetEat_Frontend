@@ -5,6 +5,7 @@ import { StaticMap } from "react-kakao-maps-sdk";
 import CheckTitle from "../../assets/check-title.svg?react";
 import Waiting from "../../assets/waiting.svg?react";
 import Check from "../../assets/check.svg?react";
+import modalStore from "../../store/modalStore.js";
 
 export default function CheckPlace() {
   const navigate = useNavigate();
@@ -80,15 +81,16 @@ export default function CheckPlace() {
     function deg2rad(deg) {
       return deg * (Math.PI / 180);
     }
+
     let R = 6371; // Radius of the earth in km
     let dLat = deg2rad(lat2 - lat1); // deg2rad below
     let dLon = deg2rad(lng2 - lng1);
     let a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(deg2rad(lat1)) *
-        Math.cos(deg2rad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
     let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     let d = R * c;
     d = Math.round((d / 4.8) * 60);
@@ -157,19 +159,24 @@ export default function CheckPlace() {
       return newState;
     });
   };
-
   // 장소 거절
-  const handleDisAgree = () => {
-    alert("거절을 선택하여 매칭이 종료됩니다");
-    setAgree(false);
-    apiDisagree();
-    unloadFunc();
-
-    navigate("/");
-    /////////////////////////////////////////
-    // 추후 삭제
-    ////////////////////////////////////////
-    history.go(0);
+  const handleDisAgree = async () => {
+    try {
+      await modalStore.openModal("twoBtn", {
+        message : "매칭을 거절 하시겠습니까?",
+        onConfirm : async () => {
+          await setAgree(false);
+          apiDisagree();
+          unloadFunc();
+          /////////////////////////////////////////
+          // 추후 삭제
+          ////////////////////////////////////////
+          location.reload();
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   ///////////////////////////////////////////////////////////////
@@ -192,6 +199,7 @@ export default function CheckPlace() {
         });
     }, [3000]);
   }
+
   async function apiGetU3() {
     setTimeout(() => {
       console.log("9초 지남");
@@ -209,6 +217,7 @@ export default function CheckPlace() {
         });
     }, [9000]);
   }
+
   async function apiGetU4() {
     setTimeout(() => {
       console.log("7초 지남");
@@ -226,6 +235,7 @@ export default function CheckPlace() {
         });
     }, [7000]);
   }
+
   async function apiAgree() {
     axios
       .get("/matching?response=accept")
@@ -236,6 +246,7 @@ export default function CheckPlace() {
         console.log(error);
       });
   }
+
   async function apiDisagree() {
     axios
       .get("/matching?response=reject")
@@ -246,6 +257,7 @@ export default function CheckPlace() {
         console.log(error);
       });
   }
+
   async function apiPOSTCancel() {
     await axios
       .post("/matching/cancel", {})
@@ -256,6 +268,7 @@ export default function CheckPlace() {
         console.log(err);
       });
   }
+
   async function apiCompleted() {
     axios
       .get("/matching/completed")
@@ -270,6 +283,7 @@ export default function CheckPlace() {
         console.log(error);
       });
   }
+
   ///////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////
 
@@ -284,9 +298,10 @@ export default function CheckPlace() {
           level={5}
         />
       </div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[525px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center py-[40px]">
+      <div
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[525px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center py-[40px]">
         <div className="place-items-center ">
-          <CheckTitle />
+          <CheckTitle/>
           <p className="text-xl pb-1 pt-[30px] font-semibold">
             매칭 인원을 찾았어요.
           </p>
@@ -297,7 +312,8 @@ export default function CheckPlace() {
             남은시간 {minutes}:{second}
           </p>
         </div>
-        <div className="people-container w-[700px] h-[200px] flex flex-col justify-center gap-4 py-3 bg-[#F8F8F8] rounded-lg text-[#555555] text-[14px]">
+        <div
+          className="people-container w-[700px] h-[200px] flex flex-col justify-center gap-4 py-3 bg-[#F8F8F8] rounded-lg text-[#555555] text-[14px]">
           {matchingData.map((item, idx) => (
             <>
               <div key={idx} className="people-info flex justify-center gap-20">

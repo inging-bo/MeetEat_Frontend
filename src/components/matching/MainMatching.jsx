@@ -12,6 +12,7 @@ import SearchList from "./SearchList";
 import InfoWindow from "./InfoWindow";
 import Matching from "./Matching";
 import { useNavigate } from "react-router-dom";
+import modalStore from "../../store/modalStore.js";
 
 export default function MainMatching() {
   const navigate = useNavigate();
@@ -190,7 +191,9 @@ export default function MainMatching() {
 
   const searchPlaces = () => {
     if (!curText.replace(/^\s+|\s+$/g, "")) {
-      alert("검색어를 입력해주세요!");
+      modalStore.openModal("oneBtn", {
+        message : "검색어를 입력해주세요!."
+      })
       return false;
     }
 
@@ -285,7 +288,7 @@ export default function MainMatching() {
     <>
       {isMatching === "false" && (
         <>
-          <header className="fixed top-0 shadow-lg w-full z-50 flex justify-center h-[77px] py-3 bg-white">
+          <header className="fixed top-0 shadow-lg w-full z-10 flex justify-center h-[77px] py-3 bg-white">
             <div className="flex w-full justify-between max-w-screen-xl">
               <Link to="/" className="h-full px-4 flex items-center">
                 <HeaderLogo />
