@@ -111,7 +111,7 @@ export default function CheckPlace() {
   };
 
   // 타이머
-  const MINUTES_IN_MS = 1 * 60 * 1000;
+  const MINUTES_IN_MS = 1000 * 60 * 1000;
   const INTERVAL = 1000;
   const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
 
@@ -373,8 +373,8 @@ export default function CheckPlace() {
           />
         )}
       </div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[525px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center py-[40px]">
-        <div className="place-items-center ">
+      <div className="absolute flex flex-col items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[525px] bg-white rounded-lg drop-shadow-2xl z-20 py-[40px]">
+        <div className="flex flex-col items-center">
           <CheckTitle />
           <p className="text-xl pb-1 pt-[30px] font-semibold">
             매칭 인원을 찾았어요.
