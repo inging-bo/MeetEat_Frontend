@@ -1,11 +1,14 @@
 import { useState } from "react";
+import modalStore from "../../store/modalStore.js";
+import { useNavigate } from "react-router-dom";
+
 export default function InfoWindow({
-  marker,
-  setIsMatching,
-  setSelectedMarker,
-  setNumber,
-  isLoggedIn,
-}) {
+                                     marker,
+                                     setIsMatching,
+                                     setSelectedMarker,
+                                     setNumber,
+                                     isLoggedIn,
+                                   }) {
   // 인원 선택
   const [choicedNumber, setChoicedNumber] = useState(2);
 
@@ -23,8 +26,23 @@ export default function InfoWindow({
     }
   };
 
-  const choicePlace = (marker) => {
-    if (!isLoggedIn) return alert("로그인 후 이용 가능한 서비스 입니다.");
+  const navigate = useNavigate()
+
+  const choicePlace = async (marker) => {
+    if (!isLoggedIn) return (
+      modalStore.openModal("twoBtn", {
+        message : (
+          <>
+            <div>로그인 후 이용할 수 있습니다.</div>
+            <div>로그인 하시겠어요?</div>
+          </>
+        ),
+        onConfirm: async () => {
+          await navigate("/account")
+          modalStore.closeModal()
+        }
+      })
+    );
     setIsMatching("true");
     setSelectedMarker(marker);
     setNumber(choicedNumber);
@@ -56,14 +74,15 @@ export default function InfoWindow({
             <p className="text-sm pb-5 text-[#909090]">
               내 위치에서 {marker.distance}m
             </p>
-            <hr className="pb-5" />
+            <hr className="pb-5"/>
             <div>
               <p className="font-bold text-base whitespace-normal pb-4">
                 방문할 인원을 선택해주세요.
               </p>
               <div className="flex flex-row justify-between text-sm ">
                 <p>인원</p>
-                <div className="flex flex-row items-center justify-between border border-[#E8E8E8] w-[100px] h-[30px] rounded-lg text-[#909090]">
+                <div
+                  className="flex flex-row items-center justify-between border border-[#E8E8E8] w-[100px] h-[30px] rounded-lg text-[#909090]">
                   <button
                     className="w-[30px] text-center text-2xl"
                     onClick={minus}
