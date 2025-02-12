@@ -3,9 +3,7 @@ import modalStore from "../../store/modalStore.js";
 export default function TwoBtnModal({ message, onConfirm }) {
   return (
     <>
-      <div>
-        {message}
-      </div>
+      <div>{message}</div>
       <div className="flex gap-8 justify-center">
         <button
           onClick={() => modalStore.closeModal()}
@@ -14,8 +12,13 @@ export default function TwoBtnModal({ message, onConfirm }) {
           아니요
         </button>
         {/* "예" 클릭 시 상태 변경 */}
-        <button className="h-full px-4 flex items-center" onClick={() => onConfirm()}>예</button>
+        <button
+          className="h-full px-4 flex items-center"
+          onClick={() => onConfirm()}
+        >
+          예
+        </button>
       </div>
     </>
-  )
+  );
 }

@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import authStore from "../../store/authStore";
 import GoldMedal from "../../assets/Medal-Gold.svg?react";
 import SilverMedal from "../../assets/Medal-Silver.svg?react";
 import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
 
 export default function RestInfo() {
+  useEffect(() => {
+    authStore.checkLoggedIn();
+    !authStore.loggedIn && alert("로그인 후 이용해주세요!");
+    !authStore.loggedIn && window.location.replace("/");
+  }, []);
+
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [nicknameData, setNicknameData] = useState("");

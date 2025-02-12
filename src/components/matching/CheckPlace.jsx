@@ -10,7 +10,7 @@ import modalStore from "../../store/modalStore.js";
 export default function CheckPlace() {
   const navigate = useNavigate();
 
-  const [position, setPosition] = useState("");
+  const position = JSON.parse(window.sessionStorage.getItem("tempPosition"));
   const [matchingData, setMatchingData] = useState([]);
   const [user, setUser] = useState(new Map());
   const [agree, setAgree] = useState(false);
@@ -22,22 +22,17 @@ export default function CheckPlace() {
       if (window.sessionStorage.getItem("isMatching") === "true") {
         window.sessionStorage.setItem("isMatching", "false");
       }
+      alert("잘못된 접근입니다.");
       return navigate("/");
     }
     if (window.sessionStorage.getItem("isMatching") === "false") {
+      alert("잘못된 접근입니다.");
       return navigate("/");
     }
-
-    // 저장된 매칭데이터 저장
-    const jsonPosition = JSON.parse(
-      window.sessionStorage.getItem("tempPosition")
-    );
     const jsonData = JSON.parse(
       window.sessionStorage.getItem("matchingData")
     ).data;
     setMatchingData(Object.entries(Object.entries(jsonData)[2][1]));
-    setPosition(jsonPosition);
-    console.log(jsonPosition);
   }, []);
 
   const isMounted = useRef(false);
@@ -292,12 +287,14 @@ export default function CheckPlace() {
     <>
       <div className="bg-map relative w-full h-full">
         <div className="bg-black/40 absolute w-full h-full z-10"></div>
-        <StaticMap
-          id="map"
-          className="w-full h-full"
-          center={JSON.parse(window.sessionStorage.getItem("tempPosition"))}
-          level={5}
-        />
+        {position && (
+          <StaticMap
+            id="map"
+            className="w-full h-full"
+            center={position}
+            level={5}
+          />
+        )}
       </div>
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[525px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center py-[40px]">
         <div className="place-items-center ">

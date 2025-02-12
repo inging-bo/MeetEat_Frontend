@@ -6,12 +6,13 @@ import axios from "axios";
 import AccIcon from "../../assets/acc-icon.svg?react";
 import HeaderLogo from "../../assets/header-logo.svg?react";
 import SearchIcon from "../../assets/search.svg?react";
-import ChatIcon from "../../assets/chat-line.svg?react";
 import FoodIcon from "../../assets/food-line.svg?react";
 import SearchList from "./SearchList";
 import InfoWindow from "./InfoWindow";
 import Matching from "./Matching";
 import { useNavigate } from "react-router-dom";
+import authStore from "../../store/authStore";
+// import ChatIcon from "../../assets/chat-line.svg?react";
 import modalStore from "../../store/modalStore.js";
 
 export default function MainMatching() {
@@ -19,12 +20,9 @@ export default function MainMatching() {
   // 매칭중 확인
   const [isMatching, setIsMatching] = useState("false");
   const [isMatched, setIsMatched] = useState("false");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const isLoggedIn = authStore.loggedIn;
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    setIsLoggedIn(!!token);
-
     window.sessionStorage.getItem("isMatching") !== null &&
       setIsMatching(window.sessionStorage.getItem("isMatching"));
     window.sessionStorage.getItem("isMatched") !== null &&
@@ -108,7 +106,6 @@ export default function MainMatching() {
     lat: 37.503081,
     lng: 127.04158,
   });
-
   // 현재 위치
   const [position, setPosition] = useState({
     lat: 37.503081,
@@ -192,8 +189,8 @@ export default function MainMatching() {
   const searchPlaces = () => {
     if (!curText.replace(/^\s+|\s+$/g, "")) {
       modalStore.openModal("oneBtn", {
-        message : "검색어를 입력해주세요!."
-      })
+        message: "검색어를 입력해주세요!.",
+      });
       return false;
     }
 
@@ -313,7 +310,10 @@ export default function MainMatching() {
               </div>
               {isLoggedIn ? (
                 <>
-                  <Link to="/mypage" className="h-full px-4 flex items-center">
+                  <Link
+                    to={`/mypage`}
+                    className="h-full px-4 flex items-center"
+                  >
                     마이페이지
                   </Link>
                 </>
@@ -354,7 +354,8 @@ export default function MainMatching() {
                   />
                   {isInfoWindowOpen &&
                     info &&
-                    info.place_name === marker.place_name && (
+                    info.place_name === marker.place_name &&
+                    info.phone === marker.phone && (
                       <CustomOverlayMap
                         position={marker.position}
                         yAnchor={1.3}
@@ -436,7 +437,7 @@ export default function MainMatching() {
 
             {/* 맛집탐방단, 내돈내산맛집 */}
             <div className="flex flex-col gap-[10px] absolute z-[1] bottom-5 right-5 p-[10px]">
-              <Link
+              {/* <Link
                 to="/openchat"
                 className="flex flex-col justify-center items-center rounded-lg w-[80px] h-[80px] bg-[#FF6445] text-white text-sm"
               >
@@ -444,7 +445,7 @@ export default function MainMatching() {
                 맛집
                 <br />
                 탐방단
-              </Link>
+              </Link> */}
               <Link
                 to="meeteatdb"
                 className="flex flex-col justify-center items-center rounded-lg w-[80px] h-[80px] bg-[#FF6445] text-white text-sm"
