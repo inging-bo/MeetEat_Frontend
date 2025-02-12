@@ -1,6 +1,7 @@
 [
   {
     "id": 1,
+    "matchedId": 1,
     "place_name": "김밥천국",
     "category_name": "한식",
     "myReview": false,
@@ -29,6 +30,7 @@
   },
   {
     "id": 2,
+    "matchedId": 2,
     "place_name": "스타벅스",
     "category_name": "카페",
     "myReview": true,
@@ -51,6 +53,7 @@
   },
   {
     "id": 3,
+    "matchedId": 3,
     "place_name": "김밥천국",
     "category_name": "한식",
     "myReview": false,
@@ -78,6 +81,7 @@
   },
   {
     "id": 4,
+    "matchedId": 4,
     "place_name": "스타벅스",
     "category_name": "카페",
     "myReview": true,
@@ -99,6 +103,7 @@
   },
   {
     "id": 5,
+    "matchedId": 5,
     "place_name": "김밥천국",
     "category_name": "한식",
     "myReview": false,
@@ -126,6 +131,7 @@
   },
   {
     "id": 6,
+    "matchedId": 6,
     "place_name": "스타벅스",
     "category_name": "카페",
     "myReview": true,

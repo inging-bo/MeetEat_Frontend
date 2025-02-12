@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import GoldMedal from "../../assets/Medal-Gold.svg?react";
 import SilverMedal from "../../assets/Medal-Silver.svg?react";
@@ -160,6 +160,19 @@ const RestReviews = observer(() => {
     }
   };
 
+  const navigate = useNavigate()
+
+  // 리뷰 작성하러 가기
+
+  const writeReview = (restsId, restsName, matchedId) => {
+    navigate(`/rests/write/${restsId}`, {
+      state: {
+        restId: `${restsId}`,
+        restName: `${restsName}`,
+        matchedId: `${matchedId}`,
+      }
+    })
+  }
   return (
     <div
       className="flex flex-col gap-10 flex-auto min-w-fit border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl py-10 px-14">
@@ -175,12 +188,11 @@ const RestReviews = observer(() => {
                     {visitItem.category_name}
                   </span>
                 </div>
-                <span
-                  className="flex flex-shrink-0 text-[15px] text-[#909090] border border-[#909090] px-1.5 rounded-md">
-                  {visitItem.myReview ? (
-                    <Link>리뷰 확인하기</Link>
-                  ) : (
-                    <Link>리뷰 작성하기</Link>
+                <span>
+                  {!visitItem.myReview && (
+                    <div
+                      onClick={() => writeReview(visitItem.id, visitItem.place_name , visitItem.matchedId)}
+                      className="flex flex-shrink-0 text-[15px] text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer">리뷰 작성하기</div>
                   )}
                 </span>
               </div>
