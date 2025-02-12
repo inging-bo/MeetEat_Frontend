@@ -27,11 +27,29 @@ export default function CheckPlace() {
     if (window.sessionStorage.getItem("isMatching") === "false") {
       return navigate("/");
     }
+
+    // SSE 재연결
+    apiSSESub();
     const jsonData = JSON.parse(
       window.sessionStorage.getItem("matchingData")
     ).data;
     setMatchingData(jsonData.restaurantList);
   }, []);
+
+  async function apiSSESub() {
+    await axios
+      .get("/sse/subscribe", {
+        headers: {
+          Authorization: `${window.localStorage.getItem("token")}`,
+        },
+      })
+      .then(() => {
+        console.log("SSE구독");
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
   const isMounted = useRef(false);
   useEffect(() => {

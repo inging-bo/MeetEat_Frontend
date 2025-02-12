@@ -5,15 +5,12 @@ import { debounce } from "lodash";
 import axios from "axios";
 import AccIcon from "../../assets/acc-icon.svg?react";
 import HeaderLogo from "../../assets/header-logo.svg?react";
-import SearchIcon from "../../assets/search.svg?react";
 import FoodIcon from "../../assets/food-line.svg?react";
 import SearchList from "./SearchList";
 import InfoWindow from "./InfoWindow";
 import Matching from "./Matching";
 import { useNavigate } from "react-router-dom";
 import authStore from "../../store/authStore";
-// import ChatIcon from "../../assets/chat-line.svg?react";
-import modalStore from "../../store/modalStore.js";
 
 export default function MainMatching() {
   const navigate = useNavigate();
@@ -184,7 +181,6 @@ export default function MainMatching() {
   const [markers, setMarkers] = useState([]);
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
-  const [preKeyword, setPreKeyword] = useState("");
   const [key, setKey] = useState(0);
   const [curText, setCurText] = useState("");
   const [selectedMarker, setSelectedMarker] = useState();
@@ -248,13 +244,6 @@ export default function MainMatching() {
   function handleInputChange(event) {
     setCurText(event.target.value);
   }
-
-  // // input필드 관찰
-  // const onChange = (e) => {
-  //   setCurText(e.target.value);
-  //   const searchBtn = document.getElementById("search-btn");
-  //   searchBtn.classList.remove("hidden");
-  // };
 
   const searchPlaces = () => {
     axios
@@ -349,13 +338,6 @@ export default function MainMatching() {
                   value={curText}
                   placeholder="함께 먹고싶은 식당을 검색해요."
                 />
-                {/* <button
-                  id="search-btn"
-                  className="absolute px-5 right-0 top-[13px]"
-                  onClick={searchPlaces}
-                >
-                  <SearchIcon width="22px" />
-                </button> */}
               </div>
               {isLoggedIn ? (
                 <>
