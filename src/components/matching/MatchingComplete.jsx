@@ -317,14 +317,14 @@ export default function MatchingComplete() {
           >
             <MapMarker
               image={{
-                src: "../../../public/assets/map-pin.svg",
+                src: "/assets/map-pin.svg",
                 size: { width: 20, height: 20 },
               }}
               position={position}
             />
             <MapMarker
               image={{
-                src: "../../../public/assets/positionTo.svg",
+                src: "/assets/positionTo.svg",
                 size: { width: 20, height: 20 },
               }}
               position={positionTo}
