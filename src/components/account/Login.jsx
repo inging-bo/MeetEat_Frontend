@@ -7,6 +7,7 @@ import KakaoIcon from "../../assets/Login-icon-kakao.svg?react";
 import NaverIcon from "../../assets/Login-icon-naver.svg?react";
 import axios from "axios";
 import modalStore from "../../store/modalStore.js";
+import authStore from "../../store/authStore.js";
 
 export default function Login() {
   // 이메일 패스워드 값 유무 확인 용
@@ -41,11 +42,12 @@ export default function Login() {
       console.log("로그인 응답 데이터:", response.data);
 
       // // ✅ 토큰 저장
-      window.localStorage.setItem("accessToken", response.data.accessToken);
+      window.localStorage.setItem("token", response.data.accessToken);
 
       if (response.data.accessToken) {
         setMessage("로그인 성공!");
-        modalStore.openModal("oneBtn", { type : "signIn"})
+        authStore.setLoggedIn(true);
+        modalStore.openModal("oneBtn", { type: "signIn" });
 
         // 입력 필드 초기화
         setEmailInput("");
@@ -123,8 +125,9 @@ export default function Login() {
       const response = await axios.post(`/users/signin/${provider}`, { code });
 
       if (response.data.accessToken) {
-        window.localStorage.setItem("accessToken", response.data.accessToken);
+        window.localStorage.setItem("token", response.data.accessToken);
         setMessage("로그인 성공!");
+        authStore.setLoggedIn(true);
         navigate("/"); // 메인 페이지로 리디렉션
       } else {
         setMessage("로그인 실패");

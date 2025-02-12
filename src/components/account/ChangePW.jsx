@@ -4,14 +4,21 @@ import HidePWIcon from "../../assets/hidePW-icon.svg?react";
 import ShowPWIcon from "../../assets/showPW-icon.svg?react";
 import Header from "../layout/Header.jsx";
 import axios from "axios";
+import authStore from "../../store/authStore.js";
 
 export default function ChangePW() {
+  const navigate = useNavigate();
+  // 로그인 확인
+  useEffect(() => {
+    !authStore.loggedIn && alert("로그인 후 이용해주세요!");
+    !authStore.loggedIn && window.location.replace("/");
+  }, []);
 
   // 값 유무 확인
-  const [currentPwInput, setCurrentPwInput] = useState("")
-  const [newPwInput, setNewPwInput] = useState("")
-  const [subNewPwInput, setSubNewPwInput] = useState("")
-  const [hasValue, setHasValue] = useState(false)
+  const [currentPwInput, setCurrentPwInput] = useState("");
+  const [newPwInput, setNewPwInput] = useState("");
+  const [subNewPwInput, setSubNewPwInput] = useState("");
+  const [hasValue, setHasValue] = useState(false);
 
   // input필드 관찰
   const currentPwChange = (e) => setCurrentPwInput(e.target.value);
@@ -20,7 +27,11 @@ export default function ChangePW() {
 
   // 입력값 변경 시 hasValue 상태 업데이트
   useEffect(() => {
-    setHasValue(currentPwInput.length > 0 && newPwInput.length > 0 && subNewPwInput.length > 0);
+    setHasValue(
+      currentPwInput.length > 0 &&
+        newPwInput.length > 0 &&
+        subNewPwInput.length > 0
+    );
   }, [currentPwInput, newPwInput, subNewPwInput]);
 
   // 비밀번호 보이기/숨기기
@@ -35,13 +46,11 @@ export default function ChangePW() {
   // 변경하기 버튼 클릭 시 메시지
   const [message, setMessage] = useState("");
 
-  const navigate = useNavigate();
-
   const handleChangePW = async (e) => {
     e.preventDefault();
 
     try {
-      const accessToken = window.localStorage.getItem("accessToken"); // 저장된 토큰 가져오기
+      const accessToken = window.localStorage.getItem("token"); // 저장된 토큰 가져오기
 
       if (!accessToken) {
         setMessage("로그인 정보가 없습니다.");
@@ -69,7 +78,9 @@ export default function ChangePW() {
 
       // 요청이 성공하면 페이지 이동
       if (response.status === 200) {
-        navigate("/successnotice", { state: { message: "변경이 완료되었습니다." } });
+        navigate("/successnotice", {
+          state: { message: "변경이 완료되었습니다." },
+        });
       }
     } catch (error) {
       if (!error.response) {
@@ -93,73 +104,92 @@ export default function ChangePW() {
     }
   };
 
-
   return (
     <form className="flex w-96 justify-center items-center">
-      <Header/>
+      <Header />
       <div className="flex flex-1 flex-col gap-3 justify-center">
         <h1 className="text-2xl text-center">비밀번호 변경</h1>
         <div className="relative flex flex-col items-start">
-          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">현재 비밀번호 <span className="text-red-500">- 임시로 현재 비번 1234입니다.</span></span>
+          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
+            현재 비밀번호{" "}
+            <span className="text-red-500">- 임시로 현재 비번 1234입니다.</span>
+          </span>
           <label className="relative w-full">
             <input
-              type={showCurrentPW ? "text" : "password"} name="password"
+              type={showCurrentPW ? "text" : "password"}
+              name="password"
               className="w-full h-11 outline-0 border-b px-2 border-gray-300"
               value={currentPwInput}
               onChange={currentPwChange}
-              placeholder="임시 현재 비밀번호 1234" required
+              placeholder="임시 현재 비밀번호 1234"
+              required
             />
-            <div className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
-                 onClick={toggleCurrentPW}>
+            <div
+              className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
+              onClick={toggleCurrentPW}
+            >
               {showCurrentPW ? (
-                <ShowPWIcon className="w-full h-full"/>
+                <ShowPWIcon className="w-full h-full" />
               ) : (
-                <HidePWIcon className="w-full h-full"/>
+                <HidePWIcon className="w-full h-full" />
               )}
             </div>
           </label>
         </div>
         <div className="relative flex flex-col items-start">
-          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">새 비밀번호 <span className="text-red-500">- 3글자 이하면 오류</span></span>
+          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
+            새 비밀번호{" "}
+            <span className="text-red-500">- 3글자 이하면 오류</span>
+          </span>
           <label className="relative w-full">
             <input
-              type={showNewPW ? "text" : "password"} name="password"
+              type={showNewPW ? "text" : "password"}
+              name="password"
               className="w-full h-11 outline-0 border-b px-2 border-gray-300"
               value={newPwInput}
               onChange={NewPwChange}
-              placeholder="비밀번호를 입력해주세요" required
+              placeholder="비밀번호를 입력해주세요"
+              required
             />
-            <div className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
-                 onClick={toggleNewPW}>
+            <div
+              className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
+              onClick={toggleNewPW}
+            >
               {showNewPW ? (
-                <ShowPWIcon className="w-full h-full"/>
+                <ShowPWIcon className="w-full h-full" />
               ) : (
-                <HidePWIcon className="w-full h-full"/>
+                <HidePWIcon className="w-full h-full" />
               )}
             </div>
           </label>
         </div>
         <div className="relative flex flex-col items-start">
-          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">새 비밀번호 확인</span>
+          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
+            새 비밀번호 확인
+          </span>
           <label className="relative w-full">
             <input
-              type={showNewPWSub ? "text" : "password"} name="password"
+              type={showNewPWSub ? "text" : "password"}
+              name="password"
               className="w-full h-11 outline-0 border-b px-2 border-gray-300"
               value={subNewPwInput}
               onChange={subNewPwChange}
-              placeholder="비밀번호를 입력해주세요" required
+              placeholder="비밀번호를 입력해주세요"
+              required
             />
-            <div className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
-                 onClick={toggleNewPWSub}>
+            <div
+              className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
+              onClick={toggleNewPWSub}
+            >
               {showNewPWSub ? (
-                <ShowPWIcon className="w-full h-full"/>
+                <ShowPWIcon className="w-full h-full" />
               ) : (
-                <HidePWIcon className="w-full h-full"/>
+                <HidePWIcon className="w-full h-full" />
               )}
             </div>
           </label>
-          <div
-            className="text-sm text-[#FF0000] mt-2 h-5">{newPwInput !== subNewPwInput && "비밀번호가 일치하지 않습니다."}
+          <div className="text-sm text-[#FF0000] mt-2 h-5">
+            {newPwInput !== subNewPwInput && "비밀번호가 일치하지 않습니다."}
           </div>
         </div>
         <button
@@ -175,5 +205,5 @@ export default function ChangePW() {
         <p className="text-sm text-[#FF0000] mt-2 min-h-5">{message}</p>
       </div>
     </form>
-  )
+  );
 }

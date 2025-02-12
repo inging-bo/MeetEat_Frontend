@@ -21,14 +21,17 @@ export default function MatchingComplete() {
   const [pickedRest, setPickedRest] = useState([]);
   const [date, setDate] = useState("");
   const [distance, setDistance] = useState("");
+
   // 초기 설정
   useEffect(() => {
     // 유저가 매칭된 상태가 아니라면 메인페이지로 이동
     if (window.sessionStorage.getItem("isCompleted") !== "true") {
+      alert("잘못된 접근입니다.");
       console.log("매칭완료된 상태가 아닙니다.");
       return navigate("/");
     }
     if (window.sessionStorage.getItem("matchedData") === undefined) {
+      alert("잘못된 접근입니다.");
       console.log("매칭완료된 데이터가 없습니다.");
       return navigate("/");
     }

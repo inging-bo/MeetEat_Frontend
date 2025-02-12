@@ -2,10 +2,11 @@ import modalStore from "../../store/modalStore.js";
 import axios from "axios";
 import visitStore from "../../store/visitStore.js";
 import { useNavigate } from "react-router-dom";
+import authStore from "../../store/authStore.js";
 
 export default function TwoBtnModal({ type, userId }) {
   // ✅ 버튼 별 메세지 선택
-  console.log(userId)
+  console.log(userId);
   const navigate = useNavigate();
 
   const choiceMessage = (type, userId) => {
@@ -66,7 +67,7 @@ export default function TwoBtnModal({ type, userId }) {
   // 로그아웃하시겠습니까? `예` 인경우
   const logOut = async () => {
     try {
-      const accessToken = window.localStorage.getItem("accessToken"); // 저장된 토큰 가져오기
+      const accessToken = window.localStorage.getItem("token"); // 저장된 토큰 가져오기
 
       if (!accessToken) {
         console.error("로그아웃 요청 실패: 토큰이 없습니다.");
@@ -87,13 +88,14 @@ export default function TwoBtnModal({ type, userId }) {
       console.log("로그아웃 응답 데이터:", response.data);
 
       // 토큰값 제거
-      window.localStorage.removeItem("accessToken"); // accessToken 삭제
-      modalStore.closeModal()
+      window.localStorage.removeItem("token"); // token 삭제
+      authStore.setLoggedIn(false);
+      modalStore.closeModal();
       navigate("/");
     } catch (error) {
       console.error("로그아웃 요청 실패!:", error);
     }
-  }
+  };
   return (
     <>
       <div>
@@ -116,5 +118,5 @@ export default function TwoBtnModal({ type, userId }) {
         </button>
       </div>
     </>
-  )
+  );
 }
