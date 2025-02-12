@@ -379,7 +379,7 @@ export default function MainMatching() {
                       setInfoWindowOpen(true);
                     }}
                     image={{
-                      src: "../../../public/assets/map-marker.svg",
+                      src: "/assets/map-marker.svg",
                       size: { width: 30, height: 30 },
                     }}
                   />
@@ -438,7 +438,7 @@ export default function MainMatching() {
               {/* 현위치 표시 */}
               <MapMarker
                 image={{
-                  src: "../../../public/assets/map-pin.svg",
+                  src: "/assets/map-pin.svg",
                   size: { width: 20, height: 20 },
                 }}
                 position={position}
