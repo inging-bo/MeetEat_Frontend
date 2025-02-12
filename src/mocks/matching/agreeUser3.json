@@ -1,3 +1,8 @@
 {
-  "message": "파인애플"
+  "message": "수락 알림이 도착했습니다.",
+  "user": {
+    "id": "3",
+    "nickname": "파인애플",
+    "join": true
+  }
 }

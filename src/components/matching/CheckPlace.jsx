@@ -93,7 +93,7 @@ export default function CheckPlace() {
   };
 
   // 타이머
-  const MINUTES_IN_MS = 1000 * 60 * 1000;
+  const MINUTES_IN_MS = 1 * 60 * 1000;
   const INTERVAL = 1000;
   const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
 
@@ -188,9 +188,14 @@ export default function CheckPlace() {
           },
         })
         .then((res) => {
+          if (res.data.user.join === false) {
+            alert("매칭 인원 중 누군가가 거절하였습니다");
+            window.sessionStorage.clear();
+            return navigate("/");
+          }
           setUser((prev) => {
             const newState = new Map(prev);
-            newState.set(res.data.message, true);
+            newState.set(res.data.user.nickname, true);
             return newState;
           });
         })
@@ -210,9 +215,14 @@ export default function CheckPlace() {
           },
         })
         .then((res) => {
+          if (res.data.user.join === false) {
+            alert("매칭 인원 중 누군가가 거절하였습니다");
+            window.sessionStorage.clear();
+            return navigate("/");
+          }
           setUser((prev) => {
             const newState = new Map(prev);
-            newState.set(res.data.message, true);
+            newState.set(res.data.user.nickname, true);
             return newState;
           });
         })
@@ -232,9 +242,14 @@ export default function CheckPlace() {
           },
         })
         .then((res) => {
+          if (res.data.user.join === false) {
+            alert("매칭 인원 중 누군가가 거절하였습니다");
+            window.sessionStorage.clear();
+            return navigate("/");
+          }
           setUser((prev) => {
             const newState = new Map(prev);
-            newState.set(res.data.message, true);
+            newState.set(res.data.user.nickname, true);
             return newState;
           });
         })
@@ -269,11 +284,19 @@ export default function CheckPlace() {
 
   async function apiDisagree() {
     axios
-      .get("/matching?response=reject", {
-        headers: {
-          Authorization: `${window.localStorage.getItem("token")}`,
+      .get(
+        "/matching?response=reject",
+        {
+          teamId: JSON.parse(window.sessionStorage.getItem("matchingData")).data
+            .teamId,
+          isJoin: false,
         },
-      })
+        {
+          headers: {
+            Authorization: `${window.localStorage.getItem("token")}`,
+          },
+        }
+      )
       .then((res) => {
         console.log(res.data);
       })
@@ -362,9 +385,9 @@ export default function CheckPlace() {
                   width="25px"
                   className="check hidden text-[#FF6445]"
                 />
-                <p>{item.user.nickname}</p>
-                <p>{item.place.name}</p>
-                <p>
+                <p className="text-overflow">{item.user.nickname}</p>
+                <p className="text-overflow">{item.place.name}</p>
+                <p className="text-overflow">
                   {item.place.category_name.slice(
                     item.place.category_name.indexOf(">") + 2
                   )}

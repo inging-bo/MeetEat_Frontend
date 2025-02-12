@@ -1,3 +1,8 @@
 {
-  "message": "석류"
+  "message": "수락 알림이 도착했습니다.",
+  "user": {
+    "id": "4",
+    "nickname": "석류",
+    "join": false
+  }
 }
