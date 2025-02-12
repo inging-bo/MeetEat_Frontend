@@ -35,7 +35,7 @@ export default function MatchingComplete() {
       console.log("매칭완료된 데이터가 없습니다.");
       return navigate("/");
     }
-
+    apiSSESub();
     const now = new Date(); // 오늘 날짜
     const firstDay = new Date(
       JSON.parse(window.sessionStorage.getItem("matchedData")).data.createdAt
@@ -83,6 +83,22 @@ export default function MatchingComplete() {
       lat: Object.entries(jsonCurData)[3][1].restaurant.lat,
       lng: Object.entries(jsonCurData)[3][1].restaurant.lon,
     });
+
+    // 매칭 취소 발생
+    setTimeout(
+      () =>
+        axios
+          .get("/matching/complete")
+          .then(() => {
+            alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
+            window.sessionStorage.clear();
+            navigate("/");
+          })
+          .catch(function (error) {
+            console.log(error);
+          }),
+      [10000]
+    );
   }, []);
 
   // 거리계산
@@ -190,6 +206,22 @@ export default function MatchingComplete() {
     setDistance(distance);
   }, [position]);
 
+  // SSE 구독
+  async function apiSSESub() {
+    await axios
+      .get("/sse/subscribe", {
+        headers: {
+          Authorization: `${window.localStorage.getItem("token")}`,
+        },
+      })
+      .then(() => {
+        console.log("SSE구독");
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
   // 3분 전 매칭취소
   async function apiPOSTCancel() {
     await axios
@@ -226,8 +258,8 @@ export default function MatchingComplete() {
         console.log(err);
       });
   }
+
   const cancelMatched = () => {
-    console.log("dd");
     const now = new Date();
     const firstDay = new Date(
       JSON.parse(window.sessionStorage.getItem("matchedData")).data.createdAt

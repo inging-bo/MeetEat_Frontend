@@ -103,6 +103,16 @@ export const handlers = [
     );
   }),
 
+  // 매칭완료후후 이탈자 발생
+  http.get("/atching/canceled", () => {
+    return HttpResponse.json(
+      {
+        message: "모임이 취소되었습니다",
+      },
+      { status: 200 }
+    );
+  }),
+
   // 회원가입 요청
   http.post("/users/signup", async ({ request }) => {
     try {
