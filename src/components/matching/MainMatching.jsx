@@ -190,35 +190,73 @@ export default function MainMatching() {
   const [selectedMarker, setSelectedMarker] = useState();
   const [number, setNumber] = useState(2);
 
-  // input필드 관찰
-  const onChange = (e) => {
-    setCurText(e.target.value);
-    const searchBtn = document.getElementById("search-btn");
-    searchBtn.classList.remove("hidden");
-  };
+  // 입력 값이 변경될 때마다 타이머 설정
+  useEffect(() => {
+    if (isMounted.current) {
+      const delayDebounceTimer = setTimeout(() => {
+        setMarkers([]);
+        axios
+          .get(`https://dapi.kakao.com/v2/local/search/keyword?`, {
+            params: {
+              x: position.lng,
+              y: position.lat,
+              radius: 2000,
+              query: curText,
+              sort: "distance",
+              page: page,
+            },
+            headers: {
+              Authorization: `KakaoAK ${import.meta.env.VITE_APP_KAKAO_REST_KEY}`,
+            },
+          })
+          .then((res) => {
+            let markers = [];
+            for (let i = 0; i < res.data.documents.length; i++) {
+              markers.push({
+                position: {
+                  lat: res.data.documents[i].y,
+                  lng: res.data.documents[i].x,
+                },
+                place_name: res.data.documents[i].place_name,
+                category_name: res.data.documents[i].category_name,
+                id: res.data.documents[i].id,
+                phone: res.data.documents[i].phone,
+                place_url: res.data.documents[i].place_url,
+                road_address_name: res.data.documents[i].road_address_name,
+                distance: res.data.documents[i].distance,
+              });
+            }
+
+            setMarkers((prevMarkers) => [...prevMarkers, ...markers]);
+
+            if (res.data.meta.is_end === false) {
+              setHasMore(true);
+              setPage(page + 1);
+            } else {
+              setHasMore(false);
+              setPage(1);
+            }
+          });
+      }, 500); // 디바운스 지연 시간
+      return () => clearTimeout(delayDebounceTimer);
+    } else {
+      isMounted.current = true;
+      return;
+    }
+  }, [curText]);
+
+  function handleInputChange(event) {
+    setCurText(event.target.value);
+  }
+
+  // // input필드 관찰
+  // const onChange = (e) => {
+  //   setCurText(e.target.value);
+  //   const searchBtn = document.getElementById("search-btn");
+  //   searchBtn.classList.remove("hidden");
+  // };
 
   const searchPlaces = () => {
-    if (!curText.replace(/^\s+|\s+$/g, "")) {
-      modalStore.openModal("oneBtn", {
-        message: "검색어를 입력해주세요!.",
-      });
-      return false;
-    }
-
-    const searchBtn = document.getElementById("search-btn");
-    searchBtn.classList.add("hidden");
-
-    // 기존 keyword와 다른 keyword 검색시 기존 marker와 정보 초기화
-    if (curText !== preKeyword && curText !== "") {
-      setMarkers([]);
-      setPage(1);
-      setHasMore(false);
-      setInfo(false);
-      setKey(key + 1);
-    }
-
-    setPreKeyword(curText);
-
     axios
       .get(`https://dapi.kakao.com/v2/local/search/keyword?`, {
         params: {
@@ -307,17 +345,17 @@ export default function MainMatching() {
                   className="w-[300px] lg:w-[600px] rounded-full pl-5 focus:outline-none"
                   id="keyword"
                   type="text"
-                  onChange={onChange}
+                  onChange={handleInputChange}
                   value={curText}
                   placeholder="함께 먹고싶은 식당을 검색해요."
                 />
-                <button
+                {/* <button
                   id="search-btn"
                   className="absolute px-5 right-0 top-[13px]"
                   onClick={searchPlaces}
                 >
                   <SearchIcon width="22px" />
-                </button>
+                </button> */}
               </div>
               {isLoggedIn ? (
                 <>

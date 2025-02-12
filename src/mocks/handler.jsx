@@ -50,6 +50,16 @@ export const handlers = [
     return HttpResponse.json(completedMatching, { status: 200 });
   }),
 
+  // SSE 구독
+  http.get("/sse/subscribe", () => {
+    return HttpResponse.json(
+      {
+        message: "SSE Subscribed",
+      },
+      { status: 200 }
+    );
+  }),
+
   // 매칭 요청
   http.post("/matching/request", async ({ request }) => {
     const newPost = await request.json();
@@ -336,7 +346,6 @@ export const handlers = [
     return HttpResponse.json({}, { status: 200 });
   }),
 
-
   // ✅ 차단 API 핸들러
   http.post("/ban", async ({ request }) => {
     try {
@@ -413,7 +422,6 @@ export const handlers = [
         { message: "차단 상태가 해제되었습니다.", data: myMatchingHistory },
         { status: 200 }
       );
-
     } catch (error) {
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },

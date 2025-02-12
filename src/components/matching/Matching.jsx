@@ -34,54 +34,66 @@ export default function Matching({
   // POST
   async function apiPOSTMatching(lng, lat, size, time, placeInfo) {
     await axios
-      .post(
-        "/matching/request",
-        {
-          userLon: lng,
-          userLat: lat,
-          groupSize: size,
-          matchingStartTime: time,
-          place: placeInfo,
+      .get("/sse/subscribe", {
+        headers: {
+          Authorization: `${window.localStorage.getItem("token")}`,
         },
-        {
-          headers: {
-            Authorization: `${window.localStorage.getItem("token")}`,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res.data);
-        setIsMatching("true");
-        window.sessionStorage.setItem("isMatching", "true");
-        setTimeout(
-          () =>
-            axios
-              .get("/matching/complete", {
-                headers: {
-                  Authorization: `${window.localStorage.getItem("token")}`,
-                },
-              })
-              .then((res) => {
-                setIsMatched(true);
-                window.sessionStorage.setItem(
-                  "tempPosition",
-                  JSON.stringify(position)
-                );
-                window.sessionStorage.setItem("isMatched", "true");
-                window.sessionStorage.setItem(
-                  "matchingData",
-                  JSON.stringify(res)
-                );
-                navigate(`/matching/check-place/${res.data.teamId}`);
-              })
-              .catch(function (error) {
-                console.log(error);
-              }),
-          [5000]
-        );
       })
-      .catch((err) => {
-        console.log(err);
+      .then(() => {
+        console.log("SSE구독");
+        axios
+          .post(
+            "/matching/request",
+            {
+              userLon: lng,
+              userLat: lat,
+              groupSize: size,
+              matchingStartTime: time,
+              place: placeInfo,
+            },
+            {
+              headers: {
+                Authorization: `${window.localStorage.getItem("token")}`,
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+            setIsMatching("true");
+            window.sessionStorage.setItem("isMatching", "true");
+            setTimeout(
+              () =>
+                axios
+                  .get("/matching/complete", {
+                    headers: {
+                      Authorization: `${window.localStorage.getItem("token")}`,
+                    },
+                  })
+                  .then((res) => {
+                    setIsMatched(true);
+                    window.sessionStorage.setItem(
+                      "tempPosition",
+                      JSON.stringify(position)
+                    );
+                    window.sessionStorage.setItem("isMatched", "true");
+                    window.sessionStorage.setItem(
+                      "matchingData",
+                      JSON.stringify(res)
+                    );
+                    navigate(`/matching/check-place/${res.data.teamId}`);
+                  })
+                  .catch(function (error) {
+                    console.log(error);
+                  }),
+              [5000]
+            );
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch(function (error) {
+        console.log(error);
       });
   }
 
