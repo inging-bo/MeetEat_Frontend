@@ -116,8 +116,8 @@ export default function CheckPlace() {
           {matchingData.map((item) => (
             <>
               <div className="people-info grid w-[700px] grid-cols-[200px_200px_200px] justify-center">
-                <p className="place-name">{item.place.name}</p>
-                <p>
+                <p className="place-name text-overflow">{item.place.name}</p>
+                <p className="text-overflow">
                   {item.place.category_name.slice(
                     item.place.category_name.indexOf(">") + 2
                   )}

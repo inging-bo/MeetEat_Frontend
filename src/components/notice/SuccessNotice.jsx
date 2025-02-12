@@ -6,7 +6,7 @@ export default function SuccessNotice() {
   // 로그인 확인
   useEffect(() => {
     authStore.checkLoggedIn();
-    !authStore.loggedIn && alert("로그인 후 이용해주세요!");
+    !authStore.loggedIn && alert(location.state?.message);
     !authStore.loggedIn && window.location.replace("/");
   }, []);
   const location = useLocation();
