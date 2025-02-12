@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Map, Circle } from "react-kakao-maps-sdk";
 import ReactLoading from "react-loading";
 import axios from "axios";
+import modalStore from "../../store/modalStore.js";
 
 export default function Matching({
   setIsMatching,
@@ -116,12 +117,20 @@ export default function Matching({
   }
 
   const cancelMatching = () => {
-    apiPOSTCancel();
-    window.sessionStorage.removeItem("isMatching");
-    window.sessionStorage.removeItem("isMatched");
-    setIsMatching(false);
-    setIsMatched(false);
-    history.go(0);
+    // 모달을 열고 콜백 함수 전달
+    modalStore.openModal("twoBtn", {
+      message : "매칭을 취소하시겠습니까?",
+      onConfirm: async () => {
+        // 예를 선택했을 때 실행할 코드
+        await apiPOSTCancel();
+        window.sessionStorage.removeItem("isMatching");
+        window.sessionStorage.removeItem("isMatched");
+        setIsMatching(false);
+        setIsMatched(false);
+        history.go(0);
+        modalStore.closeModal()
+      },
+    });
   };
 
   return (

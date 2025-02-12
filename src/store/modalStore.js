@@ -13,9 +13,9 @@ const createModalStore = () => {
     },
 
     closeModal() {
-      this.isOpen = false;
-      this.modalStyle = "";
-      this.modalProps = {};
+      this.isOpen = false; // 모달 닫기
+      this.modalStyle = ""; // 모달 스타일 초기화
+      this.modalProps = {}; // 모달 속성 초기화
     },
   };
 };

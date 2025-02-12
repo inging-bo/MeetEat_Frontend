@@ -5,6 +5,7 @@ import { StaticMap } from "react-kakao-maps-sdk";
 import CheckTitle from "../../assets/check-title.svg?react";
 import Waiting from "../../assets/waiting.svg?react";
 import Check from "../../assets/check.svg?react";
+import modalStore from "../../store/modalStore.js";
 
 export default function CheckPlace() {
   const navigate = useNavigate();
@@ -80,6 +81,7 @@ export default function CheckPlace() {
     function deg2rad(deg) {
       return deg * (Math.PI / 180);
     }
+
     let R = 6371; // Radius of the earth in km
     let dLat = deg2rad(lat2 - lat1); // deg2rad below
     let dLon = deg2rad(lng2 - lng1);
@@ -138,6 +140,7 @@ export default function CheckPlace() {
       alert("선택 시간이 초과되어 매칭이 종료됩니다");
       unloadFunc();
       navigate("/");
+      modalStore.isOpen && modalStore.closeModal();
     }
 
     return () => {
@@ -157,19 +160,24 @@ export default function CheckPlace() {
       return newState;
     });
   };
-
   // 장소 거절
-  const handleDisAgree = () => {
-    alert("거절을 선택하여 매칭이 종료됩니다");
-    setAgree(false);
-    apiDisagree();
-    unloadFunc();
-
-    navigate("/");
-    /////////////////////////////////////////
-    // 추후 삭제
-    ////////////////////////////////////////
-    history.go(0);
+  const handleDisAgree = async () => {
+    try {
+      await modalStore.openModal("twoBtn", {
+        message: "매칭을 거절 하시겠습니까?",
+        onConfirm: async () => {
+          await setAgree(false);
+          apiDisagree();
+          unloadFunc();
+          /////////////////////////////////////////
+          // 추후 삭제
+          ////////////////////////////////////////
+          location.reload();
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   ///////////////////////////////////////////////////////////////
@@ -192,6 +200,7 @@ export default function CheckPlace() {
         });
     }, [3000]);
   }
+
   async function apiGetU3() {
     setTimeout(() => {
       console.log("9초 지남");
@@ -209,6 +218,7 @@ export default function CheckPlace() {
         });
     }, [9000]);
   }
+
   async function apiGetU4() {
     setTimeout(() => {
       console.log("7초 지남");
@@ -226,6 +236,7 @@ export default function CheckPlace() {
         });
     }, [7000]);
   }
+
   async function apiAgree() {
     axios
       .get("/matching?response=accept")
@@ -236,6 +247,7 @@ export default function CheckPlace() {
         console.log(error);
       });
   }
+
   async function apiDisagree() {
     axios
       .get("/matching?response=reject")
@@ -246,6 +258,7 @@ export default function CheckPlace() {
         console.log(error);
       });
   }
+
   async function apiPOSTCancel() {
     await axios
       .post("/matching/cancel", {})
@@ -256,6 +269,7 @@ export default function CheckPlace() {
         console.log(err);
       });
   }
+
   async function apiCompleted() {
     axios
       .get("/matching/completed")
@@ -270,6 +284,7 @@ export default function CheckPlace() {
         console.log(error);
       });
   }
+
   ///////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////
 
