@@ -59,15 +59,15 @@ export default function MatchingComplete() {
     };
 
     // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
+    let timer = setTimeout(() => {
+      goReviewPage;
+    }, [360000]);
+
+    // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
     if (passedTimeMin >= 60) {
       clearTimeout(timer);
       goReviewPage();
     }
-
-    // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
-    let timer = setTimeout(() => {
-      goReviewPage;
-    }, [360000]);
 
     // 저장된 매칭데이터 저장
     const jsonCurData = JSON.parse(

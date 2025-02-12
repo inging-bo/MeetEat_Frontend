@@ -88,9 +88,9 @@ export default function CheckPlace() {
     let a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(deg2rad(lat1)) *
-      Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
     let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     let d = R * c;
     d = Math.round((d / 4.8) * 60);
@@ -140,6 +140,7 @@ export default function CheckPlace() {
       alert("선택 시간이 초과되어 매칭이 종료됩니다");
       unloadFunc();
       navigate("/");
+      modalStore.isOpen && modalStore.closeModal();
     }
 
     return () => {
@@ -163,8 +164,8 @@ export default function CheckPlace() {
   const handleDisAgree = async () => {
     try {
       await modalStore.openModal("twoBtn", {
-        message : "매칭을 거절 하시겠습니까?",
-        onConfirm : async () => {
+        message: "매칭을 거절 하시겠습니까?",
+        onConfirm: async () => {
           await setAgree(false);
           apiDisagree();
           unloadFunc();
@@ -172,10 +173,10 @@ export default function CheckPlace() {
           // 추후 삭제
           ////////////////////////////////////////
           location.reload();
-        }
-      })
+        },
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -298,10 +299,9 @@ export default function CheckPlace() {
           level={5}
         />
       </div>
-      <div
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[525px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center py-[40px]">
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[525px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center py-[40px]">
         <div className="place-items-center ">
-          <CheckTitle/>
+          <CheckTitle />
           <p className="text-xl pb-1 pt-[30px] font-semibold">
             매칭 인원을 찾았어요.
           </p>
@@ -312,8 +312,7 @@ export default function CheckPlace() {
             남은시간 {minutes}:{second}
           </p>
         </div>
-        <div
-          className="people-container w-[700px] h-[200px] flex flex-col justify-center gap-4 py-3 bg-[#F8F8F8] rounded-lg text-[#555555] text-[14px]">
+        <div className="people-container w-[700px] h-[200px] flex flex-col justify-center gap-4 py-3 bg-[#F8F8F8] rounded-lg text-[#555555] text-[14px]">
           {matchingData.map((item, idx) => (
             <>
               <div key={idx} className="people-info flex justify-center gap-20">
