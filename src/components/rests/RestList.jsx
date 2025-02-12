@@ -402,7 +402,7 @@ export default function RestList() {
                   <div className="flex h-6 gap-2 items-start text-base text-gray-500">
                     <div className="flex gap-1 h-6">
                       <span className="flex justify-center items-center ">
-                        <FullStar className="w-full h-full text-[#FF6445]" />
+                        <FullStar width="20px" height="20px" className=" text-[#FF6445]" />
                       </span>
                       <span>{rest.rating}</span>
                     </div>
