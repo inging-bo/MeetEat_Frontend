@@ -123,7 +123,7 @@ export default function RestView({ center, close, pickedRest, star }) {
                 <MapMarker
                   position={center}
                   image={{
-                    src: "../../../public/assets/map-marker.svg",
+                    src: "/assets/map-marker.svg",
                     size: { width: 30, height: 30 },
                   }}
                 />
