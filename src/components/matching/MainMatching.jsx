@@ -354,7 +354,8 @@ export default function MainMatching() {
                   />
                   {isInfoWindowOpen &&
                     info &&
-                    info.place_name === marker.place_name && (
+                    info.place_name === marker.place_name &&
+                    info.phone === marker.phone && (
                       <CustomOverlayMap
                         position={marker.position}
                         yAnchor={1.3}
