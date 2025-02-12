@@ -7,4 +7,4 @@ mkdir output
 
 cp -R ./MeetEat_Frontend/* ./output
 
-cp -R ./output ./MeetEat_FrontendMeetEat_Frontend/
+cp -R ./output ./MeetEat_Frontend/
