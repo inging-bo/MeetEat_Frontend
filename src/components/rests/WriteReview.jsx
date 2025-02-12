@@ -4,8 +4,15 @@ import axios from "axios";
 import EmptyStar from "../../assets/empty-star.svg?react";
 import FullStar from "../../assets/full-star.svg?react";
 import { Map } from "react-kakao-maps-sdk";
+import authStore from "../../store/authStore";
 
 export default function WriteReview() {
+  // 로그인 확인
+  useEffect(() => {
+    !authStore.loggedIn && alert("로그인 후 이용해주세요!");
+    !authStore.loggedIn && window.location.replace("/");
+  }, []);
+
   const location = useLocation();
   const info = { ...location.state };
 
