@@ -21,7 +21,6 @@ export default function MainMatching() {
   const [isMatching, setIsMatching] = useState("false");
   const [isMatched, setIsMatched] = useState("false");
   const isLoggedIn = authStore.loggedIn;
-  const token = window.localStorage.getItem("token");
 
   useEffect(() => {
     window.sessionStorage.getItem("isMatching") !== null &&
@@ -190,8 +189,8 @@ export default function MainMatching() {
   const searchPlaces = () => {
     if (!curText.replace(/^\s+|\s+$/g, "")) {
       modalStore.openModal("oneBtn", {
-        message : "검색어를 입력해주세요!."
-      })
+        message: "검색어를 입력해주세요!.",
+      });
       return false;
     }
 
