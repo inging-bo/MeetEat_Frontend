@@ -67,13 +67,21 @@ export default function WriteReview() {
 
   async function apiRestReviewWrite(matchedId, restId, textareaValue) {
     await axios
-      .post("/restaurants/review", {
-        matchingHistoryId: matchedId,
-        restaurantId: restId,
-        starRate: starScore,
-        description: textareaValue,
-        imgs: imageList,
-      })
+      .post(
+        "/restaurants/review",
+        {
+          matchingHistoryId: matchedId,
+          restaurantId: restId,
+          starRate: starScore,
+          description: textareaValue,
+          imgs: imageList,
+        },
+        {
+          headers: {
+            Authorization: `${window.localStorage.getItem("token")}`,
+          },
+        }
+      )
       .then(() => {
         alert("작성 완료되었습니다.");
       })

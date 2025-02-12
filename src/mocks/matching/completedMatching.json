@@ -1,16 +1,16 @@
 {
   "message": "모임이 생성되었습니다",
-  "createdAt": "2025-02-12T18:10:00",
+  "createdAt": "2025-02-12T20:50:00",
   "id": 455,
   "matching": {
     "restaurant": {
-      "id": "10",
-      "placeName": "식당3",
-      "lat": "37.470717",
-      "lon": "126.895708",
+      "id": "1",
+      "placeName": "에버그릭",
+      "lat": "37.484824",
+      "lon": "126.937320",
       "addressName": "지번 주소",
-      "roadAddressName": "도로명 주소",
-      "categoryName": "카테고리 그룹명",
+      "roadAddressName": "서울 관악구 은천로 178 1층",
+      "categoryName": "> 그릭요거트",
       "rating": "평점"
     },
     "userList": [

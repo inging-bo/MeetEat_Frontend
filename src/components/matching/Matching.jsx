@@ -34,13 +34,21 @@ export default function Matching({
   // POST
   async function apiPOSTMatching(lng, lat, size, time, placeInfo) {
     await axios
-      .post("/matching/request", {
-        userLon: lng,
-        userLat: lat,
-        groupSize: size,
-        matchingStartTime: time,
-        place: placeInfo,
-      })
+      .post(
+        "/matching/request",
+        {
+          userLon: lng,
+          userLat: lat,
+          groupSize: size,
+          matchingStartTime: time,
+          place: placeInfo,
+        },
+        {
+          headers: {
+            Authorization: `${window.localStorage.getItem("token")}`,
+          },
+        }
+      )
       .then((res) => {
         console.log(res.data);
         setIsMatching("true");
@@ -48,7 +56,11 @@ export default function Matching({
         setTimeout(
           () =>
             axios
-              .get("/matching/complete")
+              .get("/matching/complete", {
+                headers: {
+                  Authorization: `${window.localStorage.getItem("token")}`,
+                },
+              })
               .then((res) => {
                 setIsMatched(true);
                 window.sessionStorage.setItem(
@@ -107,7 +119,11 @@ export default function Matching({
 
   async function apiPOSTCancel() {
     await axios
-      .post("/matching/cancel", {})
+      .post("/matching/cancel", {
+        headers: {
+          Authorization: `${window.localStorage.getItem("token")}`,
+        },
+      })
       .then((res) => {
         console.log(res);
       })
@@ -119,7 +135,7 @@ export default function Matching({
   const cancelMatching = () => {
     // 모달을 열고 콜백 함수 전달
     modalStore.openModal("twoBtn", {
-      message : "매칭을 취소하시겠습니까?",
+      message: "매칭을 취소하시겠습니까?",
       onConfirm: async () => {
         // 예를 선택했을 때 실행할 코드
         await apiPOSTCancel();
@@ -128,7 +144,7 @@ export default function Matching({
         setIsMatching(false);
         setIsMatched(false);
         history.go(0);
-        modalStore.closeModal()
+        modalStore.closeModal();
       },
     });
   };

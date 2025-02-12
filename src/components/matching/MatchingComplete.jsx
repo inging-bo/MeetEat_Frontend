@@ -193,7 +193,11 @@ export default function MatchingComplete() {
   // 3분 전 매칭취소
   async function apiPOSTCancel() {
     await axios
-      .post("/matching/cancel/illegal", {})
+      .post("/matching/cancel/illegal", {
+        headers: {
+          Authorization: `${window.localStorage.getItem("token")}`,
+        },
+      })
       .then(() => {
         navigate("/");
         window.sessionStorage.removeItem("isMatched");
@@ -207,7 +211,11 @@ export default function MatchingComplete() {
   // 3분 후 매칭취소
   async function apiPOSTCancelIllegal() {
     await axios
-      .post("/matching/cancel/illegal", {})
+      .post("/matching/cancel/illegal", {
+        headers: {
+          Authorization: `${window.localStorage.getItem("token")}`,
+        },
+      })
       .then(() => {
         navigate("/");
         window.sessionStorage.removeItem("isMatched");

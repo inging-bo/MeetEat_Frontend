@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo, useRef, useLayoutEffect } from "react";
 import { Link } from "react-router-dom";
 import { Map, MapMarker, Circle, CustomOverlayMap } from "react-kakao-maps-sdk";
 import { debounce } from "lodash";
@@ -17,10 +17,17 @@ import modalStore from "../../store/modalStore.js";
 
 export default function MainMatching() {
   const navigate = useNavigate();
+  const [isLoggedIn, setLoggedIn] = useState();
+
+  // 로그인 확인
+  useLayoutEffect(() => {
+    authStore.checkLoggedIn();
+    setLoggedIn(authStore.loggedIn);
+  }, []);
+
   // 매칭중 확인
   const [isMatching, setIsMatching] = useState("false");
   const [isMatched, setIsMatched] = useState("false");
-  const isLoggedIn = authStore.loggedIn;
 
   useEffect(() => {
     window.sessionStorage.getItem("isMatching") !== null &&
@@ -82,7 +89,11 @@ export default function MainMatching() {
 
   async function apiPOSTCancel() {
     await axios
-      .post("/matching/cancel", {})
+      .post("/matching/cancel", {
+        headers: {
+          Authorization: `${window.localStorage.getItem("token")}`,
+        },
+      })
       .then((res) => {
         console.log(res);
       })
