@@ -33,8 +33,7 @@ export default function Header() {
                       onConfirm: async () => {
                         try {
                           const accessToken =
-                            window.localStorage.getItem("accessToken"); // 저장된 토큰 가져오기
-
+                            window.localStorage.getItem("token"); // 저장된 토큰 가져오기
                           if (!accessToken) {
                             console.error(
                               "로그아웃 요청 실패: 토큰이 없습니다."
