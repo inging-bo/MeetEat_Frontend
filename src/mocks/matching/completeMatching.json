@@ -1,62 +1,66 @@
 {
   "time": "2025-02-06T13:25:43.009Z",
   "teamId": "1",
-  "users": {
-    "1": {
-      "id": 1,
-      "nickName": "닉네임1",
-      "place": [
-        {
-          "name": "식당1",
-          "category_name": "카테고리1",
-          "road_address_name": "도로명1",
-          "phone": "폰1",
-          "lon": "127.02827170358093",
-          "lat": "37.49813943152925"
-        }
-      ]
+  "restaurantList": [
+    {
+      "user": {
+        "id": "1",
+        "nickname": "사과"
+      },
+      "place": {
+        "id": "1",
+        "name": "에버그릭",
+        "category_name": "> 그릭요거트",
+        "road_address_name": "서울 관악구 은천로 178 1층",
+        "phone": "02-738-5688",
+        "lat": "37.484824",
+        "lon": "126.937320"
+      }
     },
-    "2": {
-      "id": 2,
-      "nickName": "닉네임2",
-      "place": [
-        {
-          "name": "식당2",
-          "category_name": "카테고리2",
-          "road_address_name": "도로명2",
-          "phone": "폰2",
-          "lon": "127.03450754512691",
-          "lat": "37.48390185679575"
-        }
-      ]
+    {
+      "user": {
+        "id": "2",
+        "nickname": "바나나"
+      },
+      "place": {
+        "id": "2",
+        "name": "미자네",
+        "category_name": "> 곱창",
+        "road_address_name": "서울 관악구 신림로 59길 14 원조민속 순대타운 3층 31 7호, 318호",
+        "phone": "02-738-5688",
+        "lat": "37.485107",
+        "lon": "126.928925"
+      }
     },
-    "3": {
-      "id": 3,
-      "nickName": "닉네임3",
-      "place": [
-        {
-          "name": "식당3",
-          "category_name": "카테고리3",
-          "road_address_name": "도로명3",
-          "phone": "폰3",
-          "lon": "127.02501696793027",
-          "lat": "37.50462740802899"
-        }
-      ]
+    {
+      "user": {
+        "id": "3",
+        "nickname": "파인애플"
+      },
+      "place": {
+        "id": "3",
+        "name": "정남옥 서울대입구점",
+        "category_name": "> 한식",
+        "road_address_name": "서울 관악구 신림로 59길 14 원조민속 순대타운 3층 31 7호, 318호",
+        "phone": "02-738-5688",
+        "lat": "37.485107",
+        "lon": "126.928925"
+      }
     },
-    "4": {
-      "id": 4,
-      "nickName": "닉네임4",
-      "place": [
-        {
-          "name": "식당4",
-          "category_name": "카테고리4",
-          "road_address_name": "도로명4",
-          "phone": "폰4",
-          "lon": "127.02501696793027",
-          "lat": "37.50462740802899"
-        }
-      ]
+    {
+      "user": {
+        "id": "4",
+        "nickname": "석류"
+      },
+      "place": {
+        "id": "4",
+        "name": "아우네장터순대국 봉천점",
+        "category_name": "> 한식",
+        "road_address_name": "서울 관악구 봉천로 490",
+        "phone": "02-738-5688",
+        "lat": "37.484418",
+        "lon": "126.955153"
+      }
     }
-  }
+  ]
 }

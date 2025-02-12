@@ -22,25 +22,23 @@ export default function CheckPlace() {
       if (window.sessionStorage.getItem("isMatching") === "true") {
         window.sessionStorage.setItem("isMatching", "false");
       }
-      alert("잘못된 접근입니다.");
       return navigate("/");
     }
     if (window.sessionStorage.getItem("isMatching") === "false") {
-      alert("잘못된 접근입니다.");
       return navigate("/");
     }
     const jsonData = JSON.parse(
       window.sessionStorage.getItem("matchingData")
     ).data;
-    setMatchingData(Object.entries(Object.entries(jsonData)[2][1]));
+    setMatchingData(jsonData.restaurantList);
   }, []);
 
   const isMounted = useRef(false);
   useEffect(() => {
     if (isMounted.current) {
-      matchingData.map((data) =>
-        setUser((pre) => new Map([...pre, [data[1].nickName, false]]))
-      );
+      matchingData.map((data) => {
+        setUser((pre) => new Map([...pre, [data.user.nickname, false]]));
+      });
       apiGetU2();
       apiGetU3();
       apiGetU4();
@@ -50,7 +48,6 @@ export default function CheckPlace() {
   }, [matchingData]);
 
   useEffect(() => {
-    console.log([...user.values()]);
     if (
       isMounted.current &&
       agree &&
@@ -65,6 +62,9 @@ export default function CheckPlace() {
   useEffect(() => {
     user.forEach((value, key) => {
       if (value === true) {
+        console.log(key);
+        console.log(`#${key}waiting`);
+        console.log(document.querySelector(`#${key}waiting`));
         document.querySelector(`#${key}waiting`).classList.add("hidden");
         document.querySelector(`#${key}check`).classList.remove("hidden");
       }
@@ -93,7 +93,7 @@ export default function CheckPlace() {
   };
 
   // 타이머
-  const MINUTES_IN_MS = 1 * 60 * 1000;
+  const MINUTES_IN_MS = 1000 * 60 * 1000;
   const INTERVAL = 1000;
   const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
 
@@ -146,12 +146,12 @@ export default function CheckPlace() {
   // 장소 동의
   const handleAgree = () => {
     apiAgree();
-    document.querySelector(`#닉네임1waiting`).classList.add("hidden");
-    document.querySelector(`#닉네임1check`).classList.remove("hidden");
+    document.querySelector(`#사과waiting`).classList.add("hidden");
+    document.querySelector(`#사과check`).classList.remove("hidden");
     setAgree(true);
     setUser((prev) => {
       const newState = new Map(prev);
-      newState.set("닉네임1", true);
+      newState.set("사과", true);
       return newState;
     });
   };
@@ -182,7 +182,11 @@ export default function CheckPlace() {
     setTimeout(() => {
       console.log("3초 지남");
       axios
-        .get("/matching/nickname2")
+        .get("/matching/nickname2", {
+          headers: {
+            Authorization: `${window.localStorage.getItem("token")}`,
+          },
+        })
         .then((res) => {
           setUser((prev) => {
             const newState = new Map(prev);
@@ -200,7 +204,11 @@ export default function CheckPlace() {
     setTimeout(() => {
       console.log("9초 지남");
       axios
-        .get("/matching/nickname3")
+        .get("/matching/nickname3", {
+          headers: {
+            Authorization: `${window.localStorage.getItem("token")}`,
+          },
+        })
         .then((res) => {
           setUser((prev) => {
             const newState = new Map(prev);
@@ -218,7 +226,11 @@ export default function CheckPlace() {
     setTimeout(() => {
       console.log("7초 지남");
       axios
-        .get("/matching/nickname4")
+        .get("/matching/nickname4", {
+          headers: {
+            Authorization: `${window.localStorage.getItem("token")}`,
+          },
+        })
         .then((res) => {
           setUser((prev) => {
             const newState = new Map(prev);
@@ -234,7 +246,19 @@ export default function CheckPlace() {
 
   async function apiAgree() {
     axios
-      .get("/matching?response=accept")
+      .get(
+        "/matching?response=accept",
+        {
+          teamId: JSON.parse(window.sessionStorage.getItem("matchingData")).data
+            .teamId,
+          isJoin: true,
+        },
+        {
+          headers: {
+            Authorization: `${window.localStorage.getItem("token")}`,
+          },
+        }
+      )
       .then((res) => {
         console.log(res.data);
       })
@@ -245,7 +269,11 @@ export default function CheckPlace() {
 
   async function apiDisagree() {
     axios
-      .get("/matching?response=reject")
+      .get("/matching?response=reject", {
+        headers: {
+          Authorization: `${window.localStorage.getItem("token")}`,
+        },
+      })
       .then((res) => {
         console.log(res.data);
       })
@@ -256,7 +284,11 @@ export default function CheckPlace() {
 
   async function apiPOSTCancel() {
     await axios
-      .post("/matching/cancel", {})
+      .post("/matching/cancel", {
+        headers: {
+          Authorization: `${window.localStorage.getItem("token")}`,
+        },
+      })
       .then((res) => {
         console.log(res);
       })
@@ -267,7 +299,11 @@ export default function CheckPlace() {
 
   async function apiCompleted() {
     axios
-      .get("/matching/completed")
+      .get("/matching/completed", {
+        headers: {
+          Authorization: `${window.localStorage.getItem("token")}`,
+        },
+      })
       .then((res) => {
         window.sessionStorage.setItem("matchedData", JSON.stringify(res));
         window.sessionStorage.removeItem("isMatching");
@@ -312,24 +348,31 @@ export default function CheckPlace() {
         <div className="people-container w-[700px] h-[200px] flex flex-col justify-center gap-4 py-3 bg-[#F8F8F8] rounded-lg text-[#555555] text-[14px]">
           {matchingData.map((item, idx) => (
             <>
-              <div key={idx} className="people-info flex justify-center gap-20">
+              <div
+                key={idx}
+                className="people-info grid w-[700px] grid-cols-[100px_150px_150px_150px_150px] justify-items-center"
+              >
                 <Waiting
-                  id={item[1].nickName + `waiting`}
+                  id={item.user.nickname + `waiting`}
                   width="25px"
                   className="waiting"
                 />
                 <Check
-                  id={item[1].nickName + `check`}
+                  id={item.user.nickname + `check`}
                   width="25px"
                   className="check hidden text-[#FF6445]"
                 />
-                <p>{item[1].nickName}</p>
-                <p>{item[1].place[0].name}</p>
-                <p>{item[1].place[0].category_name}</p>
+                <p>{item.user.nickname}</p>
+                <p>{item.place.name}</p>
+                <p>
+                  {item.place.category_name.slice(
+                    item.place.category_name.indexOf(">") + 2
+                  )}
+                </p>
                 <p>
                   {getDistance(
-                    item[1].place[0].lat,
-                    item[1].place[0].lon,
+                    item.place.lat,
+                    item.place.lon,
                     position.lat,
                     position.lng
                   )}

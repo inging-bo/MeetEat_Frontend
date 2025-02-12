@@ -25,8 +25,9 @@ export default function CheckPlace() {
     const jsonCurData = JSON.parse(
       window.sessionStorage.getItem("matchedData")
     ).data;
-    setMatchingData(Object.entries(Object.entries(jsonData)[2][1]));
-    setPickedPlace(Object.entries(jsonCurData)[3][1].restaurant.placeName);
+    console.log(jsonData);
+    setMatchingData(jsonData.restaurantList);
+    setPickedPlace(jsonCurData.matching.restaurant.placeName);
   }, []);
 
   // 타이머
@@ -114,13 +115,17 @@ export default function CheckPlace() {
         <div className="people-container w-[700px] h-[200px] flex flex-col justify-center gap-4 py-3 bg-[#F8F8F8] rounded-lg text-[#555555] text-[14px] relative">
           {matchingData.map((item) => (
             <>
-              <div className="people-info flex justify-center gap-20">
-                <p className="place-name">{item[1].place[0].name}</p>
-                <p>{item[1].place[0].category_name}</p>
+              <div className="people-info grid w-[700px] grid-cols-[200px_200px_200px] justify-center">
+                <p className="place-name">{item.place.name}</p>
+                <p>
+                  {item.place.category_name.slice(
+                    item.place.category_name.indexOf(">") + 2
+                  )}
+                </p>
                 <p>
                   {getDistance(
-                    item[1].place[0].lat,
-                    item[1].place[0].lon,
+                    item.place.lat,
+                    item.place.lon,
                     position.lat,
                     position.lng
                   )}
