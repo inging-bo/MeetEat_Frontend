@@ -1,14 +1,14 @@
 import { makeAutoObservable } from "mobx";
 import axios from "axios";
 
-const createVisitStore = () => {
+const createProfileStore = () => {
   const store = {
     visit: [],
 
-    async fetchVisitData() {
+    async fetchProfileData() {
       try {
-        const response = await axios.get("/restaurants/myreview", {});
-        store.visit = response.data;
+        const response = await axios.get("/users/profile", {});
+        store.profile = response.data;
       } catch (error) {
         console.error("프로필 정보를 가져오는데 실패했습니다", error);
       }
@@ -18,5 +18,5 @@ const createVisitStore = () => {
   return makeAutoObservable(store);
 };
 
-const visitStore = createVisitStore();
-export default visitStore;
+const profileStore = createProfileStore();
+export default profileStore;
