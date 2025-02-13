@@ -42,7 +42,7 @@ export default function Header() {
                           }
 
                           const response = await axios.post(
-                            "/users/signout",
+                            `${import.meta.env.VITE_BE_API_URL}/users/signout`,
                             {}, // 본문 필요 없음
                             {
                               headers: {

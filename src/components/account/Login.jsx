@@ -35,7 +35,7 @@ export default function Login() {
     event.preventDefault(); // 기본 제출 동작 방지
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BE_API_URL}/api/users/signin`, {
+      const response = await axios.post(`${import.meta.env.VITE_BE_API_URL}/users/signin`, {
         email: emailInput,
         password: pwInput,
       });
@@ -74,13 +74,17 @@ export default function Login() {
     kakao: {
       clientId: import.meta.env.VITE_APP_KAKAO_REST_KEY,
       authUrl: "https://kauth.kakao.com/oauth/authorize",
-      redirectUri: "http://localhost:5173/account",
+      redirectUri: window.location.hostname === "localhost"
+        ? "http://localhost:5173/account"
+        : "https://meet-eat-frontend.vercel.app/account",
       state: "", // 카카오는 state가 필요 없음
     },
     naver: {
       clientId: import.meta.env.VITE_NAVER_CLIENT_ID,
       authUrl: "https://nid.naver.com/oauth2.0/authorize",
-      redirectUri: "http://localhost:5173/account",
+      redirectUri: window.location.hostname === "localhost"
+        ? "http://localhost:5173/account"
+        : "https://meet-eat-frontend.vercel.app/account",
       state: "RANDOM_STATE", // CSRF 방지를 위한 랜덤 값 (임시)
     },
   };
@@ -122,7 +126,7 @@ export default function Login() {
       : "kakao";
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BE_API_URL}/api/users/signin/${provider}`, { code });
+      const response = await axios.post(`${import.meta.env.VITE_BE_API_URL}/users/signin/${provider}`, { code });
 
       if (response.data.accessToken) {
         window.localStorage.setItem("token", response.data.accessToken);
