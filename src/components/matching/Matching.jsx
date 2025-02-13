@@ -37,7 +37,7 @@ export default function Matching({
   // POST
   async function apiPOSTMatching(lng, lat, size, time, placeInfo) {
     await axios
-      .get("/sse/subscribe", {
+      .get(`http://${import.meta.env.VITE_BE_API_URL}/api/sse/subscribe`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
         },
@@ -46,7 +46,7 @@ export default function Matching({
         console.log("SSE구독");
         axios
           .post(
-            "/matching/request",
+            `http://${import.meta.env.VITE_BE_API_URL}/api/matching/request`,
             {
               userLon: lng,
               userLat: lat,
@@ -57,6 +57,7 @@ export default function Matching({
             {
               headers: {
                 Authorization: `${window.localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
               },
             }
           )
@@ -64,32 +65,35 @@ export default function Matching({
             console.log(res.data);
             setIsMatching("true");
             window.sessionStorage.setItem("isMatching", "true");
-            setTimeout(
-              () =>
-                axios
-                  .get("/matching/complete", {
-                    headers: {
-                      Authorization: `${window.localStorage.getItem("token")}`,
-                    },
-                  })
-                  .then((res) => {
-                    setIsMatched(true);
-                    window.sessionStorage.setItem(
-                      "tempPosition",
-                      JSON.stringify(position)
-                    );
-                    window.sessionStorage.setItem("isMatched", "true");
-                    window.sessionStorage.setItem(
-                      "matchingData",
-                      JSON.stringify(res)
-                    );
-                    navigate(`/matching/check-place/${res.data.teamId}`);
-                  })
-                  .catch(function (error) {
-                    console.log(error);
-                  }),
-              [5000]
-            );
+            // setTimeout(
+            //   () =>
+            //     axios
+            //       .get(
+            //         `http://${import.meta.env.VITE_BE_API_URL}/api/matching/complete`,
+            //         {
+            //           headers: {
+            //             Authorization: `${window.localStorage.getItem("token")}`,
+            //           },
+            //         }
+            //       )
+            //       .then((res) => {
+            //         setIsMatched(true);
+            //         window.sessionStorage.setItem(
+            //           "tempPosition",
+            //           JSON.stringify(position)
+            //         );
+            //         window.sessionStorage.setItem("isMatched", "true");
+            //         window.sessionStorage.setItem(
+            //           "matchingData",
+            //           JSON.stringify(res)
+            //         );
+            //         navigate(`/matching/check-place/${res.data.teamId}`);
+            //       })
+            //       .catch(function (error) {
+            //         console.log(error);
+            //       }),
+            //   [5000]
+            // );
           })
           .catch((err) => {
             console.log(err);
@@ -134,7 +138,7 @@ export default function Matching({
 
   async function apiPOSTCancel() {
     await axios
-      .post("/matching/cancel", {
+      .post(`http://${import.meta.env.VITE_BE_API_URL}/api/matching/cancel`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
         },

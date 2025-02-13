@@ -210,16 +210,19 @@ export default function RestList() {
     page
   ) {
     await axios
-      .post("/restaurants/search", {
-        region: region,
-        categoryName: categoryName,
-        placeName: placeName,
-        userY: position.lat,
-        userX: position.lng,
-        sorted: sorted,
-        page: page,
-        size: "20",
-      })
+      .post(
+        `http://${import.meta.env.VITE_BE_API_URL}/api/restaurants/search`,
+        {
+          region: region,
+          categoryName: categoryName,
+          placeName: placeName,
+          userY: position.lat,
+          userX: position.lng,
+          sorted: sorted,
+          page: page,
+          size: "20",
+        }
+      )
       .then((res) => {
         setRestaurants((prev) => [...prev, ...res.data.content]);
         setMaxPage(res.data.totalPages);
@@ -229,9 +232,21 @@ export default function RestList() {
       });
   }
 
+  // async function apiPOSTRestDetailView(restId) {
+  //   await axios
+  //     .get("/restaurants", { params: { restaurantId: restId } })
+  //     .then((res) => {
+  //       setPickedRest(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
   async function apiPOSTRestDetailView(restId) {
     await axios
-      .get("/restaurants", { params: { restaurantId: restId } })
+      .get(
+        `http://${import.meta.env.VITE_BE_API_URL}/api/restaurants/${restId}`
+      )
       .then((res) => {
         setPickedRest(res.data);
       })
@@ -402,7 +417,11 @@ export default function RestList() {
                   <div className="flex h-6 gap-2 items-start text-base text-gray-500">
                     <div className="flex gap-1 h-6">
                       <span className="flex justify-center items-center ">
-                        <FullStar width="20px" height="20px" className=" text-[#FF6445]" />
+                        <FullStar
+                          width="20px"
+                          height="20px"
+                          className=" text-[#FF6445]"
+                        />
                       </span>
                       <span>{rest.rating}</span>
                     </div>
