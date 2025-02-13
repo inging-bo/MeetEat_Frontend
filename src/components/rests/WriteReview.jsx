@@ -86,6 +86,7 @@ export default function WriteReview() {
         {
           headers: {
             Authorization: `${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
           },
         }
       )
