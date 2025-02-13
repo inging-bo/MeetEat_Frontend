@@ -37,7 +37,7 @@ export default function Matching({
   // POST
   async function apiPOSTMatching(lng, lat, size, time, placeInfo) {
     await axios
-      .get(`http://${import.meta.env.VITE_BE_API_URL}/api/sse/subscribe`, {
+      .get(`${import.meta.env.VITE_BE_API_URL}/api/sse/subscribe`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
         },
@@ -46,7 +46,7 @@ export default function Matching({
         console.log("SSE구독");
         axios
           .post(
-            `http://${import.meta.env.VITE_BE_API_URL}/api/matching/request`,
+            `${import.meta.env.VITE_BE_API_URL}/api/matching/request`,
             {
               userLon: lng,
               userLat: lat,
@@ -138,7 +138,7 @@ export default function Matching({
 
   async function apiPOSTCancel() {
     await axios
-      .post(`http://${import.meta.env.VITE_BE_API_URL}/api/matching/cancel`, {
+      .post(`${import.meta.env.VITE_BE_API_URL}/api/matching/cancel`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
         },
