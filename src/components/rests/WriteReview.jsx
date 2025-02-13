@@ -75,7 +75,7 @@ export default function WriteReview() {
   async function apiRestReviewWrite(matchedId, restId, textareaValue) {
     await axios
       .post(
-        "/restaurants/review",
+        `${import.meta.env.VITE_BE_API_URL}/restaurants/review`,
         {
           matchingHistoryId: matchedId,
           restaurantId: restId,

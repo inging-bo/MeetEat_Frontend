@@ -6,13 +6,14 @@ import CheckTitle from "../../assets/check-title.svg?react";
 import Waiting from "../../assets/waiting.svg?react";
 import Check from "../../assets/check.svg?react";
 import modalStore from "../../store/modalStore.js";
+import { EventSourcePolyfill } from "event-source-polyfill";
 
 export default function CheckPlace() {
   // 뒤로가기 발생시 매칭 취소
   history.pushState(null, document.title, location.href); // push
   const preventBack = () => {
     alert("페이지를 이동하여 자동으로 매칭이 취소됩니다.");
-    apiPOSTCancel();
+    apiDisagree();
     window.sessionStorage.removeItem("position");
     window.sessionStorage.removeItem("isMatching");
     location.href("/");
@@ -43,28 +44,105 @@ export default function CheckPlace() {
     }
 
     // SSE 재연결
-    apiSSESub();
+    // apiSSESub();
+    fetchSSE();
     const jsonData = JSON.parse(
       window.sessionStorage.getItem("matchingData")
     ).data;
     setMatchingData(jsonData.restaurantList);
   }, []);
 
-  async function apiSSESub() {
-    await axios
-      .get(`${import.meta.env.VITE_BE_API_URL}/sse/subscribe`, {
+  // SSE fetch
+  const fetchSSE = () => {
+    // header 보내기 위해 EventSourcePolyfill 사용
+    const eventSource = new EventSourcePolyfill(
+      `${import.meta.env.VITE_BE_API_URL}/api/sse/subscribe`,
+      {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
-      })
-      .then(() => {
-        console.log("SSE구독");
-      })
-      .catch(function (error) {
-        console.log(error);
+      }
+    );
+
+    eventSource.onopen = () => {
+      // 연결 시 할 일
+    };
+
+    // 방법1. onmessage 이용
+    // eventSource.onmessage = async (e) => {
+    //   const res = await e.data;
+    //   const parsedData = JSON.parse(res);
+    //   // 받아오는 data로 할 일
+    //   if (parsedData.message === "수락 알림이 도착했습니다.") {
+    //     if (parsedData.user.join === false) {
+    //       alert("매칭 인원 중 누군가가 거절하였습니다");
+    //       window.sessionStorage.clear();
+    //       return navigate("/");
+    //     }
+    //     setUser((prev) => {
+    //       const newState = new Map(prev);
+    //       newState.set(parsedData.user.nickname, true);
+    //       return newState;
+    //     });
+    //   }
+    //   if (parsedData.message === "모임이 생성되었습니다") {
+    //     window.sessionStorage.setItem("matchedData", JSON.stringify(res));
+    //     window.sessionStorage.removeItem("isMatching");
+    //     window.sessionStorage.removeItem("isMatched");
+    //     window.sessionStorage.setItem("isCompleted", "true");
+    //     navigate(`/matching/choice-place/${res.data.id}`);
+    //   }
+    // };
+
+    // 방법2. EventListener
+    eventSource.addEventListener("Join", (e) => {
+      if (e.data.user.join === false) {
+        alert("매칭 인원 중 누군가가 거절하였습니다");
+        window.sessionStorage.clear();
+        return navigate("/");
+      }
+      setUser((prev) => {
+        const newState = new Map(prev);
+        newState.set(e.data.user.nickname, true);
+        return newState;
       });
-  }
+    });
+    eventSource.addEventListener("Team", (e) => {
+      window.sessionStorage.setItem("matchedData", JSON.stringify(e.data));
+      window.sessionStorage.removeItem("isMatching");
+      window.sessionStorage.removeItem("isMatched");
+      window.sessionStorage.setItem("isCompleted", "true");
+      navigate(`/matching/choice-place/${e.data.id}`);
+    });
+
+    eventSource.onerror = (e) => {
+      // 종료 또는 에러 발생 시 할 일
+      eventSource.close();
+      if (e.error) {
+        // 에러 발생 시 할 일
+      }
+      if (e.target.readyState === EventSource.CLOSED) {
+        // 종료 시 할 일
+      }
+    };
+  };
+
+  // async function apiSSESub() {
+  //   await axios
+  //     .get(`${import.meta.env.VITE_BE_API_URL}/sse/subscribe`, {
+  //       headers: {
+  //         Authorization: `${window.localStorage.getItem("token")}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+  //     .then(() => {
+  //       console.log("SSE구독");
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // }
 
   const isMounted = useRef(false);
   useEffect(() => {
@@ -72,25 +150,25 @@ export default function CheckPlace() {
       matchingData.map((data) => {
         setUser((pre) => new Map([...pre, [data.user.nickname, false]]));
       });
-      apiGetU2();
-      apiGetU3();
-      apiGetU4();
+      // apiGetU2();
+      // apiGetU3();
+      // apiGetU4();
     } else {
       isMounted.current = true;
     }
   }, [matchingData]);
 
-  useEffect(() => {
-    if (
-      isMounted.current &&
-      agree &&
-      [...user.values()].indexOf(false) === -1
-    ) {
-      apiCompleted();
-    } else {
-      isMounted.current = true;
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (
+  //     isMounted.current &&
+  //     agree &&
+  //     [...user.values()].indexOf(false) === -1
+  //   ) {
+  //     apiCompleted();
+  //   } else {
+  //     isMounted.current = true;
+  //   }
+  // }, [user]);
 
   useEffect(() => {
     user.forEach((value, key) => {
@@ -151,7 +229,7 @@ export default function CheckPlace() {
   //새로고침 확인을 눌렀을 경우 unload 이벤트 실행
   const unloadFunc = () => {
     window.sessionStorage.setItem("isMatched", "false");
-    apiPOSTCancel();
+    apiDisagree();
     window.sessionStorage.removeItem("position");
     window.sessionStorage.removeItem("isMatching");
   };
@@ -211,89 +289,89 @@ export default function CheckPlace() {
   ///////////////////////////////////////////////////////////////
   // 임시 함수 ////////////////////////////
   ///////////////////////////////////////////////////////////////
-  async function apiGetU2() {
-    setTimeout(() => {
-      console.log("3초 지남");
-      axios
-        .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname2`, {
-          headers: {
-            Authorization: `${window.localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        })
-        .then((res) => {
-          if (res.data.user.join === false) {
-            alert("매칭 인원 중 누군가가 거절하였습니다");
-            window.sessionStorage.clear();
-            return navigate("/");
-          }
-          setUser((prev) => {
-            const newState = new Map(prev);
-            newState.set(res.data.user.nickname, true);
-            return newState;
-          });
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }, [3000]);
-  }
+  // async function apiGetU2() {
+  //   setTimeout(() => {
+  //     console.log("3초 지남");
+  //     axios
+  //       .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname2`, {
+  //         headers: {
+  //           Authorization: `${window.localStorage.getItem("token")}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       })
+  //       .then((res) => {
+  //         if (res.data.user.join === false) {
+  //           alert("매칭 인원 중 누군가가 거절하였습니다");
+  //           window.sessionStorage.clear();
+  //           return navigate("/");
+  //         }
+  //         setUser((prev) => {
+  //           const newState = new Map(prev);
+  //           newState.set(res.data.user.nickname, true);
+  //           return newState;
+  //         });
+  //       })
+  //       .catch(function (error) {
+  //         console.log(error);
+  //       });
+  //   }, [3000]);
+  // }
 
-  async function apiGetU3() {
-    setTimeout(() => {
-      console.log("9초 지남");
-      axios
-        .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname3`, {
-          headers: {
-            Authorization: `${window.localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        })
-        .then((res) => {
-          if (res.data.user.join === false) {
-            alert("매칭 인원 중 누군가가 거절하였습니다");
-            window.sessionStorage.clear();
-            return navigate("/");
-          }
-          setUser((prev) => {
-            const newState = new Map(prev);
-            newState.set(res.data.user.nickname, true);
-            return newState;
-          });
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }, [9000]);
-  }
+  // async function apiGetU3() {
+  //   setTimeout(() => {
+  //     console.log("9초 지남");
+  //     axios
+  //       .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname3`, {
+  //         headers: {
+  //           Authorization: `${window.localStorage.getItem("token")}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       })
+  //       .then((res) => {
+  //         if (res.data.user.join === false) {
+  //           alert("매칭 인원 중 누군가가 거절하였습니다");
+  //           window.sessionStorage.clear();
+  //           return navigate("/");
+  //         }
+  //         setUser((prev) => {
+  //           const newState = new Map(prev);
+  //           newState.set(res.data.user.nickname, true);
+  //           return newState;
+  //         });
+  //       })
+  //       .catch(function (error) {
+  //         console.log(error);
+  //       });
+  //   }, [9000]);
+  // }
 
-  async function apiGetU4() {
-    setTimeout(() => {
-      console.log("7초 지남");
-      axios
-        .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname4`, {
-          headers: {
-            Authorization: `${window.localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        })
-        .then((res) => {
-          if (res.data.user.join === false) {
-            alert("매칭 인원 중 누군가가 거절하였습니다");
-            window.sessionStorage.clear();
-            return navigate("/");
-          }
-          setUser((prev) => {
-            const newState = new Map(prev);
-            newState.set(res.data.user.nickname, true);
-            return newState;
-          });
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }, [7000]);
-  }
+  // async function apiGetU4() {
+  //   setTimeout(() => {
+  //     console.log("7초 지남");
+  //     axios
+  //       .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname4`, {
+  //         headers: {
+  //           Authorization: `${window.localStorage.getItem("token")}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       })
+  //       .then((res) => {
+  //         if (res.data.user.join === false) {
+  //           alert("매칭 인원 중 누군가가 거절하였습니다");
+  //           window.sessionStorage.clear();
+  //           return navigate("/");
+  //         }
+  //         setUser((prev) => {
+  //           const newState = new Map(prev);
+  //           newState.set(res.data.user.nickname, true);
+  //           return newState;
+  //         });
+  //       })
+  //       .catch(function (error) {
+  //         console.log(error);
+  //       });
+  //   }, [7000]);
+  // }
 
   async function apiAgree() {
     axios
@@ -359,25 +437,25 @@ export default function CheckPlace() {
       });
   }
 
-  async function apiCompleted() {
-    axios
-      .get(`${import.meta.env.VITE_BE_API_URL}/matching/completed`, {
-        headers: {
-          Authorization: `${window.localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        window.sessionStorage.setItem("matchedData", JSON.stringify(res));
-        window.sessionStorage.removeItem("isMatching");
-        window.sessionStorage.removeItem("isMatched");
-        window.sessionStorage.setItem("isCompleted", "true");
-        navigate(`/matching/choice-place/${res.data.id}`);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }
+  // async function apiCompleted() {
+  //   axios
+  //     .get(`${import.meta.env.VITE_BE_API_URL}/matching/completed`, {
+  //       headers: {
+  //         Authorization: `${window.localStorage.getItem("token")}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+  //     .then((res) => {
+  //       window.sessionStorage.setItem("matchedData", JSON.stringify(res));
+  //       window.sessionStorage.removeItem("isMatching");
+  //       window.sessionStorage.removeItem("isMatched");
+  //       window.sessionStorage.setItem("isCompleted", "true");
+  //       navigate(`/matching/choice-place/${res.data.id}`);
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // }
 
   ///////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////
