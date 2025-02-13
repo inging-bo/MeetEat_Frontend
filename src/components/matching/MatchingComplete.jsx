@@ -229,7 +229,7 @@ export default function MatchingComplete() {
       const res = await e.data;
       const parsedData = JSON.parse(res);
       // 받아오는 data로 할 일
-      if (parsedData.message === "모임이 취소되었습니다") {
+      if (parsedData === "모임이 취소되었습니다") {
         alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
         window.sessionStorage.clear();
         navigate("/");

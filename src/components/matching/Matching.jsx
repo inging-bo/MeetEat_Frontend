@@ -78,22 +78,31 @@ export default function Matching({
           console.log(err);
         });
     };
+    // 방법1. onmessage 이용용
+    // eventSource.onmessage = async (e) => {
+    //   const res = await e.data;
+    //   const parsedData = JSON.parse(res);
+    //   받아오는 data로 할 일
+    //   if (parsedData === "임시 모임이 생성되었습니다.") {
+    //     setIsMatched(true);
+    //     window.sessionStorage.setItem("tempPosition", JSON.stringify(position));
+    //     window.sessionStorage.setItem("isMatched", "true");
+    //     window.sessionStorage.setItem(
+    //       "matchingData",
+    //       JSON.stringify(parsedData)
+    //     );
+    //     navigate(`/matching/check-place/${parsedData.teamId}`);
+    //   }
+    // };
 
-    eventSource.onmessage = async (e) => {
-      const res = await e.data;
-      const parsedData = JSON.parse(res);
-      // 받아오는 data로 할 일
-      if (parsedData.message === "임시 모임이 생성되었습니다.") {
-        setIsMatched(true);
-        window.sessionStorage.setItem("tempPosition", JSON.stringify(position));
-        window.sessionStorage.setItem("isMatched", "true");
-        window.sessionStorage.setItem(
-          "matchingData",
-          JSON.stringify(parsedData)
-        );
-        navigate(`/matching/check-place/${parsedData.teamId}`);
-      }
-    };
+    // 방법2. EventListener
+    eventSource.addEventListener("TempTeam", (e) => {
+      setIsMatched(true);
+      window.sessionStorage.setItem("tempPosition", JSON.stringify(position));
+      window.sessionStorage.setItem("isMatched", "true");
+      window.sessionStorage.setItem("matchingData", JSON.stringify(e.data));
+      navigate(`/matching/check-place/${e.data.teamId}`);
+    });
 
     eventSource.onerror = (e) => {
       // 종료 또는 에러 발생 시 할 일

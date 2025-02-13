@@ -67,31 +67,54 @@ export default function CheckPlace() {
 
     eventSource.onopen = () => {
       // 연결 시 할 일
-      eventSource.onmessage = async (e) => {
-        const res = await e.data;
-        const parsedData = JSON.parse(res);
-        // 받아오는 data로 할 일
-        if (parsedData.message === "수락 알림이 도착했습니다.") {
-          if (parsedData.user.join === false) {
-            alert("매칭 인원 중 누군가가 거절하였습니다");
-            window.sessionStorage.clear();
-            return navigate("/");
-          }
-          setUser((prev) => {
-            const newState = new Map(prev);
-            newState.set(parsedData.user.nickname, true);
-            return newState;
-          });
-        }
-        if (parsedData.message === "모임이 생성되었습니다") {
-          window.sessionStorage.setItem("matchedData", JSON.stringify(res));
-          window.sessionStorage.removeItem("isMatching");
-          window.sessionStorage.removeItem("isMatched");
-          window.sessionStorage.setItem("isCompleted", "true");
-          navigate(`/matching/choice-place/${res.data.id}`);
-        }
-      };
     };
+
+    // 방법1. onmessage 이용
+    // eventSource.onmessage = async (e) => {
+    //   const res = await e.data;
+    //   const parsedData = JSON.parse(res);
+    //   // 받아오는 data로 할 일
+    //   if (parsedData.message === "수락 알림이 도착했습니다.") {
+    //     if (parsedData.user.join === false) {
+    //       alert("매칭 인원 중 누군가가 거절하였습니다");
+    //       window.sessionStorage.clear();
+    //       return navigate("/");
+    //     }
+    //     setUser((prev) => {
+    //       const newState = new Map(prev);
+    //       newState.set(parsedData.user.nickname, true);
+    //       return newState;
+    //     });
+    //   }
+    //   if (parsedData.message === "모임이 생성되었습니다") {
+    //     window.sessionStorage.setItem("matchedData", JSON.stringify(res));
+    //     window.sessionStorage.removeItem("isMatching");
+    //     window.sessionStorage.removeItem("isMatched");
+    //     window.sessionStorage.setItem("isCompleted", "true");
+    //     navigate(`/matching/choice-place/${res.data.id}`);
+    //   }
+    // };
+
+    // 방법2. EventListener
+    eventSource.addEventListener("Join", (e) => {
+      if (e.data.user.join === false) {
+        alert("매칭 인원 중 누군가가 거절하였습니다");
+        window.sessionStorage.clear();
+        return navigate("/");
+      }
+      setUser((prev) => {
+        const newState = new Map(prev);
+        newState.set(e.data.user.nickname, true);
+        return newState;
+      });
+    });
+    eventSource.addEventListener("Team", (e) => {
+      window.sessionStorage.setItem("matchedData", JSON.stringify(e.data));
+      window.sessionStorage.removeItem("isMatching");
+      window.sessionStorage.removeItem("isMatched");
+      window.sessionStorage.setItem("isCompleted", "true");
+      navigate(`/matching/choice-place/${e.data.id}`);
+    });
 
     eventSource.onerror = (e) => {
       // 종료 또는 에러 발생 시 할 일
