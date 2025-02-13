@@ -63,7 +63,7 @@ export default function ChangePW() {
       }
 
       const response = await axios.post(
-        "/users/change-password",
+        `${import.meta.env.VITE_BE_API_URL}/users/change-password`,
         {
           currentPassword: currentPwInput,
           newPassword: newPwInput,

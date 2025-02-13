@@ -101,13 +101,13 @@ const RestReviews = observer(() => {
             let response;
             // 서버 요청 전송
             if (type === "ban") {
-              response = await axios.post(`/ban?bannedId=${userId}`); // 차단 요청
+              response = await axios.post(`${import.meta.env.VITE_BE_API_URL}/ban?bannedId=${userId}`); // 차단 요청
             } else if (type === "unBan") {
-              response = await axios.delete(`/ban?bannedId=${userId}`); // 차단 해제 요청
+              response = await axios.delete(`${import.meta.env.VITE_BE_API_URL}/ban?bannedId=${userId}`); // 차단 해제 요청
             } else if (type === "report") {
-              response = await axios.post(`/report?reportedId=${userId}`); // 신고 요청
+              response = await axios.post(`${import.meta.env.VITE_BE_API_URL}/report?reportedId=${userId}`); // 신고 요청
             } else if (type === "unReport") {
-              response = await axios.delete(`/report?reportedId=${userId}`); // 신고 해제 요청
+              response = await axios.delete(`${import.meta.env.VITE_BE_API_URL}/report?reportedId=${userId}`); // 신고 해제 요청
             }
             // 요청 성공 시 visit 데이터 갱신
             if (response.status === 200) {
