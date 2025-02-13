@@ -15,7 +15,6 @@ export default function Matching({
   // 뒤로가기 방지
   history.pushState(null, document.title, location.href); // push
 
-  const navigate = useNavigate();
   const categoryName = selectedMarker.category_name.slice(
     selectedMarker.category_name.lastIndexOf(">") + 2
   );
