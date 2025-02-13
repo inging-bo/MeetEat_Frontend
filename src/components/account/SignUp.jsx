@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "../layout/Header.jsx";
 import OneBtnModal from "../common/OneBtnModal.jsx";
 import ShowPWIcon from "../../assets/showPW-icon.svg?react";
@@ -7,6 +7,7 @@ import HidePWIcon from "../../assets/hidePW-icon.svg?react";
 import HeaderLogo from "../../assets/header-logo.svg?react";
 import axios from "axios";
 import authStore from "../../store/authStore.js";
+import modalStore from "../../store/modalStore.js";
 
 export default function SignUp() {
   // 로그인 확인
@@ -33,9 +34,9 @@ export default function SignUp() {
   useEffect(() => {
     setHasValue(
       emailInput.length > 0 &&
-        pwInput.length > 0 &&
-        subPwInput.length > 0 &&
-        nickNameInput.length > 0
+      pwInput.length > 0 &&
+      subPwInput.length > 0 &&
+      nickNameInput.length > 0
     );
   }, [emailInput, pwInput, subPwInput, nickNameInput]);
 
@@ -49,16 +50,8 @@ export default function SignUp() {
   const togglePW = () => setShowPW(!showPW);
   const togglePWSub = () => setShowPWSub(!showPWSub);
 
-  // ✅ 회원가입 버튼 클릭 시 동작
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState(null); // oneBtn 넘기는 타입용
-  // ✅ 모달 닫기 함수
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setModalType(null);
-  };
   // 회원가입 버튼 클릭 시 메시지
+  const navigate = useNavigate()
   const [message, setMessage] = useState("");
 
   const signUp = async (event) => {
@@ -75,15 +68,19 @@ export default function SignUp() {
       console.log("회원가입 응답 데이터:", response.data);
 
       if (response.data.success) {
-        setMessage("회원가입 성공!");
-        setIsModalOpen(true);
-        setModalType("signUp");
-
-        // 입력 필드 초기화
-        setEmailInput("");
-        setPwInput("");
-        setSubPwInput("");
-        setNickNameInput("");
+        navigate("/account")
+        modalStore.openModal("oneBtn", {
+          message: "회원가입이 완료되었습니다!.",
+          onConfirm: async () => {
+            setMessage("회원가입 성공!");
+            // 입력 필드 초기화
+            setEmailInput("");
+            setPwInput("");
+            setSubPwInput("");
+            setNickNameInput("");
+            await modalStore.closeModal()
+          }
+        })
       } else {
         setMessage("회원가입 실패");
       }
@@ -98,12 +95,12 @@ export default function SignUp() {
 
   return (
     <>
-      <Header />
+      <Header/>
       <form className="flex w-96 justify-center items-center">
         <div className="flex flex-1 flex-col gap-3 justify-center">
           <h1 className="flex justify-center h-8 mb-8">
             <Link to={"/"}>
-              <HeaderLogo className="h-full w-full" />
+              <HeaderLogo className="h-full w-full"/>
             </Link>
           </h1>
           <div className="flex flex-col items-start">
@@ -142,9 +139,9 @@ export default function SignUp() {
                 onClick={togglePW}
               >
                 {showPW ? (
-                  <ShowPWIcon className="w-full h-full" />
+                  <ShowPWIcon className="w-full h-full"/>
                 ) : (
-                  <HidePWIcon className="w-full h-full" />
+                  <HidePWIcon className="w-full h-full"/>
                 )}
               </div>
             </label>
@@ -168,9 +165,9 @@ export default function SignUp() {
                 onClick={togglePWSub}
               >
                 {showPWSub ? (
-                  <ShowPWIcon className="w-full h-full" />
+                  <ShowPWIcon className="w-full h-full"/>
                 ) : (
-                  <HidePWIcon className="w-full h-full" />
+                  <HidePWIcon className="w-full h-full"/>
                 )}
               </div>
             </label>
@@ -194,7 +191,7 @@ export default function SignUp() {
           </div>
           <button
             type="submit"
-            onClick={(e) => signUp(e, "signUp")}
+            onClick={(e) => signUp(e)}
             className={`w-full h-11 rounded-md hover:bg-[#FF6445] hover:text-white ${
               hasValue ? "bg-[#FF6445] text-white" : "bg-gray-200"
             }`}
@@ -204,8 +201,6 @@ export default function SignUp() {
           {/* 에러 메시지 표시 */}
           <p className="text-sm text-[#FF0000] mt-2 min-h-5">{message}</p>
         </div>
-        {/* OneBtnModal 표시*/}
-        {isModalOpen && <OneBtnModal type={modalType} onClose={closeModal} />}
       </form>
     </>
   );

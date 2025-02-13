@@ -1,13 +1,13 @@
-import modalStore from "../../store/modalStore.js";
-
-export default function OneBtnModal({ message }) {
+export default function OneBtnModal({ message, onConfirm  }) {
   return (
     <>
       <div>
         {message}
       </div>
-      <div className="flex gap-8 justify-center">
-        <button onClick={() => modalStore.closeModal()}>확인</button>
+      <div className="flex gap-8 justify-center cursor-pointer"
+        onClick={() => onConfirm()}
+      >
+        확인
       </div>
     </>
   )
