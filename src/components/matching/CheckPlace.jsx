@@ -52,9 +52,10 @@ export default function CheckPlace() {
 
   async function apiSSESub() {
     await axios
-      .get("/sse/subscribe", {
+      .get(`${import.meta.env.VITE_BE_API_URL}/sse/subscribe`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
         },
       })
       .then(() => {
@@ -214,9 +215,10 @@ export default function CheckPlace() {
     setTimeout(() => {
       console.log("3초 지남");
       axios
-        .get("/matching/nickname2", {
+        .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname2`, {
           headers: {
             Authorization: `${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
           },
         })
         .then((res) => {
@@ -241,9 +243,10 @@ export default function CheckPlace() {
     setTimeout(() => {
       console.log("9초 지남");
       axios
-        .get("/matching/nickname3", {
+        .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname3`, {
           headers: {
             Authorization: `${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
           },
         })
         .then((res) => {
@@ -268,9 +271,10 @@ export default function CheckPlace() {
     setTimeout(() => {
       console.log("7초 지남");
       axios
-        .get("/matching/nickname4", {
+        .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname4`, {
           headers: {
             Authorization: `${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
           },
         })
         .then((res) => {
@@ -294,7 +298,7 @@ export default function CheckPlace() {
   async function apiAgree() {
     axios
       .get(
-        "/matching?response=accept",
+        `${import.meta.env.VITE_BE_API_URL}/matching?response=accept`,
         {
           teamId: JSON.parse(window.sessionStorage.getItem("matchingData")).data
             .teamId,
@@ -303,6 +307,7 @@ export default function CheckPlace() {
         {
           headers: {
             Authorization: `${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
           },
         }
       )
@@ -317,7 +322,7 @@ export default function CheckPlace() {
   async function apiDisagree() {
     axios
       .get(
-        "/matching?response=reject",
+        `${import.meta.env.VITE_BE_API_URL}/matching?response=reject`,
         {
           teamId: JSON.parse(window.sessionStorage.getItem("matchingData")).data
             .teamId,
@@ -326,6 +331,7 @@ export default function CheckPlace() {
         {
           headers: {
             Authorization: `${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
           },
         }
       )
@@ -339,9 +345,10 @@ export default function CheckPlace() {
 
   async function apiPOSTCancel() {
     await axios
-      .post("/matching/cancel", {
+      .post(`${import.meta.env.VITE_BE_API_URL}/matching/cancel`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
         },
       })
       .then((res) => {
@@ -354,9 +361,10 @@ export default function CheckPlace() {
 
   async function apiCompleted() {
     axios
-      .get("/matching/completed", {
+      .get(`${import.meta.env.VITE_BE_API_URL}/matching/completed`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
         },
       })
       .then((res) => {

@@ -84,25 +84,12 @@ export default function MainMatching() {
     };
   }, [isMatching]);
 
-  // async function apiPOSTCancel() {
-  //   await axios
-  //     .post("/matching/cancel", {
-  //       headers: {
-  //         Authorization: `${window.localStorage.getItem("token")}`,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       console.log(res);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }
   async function apiPOSTCancel() {
     await axios
-      .post(`${import.meta.env.VITE_BE_API_URL}/api/matching/cancel`, {
+      .post(`${import.meta.env.VITE_BE_API_URL}/matching/cancel`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
         },
       })
       .then((res) => {

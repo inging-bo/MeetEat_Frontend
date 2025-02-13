@@ -210,7 +210,7 @@ export default function RestList() {
     page
   ) {
     await axios
-      .post(`/${import.meta.env.VITE_BE_API_URL}/api/restaurants/search`, {
+      .post(`${import.meta.env.VITE_BE_API_URL}/restaurants/search`, {
         region: region,
         categoryName: categoryName,
         placeName: placeName,
@@ -241,7 +241,7 @@ export default function RestList() {
   // }
   async function apiPOSTRestDetailView(restId) {
     await axios
-      .get(`${import.meta.env.VITE_BE_API_URL}/api/restaurants/${restId}`)
+      .get(`${import.meta.env.VITE_BE_API_URL}/restaurants/${restId}`)
       .then((res) => {
         setPickedRest(res.data);
       })

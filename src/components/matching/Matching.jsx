@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Map, Circle } from "react-kakao-maps-sdk";
 import ReactLoading from "react-loading";
 import axios from "axios";
@@ -39,13 +38,14 @@ export default function Matching({
       .get(`${import.meta.env.VITE_BE_API_URL}/api/sse/subscribe`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
         },
       })
       .then(() => {
         console.log("SSE구독");
         axios
           .post(
-            `${import.meta.env.VITE_BE_API_URL}/api/matching/request`,
+            `${import.meta.env.VITE_BE_API_URL}/matching/request`,
             {
               userLon: lng,
               userLat: lat,
@@ -137,9 +137,10 @@ export default function Matching({
 
   async function apiPOSTCancel() {
     await axios
-      .post(`${import.meta.env.VITE_BE_API_URL}/api/matching/cancel`, {
+      .post(`${import.meta.env.VITE_BE_API_URL}/matching/cancel`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
         },
       })
       .then((res) => {
