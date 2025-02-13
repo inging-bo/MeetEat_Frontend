@@ -94,7 +94,7 @@ export const handlers = [
       // 닉네임 중복 검사
       const nicknameExists = userListDB.some((user) => user.nickname === nickname);
       if (nicknameExists) {
-        return HttpResponse.json({message: "이미 사용 중인 이메일입니다."}, {status: 400});
+        return HttpResponse.json({message: "이미 사용 중인 닉네임입니다."}, {status: 400});
       }
 
       // 새 유저 추가
