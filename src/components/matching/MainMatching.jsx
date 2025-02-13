@@ -100,7 +100,7 @@ export default function MainMatching() {
   // }
   async function apiPOSTCancel() {
     await axios
-      .post(`http://${import.meta.env.VITE_BE_API_URL}/api/matching/cancel`, {
+      .post(`${import.meta.env.VITE_BE_API_URL}/api/matching/cancel`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
         },

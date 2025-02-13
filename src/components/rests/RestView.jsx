@@ -64,12 +64,9 @@ export default function RestView({ center, close, pickedRest, star }) {
   // }
   async function apiPOSTRestsLists(restId, page, size) {
     await axios
-      .get(
-        `http://${import.meta.env.VITE_BE_API_URL}/restaurants/${restId}/reviews`,
-        {
-          params: { page: page, size: size },
-        }
-      )
+      .get(`${import.meta.env.VITE_BE_API_URL}/restaurants/${restId}/reviews`, {
+        params: { page: page, size: size },
+      })
       .then((res) => {
         setReviews((prev) => [...prev, ...res.data.content]);
         setMaxNumber(res.data.page.totalElements);
