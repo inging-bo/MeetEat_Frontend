@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Map, MapMarker, Polyline } from "react-kakao-maps-sdk";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { EventSourcePolyfill } from "event-source-polyfill";
 
 export default function MatchingComplete() {
   // 현재 위치
@@ -35,7 +36,8 @@ export default function MatchingComplete() {
       console.log("매칭완료된 데이터가 없습니다.");
       return navigate("/");
     }
-    apiSSESub();
+    // apiSSESub();
+    fetchSSE();
     const now = new Date(); // 오늘 날짜
     const firstDay = new Date(
       JSON.parse(window.sessionStorage.getItem("matchedData")).data.createdAt
@@ -85,20 +87,20 @@ export default function MatchingComplete() {
     });
 
     // 매칭 취소 발생
-    setTimeout(
-      () =>
-        axios
-          .get(`${import.meta.env.VITE_BE_API_URL}/matching/complete`)
-          .then(() => {
-            alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
-            window.sessionStorage.clear();
-            navigate("/");
-          })
-          .catch(function (error) {
-            console.log(error);
-          }),
-      [10000]
-    );
+    //   setTimeout(
+    //     () =>
+    //       axios
+    //         .get(`${import.meta.env.VITE_BE_API_URL}/matching/complete`)
+    //         .then(() => {
+    //           alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
+    //           window.sessionStorage.clear();
+    //           navigate("/");
+    //         })
+    //         .catch(function (error) {
+    //           console.log(error);
+    //         }),
+    //     [10000]
+    //   );
   }, []);
 
   // 거리계산
@@ -206,32 +208,73 @@ export default function MatchingComplete() {
     setDistance(distance);
   }, [position]);
 
-  // SSE 구독
-  async function apiSSESub() {
-    await axios
-      .get(`${import.meta.env.VITE_BE_API_URL}/sse/subscribe`, {
+  // SSE fetch
+  const fetchSSE = () => {
+    // header 보내기 위해 EventSourcePolyfill 사용
+    const eventSource = new EventSourcePolyfill(
+      `${import.meta.env.VITE_BE_API_URL}/api/sse/subscribe`,
+      {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
-      })
-      .then(() => {
-        console.log("SSE구독");
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }
+      }
+    );
+
+    eventSource.onopen = () => {
+      // 연결시 할 일
+    };
+
+    eventSource.onmessage = async (e) => {
+      const res = await e.data;
+      const parsedData = JSON.parse(res);
+      // 받아오는 data로 할 일
+      if (parsedData === "모임이 취소되었습니다") {
+        alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
+        window.sessionStorage.clear();
+        navigate("/");
+      }
+    };
+
+    eventSource.onerror = (e) => {
+      // 종료 또는 에러 발생 시 할 일
+      eventSource.close();
+      if (e.error) {
+        // 에러 발생 시 할 일
+      }
+      if (e.target.readyState === EventSource.CLOSED) {
+        // 종료 시 할 일
+      }
+    };
+  };
+  // async function apiSSESub() {
+  //   await axios
+  //     .get(`${import.meta.env.VITE_BE_API_URL}/sse/subscribe`, {
+  //       headers: {
+  //         Authorization: `${window.localStorage.getItem("token")}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+  //     .then(() => {
+  //       console.log("SSE구독");
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // }
 
   // 3분 전 매칭취소
-  async function apiPOSTCancel() {
+  async function apiPOSTCancel(matchingId) {
     await axios
-      .post(`${import.meta.env.VITE_BE_API_URL}/matching/cancel/illegal`, {
-        headers: {
-          Authorization: `${window.localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-      })
+      .post(
+        `${import.meta.env.VITE_BE_API_URL}/matching/cancel/illegal/${matchingId}`,
+        {
+          headers: {
+            Authorization: `${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then(() => {
         navigate("/");
         window.sessionStorage.removeItem("isMatched");
@@ -243,14 +286,17 @@ export default function MatchingComplete() {
       });
   }
   // 3분 후 매칭취소
-  async function apiPOSTCancelIllegal() {
+  async function apiPOSTCancelIllegal(matchingId) {
     await axios
-      .post(`${import.meta.env.VITE_BE_API_URL}/matching/cancel/illegal`, {
-        headers: {
-          Authorization: `${window.localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-      })
+      .post(
+        `${import.meta.env.VITE_BE_API_URL}/matching/cancel/illegal${matchingId}`,
+        {
+          headers: {
+            Authorization: `${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then(() => {
         navigate("/");
         window.sessionStorage.removeItem("isMatched");
@@ -274,10 +320,14 @@ export default function MatchingComplete() {
     // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
     if (passedTimeMin >= 3) {
       alert("매칭 3분 이후 취소로 패널티가 부과됩니다.");
-      return apiPOSTCancelIllegal();
+      return apiPOSTCancelIllegal(
+        JSON.parse(window.sessionStorage.getItem("matchedData")).data.id
+      );
     }
     alert("매칭 3분 이전 취소로 패널티가 부과되지 않습니다.");
-    return apiPOSTCancel();
+    return apiPOSTCancel(
+      JSON.parse(window.sessionStorage.getItem("matchedData")).data.id
+    );
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
