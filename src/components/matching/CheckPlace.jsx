@@ -111,7 +111,7 @@ export default function CheckPlace() {
   };
 
   // 타이머
-  const MINUTES_IN_MS = 1000 * 60 * 1000;
+  const MINUTES_IN_MS = 1 * 60 * 1000;
   const INTERVAL = 1000;
   const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
 
@@ -423,17 +423,20 @@ export default function CheckPlace() {
             </>
           ))}
         </div>
-        <div className="check-container flex flex-col justify-center ">
+        <div className="check-container flex flex-col justify-center">
           <button
             onClick={handleAgree}
             className="w-[200px] pt-1 pb-[6px] bg-[#A2A2A2] rounded-lg text-white text-[16px] mt-4 mb-3 hover:bg-[#FF6445]"
           >
             모든 장소에 대해 동의
           </button>
-          <button onClick={handleDisAgree} className="text-[14px]">
-            매칭취소
-          </button>
         </div>
+        <button
+          onClick={handleDisAgree}
+          className="text-[14px] absolute bottom-5"
+        >
+          매칭취소
+        </button>
       </div>
     </>
   );
