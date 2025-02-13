@@ -210,19 +210,16 @@ export default function RestList() {
     page
   ) {
     await axios
-      .post(
-        `http://${import.meta.env.VITE_BE_API_URL}/api/restaurants/search`,
-        {
-          region: region,
-          categoryName: categoryName,
-          placeName: placeName,
-          userY: position.lat,
-          userX: position.lng,
-          sorted: sorted,
-          page: page,
-          size: "20",
-        }
-      )
+      .post(`/${import.meta.env.VITE_BE_API_URL}/api/restaurants/search`, {
+        region: region,
+        categoryName: categoryName,
+        placeName: placeName,
+        userY: position.lat,
+        userX: position.lng,
+        sorted: sorted,
+        page: page,
+        size: "20",
+      })
       .then((res) => {
         setRestaurants((prev) => [...prev, ...res.data.content]);
         setMaxPage(res.data.totalPages);
@@ -244,9 +241,7 @@ export default function RestList() {
   // }
   async function apiPOSTRestDetailView(restId) {
     await axios
-      .get(
-        `http://${import.meta.env.VITE_BE_API_URL}/api/restaurants/${restId}`
-      )
+      .get(`${import.meta.env.VITE_BE_API_URL}/api/restaurants/${restId}`)
       .then((res) => {
         setPickedRest(res.data);
       })
