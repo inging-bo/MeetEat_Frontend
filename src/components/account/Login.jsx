@@ -35,7 +35,7 @@ export default function Login() {
     event.preventDefault(); // 기본 제출 동작 방지
 
     try {
-      const response = await axios.post("/users/signin", {
+      const response = await axios.post(`${import.meta.env.VITE_BE_API_URL}/api/users/signin`, {
         email: emailInput,
         password: pwInput,
       });
@@ -122,7 +122,7 @@ export default function Login() {
       : "kakao";
 
     try {
-      const response = await axios.post(`/users/signin/${provider}`, { code });
+      const response = await axios.post(`${import.meta.env.VITE_BE_API_URL}/api/users/signin/${provider}`, { code });
 
       if (response.data.accessToken) {
         window.localStorage.setItem("token", response.data.accessToken);
