@@ -8,8 +8,22 @@ import Check from "../../assets/check.svg?react";
 import modalStore from "../../store/modalStore.js";
 
 export default function CheckPlace() {
-  const navigate = useNavigate();
+  // 뒤로가기 발생시 매칭 취소
+  history.pushState(null, document.title, location.href); // push
+  const preventBack = () => {
+    alert("페이지를 이동하여 자동으로 매칭이 취소됩니다.");
+    apiPOSTCancel();
+    window.sessionStorage.removeItem("position");
+    window.sessionStorage.removeItem("isMatching");
+    location.href("/");
+  };
 
+  useEffect(() => {
+    window.addEventListener("popstate", preventBack);
+    return window.removeEventListener("popstate", preventBack);
+  }, []);
+
+  const navigate = useNavigate();
   const position = JSON.parse(window.sessionStorage.getItem("tempPosition"));
   const [matchingData, setMatchingData] = useState([]);
   const [user, setUser] = useState(new Map());

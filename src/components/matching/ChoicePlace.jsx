@@ -1,9 +1,24 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { StaticMap } from "react-kakao-maps-sdk";
+import { createBrowserHistory } from "history";
 import CheckTitle from "../../assets/check-title.svg?react";
 
 export default function CheckPlace() {
+  // 뒤로가기 발생시 매칭 취소
+  const history = createBrowserHistory();
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const unlistenHistoryEvent = history.listen(({ action }) => {
+      console.log(pathname);
+      if (action !== "POP") return;
+      else {
+        location.replace("/");
+      }
+    });
+    return unlistenHistoryEvent;
+  }, []);
+
   const navigate = useNavigate();
 
   const position = JSON.parse(window.sessionStorage.getItem("tempPosition"));
