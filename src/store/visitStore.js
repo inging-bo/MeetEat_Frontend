@@ -3,14 +3,20 @@ import axios from "axios";
 
 const createVisitStore = () => {
   const store = {
-    visit: [],
+    visit: { content: [] },
 
-    async fetchVisitData() {
+    async fetchVisitData(page) {
       try {
-        const response = await axios.get("/restaurants/myreview", {});
-        store.visit = response.data;
+        const response = await axios.get("/matching/history", {
+          params: { page, size: 20 }
+        });
+        if (page === 0) {
+          store.visit = response.data;
+        } else {
+          store.visit.content = [...store.visit.content, ...response.data.content];
+        }
       } catch (error) {
-        console.error("프로필 정보를 가져오는데 실패했습니다", error);
+        console.error("방문 기록을 가져오는데 실패했습니다", error);
       }
     },
   };
