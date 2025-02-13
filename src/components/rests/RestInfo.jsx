@@ -23,7 +23,7 @@ export default function RestInfo() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("/users/profile");
+        const response = await axios.get(`${import.meta.env.VITE_BE_API_URL}/users/profile`);
         setProfile(response.data);
         setNicknameData(response.data.nickname || "");
         setIntroductionData(
@@ -60,7 +60,7 @@ export default function RestInfo() {
 
     async function saveField() {
       try {
-        const response = await axios.put("/users/profile", {
+        const response = await axios.put(`${import.meta.env.VITE_BE_API_URL}/users/profile`, {
           [fieldKey]: value,
         });
         updateFunction(response.data[fieldKey]); // 응답받은 값으로 업데이트
