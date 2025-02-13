@@ -524,8 +524,8 @@ export const handlers = [
     }
   }),
 
-  // 나의 식당 후기 조회
-  http.get("/restaurants/myreview", async () => {
+  // 나의 모임 기록 조회
+  http.get("/matching/history", async () => {
     return HttpResponse.json(myMatchingHistory, { status: 200 });
   }),
 

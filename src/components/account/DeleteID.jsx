@@ -14,7 +14,7 @@ export default function DeleteID() {
 
   const handleDelete = async () => {
     try {
-      const response = await axios.delete("/users/withdrawal");
+      const response = await axios.delete(`${import.meta.env.VITE_BE_API_URL}/api/users/withdrawal`);
 
       if (response) {
         navigate("/successnotice", {

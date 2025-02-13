@@ -58,7 +58,7 @@ export default function SignUp() {
     event.preventDefault(); // 기본 제출 동작 방지
 
     try {
-      const response = await axios.post("/users/signup", {
+      const response = await axios.post(`${import.meta.env.VITE_BE_API_URL}/api/users/signup`, {
         email: emailInput,
         password: pwInput,
         subPassword: subPwInput,
