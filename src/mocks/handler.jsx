@@ -140,7 +140,7 @@ export const handlers = [
       const emailExists = userListDB.some((user) => user.email === email);
       if (emailExists) {
         return HttpResponse.json(
-          { message: "이미 사용 중인 닉네임입니다." },
+          { message: "이미 사용 중인 이메일입니다." },
           { status: 400 }
         );
       }
@@ -160,7 +160,7 @@ export const handlers = [
       );
       if (nicknameExists) {
         return HttpResponse.json(
-          { message: "이미 사용 중인 이메일입니다." },
+          { message: "이미 사용 중인 닉네임입니다." },
           { status: 400 }
         );
       }

@@ -23,6 +23,7 @@ const Modal = observer(() => {
         return (
           <OneBtnModal
             message={message}
+            onConfirm={handleConfirm}
           />
         )
       case 'twoBtn':

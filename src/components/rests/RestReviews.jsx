@@ -86,21 +86,33 @@ const RestReviews = observer(() => {
                 case "ban":
                   modalStore.openModal("oneBtn", {
                     message: `${userId}를 차단했습니다.`,
+                    onConfirm : async () => {
+                      await modalStore.closeModal()
+                    }
                   });
                   break;
                 case "unBan":
                   modalStore.openModal("oneBtn", {
                     message: `${userId}를 차단 해제했습니다.`,
+                    onConfirm : async () => {
+                      await modalStore.closeModal()
+                    }
                   });
                   break;
                 case "report":
                   modalStore.openModal("oneBtn", {
                     message: `${userId}를 신고했습니다.`,
+                    onConfirm : async () => {
+                      await modalStore.closeModal()
+                    }
                   });
                   break;
                 case "unReport":
                   modalStore.openModal("oneBtn", {
                     message: `${userId}를 신고 해제했습니다.`,
+                    onConfirm : async () => {
+                      await modalStore.closeModal()
+                    }
                   });
                   break;
                 default:
