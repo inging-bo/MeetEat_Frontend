@@ -22,60 +22,60 @@
 }
 
 .pick-border-2-0 {
-  animation: motion-2 0.3s linear 8.1 alternate;
+  animation: motion-2 0.3s linear 8 alternate;
   margin-top: 0;
   -webkit-animation-fill-mode: both;
 }
 .pick-border-2-1 {
-  animation: motion-2 0.3s linear 8.82 alternate;
+  animation: motion-2 0.3s linear 8.75 alternate;
   margin-top: 0;
   -webkit-animation-fill-mode: both;
 }
 
 .pick-border-3-0 {
-  animation: motion-3 0.3s linear 8.05 alternate;
+  animation: motion-3 0.3s linear 8 alternate;
   margin-top: 0;
   -webkit-animation-fill-mode: both;
 }
 .pick-border-3-1 {
-  animation: motion-3 0.3s linear 8.48 alternate;
+  animation: motion-3 0.3s linear 8.42 alternate;
   margin-top: 0;
   -webkit-animation-fill-mode: both;
 }
 .pick-border-3-2 {
-  animation: motion-3 0.3s linear 8.9 alternate;
+  animation: motion-3 0.3s linear 8.85 alternate;
   margin-top: 0;
   -webkit-animation-fill-mode: both;
 }
 
 .pick-border-4-0 {
-  animation: motion-4 0.3s linear 8.12 alternate;
+  animation: motion-4 0.3s linear 8.1 alternate;
   margin-top: 0;
   -webkit-animation-fill-mode: both;
 }
 .pick-border-4-1 {
-  animation: motion-4 0.3s linear 8.39 alternate;
+  animation: motion-4 0.3s linear 8.36 alternate;
   margin-top: 0;
   -webkit-animation-fill-mode: both;
 }
 .pick-border-4-2 {
-  animation: motion-4 0.3s linear 8.65 alternate;
+  animation: motion-4 0.3s linear 8.62 alternate;
   margin-top: 0;
   -webkit-animation-fill-mode: both;
 }
 .pick-border-4-3 {
-  animation: motion-4 0.3s linear 8.92 alternate;
+  animation: motion-4 0.3s linear 8.89 alternate;
   margin-top: 0;
   -webkit-animation-fill-mode: both;
 }
 
 .pick-border-5-0 {
-  animation: motion-5 0.3s linear 8 alternate;
+  animation: motion-5 0.3s linear 8.05 alternate;
   margin-top: 0;
   -webkit-animation-fill-mode: both;
 }
 .pick-border-5-1 {
-  animation: motion-5 0.3s linear 8.25 alternate;
+  animation: motion-5 0.3s linear 8.26 alternate;
   margin-top: 0;
   -webkit-animation-fill-mode: both;
 }
@@ -90,7 +90,7 @@
   -webkit-animation-fill-mode: both;
 }
 .pick-border-5-4 {
-  animation: motion-5 0.3s linear 9 alternate;
+  animation: motion-5 0.3s linear 8.98 alternate;
   margin-top: 0;
   -webkit-animation-fill-mode: both;
 }
@@ -124,7 +124,7 @@
 
 @keyframes motion-5 {
   0% {
-    margin-top: -40px;
+    margin-top: -50px;
   }
   100% {
     margin-top: 107px;

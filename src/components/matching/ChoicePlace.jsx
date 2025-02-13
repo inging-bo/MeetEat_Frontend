@@ -1,9 +1,24 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { StaticMap } from "react-kakao-maps-sdk";
+import { createBrowserHistory } from "history";
 import CheckTitle from "../../assets/check-title.svg?react";
 
 export default function CheckPlace() {
+  // 뒤로가기 발생시 매칭 취소
+  const history = createBrowserHistory();
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const unlistenHistoryEvent = history.listen(({ action }) => {
+      console.log(pathname);
+      if (action !== "POP") return;
+      else {
+        location.replace("/");
+      }
+    });
+    return unlistenHistoryEvent;
+  }, []);
+
   const navigate = useNavigate();
 
   const position = JSON.parse(window.sessionStorage.getItem("tempPosition"));
@@ -102,8 +117,8 @@ export default function CheckPlace() {
           />
         )}
       </div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[412px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center py-[40px] will-change-transform">
-        <div className="place-items-center ">
+      <div className="absolute flex flex-col items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[412px] bg-white rounded-lg drop-shadow-2xl z-20 py-[40px] will-change-transform">
+        <div className="flex flex-col items-center">
           <CheckTitle />
           <p className="text-xl pb-1 pt-[30px] font-semibold">
             방문할 음식점을 선택하는 중이에요.
