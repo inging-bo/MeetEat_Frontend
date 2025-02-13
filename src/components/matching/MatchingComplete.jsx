@@ -88,7 +88,7 @@ export default function MatchingComplete() {
     setTimeout(
       () =>
         axios
-          .get("/matching/complete")
+          .get(`${import.meta.env.VITE_BE_API_URL}/matching/complete`)
           .then(() => {
             alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
             window.sessionStorage.clear();
@@ -209,9 +209,10 @@ export default function MatchingComplete() {
   // SSE 구독
   async function apiSSESub() {
     await axios
-      .get("/sse/subscribe", {
+      .get(`${import.meta.env.VITE_BE_API_URL}/sse/subscribe`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
         },
       })
       .then(() => {
@@ -225,9 +226,10 @@ export default function MatchingComplete() {
   // 3분 전 매칭취소
   async function apiPOSTCancel() {
     await axios
-      .post("/matching/cancel/illegal", {
+      .post(`${import.meta.env.VITE_BE_API_URL}/matching/cancel/illegal`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
         },
       })
       .then(() => {
@@ -243,9 +245,10 @@ export default function MatchingComplete() {
   // 3분 후 매칭취소
   async function apiPOSTCancelIllegal() {
     await axios
-      .post("/matching/cancel/illegal", {
+      .post(`${import.meta.env.VITE_BE_API_URL}/matching/cancel/illegal`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
         },
       })
       .then(() => {
