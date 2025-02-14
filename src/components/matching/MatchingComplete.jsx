@@ -233,6 +233,7 @@ export default function MatchingComplete() {
         alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
         window.sessionStorage.clear();
         navigate("/");
+        eventSource.close();
       }
     };
 

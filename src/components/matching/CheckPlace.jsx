@@ -114,6 +114,7 @@ export default function CheckPlace() {
       window.sessionStorage.removeItem("isMatched");
       window.sessionStorage.setItem("isCompleted", "true");
       navigate(`/matching/choice-place/${e.data.id}`);
+      eventSource.close();
     });
 
     eventSource.onerror = (e) => {

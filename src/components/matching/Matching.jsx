@@ -78,7 +78,7 @@ export default function Matching({
           console.log(err);
         });
     };
-    // 방법1. onmessage 이용용
+    // 방법1. onmessage 이용
     // eventSource.onmessage = async (e) => {
     //   const res = await e.data;
     //   const parsedData = JSON.parse(res);
@@ -102,6 +102,7 @@ export default function Matching({
       window.sessionStorage.setItem("isMatched", "true");
       window.sessionStorage.setItem("matchingData", JSON.stringify(e.data));
       navigate(`/matching/check-place/${e.data.teamId}`);
+      eventSource.close();
     });
 
     eventSource.onerror = (e) => {
