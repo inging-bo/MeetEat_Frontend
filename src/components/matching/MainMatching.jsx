@@ -390,7 +390,10 @@ export default function MainMatching() {
                     position={marker.position}
                     onClick={() => {
                       setInfo(marker);
-                      setCenter(marker.position);
+                      setCenter({
+                        lat: `${Number(marker.position.lat) - 0.015}`,
+                        lng: `${Number(marker.position.lng) + 0.01}`,
+                      });
                       setInfoWindowOpen(true);
                     }}
                     image={{
@@ -451,7 +454,10 @@ export default function MainMatching() {
                     <div
                       onClick={() => {
                         setInfo(marker);
-                        setCenter(marker.position);
+                        setCenter({
+                          lat: `${Number(marker.position.lat) - 0.015}`,
+                          lng: `${Number(marker.position.lng) + 0.01}`,
+                        });
                         setInfoWindowOpen(true);
                       }}
                     >
@@ -502,7 +508,10 @@ export default function MainMatching() {
                         <div
                           onClick={() => {
                             setInfo(marker);
-                            setCenter(marker.position);
+                            setCenter({
+                              lat: `${Number(marker.position.lat) - 0.015}`,
+                              lng: `${Number(marker.position.lng) + 0.01}`,
+                            });
                             setInfoWindowOpen(true);
                           }}
                         >
