@@ -34,10 +34,10 @@ export default function Login() {
   const login = async (event) => {
       event.preventDefault(); // 기본 제출 동작 방지
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailInput === "") return setMessage("이메일을 입력하세요")
-    if (!emailRegex.test(emailInput)) return setMessage("이메일 형식으로 작성해주세요.")
-    if (pwInput === "") return setMessage("비밀번호을 입력하세요")
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailInput === "") return setMessage("이메일을 입력하세요")
+      if (!emailRegex.test(emailInput)) return setMessage("이메일 형식으로 작성해주세요.")
+      if (pwInput === "") return setMessage("비밀번호을 입력하세요")
       try {
         const response = await axios.post(
           `${import.meta.env.VITE_BE_API_URL}/users/signin`, {
@@ -87,7 +87,7 @@ export default function Login() {
   // ✅ 서비스별 로그인 URL 설정
   const OAUTH_PROVIDERS = {
     kakao: {
-      clientId: import.meta.env.VITE_APP_KAKAO_REST_KEY,
+      clientId: "a07fdc7a9364fd1acede10690029fc10",
       authUrl: "https://kauth.kakao.com/oauth/authorize",
       redirectUri: window.location.hostname === "localhost"
         ? "http://localhost:5173/account"
@@ -103,11 +103,18 @@ export default function Login() {
       state: "RANDOM_STATE", // CSRF 방지를 위한 랜덤 값 (임시)
     },
   };
+  const generateState = () => crypto.randomUUID();
 
   // ✅ OAuth 로그인 요청 (카카오 또는 네이버)
   const handleOAuthLogin = (provider, event) => {
     event.preventDefault(); // 기본 동작 방지
-    const { clientId, authUrl, redirectUri, state } = OAUTH_PROVIDERS[provider];
+    const { clientId, authUrl, redirectUri } = OAUTH_PROVIDERS[provider];
+
+    let state = "";
+    if (provider === "naver") {
+      state = generateState();
+      sessionStorage.setItem("oauth_state", state); // 세션에 저장
+    }
 
     const queryParams = new URLSearchParams({
       response_type: "code",
@@ -122,53 +129,67 @@ export default function Login() {
   };
 
   // ✅ URL에서 인가 코드 가져오기
-  const getAuthorizationCode = () => {
+  const getAuthorizationCode = async () => {
     const params = new URLSearchParams(window.location.search);
     return params.get("code");
   };
 
-  // ✅ 로그인 후 토큰 발급 처리
+// ✅ 로그인 후 토큰 발급 처리
   const handleOAuthCallback = async () => {
-    const code = getAuthorizationCode();
+    const code = await getAuthorizationCode();
+    console.log("인가 코드:", code); // ✅ 코드 값 확인
     if (!code) {
       setMessage("인가 코드가 없습니다.");
       return;
     }
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const state = urlParams.get("state");
+
+    // 네이버 OAuth의 경우 state 검증
+    if (state) {
+      const storedState = sessionStorage.getItem("oauth_state");
+      if (state !== storedState) {
+        setMessage("CSRF 공격 감지: state 불일치");
+        return;
+      }
+    }
+
     // 어떤 제공자인지 확인
-    const provider = window.location.search.includes("state")
-      ? "naver"
-      : "kakao";
+    const provider = state ? "naver" : "kakao";
 
     try {
+      console.log("서버 요청 보냄:", provider, code); // ✅ provider와 code 값 확인
+      console.log("서버로 요청할 URL:", `${import.meta.env.VITE_BE_API_URL}/users/signin/${provider}`);
       const response = await axios.post(
         `${import.meta.env.VITE_BE_API_URL}/users/signin/${provider}`,
-        { code } // code를 바디에 포함
+        { code: code },
+        {
+          headers: { "Content-Type": "application/json" }
+        }
       );
+
       if (response.status === 200) {
         window.localStorage.setItem("token", response.data.accessToken);
-        setMessage("로그인 성공!");
         authStore.setLoggedIn(true);
         navigate("/"); // 메인 페이지로 리디렉션
       } else {
-        setMessage("로그인 실패");
+        throw new Error("로그인 실패");
       }
     } catch (error) {
-      console.log(error.response)
-      if (error.response?.status === 400) {
-        setMessage(error.response?.data);
-      } else {
-        setMessage(error.response?.data);
-      }
       console.error("로그인 요청 실패:", error);
+      setMessage(error.response?.data || "로그인 실패");
     }
   };
+
+
   // ✅ 인가 코드가 있으면 자동으로 처리
   useEffect(() => {
-    if (window.location.search.includes("code")) {
+    if (window.location.pathname === "/account" && window.location.search.includes("code")) {
       handleOAuthCallback();
     }
   }, []);
+
 
   return (
     <form className="flex w-96 justify-center items-center">
