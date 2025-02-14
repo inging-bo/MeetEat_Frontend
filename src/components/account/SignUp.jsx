@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "../layout/Header.jsx";
-import OneBtnModal from "../common/OneBtnModal.jsx";
 import ShowPWIcon from "../../assets/showPW-icon.svg?react";
 import HidePWIcon from "../../assets/hidePW-icon.svg?react";
 import HeaderLogo from "../../assets/header-logo.svg?react";
@@ -22,7 +21,6 @@ export default function SignUp() {
   const [pwInput, setPwInput] = useState("");
   const [subPwInput, setSubPwInput] = useState("");
   const [nickNameInput, setNickNameInput] = useState("");
-  const [hasValue, setHasValue] = useState(false);
 
   // input필드 관찰
   const emailChange = (e) => setEmailInput(e.target.value);
@@ -30,15 +28,8 @@ export default function SignUp() {
   const subPwChange = (e) => setSubPwInput(e.target.value);
   const nickNameChange = (e) => setNickNameInput(e.target.value);
 
-  // 입력값 변경 시 hasValue 상태 업데이트
-  useEffect(() => {
-    setHasValue(
-      emailInput.length > 0 &&
-      pwInput.length > 0 &&
-      subPwInput.length > 0 &&
-      nickNameInput.length > 0
-    );
-  }, [emailInput, pwInput, subPwInput, nickNameInput]);
+  // 모든 input 입력시 회원가입 버튼 색 변경 코드
+  const hasValue = emailInput && pwInput && subPwInput && nickNameInput;
 
   // 이메일 형식 검증
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -57,15 +48,18 @@ export default function SignUp() {
   const signUp = async (event) => {
     event.preventDefault(); // 기본 제출 동작 방지
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailInput === "") return setMessage("이메일을 입력하세요")
+    if (!emailRegex.test(emailInput)) return setMessage("이메일 형식으로 작성해주세요.")
+    if (pwInput === "") return setMessage("비밀번호을 입력하세요")
+    if (subPwInput !== pwInput) return setMessage("새 비밀번호가 일치하지 않습니다.")
+    if (nickNameInput === "") return setMessage("닉네임을 입력하세요")
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BE_API_URL}/api/users/signup`, {
+      const response = await axios.post(`${import.meta.env.VITE_BE_API_URL}/users/signup`, {
         email: emailInput,
         password: pwInput,
-        subPassword: subPwInput,
         nickname: nickNameInput,
       });
-
-      console.log("회원가입 응답 데이터:", response.data);
 
       if (response.data.success) {
         navigate("/account")
@@ -85,11 +79,14 @@ export default function SignUp() {
         setMessage("회원가입 실패");
       }
     } catch (error) {
-      console.error("회원가입 요청 실패:", error);
-
-      setMessage(
-        error.response?.data?.message || "회원가입 요청 중 오류가 발생했습니다."
-      );
+      if (error.response?.status === 404) return setMessage("요청 주소가 없습니다.");
+      if (error.response?.status === 500) {
+        setMessage("서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      } else if (error.response?.status === 400) {
+        setMessage(error.response?.data?.message);
+      } else {
+        setMessage("회원가입 요청 중 알 수 없는 오류가 발생했습니다.");
+      }
     }
   };
 
