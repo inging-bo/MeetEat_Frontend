@@ -11,10 +11,16 @@ import InfoWindow from "./InfoWindow";
 import Matching from "./Matching";
 import { useNavigate } from "react-router-dom";
 import authStore from "../../store/authStore";
+import { BottomSheet } from "react-spring-bottom-sheet";
+import "../../customBottomSheet.css";
 
 export default function MainMatching() {
   const navigate = useNavigate();
   const [isLoggedIn, setLoggedIn] = useState();
+  const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
+  const handleDismiss = () => {
+    setBottomSheetOpen(false);
+  };
 
   // 로그인 확인
   useLayoutEffect(() => {
@@ -225,6 +231,7 @@ export default function MainMatching() {
             }
 
             setMarkers((prevMarkers) => [...prevMarkers, ...markers]);
+            setBottomSheetOpen(true);
 
             if (res.data.meta.is_end === false) {
               setHasMore(true);
@@ -280,6 +287,8 @@ export default function MainMatching() {
         }
 
         setMarkers((prevMarkers) => [...prevMarkers, ...markers]);
+        if (res.data.documents.length !== 0) setBottomSheetOpen(true);
+        if (res.data.documents.length === 0) setBottomSheetOpen(false);
 
         if (res.data.meta.is_end === false) {
           setHasMore(true);
@@ -324,15 +333,18 @@ export default function MainMatching() {
     <>
       {isMatching === "false" && (
         <>
-          <header className="fixed top-0 shadow-lg w-full z-10 flex justify-center h-[77px] py-3 bg-white">
+          <header className="fixed top-0 shadow-lg w-screen z-10 flex justify-center h-[77px] py-3 bg-white">
             <div className="flex w-full justify-between max-w-screen-xl">
-              <Link to="/" className="h-full px-4 flex items-center">
+              <Link
+                to="/"
+                className="hidden sm:block h-full sm:px-4 sm:flex sm:items-center"
+              >
                 <HeaderLogo />
               </Link>
 
-              <div className="search-bar flex flex-row bg-emerald-600 border border-[#3BB82D] rounded-full relative">
+              <div className="search-bar w-[70%] lg:max-w-[600px] flex flex-row mx-4 bg-emerald-600 border border-[#3BB82D] rounded-full relative">
                 <input
-                  className="w-[300px] lg:w-[600px] rounded-full pl-5 focus:outline-none"
+                  className="w-full lg:max-w-[600px] rounded-full px-5 focus:outline-none"
                   id="keyword"
                   type="text"
                   onChange={handleInputChange}
@@ -344,9 +356,11 @@ export default function MainMatching() {
                 <>
                   <Link
                     to={`/mypage`}
-                    className="h-full px-4 flex items-center"
+                    className="h-full min-w-[80px] px-4 flex items-center text-xs sm:text-base"
                   >
-                    마이페이지
+                    마이
+                    <br />
+                    페이지
                   </Link>
                 </>
               ) : (
@@ -381,10 +395,11 @@ export default function MainMatching() {
                     }}
                     image={{
                       src: "/assets/map-marker.svg",
-                      size: { width: 30, height: 30 },
+                      size: { width: 25, height: 25 },
                     }}
                   />
-                  {isInfoWindowOpen &&
+                  {window.innerWidth > 767 &&
+                    isInfoWindowOpen &&
                     info &&
                     info.place_name === marker.place_name &&
                     info.phone === marker.phone && (
@@ -402,13 +417,31 @@ export default function MainMatching() {
                         />
                       </CustomOverlayMap>
                     )}
+                  {window.innerWidth <= 767 &&
+                    isInfoWindowOpen &&
+                    info &&
+                    info.place_name === marker.place_name &&
+                    info.phone === marker.phone && (
+                      <CustomOverlayMap
+                        position={marker.position}
+                        id="infoWindow"
+                      >
+                        <InfoWindow
+                          marker={marker}
+                          setIsMatching={setIsMatching}
+                          setSelectedMarker={setSelectedMarker}
+                          setNumber={setNumber}
+                          isLoggedIn={isLoggedIn}
+                        />
+                      </CustomOverlayMap>
+                    )}
                 </>
               ))}
 
               {/* 검색 된 리스트 표시 */}
               <div
                 key={key}
-                className="bg-white text-black absolute z-10 top-[20%] left-10 min-w-[320px] max-w-[320px] rounded-lg max-h-[650px] overflow-y-scroll scrollbar-hide px-5 drop-shadow-2xl"
+                className="hidden md:block bg-white text-black absolute z-10 top-[20%] left-10 min-w-[320px] max-w-[320px] rounded-lg max-h-[650px] overflow-y-scroll scrollbar-hide px-5 drop-shadow-2xl"
               >
                 {markers.length !== 0 && (
                   <div className="font-bold py-[15px] text-left">검색결과</div>
@@ -435,6 +468,59 @@ export default function MainMatching() {
                   </button>
                 )}
               </div>
+              {/*검색된 리스트 표시 : 모바일 */}
+              {window.innerWidth <= 767 && (
+                <>
+                  <BottomSheet
+                    open={bottomSheetOpen}
+                    blocking={false}
+                    // the first snap points height depends on the content, while the second one is equivalent to 60vh
+                    snapPoints={({ minHeight, maxHeight }) => [
+                      minHeight * 0 + 120,
+                      maxHeight / 2.5,
+                    ]}
+                    // Opens the largest snap point by default, unless the user selected one previously
+                    defaultSnap={({ lastSnap, snapPoints }) =>
+                      lastSnap ?? Math.max(...snapPoints)
+                    }
+                  >
+                    {markers.length === 0 && (
+                      <>
+                        <div className="font-bold py-[15px] text-left">
+                          검색결과
+                        </div>
+                        <div>검색 결과가 없습니다.</div>
+                      </>
+                    )}
+                    {markers.length !== 0 && (
+                      <div className="font-bold py-[15px] text-left">
+                        검색결과
+                      </div>
+                    )}
+                    {markers.map((marker) => (
+                      <>
+                        <div
+                          onClick={() => {
+                            setInfo(marker);
+                            setCenter(marker.position);
+                            setInfoWindowOpen(true);
+                          }}
+                        >
+                          <SearchList marker={marker} />
+                        </div>
+                      </>
+                    ))}
+                    {hasMore && (
+                      <button
+                        className="py-3 font-bold drop-shadow-md w-full"
+                        onClick={() => searchPlaces()}
+                      >
+                        더보기
+                      </button>
+                    )}
+                  </BottomSheet>
+                </>
+              )}
 
               {/* 현위치 표시 */}
               <MapMarker
@@ -458,7 +544,7 @@ export default function MainMatching() {
             </Map>
 
             {/* 현위치로 지도도 이동 버튼 */}
-            <div className="flex flex-col gap-[10px] absolute z-[10] top-20 right-5 p-[10px]">
+            <div className="flex flex-col gap-[10px] absolute z-[10] top-[5.5rem] right-2 p-[10px]">
               <button
                 className="flex justify-center items-center cursor-pointer rounded-full w-[45px] h-[45px] bg-white shadow-[0_0_8px_#00000025]"
                 onClick={setCenterToMyPosition}
@@ -468,7 +554,7 @@ export default function MainMatching() {
             </div>
 
             {/* 맛집탐방단, 내돈내산맛집 */}
-            <div className="flex flex-col gap-[10px] absolute z-[1] bottom-5 right-5 p-[10px]">
+            <div className="flex flex-col gap-[10px] absolute z-[1] top-[9rem] sm:top-[10rem] sm:bottom-2 right-2 p-[10px]">
               {/* <Link
                 to="/openchat"
                 className="flex flex-col justify-center items-center rounded-lg w-[80px] h-[80px] bg-[#FF6445] text-white text-sm"
@@ -480,12 +566,14 @@ export default function MainMatching() {
               </Link> */}
               <Link
                 to="meeteatdb"
-                className="flex flex-col justify-center items-center rounded-lg w-[80px] h-[80px] bg-[#FF6445] text-white text-sm"
+                className="flex flex-col justify-center items-center rounded-full sm:rounded-lg w-[45px] h-[45px] sm:w-[80px] sm:h-[80px] bg-[#FF6445] text-white text-sm shadow-[0_0_8px_#00000025]"
               >
                 <FoodIcon width="15px" />
-                내돈내산
-                <br />
-                맛집
+                <div className="hidden sm:block">
+                  내돈내산
+                  <br />
+                  맛집
+                </div>
               </Link>
             </div>
           </div>
