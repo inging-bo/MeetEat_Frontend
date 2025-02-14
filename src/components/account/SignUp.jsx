@@ -55,13 +55,21 @@ export default function SignUp() {
     if (subPwInput !== pwInput) return setMessage("새 비밀번호가 일치하지 않습니다.")
     if (nickNameInput === "") return setMessage("닉네임을 입력하세요")
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BE_API_URL}/users/signup`, {
-        email: emailInput,
-        password: pwInput,
-        nickname: nickNameInput,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BE_API_URL}/users/signup`,
+        {
+          email: emailInput,
+          password: pwInput,
+          nickname: nickNameInput,
+        }, // 👉 데이터 객체는 두 번째 인자로 전달
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      if (response.data.success) {
+      if (response.status === 200) {
         navigate("/account")
         modalStore.openModal("oneBtn", {
           message: "회원가입이 완료되었습니다!.",
@@ -83,7 +91,7 @@ export default function SignUp() {
       if (error.response?.status === 500) {
         setMessage("서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
       } else if (error.response?.status === 400) {
-        setMessage(error.response?.data?.message);
+        setMessage(error.response?.data);
       } else {
         setMessage("회원가입 요청 중 알 수 없는 오류가 발생했습니다.");
       }

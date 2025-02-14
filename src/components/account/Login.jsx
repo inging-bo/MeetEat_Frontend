@@ -32,37 +32,52 @@ export default function Login() {
   const togglePW = () => setShowPW(!showPW);
 
   const login = async (event) => {
-    event.preventDefault(); // 기본 제출 동작 방지
+      event.preventDefault(); // 기본 제출 동작 방지
 
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_BE_API_URL}/users/signin`, {
-        email: emailInput,
-        password: pwInput,
-      });
-      console.log("로그인 응답 데이터:", response.data);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailInput === "") return setMessage("이메일을 입력하세요")
+    if (!emailRegex.test(emailInput)) return setMessage("이메일 형식으로 작성해주세요.")
+    if (pwInput === "") return setMessage("비밀번호을 입력하세요")
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_BE_API_URL}/users/signin`, {
+            email: emailInput,
+            password: pwInput,
+          }, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("로그인 응답 데이터:", response.data);
 
-      // // ✅ 토큰 저장
-      window.localStorage.setItem("token", response.data.accessToken);
+        // // ✅ 토큰 저장
+        window.localStorage.setItem("token", response.data.accessToken);
 
-      if (response.data.accessToken) {
-        setMessage("로그인 성공!");
-        authStore.setLoggedIn(true);
+        if (response.status === 200) {
+          setMessage("로그인 성공!");
+          authStore.setLoggedIn(true);
 
-        // 입력 필드 초기화
-        setEmailInput("");
-        setPwInput("");
-        navigate("/")
-      } else {
-        setMessage("로그인 실패");
+          // 입력 필드 초기화
+          setEmailInput("");
+          setPwInput("");
+          navigate("/")
+        } else {
+          setMessage("로그인 실패");
+        }
+      } catch (error) {
+
+        if (error.response?.status === 404) return setMessage("사용자를 찾을 수 없습니다.");
+        if (error.response?.status === 500) {
+          setMessage("서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        } else if (error.response?.status === 400) {
+          setMessage(error.response?.data?.message);
+        } else {
+          setMessage("회원가입 요청 중 알 수 없는 오류가 발생했습니다.");
+        }
       }
-    } catch (error) {
-      console.error("로그인 요청 실패:", error);
-
-      setMessage(
-        error.response?.data?.message || "로그인 요청 중 오류가 발생했습니다."
-      );
     }
-  };
+  ;
 
   // 로그인 버튼 클릭 시 메시지
   const [message, setMessage] = useState("");
@@ -126,9 +141,11 @@ export default function Login() {
       : "kakao";
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BE_API_URL}/users/signin/${provider}`, { code });
-
-      if (response.data.accessToken) {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BE_API_URL}/users/signin/${provider}`,
+        { code } // code를 바디에 포함
+      );
+      if (response.status === 200) {
         window.localStorage.setItem("token", response.data.accessToken);
         setMessage("로그인 성공!");
         authStore.setLoggedIn(true);
@@ -137,8 +154,13 @@ export default function Login() {
         setMessage("로그인 실패");
       }
     } catch (error) {
+      console.log(error.response)
+      if (error.response?.status === 400) {
+        setMessage(error.response?.data);
+      } else {
+        setMessage(error.response?.data);
+      }
       console.error("로그인 요청 실패:", error);
-      setMessage("로그인 요청 중 오류가 발생했습니다.");
     }
   };
   // ✅ 인가 코드가 있으면 자동으로 처리
@@ -153,7 +175,7 @@ export default function Login() {
       <div className="flex flex-1 flex-col gap-3 justify-center">
         <h1 className="flex justify-center h-8 mb-8">
           <Link to={"/"}>
-            <HeaderLogo className="h-full w-full" />
+            <HeaderLogo className="h-full w-full"/>
           </Link>
         </h1>
         {/* 이메일 형식일 때 통과 하도록 적기 */}
@@ -193,9 +215,9 @@ export default function Login() {
               onClick={togglePW}
             >
               {showPW ? (
-                <ShowPWIcon className="w-full h-full" />
+                <ShowPWIcon className="w-full h-full"/>
               ) : (
-                <HidePWIcon className="w-full h-full" />
+                <HidePWIcon className="w-full h-full"/>
               )}
             </div>
           </label>
@@ -220,10 +242,10 @@ export default function Login() {
         <p className="text-sm mt-5">SNS 간편 로그인</p>
         <div className="flex h-14 justify-center gap-4">
           <button onClick={(e) => handleOAuthLogin("naver", e)}>
-            <NaverIcon className="w-full h-full" />
+            <NaverIcon className="w-full h-full"/>
           </button>
           <button onClick={(e) => handleOAuthLogin("kakao", e)}>
-            <KakaoIcon className="w-full h-full" />
+            <KakaoIcon className="w-full h-full"/>
           </button>
         </div>
         {/* 에러 메시지 표시 */}

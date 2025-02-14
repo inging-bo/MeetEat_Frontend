@@ -115,12 +115,11 @@ export const handlers = [
 // 회원가입 요청
   http.post("/users/signup", async ({ request }) => {
     const { email, password, nickname } = await request.json();
-    console.log("입력된 이메일:", email);
 
-    // 특정 이메일이면 강제 서버 오류 발생
-    if (email === "500") {
+    // 에러코드 500 확인용
+    if (email === "500" || password === "500" || nickname === "500") {
       return HttpResponse.json(
-        { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
+        "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
         { status: 500, statusText: "INTERNAL_SERVER_ERROR" }
       );
     }
@@ -129,7 +128,7 @@ export const handlers = [
     const emailExists = userListDB.some((user) => user.email === email);
     if (emailExists) {
       return HttpResponse.json(
-        { message: "이미 사용 중인 이메일입니다." },
+        "이미 사용 중인 이메일입니다.",
         { status: 400, statusText: "EMAIL_ALREADY_REGISTERED" }
       );
     }
@@ -138,7 +137,7 @@ export const handlers = [
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}|:"<>?])[A-Za-z\d!@#$%^&*()_+{}|:"<>?]{8,}$/;
     if (!passwordRegex.test(password)) {
       return HttpResponse.json(
-        { message: "비밀번호는 최소 8자 이상이며, 영문, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다." },
+        "비밀번호는 최소 8자 이상이며, 영문, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다.",
         { status: 400, statusText: "VALIDATION_FAILED" }
       );
     }
@@ -147,7 +146,7 @@ export const handlers = [
     const nicknameExists = userListDB.some((user) => user.nickname === nickname);
     if (nicknameExists) {
       return HttpResponse.json(
-        { message: "이미 사용 중인 닉네임입니다." },
+        "이미 사용 중인 닉네임입니다.",
         { status: 400, statusText: "NICKNAME_ALREADY_REGISTERED" }
       );
     }
@@ -171,82 +170,88 @@ export const handlers = [
 
   // 로그인 요청
   http.post("/users/signin", async ({ request }) => {
-    try {
-      const { email, password } = await request.json();
-      console.log("입력된 이메일:", email);
+    const { email, password } = await request.json();
 
-      // 유효성 검사
-      if (!email || !password) {
-        return HttpResponse.json(
-          { message: "이메일, 비밀번호를 입력하세요." },
-          { status: 400 }
-        );
-      }
-
-      // 이메일과 비밀번호가 일치하는 유저 찾기
-      const userEmail = userListDB.find((user) => user.email === email);
-      const userPassword = userListDB.find(
-        (user) => user.password === password
-      );
-      if (!userEmail) {
-        return HttpResponse.json(
-          { message: "이메일을 확인해주세요." },
-          { status: 404 }
-        );
-      }
-      if (!userPassword) {
-        return HttpResponse.json(
-          { message: "비밀번호가 틀렸습니다." },
-          { status: 401 }
-        );
-      }
-
-      // 성공 응답
-      return HttpResponse.json({ status: 200, statusText: "회원가입 성공" }
-      );
-    } catch (error) {
-      console.error("로그인 오류:", error);
+    // 특정 값이면 강제 서버 오류 발생
+    if (email === "500" || password === "500") {
       return HttpResponse.json(
-        { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
-        { status: 500 }
+        { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", status: 500 }
       );
     }
+    // 특정 값이면 강제 서버 오류 발생
+    if (email === "400" || password === "400") {
+      return HttpResponse.json(
+        { message: "잘못된 요청입니다.", status: 400 }
+      );
+    }
+    // 탈퇴예정인 유저가 로그인을 시도할 때
+    if (email === "탈퇴예정" || password === "탈퇴예정") {
+      return HttpResponse.json(
+        { message: "해당 계정은 탈퇴 예정 상태입니다.", status: 403 }
+      );
+    }
+
+    const user = userListDB.find((u) => u.email === email);
+
+    // 사용자를 찾을 수 없는 경우
+    if (!user) {
+      return HttpResponse.json(
+        { message: "사용자를 찾을 수 없습니다." },
+        { status: 404 }
+      );
+    }
+
+    // 비밀번호가 맞지 않는 경우
+    if (user.password !== password) {
+      return HttpResponse.json(
+        { message: "이메일 또는 비밀번호가 잘못되었습니다." },
+        { status: 401 }
+      );
+    }
+
+    // 유효성 검사
+    if (!email || !password) {
+      return HttpResponse.json(
+        { message: "이메일, 비밀번호를 입력하세요." },
+        { status: 400 }
+      );
+    }
+
+    // 성공 응답
+    return HttpResponse.json(
+      {
+        accessToken: "",
+        needProfileUpdate: true
+      },
+      { status: 200 }
+    );
   }),
 
   // ✅ OAuth 로그인 처리 (카카오, 네이버)
   http.post("/users/signin/:provider", async ({ request, params }) => {
-    try {
-      const { provider } = params; // provider = "kakao" 또는 "naver"
-      const { code } = await request.json();
+    const { provider } = params; // provider = "kakao" 또는 "naver"
+    const { code } = await request.json();
 
-      console.log(`${provider} 로그인 요청 코드:`, code);
+    console.log(`${provider} 로그인 요청 코드:`, code);
 
-      // 인가 코드가 없을 경우 에러 반환
-      if (!code) {
-        return HttpResponse.json(
-          { error: "invalid_grant", message: "인가 코드가 없습니다." },
-          { status: 400 }
-        );
-      }
-
-      // 인가 코드에 따른 임시 액세스 토큰 발급
-      const accessToken = `accessToken_${provider}`;
-
-      // 성공 응답
+    // 인가 코드가 없을 경우 에러 반환
+    if (!code) {
       return HttpResponse.json(
-        {
-          ...signInSuccess,
-          accessToken: accessToken, // 요청값 반영
-        },
-        { status: 200 }
-      );
-    } catch (error) {
-      console.error("OAuth 로그인 처리 중 오류 발생:", error);
-      return HttpResponse.json(
-        { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
+        "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
         { status: 500 }
       );
     }
+
+    // 인가 코드에 따른 임시 액세스 토큰 발급
+    const accessToken = `accessToken_${provider}`;
+    // 성공 응답
+    return HttpResponse.json(
+      {
+        accessToken: accessToken,
+        needProfileUpdate: true// 요청값 반영
+      },
+      { status: 200 }
+    );
   }),
 
   // 로그아웃 요청
