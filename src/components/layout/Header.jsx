@@ -49,16 +49,19 @@ export default function Header() {
                               },
                             }
                           );
+                          if (response.status === 200) {
+                            window.localStorage.removeItem("token"); // token 삭제
+                            authStore.setLoggedIn(false);
+                            navigate("/");
+                            modalStore.openModal("oneBtn", {
+                              message: "로그아웃 되었습니다.",
+                              onConfirm: async () => {
+                                await modalStore.closeModal()
+                              }
+                            });
+                            console.log("로그아웃 완료")
+                          }
                           // 토큰값 제거
-                          window.localStorage.removeItem("token"); // token 삭제
-                          authStore.setLoggedIn(false);
-                          navigate("/");
-                          modalStore.openModal("oneBtn", {
-                            message: "로그아웃 되었습니다.",
-                            onConfirm : async () => {
-                              await modalStore.closeModal()
-                            }
-                          });
                         } catch (error) {
                           console.error("로그아웃 요청 실패!:", error);
                         }
