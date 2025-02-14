@@ -89,17 +89,13 @@ export default function Login() {
     kakao: {
       clientId: "a07fdc7a9364fd1acede10690029fc10",
       authUrl: "https://kauth.kakao.com/oauth/authorize",
-      redirectUri: window.location.hostname === "localhost"
-        ? "http://localhost:5173/account"
-        : "https://meet-eat-frontend.vercel.app/account",
+      redirectUri:  "https://meet-eat-frontend.vercel.app/account",
       state: "", // 카카오는 state가 필요 없음
     },
     naver: {
       clientId: import.meta.env.VITE_NAVER_CLIENT_ID,
       authUrl: "https://nid.naver.com/oauth2.0/authorize",
-      redirectUri: window.location.hostname === "localhost"
-        ? "http://localhost:5173/account"
-        : "https://meet-eat-frontend.vercel.app/account",
+      redirectUri: "https://meet-eat-frontend.vercel.app/account",
       state: "RANDOM_STATE", // CSRF 방지를 위한 랜덤 값 (임시)
     },
   };
