@@ -64,14 +64,10 @@ export default function RestList() {
   useEffect(() => {
     setRestaurants([]);
     setPage("0");
-    apiPOSTRestsLists(
-      regionName,
-      categoryName,
-      placeName,
-      position,
-      sortedName,
-      "0"
-    );
+    let sort = "DISTANCE";
+    if (sortedName === "거리순") sort = "DISTANCE";
+    else if (sortedName === "평점순") sort = "RATING";
+    apiPOSTRestsLists(regionName, categoryName, placeName, position, sort, "0");
   }, [regionName, categoryName, sortedName]);
 
   const openSearchFilter = (filter) => {
@@ -107,12 +103,15 @@ export default function RestList() {
       const delayDebounceTimer = setTimeout(() => {
         setRestaurants([]);
         setPage("0");
+        let sort = "DISTANCE";
+        if (sortedName === "거리순") sort = "DISTANCE";
+        else if (sortedName === "평점순") sort = "RATING";
         apiPOSTRestsLists(
           regionName,
           categoryName,
           placeName,
           position,
-          sortedName,
+          sort,
           "0"
         );
       }, 1000); // 디바운스 지연 시간
@@ -175,12 +174,15 @@ export default function RestList() {
 
   const getInfo = async () => {
     if (maxPage < Number(page) + 1) return console.log("마지막페이지입니다.");
+    let sort = "DISTANCE";
+    if (sortedName === "거리순") sort = "DISTANCE";
+    else if (sortedName === "평점순") sort = "RATING";
     apiPOSTRestsLists(
       regionName,
       categoryName,
       placeName,
       position,
-      sortedName,
+      sort,
       String(Number(page) + 1)
     );
     setPage((prev) => prev + 1);

@@ -44,7 +44,7 @@ export default function Matching({
       `${import.meta.env.VITE_BE_API_URL}/sse/subscribe`,
       {
         headers: {
-          Authorization: `${window.localStorage.getItem("token")}`,
+          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
       }
@@ -64,7 +64,7 @@ export default function Matching({
           },
           {
             headers: {
-              Authorization: `${window.localStorage.getItem("token")}`,
+              Authorization: `Bearer ${window.localStorage.getItem("token")}`,
               "Content-Type": "application/json",
             },
           }
@@ -227,7 +227,7 @@ export default function Matching({
     await axios
       .post(`${import.meta.env.VITE_BE_API_URL}/matching/cancel`, {
         headers: {
-          Authorization: `${window.localStorage.getItem("token")}`,
+          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
       })
