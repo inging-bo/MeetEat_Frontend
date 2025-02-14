@@ -103,11 +103,18 @@ export default function Login() {
       state: "RANDOM_STATE", // CSRF 방지를 위한 랜덤 값 (임시)
     },
   };
+  const generateState = () => crypto.randomUUID();
 
   // ✅ OAuth 로그인 요청 (카카오 또는 네이버)
   const handleOAuthLogin = (provider, event) => {
     event.preventDefault(); // 기본 동작 방지
-    const { clientId, authUrl, redirectUri, state } = OAUTH_PROVIDERS[provider];
+    const { clientId, authUrl, redirectUri } = OAUTH_PROVIDERS[provider];
+
+    let state = "";
+    if (provider === "naver") {
+      state = generateState();
+      sessionStorage.setItem("oauth_state", state); // 세션에 저장
+    }
 
     const queryParams = new URLSearchParams({
       response_type: "code",
@@ -135,40 +142,47 @@ export default function Login() {
       return;
     }
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const state = urlParams.get("state");
+
+    // 네이버 OAuth의 경우 state 검증
+    if (state) {
+      const storedState = sessionStorage.getItem("oauth_state");
+      if (state !== storedState) {
+        setMessage("CSRF 공격 감지: state 불일치");
+        return;
+      }
+    }
+
     // 어떤 제공자인지 확인
-    const provider = window.location.search.includes("state")
-      ? "naver"
-      : "kakao";
+    const provider = state ? "naver" : "kakao";
 
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BE_API_URL}/users/signin/${provider}`,
-        { code } // code를 바디에 포함
+        { code }
       );
+
       if (response.status === 200) {
         window.localStorage.setItem("token", response.data.accessToken);
-        setMessage("로그인 성공!");
         authStore.setLoggedIn(true);
         navigate("/"); // 메인 페이지로 리디렉션
       } else {
-        setMessage("로그인 실패");
+        throw new Error("로그인 실패");
       }
     } catch (error) {
-      console.log(error.response)
-      if (error.response?.status === 400) {
-        setMessage(error.response?.data);
-      } else {
-        setMessage(error.response?.data);
-      }
       console.error("로그인 요청 실패:", error);
+      setMessage(error.response?.data || "로그인 실패");
     }
   };
+
   // ✅ 인가 코드가 있으면 자동으로 처리
   useEffect(() => {
-    if (window.location.search.includes("code")) {
+    if (window.location.pathname === "/account" && window.location.search.includes("code")) {
       handleOAuthCallback();
     }
   }, []);
+
 
   return (
     <form className="flex w-96 justify-center items-center">
