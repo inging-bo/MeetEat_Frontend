@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import GoldMedal from "../../assets/Medal-Gold.svg?react";
 import SilverMedal from "../../assets/Medal-Silver.svg?react";

@@ -1,22 +1,32 @@
-import { makeAutoObservable } from "mobx";
+// profile.js
+import { useLocalObservable } from "mobx-react-lite";
+import { observable, action, runInAction } from "mobx";
 import axios from "axios";
 
-const createProfileStore = () => {
-  const store = {
-    visit: [],
+const useProfileStore = () => {
+  const store = useLocalObservable(() => ({
+    profile: null,
 
-    async fetchProfileData() {
+    fetchProfile: action(async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BE_API_URL}/users/profile`, {});
-        store.profile = response.data;
-      } catch (error) {
-        console.error("프로필 정보를 가져오는데 실패했습니다", error);
-      }
-    },
-  };
+        const response = await axios.get(`${import.meta.env.VITE_BE_API_URL}/users/profile`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-  return makeAutoObservable(store);
+        runInAction(() => {
+          store.profile = response.data;
+        });
+      } catch (error) {
+        console.error("프로필 정보를 가져오는 데 실패했습니다.", error);
+      }
+    }),
+  }));
+
+  return store;
 };
 
-const profileStore = createProfileStore();
-export default profileStore;
+// 기본 내보내기
+export default useProfileStore;

@@ -1,52 +1,33 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+import { useEffect, useState, useMemo } from "react";
+import useProfileStore from "../../store/profile.js"; // 훅으로 변경된 store import
+import authStore from "../../store/authStore.js";
 import axios from "axios";
-import authStore from "../../store/authStore";
 import GoldMedal from "../../assets/Medal-Gold.svg?react";
 import SilverMedal from "../../assets/Medal-Silver.svg?react";
 import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
+import { Link } from "react-router-dom";
 
-export default function RestInfo() {
+const RestInfo = observer(() => {
+  const profileStore = useProfileStore(); // useProfileStore 사용
+
   useEffect(() => {
     authStore.checkLoggedIn();
-    !authStore.loggedIn && alert("로그인 후 이용해주세요!");
-    !authStore.loggedIn && window.location.replace("/");
-  }, []);
+    if (!authStore.loggedIn) {
+      alert("로그인 후 이용해주세요!");
+      window.location.replace("/");
+    } else {
+      profileStore.fetchProfile(); // 페이지 진입 시 프로필 정보 다시 가져오기
+    }
+  }, [profileStore]); // store가 변경될 때 useEffect 실행
 
-  const navigate = useNavigate();
-  const [profile, setProfile] = useState(null);
-  const [nicknameData, setNicknameData] = useState("");
-  const [introductionData, setIntroductionData] = useState("");
-  const [matchingCount, setMatchingCount] = useState("");
-
-  // 서버에서 프로필 정보 가져오기
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_BE_API_URL}/users/profile`);
-        setProfile(response.data);
-        setNicknameData(response.data.nickname || "");
-        setIntroductionData(
-          response.data.introduce || "한 줄 소개를 입력하세요."
-        );
-        setMatchingCount(response.data.matchingCount);
-        navigate(`/mypage/${response.data.id}`);
-      } catch (error) {
-        console.error("프로필 정보를 가져오는데 실패했습니다", error);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
-  function useEditableField(initialValue, updateFunction, fieldKey) {
-    const [value, setValue] = useState(initialValue);
+  function useEditableField(fieldKey) {
     const [isEditing, setIsEditing] = useState(false);
+    const [value, setValue] = useState(profileStore.profile?.[fieldKey] || "");
 
-    // 초기값이 변경되면 상태 업데이트
     useEffect(() => {
-      setValue(initialValue);
-    }, [initialValue]);
+      setValue(profileStore.profile?.[fieldKey] || "");
+    }, [profileStore.profile, fieldKey]);
 
     function changeField() {
       setIsEditing(true);
@@ -54,16 +35,28 @@ export default function RestInfo() {
 
     function handleInputChange(event) {
       const newValue = event.target.value;
-      if (fieldKey === "nickname" && newValue.length > 8) return; // 닉네임은 8자 제한
+      if (fieldKey === "nickname" && newValue.length > 8) return;
       setValue(newValue);
     }
 
     async function saveField() {
       try {
-        const response = await axios.put(`${import.meta.env.VITE_BE_API_URL}/users/profile`, {
-          [fieldKey]: value,
+        const url =
+          fieldKey === "nickname"
+            ? `${import.meta.env.VITE_BE_API_URL}/users/profile/nickname`
+            : `${import.meta.env.VITE_BE_API_URL}/users/profile/introduce`;
+
+        const accessToken = window.localStorage.getItem("token");
+        const body = { [fieldKey]: value };
+
+        await axios.patch(url, body, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
         });
-        updateFunction(response.data[fieldKey]); // 응답받은 값으로 업데이트
+
+        await profileStore.fetchProfile(); // 수정 후 최신 프로필 정보 가져오기
         setIsEditing(false);
       } catch (error) {
         console.error("업데이트 실패", error);
@@ -73,116 +66,27 @@ export default function RestInfo() {
     return { value, isEditing, changeField, handleInputChange, saveField };
   }
 
-  const {
-    value: nickname,
-    isEditing: isEditingNickname,
-    changeField: changeNickname,
-    handleInputChange: handleNicknameChange,
-    saveField: saveNickname,
-  } = useEditableField(nicknameData, setNicknameData, "nickname");
+  const nicknameField = useEditableField("nickname");
+  const introduceField = useEditableField("introduce");
 
-  const {
-    value: introduce,
-    isEditing: isEditingIntroduction,
-    changeField: changeIntroduction,
-    handleInputChange: handleIntroductionChange,
-    saveField: saveIntroduction,
-  } = useEditableField(introductionData, setIntroductionData, "introduce");
-
-  // 매칭 횟수별 메달 표시
-  const viewMedal = () => {
-    if (matchingCount >= 5) {
-      return <GoldMedal />;
-    } else if (matchingCount >= 3) {
-      return <SilverMedal />;
-    } else if (matchingCount >= 1) {
-      return <BronzeMedal />;
-    } else {
-      return (
-        <span className="pl-2 pt-2">매칭을 하면 메달을 얻을 수 있어요!</span>
-      );
-    }
-  };
+  const viewMedal = useMemo(() => {
+    const count = profileStore.profile?.matchingCount || 0;
+    if (count >= 5) return <GoldMedal />;
+    if (count >= 3) return <SilverMedal />;
+    if (count >= 1) return <BronzeMedal />;
+    return <span className="pl-2 pt-2">매칭을 하면 메달을 얻을 수 있어요!</span>;
+  }, [profileStore.profile?.matchingCount]);
 
   return (
     <div className="flex flex-col gap-10 w-[380px] min-w-[380px] max-w-[380px] flex-1 justify-start border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-10">
       <h1 className="font-bold text-[28px] text-left">마이페이지</h1>
+
       {/* 닉네임 수정 */}
-      <div className="flex flex-col gap-2">
-        <div className="text-[15px] flex items-center justify-between">
-          <span className="font-bold">닉네임</span>
-          {isEditingNickname ? (
-            <button
-              className="rounded-md border border-black px-1.5"
-              onClick={saveNickname}
-            >
-              완료
-            </button>
-          ) : (
-            <button
-              className="text-[#909090] rounded-md border border-[#909090] px-1.5"
-              onClick={changeNickname}
-            >
-              수정
-            </button>
-          )}
-        </div>
-        <div className="relative flex h-10 justify-between items-center text-[15px] text-left border-b border-b-[#EAEAEA] bg-[#F8F8F8]">
-          {isEditingNickname ? (
-            <>
-              <input
-                type="text"
-                id="nickName"
-                className="flex-1 text-left outline-none pl-2 py-2 bg-inherit rounded-lg"
-                value={nickname}
-                onChange={handleNicknameChange}
-                autoFocus
-              />
-              <span className="absolute top-full pt-1 text-xs text-gray-400">
-                최대 8자리만 가능합니다.
-              </span>
-            </>
-          ) : (
-            <span className="flex-1 pl-2 py-2 text-[#909090]">{nickname}</span>
-          )}
-        </div>
-      </div>
+      <EditableField label="닉네임" field={nicknameField} maxLength={8} />
 
       {/* 한 줄 소개 수정 */}
-      <div className="flex flex-col gap-2">
-        <div className="text-[15px] flex items-center justify-between">
-          <span className="font-bold">짧은 소개</span>
-          {isEditingIntroduction ? (
-            <button
-              className="rounded-md border border-black px-1.5"
-              onClick={saveIntroduction}
-            >
-              완료
-            </button>
-          ) : (
-            <button
-              className="text-[#909090] rounded-md border border-[#909090] px-1.5"
-              onClick={changeIntroduction}
-            >
-              수정
-            </button>
-          )}
-        </div>
-        <div className="flex h-10 justify-between items-center text-[15px] text-left border-b border-b-[#EAEAEA] bg-[#F8F8F8]">
-          {isEditingIntroduction ? (
-            <input
-              type="text"
-              id="introduce"
-              className="flex-1 outline-none pl-2 py-2 bg-inherit rounded-lg"
-              value={introduce}
-              onChange={handleIntroductionChange}
-              autoFocus
-            />
-          ) : (
-            <span className="flex-1 pl-2 py-2 text-[#909090]">{introduce}</span>
-          )}
-        </div>
-      </div>
+      <EditableField label="짧은 소개" field={introduceField} />
+
       {/* 메달 표시 */}
       <div>
         <div className="flex gap-1 items-center text-[15px] text-left border-b-gray-300">
@@ -213,7 +117,7 @@ export default function RestInfo() {
             </div>
           </div>
         </div>
-        <div className="flex items-start text-sm">{viewMedal()}</div>
+        <div className="flex items-start text-sm">{viewMedal}</div>
       </div>
       {/* 계정 정보 */}
       <div className="flex flex-col gap-2 h-full">
@@ -229,4 +133,44 @@ export default function RestInfo() {
       </div>
     </div>
   );
-}
+});
+
+const EditableField = ({ label, field, maxLength }) => {
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="text-[15px] flex items-center justify-between">
+        <span className="font-bold">{label}</span>
+        {field.isEditing ? (
+          <button className="rounded-md border border-black px-1.5" onClick={field.saveField}>
+            완료
+          </button>
+        ) : (
+          <button className="text-[#909090] rounded-md border border-[#909090] px-1.5" onClick={field.changeField}>
+            수정
+          </button>
+        )}
+      </div>
+      <div className="relative flex h-10 justify-between items-center text-[15px] text-left border-b border-b-[#EAEAEA] bg-[#F8F8F8]">
+        {field.isEditing ? (
+          <>
+            <input
+              type="text"
+              className="flex-1 text-left outline-none pl-2 py-2 bg-inherit rounded-lg"
+              value={field.value}
+              onChange={field.handleInputChange}
+              autoFocus
+              maxLength={maxLength}
+            />
+            {maxLength && (
+              <span className="absolute top-full pt-1 text-xs text-gray-400">최대 {maxLength}자리만 가능합니다.</span>
+            )}
+          </>
+        ) : (
+          <span className="flex-1 pl-2 py-2 text-[#909090]">{field.value}</span>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default RestInfo;
