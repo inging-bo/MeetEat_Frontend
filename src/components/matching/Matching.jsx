@@ -108,12 +108,15 @@ export default function Matching({
     eventSource.onerror = (e) => {
       // 종료 또는 에러 발생 시 할 일
       eventSource.close();
-      if (e.error) {
-        // 에러 발생 시 할 일
-      }
-      if (e.target.readyState === EventSource.CLOSED) {
-        // 종료 시 할 일
-      }
+      setIsMatching(false);
+      window.sessionStorage.removeItem("isMatching");
+      history.go(0);
+      // if (e.error) {
+      //   // 에러 발생 시 할 일
+      // }
+      // if (e.target.readyState === EventSource.CLOSED) {
+      //   // 종료 시 할 일
+      // }
     };
   };
 
