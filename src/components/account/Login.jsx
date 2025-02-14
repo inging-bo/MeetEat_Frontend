@@ -34,10 +34,10 @@ export default function Login() {
   const login = async (event) => {
       event.preventDefault(); // 기본 제출 동작 방지
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailInput === "") return setMessage("이메일을 입력하세요")
-    if (!emailRegex.test(emailInput)) return setMessage("이메일 형식으로 작성해주세요.")
-    if (pwInput === "") return setMessage("비밀번호을 입력하세요")
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailInput === "") return setMessage("이메일을 입력하세요")
+      if (!emailRegex.test(emailInput)) return setMessage("이메일 형식으로 작성해주세요.")
+      if (pwInput === "") return setMessage("비밀번호을 입력하세요")
       try {
         const response = await axios.post(
           `${import.meta.env.VITE_BE_API_URL}/users/signin`, {
@@ -87,7 +87,7 @@ export default function Login() {
   // ✅ 서비스별 로그인 URL 설정
   const OAUTH_PROVIDERS = {
     kakao: {
-      clientId: import.meta.env.VITE_APP_KAKAO_REST_KEY,
+      clientId: "a07fdc7a9364fd1acede10690029fc10",
       authUrl: "https://kauth.kakao.com/oauth/authorize",
       redirectUri: window.location.hostname === "localhost"
         ? "http://localhost:5173/account"
@@ -129,14 +129,15 @@ export default function Login() {
   };
 
   // ✅ URL에서 인가 코드 가져오기
-  const getAuthorizationCode = () => {
+  const getAuthorizationCode = async () => {
     const params = new URLSearchParams(window.location.search);
     return params.get("code");
   };
 
-  // ✅ 로그인 후 토큰 발급 처리
+// ✅ 로그인 후 토큰 발급 처리
   const handleOAuthCallback = async () => {
-    const code = getAuthorizationCode();
+    const code = await getAuthorizationCode();
+    console.log("인가 코드:", code); // ✅ 코드 값 확인
     if (!code) {
       setMessage("인가 코드가 없습니다.");
       return;
@@ -158,9 +159,14 @@ export default function Login() {
     const provider = state ? "naver" : "kakao";
 
     try {
+      console.log("서버 요청 보냄:", provider, code); // ✅ provider와 code 값 확인
+      console.log("서버로 요청할 URL:", `${import.meta.env.VITE_BE_API_URL}/users/signin/${provider}`);
       const response = await axios.post(
         `${import.meta.env.VITE_BE_API_URL}/users/signin/${provider}`,
-        { code }
+        { code: code },
+        {
+          headers: { "Content-Type": "application/json" }
+        }
       );
 
       if (response.status === 200) {
@@ -175,6 +181,7 @@ export default function Login() {
       setMessage(error.response?.data || "로그인 실패");
     }
   };
+
 
   // ✅ 인가 코드가 있으면 자동으로 처리
   useEffect(() => {
