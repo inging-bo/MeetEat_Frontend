@@ -41,7 +41,7 @@ export default function Matching({
   const fetchSSE = (lng, lat, size, time, placeInfo) => {
     // header 보내기 위해 EventSourcePolyfill 사용
     const eventSource = new EventSourcePolyfill(
-      `${import.meta.env.VITE_BE_API_URL}/api/sse/subscribe`,
+      `${import.meta.env.VITE_BE_API_URL}/sse/subscribe`,
       {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
