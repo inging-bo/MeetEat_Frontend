@@ -215,7 +215,7 @@ export default function MatchingComplete() {
       `${import.meta.env.VITE_BE_API_URL}/api/sse/subscribe`,
       {
         headers: {
-          Authorization: `${window.localStorage.getItem("token")}`,
+          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
       }
@@ -271,7 +271,7 @@ export default function MatchingComplete() {
         `${import.meta.env.VITE_BE_API_URL}/matching/cancel/illegal/${matchingId}`,
         {
           headers: {
-            Authorization: `${window.localStorage.getItem("token")}`,
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
         }
@@ -293,7 +293,7 @@ export default function MatchingComplete() {
         `${import.meta.env.VITE_BE_API_URL}/matching/cancel/illegal${matchingId}`,
         {
           headers: {
-            Authorization: `${window.localStorage.getItem("token")}`,
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
         }
