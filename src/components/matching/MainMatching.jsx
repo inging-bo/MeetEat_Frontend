@@ -94,7 +94,7 @@ export default function MainMatching() {
     await axios
       .post(`${import.meta.env.VITE_BE_API_URL}/matching/cancel`, {
         headers: {
-          Authorization: `${window.localStorage.getItem("token")}`,
+          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
       })
