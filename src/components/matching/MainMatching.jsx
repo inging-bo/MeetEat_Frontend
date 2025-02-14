@@ -391,8 +391,8 @@ export default function MainMatching() {
                     onClick={() => {
                       setInfo(marker);
                       setCenter({
-                        lat: `${Number(marker.position.lat) - 0.015}`,
-                        lng: `${Number(marker.position.lng) + 0.01}`,
+                        lat: `${Number(marker.position.lat) - 0.007}`,
+                        lng: `${Number(marker.position.lng) + 0.005}`,
                       });
                       setInfoWindowOpen(true);
                     }}
@@ -455,8 +455,8 @@ export default function MainMatching() {
                       onClick={() => {
                         setInfo(marker);
                         setCenter({
-                          lat: `${Number(marker.position.lat) - 0.015}`,
-                          lng: `${Number(marker.position.lng) + 0.01}`,
+                          lat: `${Number(marker.position.lat) - 0.007}`,
+                          lng: `${Number(marker.position.lng) + 0.005}`,
                         });
                         setInfoWindowOpen(true);
                       }}
@@ -509,8 +509,8 @@ export default function MainMatching() {
                           onClick={() => {
                             setInfo(marker);
                             setCenter({
-                              lat: `${Number(marker.position.lat) - 0.015}`,
-                              lng: `${Number(marker.position.lng) + 0.01}`,
+                              lat: `${Number(marker.position.lat) - 0.007}`,
+                              lng: `${Number(marker.position.lng) + 0.005}`,
                             });
                             setInfoWindowOpen(true);
                           }}
