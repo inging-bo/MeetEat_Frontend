@@ -7,8 +7,6 @@ import axios from "axios";
 export default function Header() {
   const navigate = useNavigate();
   const loggedIn = authStore.loggedIn; //로그인 상태값
-  console.log(loggedIn);
-
   const location = useLocation(); // 현재 경로 가져오기
 
   return (
