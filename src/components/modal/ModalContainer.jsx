@@ -51,7 +51,7 @@ const Modal = observer(() => {
       >
       </div>
       <div
-        className="fixed z-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 p-10 min-w-fit bg-white rounded-lg drop-shadow-lg"
+        className="flex flex-col gap-5 fixed z-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 p-5 min-w-fit bg-white rounded-lg drop-shadow-lg"
       >
         {renderModalContent()}
       </div>
