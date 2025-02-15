@@ -31,53 +31,54 @@ export default function Login() {
   const togglePW = () => setShowPW(!showPW);
 
   const login = async (event) => {
-      event.preventDefault(); // 기본 제출 동작 방지
+    event.preventDefault(); // 기본 제출 동작 방지
 
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (emailInput === "") return setMessage("이메일을 입력하세요")
-      if (!emailRegex.test(emailInput)) return setMessage("이메일 형식으로 작성해주세요.")
-      if (pwInput === "") return setMessage("비밀번호을 입력하세요")
-      try {
-        const response = await axios.post(
-          `${import.meta.env.VITE_BE_API_URL}/users/signin`, {
-            email: emailInput,
-            password: pwInput,
-          }, {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log("로그인 응답 데이터:", response.data);
-
-        // // ✅ 토큰 저장
-        window.localStorage.setItem("token", response.data.accessToken);
-
-        if (response.status === 200) {
-          setMessage("로그인 성공!");
-          authStore.setLoggedIn(true);
-
-          // 입력 필드 초기화
-          setEmailInput("");
-          setPwInput("");
-          navigate("/")
-        } else {
-          setMessage("로그인 실패");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailInput === "") return setMessage("이메일을 입력하세요");
+    if (!emailRegex.test(emailInput))
+      return setMessage("이메일 형식으로 작성해주세요.");
+    if (pwInput === "") return setMessage("비밀번호을 입력하세요");
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BE_API_URL}/users/signin`,
+        {
+          email: emailInput,
+          password: pwInput,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      } catch (error) {
+      );
+      console.log("로그인 응답 데이터:", response.data);
+      authStore.setLoggedIn(true);
 
-        if (error.response?.status === 404) return setMessage("사용자를 찾을 수 없습니다.");
-        if (error.response?.status === 500) {
-          setMessage("서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-        } else if (error.response?.status === 400) {
-          setMessage(error.response?.data?.message);
-        } else {
-          setMessage("회원가입 요청 중 알 수 없는 오류가 발생했습니다.");
-        }
+      // // ✅ 토큰 저장
+      window.localStorage.setItem("token", response.data.accessToken);
+
+      if (response.status === 200) {
+        setMessage("로그인 성공!");
+
+        // 입력 필드 초기화
+        setEmailInput("");
+        setPwInput("");
+        navigate("/");
+      } else {
+        setMessage("로그인 실패");
+      }
+    } catch (error) {
+      if (error.response?.status === 404)
+        return setMessage("사용자를 찾을 수 없습니다.");
+      if (error.response?.status === 500) {
+        setMessage("서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      } else if (error.response?.status === 400) {
+        setMessage(error.response?.data?.message);
+      } else {
+        setMessage("회원가입 요청 중 알 수 없는 오류가 발생했습니다.");
       }
     }
-  ;
-
+  };
   // 로그인 버튼 클릭 시 메시지
   const [message, setMessage] = useState("");
 
@@ -88,17 +89,19 @@ export default function Login() {
     kakao: {
       clientId: import.meta.env.VITE_KAKAO_CLIENT_ID,
       authUrl: "https://kauth.kakao.com/oauth/authorize",
-      redirectUri: window.location.hostname === "localhost"
-        ? "http://localhost:5173/account"
-        : "https://meet-eat-frontend.vercel.app/account",
+      redirectUri:
+        window.location.hostname === "localhost"
+          ? "http://localhost:5173/account"
+          : "https://meet-eat-frontend.vercel.app/account",
       state: "", // 카카오는 state가 필요 없음
     },
     naver: {
       clientId: import.meta.env.VITE_NAVER_CLIENT_ID,
       authUrl: "https://nid.naver.com/oauth2.0/authorize",
-      redirectUri: window.location.hostname === "localhost"
-        ? "http://localhost:5173/account"
-        : "https://meet-eat-frontend.vercel.app/account",
+      redirectUri:
+        window.location.hostname === "localhost"
+          ? "http://localhost:5173/account"
+          : "https://meet-eat-frontend.vercel.app/account",
       state: "RANDOM_STATE", // CSRF 방지를 위한 랜덤 값 (임시)
     },
   };
@@ -125,7 +128,6 @@ export default function Login() {
 
     const OAUTH_URL = `${authUrl}?${queryParams.toString()}`;
     window.location.href = OAUTH_URL; // 로그인 페이지로 이동
-
   };
 
   // ✅ URL에서 인가 코드 가져오기
@@ -134,7 +136,7 @@ export default function Login() {
     return params.get("code");
   };
 
-// ✅ 로그인 후 토큰 발급 처리
+  // ✅ 로그인 후 토큰 발급 처리
   const handleOAuthCallback = async () => {
     const code = await getAuthorizationCode();
     console.log("인가 코드:", code); // ✅ 코드 값 확인
@@ -159,12 +161,15 @@ export default function Login() {
 
     try {
       console.log("서버 요청 보냄:", provider, code); // ✅ provider와 code 값 확인
-      console.log("서버로 요청할 URL:", `${import.meta.env.VITE_BE_API_URL}/users/signin/${provider}`);
+      console.log(
+        "서버로 요청할 URL:",
+        `${import.meta.env.VITE_BE_API_URL}/users/signin/${provider}`
+      );
       const response = await axios.post(
         `${import.meta.env.VITE_BE_API_URL}/users/signin/${provider}`,
         { code: code },
         {
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json" },
         }
       );
 
@@ -181,21 +186,22 @@ export default function Login() {
     }
   };
 
-
   // ✅ 인가 코드가 있으면 자동으로 처리
   useEffect(() => {
-    if (window.location.pathname === "/account" && window.location.search.includes("code")) {
+    if (
+      window.location.pathname === "/account" &&
+      window.location.search.includes("code")
+    ) {
       handleOAuthCallback();
     }
   }, []);
-
 
   return (
     <form className="flex w-96 justify-center items-center">
       <div className="flex flex-1 flex-col gap-3 justify-center">
         <h1 className="flex justify-center h-8 mb-8">
           <Link to={"/"}>
-            <HeaderLogo className="h-full w-full"/>
+            <HeaderLogo className="h-full w-full" />
           </Link>
         </h1>
         {/* 이메일 형식일 때 통과 하도록 적기 */}
@@ -235,9 +241,9 @@ export default function Login() {
               onClick={togglePW}
             >
               {showPW ? (
-                <ShowPWIcon className="w-full h-full"/>
+                <ShowPWIcon className="w-full h-full" />
               ) : (
-                <HidePWIcon className="w-full h-full"/>
+                <HidePWIcon className="w-full h-full" />
               )}
             </div>
           </label>
@@ -262,10 +268,10 @@ export default function Login() {
         <p className="text-sm mt-5">SNS 간편 로그인</p>
         <div className="flex h-14 justify-center gap-4">
           <button onClick={(e) => handleOAuthLogin("naver", e)}>
-            <NaverIcon className="w-full h-full"/>
+            <NaverIcon className="w-full h-full" />
           </button>
           <button onClick={(e) => handleOAuthLogin("kakao", e)}>
-            <KakaoIcon className="w-full h-full"/>
+            <KakaoIcon className="w-full h-full" />
           </button>
         </div>
         {/* 에러 메시지 표시 */}

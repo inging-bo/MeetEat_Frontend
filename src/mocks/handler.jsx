@@ -112,7 +112,7 @@ export const handlers = [
     );
   }),
 
-// 회원가입 요청
+  // 회원가입 요청
   http.post("/users/signup", async ({ request }) => {
     const { email, password, nickname } = await request.json();
 
@@ -127,14 +127,15 @@ export const handlers = [
     // 이메일 중복 검사
     const emailExists = userListDB.some((user) => user.email === email);
     if (emailExists) {
-      return HttpResponse.json(
-        "이미 사용 중인 이메일입니다.",
-        { status: 400, statusText: "EMAIL_ALREADY_REGISTERED" }
-      );
+      return HttpResponse.json("이미 사용 중인 이메일입니다.", {
+        status: 400,
+        statusText: "EMAIL_ALREADY_REGISTERED",
+      });
     }
 
     // 비밀번호 유효성 검사
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}|:"<>?])[A-Za-z\d!@#$%^&*()_+{}|:"<>?]{8,}$/;
+    const passwordRegex =
+      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}|:"<>?])[A-Za-z\d!@#$%^&*()_+{}|:"<>?]{8,}$/;
     if (!passwordRegex.test(password)) {
       return HttpResponse.json(
         "비밀번호는 최소 8자 이상이며, 영문, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다.",
@@ -143,12 +144,14 @@ export const handlers = [
     }
 
     // 닉네임 중복 검사
-    const nicknameExists = userListDB.some((user) => user.nickname === nickname);
+    const nicknameExists = userListDB.some(
+      (user) => user.nickname === nickname
+    );
     if (nicknameExists) {
-      return HttpResponse.json(
-        "이미 사용 중인 닉네임입니다.",
-        { status: 400, statusText: "NICKNAME_ALREADY_REGISTERED" }
-      );
+      return HttpResponse.json("이미 사용 중인 닉네임입니다.", {
+        status: 400,
+        statusText: "NICKNAME_ALREADY_REGISTERED",
+      });
     }
 
     // 새 유저 추가
@@ -167,28 +170,27 @@ export const handlers = [
     );
   }),
 
-
   // 로그인 요청
   http.post("/users/signin", async ({ request }) => {
     const { email, password } = await request.json();
 
     // 특정 값이면 강제 서버 오류 발생
     if (email === "500" || password === "500") {
-      return HttpResponse.json(
-        { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", status: 500 }
-      );
+      return HttpResponse.json({
+        message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+        status: 500,
+      });
     }
     // 특정 값이면 강제 서버 오류 발생
     if (email === "400" || password === "400") {
-      return HttpResponse.json(
-        { message: "잘못된 요청입니다.", status: 400 }
-      );
+      return HttpResponse.json({ message: "잘못된 요청입니다.", status: 400 });
     }
     // 탈퇴예정인 유저가 로그인을 시도할 때
     if (email === "탈퇴예정" || password === "탈퇴예정") {
-      return HttpResponse.json(
-        { message: "해당 계정은 탈퇴 예정 상태입니다.", status: 403 }
-      );
+      return HttpResponse.json({
+        message: "해당 계정은 탈퇴 예정 상태입니다.",
+        status: 403,
+      });
     }
 
     const user = userListDB.find((u) => u.email === email);
@@ -220,8 +222,8 @@ export const handlers = [
     // 성공 응답
     return HttpResponse.json(
       {
-        accessToken: "",
-        needProfileUpdate: true
+        accessToken: "ecdedfa14edc1dse4",
+        needProfileUpdate: true,
       },
       { status: 200 }
     );
@@ -248,7 +250,7 @@ export const handlers = [
     return HttpResponse.json(
       {
         accessToken: accessToken,
-        needProfileUpdate: true// 요청값 반영
+        needProfileUpdate: true, // 요청값 반영
       },
       { status: 200 }
     );
