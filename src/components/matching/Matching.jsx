@@ -123,7 +123,7 @@ export default function Matching({
   // // POST
   async function apiPOSTMatching(lng, lat, size, time, placeInfo) {
     await axios
-      .get(`${import.meta.env.VITE_BE_API_URL}/api/sse/subscribe`, {
+      .get(`${import.meta.env.VITE_BE_API_URL}/sse/subscribe`, {
         headers: {
           Authorization: `${window.localStorage.getItem("token")}`,
           "Content-Type": "application/json",

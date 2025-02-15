@@ -70,8 +70,6 @@ export default function WriteReview() {
   const handleWriteComplete = () => {
     const textareaValue = document.getElementById("textarea").value;
     apiRestReviewWrite(info.matchedId, info.restId, textareaValue);
-    alert("작성이 완료되었습니다.");
-    navigate("/");
   };
 
   async function apiRestReviewWrite(matchedId, restId, textareaValue) {
@@ -94,9 +92,14 @@ export default function WriteReview() {
       )
       .then(() => {
         alert("작성 완료되었습니다.");
+        window.sessionStorage.removeItem("isCompleted");
+        window.sessionStorage.removeItem("isMatched");
+        window.sessionStorage.removeItem("matchedData");
+        navigate("/");
       })
       .catch((err) => {
         console.log(err);
+        alert("방문 후기를 작성해주세요!");
       });
   }
 
