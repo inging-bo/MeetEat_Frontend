@@ -351,20 +351,20 @@ export default function MatchingComplete() {
         <div className="bg-black/40 absolute w-full h-full z-10"></div>
         <Map id="map" className="w-full h-full" center={position} level={5} />
       </div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[520px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center py-[40px] flex flex-col gap-5">
-        <div className="title-container text-xl flex flex-col  font-semibold">
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[350px] md:w-[790px] h-[600px] md:h-[520px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center py-[40px] flex flex-col gap-5">
+        <div className="title-container text-base md:text-xl flex flex-col  font-semibold">
           <h1>{pickedRest.placeName}에서</h1>
           <h1>
             오늘 {Number(date.slice(11, 13)) + 1}시 {date.slice(14, 16)}분에
             만나요 !
           </h1>
-          <div className="font-normal text-base pt-2">
+          <div className="font-normal text-sm md:text-base pt-2">
             {pickedRest.roadAddressName}까지 내 위치에서 {distance}분
           </div>
         </div>
-        <div className="center-container h-[300px] flex flex-row gap-10 justify-center">
+        <div className="center-container max-w-[340px] md:w-full md:h-[300px] flex flex-col md:flex-row gap-5 md:gap-10 justify-center">
           <Map
-            className="map-container min-w-[300px] h-full"
+            className="map-container min-h-[200px] md:min-w-[300px] md:h-full"
             id="map"
             center={position}
             level={5}
@@ -391,7 +391,7 @@ export default function MatchingComplete() {
               strokeStyle={"solid"} // 선의 스타일입니다
             />
           </Map>
-          <div className="people-container flex flex-col gap-2 min-w-[370px] h-full overflow-y-scroll scrollbar-hide">
+          <div className="people-container flex flex-col gap-2 min-w-[340px] h-[180px] md:min-w-[370px] md:h-full overflow-y-scroll scrollbar-hide">
             {userList.map((user) => (
               <>
                 <div className="people-item border border-slate-200 text-left rounded-lg p-3">
@@ -420,22 +420,26 @@ export default function MatchingComplete() {
             ></div>
           </div>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 drop-shadow-lg z-50">
-            <div className="bg-white p-7 rounded-lg w-[420px] text-left">
-              <p className="font-bold text-[18px] text-center max-w-[420px]">
+            <div className="bg-white p-4 md:p-7 rounded-lg w-[300px] md:w-[420px] text-left">
+              <p className="font-bold text-[15px] md:text-[18px] text-center max-w-[420px]">
                 매칭 취소시 패널티가 부과될 수 있습니다.
               </p>
-              <p className="font-bold text-[18px] text-center max-w-[420px] pb-5">
+              <p className="font-bold text-[15px] md:text-[18px] text-center max-w-[420px] pb-5">
                 매칭을 취소하시겠습니까?
               </p>
-              <p className="font-semibold text-base max-w-[200px]">
+              <p className="font-semibold text-sm md:text-base max-w-[200px]">
                 매칭 완료 3분 이내 취소
               </p>
-              <p className="text-sm max-w-[200px] pb-2">→ 패널티 없음</p>
-              <p className="font-semibold text-base max-w-[200px]">
+              <p className="text-xs md:text-sm max-w-[200px] pb-2">
+                → 패널티 없음
+              </p>
+              <p className="font-semibold text-sm md:text-base max-w-[200px]">
                 매칭 완료 3분 이후 취소
               </p>
-              <p className="text-sm max-w-[200px]">→ 일주일간 매칭 불가</p>
-              <div className="flex flex-row justify-center gap-20 pt-6">
+              <p className="text-xs md:text-sm max-w-[200px]">
+                → 일주일간 매칭 불가
+              </p>
+              <div className="flex flex-row justify-center gap-24 pt-6 text-sm md:text-base">
                 <button onClick={() => setIsModalOpen(false)}>아니오</button>
                 <button onClick={cancelMatched}>네</button>
               </div>
