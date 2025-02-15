@@ -5,6 +5,7 @@ import ShowPWIcon from "../../assets/showPW-icon.svg?react";
 import Header from "../layout/Header.jsx";
 import axios from "axios";
 import authStore from "../../store/authStore.js";
+import modalStore from "../../store/modalStore.js";
 
 export default function ChangePW() {
   const navigate = useNavigate();
@@ -78,29 +79,34 @@ export default function ChangePW() {
 
       // 요청이 성공하면 페이지 이동
       if (response.status === 200) {
-        navigate("/successnotice", {
-          state: { message: "변경이 완료되었습니다." },
-        });
+        modalStore.openModal("oneBtn", {
+          message: "변경이 완료되었습니다.",
+          onConfirm: () => {
+            navigate("/");
+            modalStore.closeModal();
+          }
+        })
       }
     } catch (error) {
       if (!error.response) {
         console.error("서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
         return;
       }
-
-      const { status } = error.response;
-
-      if (status === 401) {
-        setMessage("인증 정보가 없습니다.");
-      } else if (status === 400) {
-        setMessage("현재 비밀번호가 일치하지 않습니다.");
-      } else if (status === 402) {
-        setMessage("변경하는 비밀번호는 3글자 이상");
-      } else if (status === 403) {
-        setMessage("새 비밀번호가 유효하지 않습니다.");
-      } else {
-        setMessage("서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-      }
+      const PASSWORD_MISMATCH = error?.response?.data?.error;
+      console.log(error.response);
+      // console.log(error);
+      // setMessage(error)
+      // if (error === "UNAUTHORIZED") {
+      //   setMessage(error.response.data ||"인증 토큰이 없습니다..");
+      // } else if (error === "INVALID_TOKEN") {
+      //   setMessage(error.response.data || "현재 비밀번호가 일치하지 않습니다.");
+      // } else if (PASSWORD_MISMATCH === "PASSWORD_MISMATCH") {
+      //   setMessage(error.response.data || "변경하는 비밀번호는 3글자 이상");
+      // } else if (error === "INVALID_PASSWORD") {
+      //   setMessage(error.response.data || "새 비밀번호가 유효하지 않습니다.");
+      // } else {
+      //   setMessage("서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      // }
     }
   };
 
