@@ -133,7 +133,7 @@ export default function WriteReview() {
         <div className="bg-black/40 absolute w-full h-full z-10"></div>
         <Map id="map" className="w-full h-full" center={position} level={5} />
       </div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[550px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center flex flex-col gap-3 pt-14">
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[350px] md:w-[790px] h-[550px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center flex flex-col gap-3 pt-14">
         <h1 className="text-2xl font-bold">{info.restName}</h1>
         <div>
           <div className="stars flex flex-row justify-center pb-2">
@@ -142,13 +142,13 @@ export default function WriteReview() {
         </div>
         <textarea
           id="textarea"
-          className="w-[400px] h-[100px] resize-none border p-2"
+          className="w-[300px] md:w-[400px] h-[100px] resize-none border p-2"
           placeholder="방문후기를 작성해주세요
 다른 사용자들의 식당 선정시 도움이 됩니다"
         ></textarea>
 
         <label htmlFor="inputFile">
-          <div className="w-[400px] h-[35px] content-center border p-1 px-4 rounded-lg">
+          <div className="w-[300px] md:w-[400px] h-[35px] content-center border p-1 px-4 rounded-lg">
             사진 첨부
           </div>
           <input
@@ -160,8 +160,8 @@ export default function WriteReview() {
             onChange={handleAddImages}
           />
         </label>
-        <div className="img-container flex flex-row gap-3 w-[400px] relative">
-          <div className="flex flex-row max-w-[400px] gap-3 overflow-x-scroll scrollbar-hide">
+        <div className="img-container flex flex-row gap-3 w-[300px] md:w-[400px] relative">
+          <div className="flex flex-row max-w-[300px] md:max-w-[400px] gap-3 overflow-x-scroll scrollbar-hide">
             {imageList.length === 0 && (
               <>
                 <label htmlFor="inputFile">
@@ -192,13 +192,13 @@ export default function WriteReview() {
         </div>
         <button
           onClick={handleWriteComplete}
-          className="w-[400px] p-2 bg-[#FF6445] text-white rounded-lg"
+          className="w-[300px] md:w-[400px] p-2 bg-[#FF6445] text-white rounded-lg"
         >
           작성완료
         </button>
         <button
           onClick={handleWriteNext}
-          className="absolute bottom-2 w-[400px] p-2  text-[#555555] text-sm"
+          className="absolute bottom-2 w-[300px] md:w-[400px] p-2  text-[#555555] text-sm"
         >
           다음에 작성할게요.
         </button>

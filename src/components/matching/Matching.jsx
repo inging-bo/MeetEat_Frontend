@@ -33,166 +33,163 @@ export default function Matching({
       lat: selectedMarker.y,
       place_url: selectedMarker.place_url,
     };
-    // apiPOSTMatching(position.lng, position.lat, number, new Date(), place);
-    fetchSSE(position.lng, position.lat, number, new Date(), place);
+    apiPOSTMatching(position.lng, position.lat, number, new Date(), place);
+    // fetchSSE(position.lng, position.lat, number, new Date(), place);
   }, []);
 
   // SSE fetch
-  const fetchSSE = (lng, lat, size, time, placeInfo) => {
-    // header 보내기 위해 EventSourcePolyfill 사용
-    const eventSource = new EventSourcePolyfill(
-      `${import.meta.env.VITE_BE_API_URL}/sse/subscribe`,
-      {
-        headers: {
-          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    eventSource.onopen = () => {
-      // 연결 시 매칭 요청 api 실행
-      axios
-        .post(
-          `${import.meta.env.VITE_BE_API_URL}/matching/request`,
-          {
-            userLon: lng,
-            userLat: lat,
-            groupSize: size,
-            matchingStartTime: time,
-            place: placeInfo,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((res) => {
-          console.log(res.data);
-          setIsMatching("true");
-          window.sessionStorage.setItem("isMatching", "true");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    // 방법1. onmessage 이용
-    // eventSource.onmessage = async (e) => {
-    //   const res = await e.data;
-    //   const parsedData = JSON.parse(res);
-    //   받아오는 data로 할 일
-    //   if (parsedData === "임시 모임이 생성되었습니다.") {
-    //     setIsMatched(true);
-    //     window.sessionStorage.setItem("tempPosition", JSON.stringify(position));
-    //     window.sessionStorage.setItem("isMatched", "true");
-    //     window.sessionStorage.setItem(
-    //       "matchingData",
-    //       JSON.stringify(parsedData)
-    //     );
-    //     navigate(`/matching/check-place/${parsedData.teamId}`);
-    //   }
-    // };
-
-    // 방법2. EventListener
-    eventSource.addEventListener("TempTeam", (e) => {
-      setIsMatched(true);
-      window.sessionStorage.setItem("tempPosition", JSON.stringify(position));
-      window.sessionStorage.setItem("isMatched", "true");
-      window.sessionStorage.setItem("matchingData", JSON.stringify(e.data));
-      navigate(`/matching/check-place/${e.data.teamId}`);
-      eventSource.close();
-    });
-
-    eventSource.onerror = (e) => {
-      // 종료 또는 에러 발생 시 할 일
-      eventSource.close();
-      setIsMatching(false);
-      window.sessionStorage.removeItem("isMatching");
-      history.go(0);
-      // if (e.error) {
-      //   // 에러 발생 시 할 일
-      // }
-      // if (e.target.readyState === EventSource.CLOSED) {
-      //   // 종료 시 할 일
-      // }
-    };
-  };
-
-  // // POST
-  // async function apiPOSTMatching(lng, lat, size, time, placeInfo) {
-  //   await axios
-  //     .get(`${import.meta.env.VITE_BE_API_URL}/api/sse/subscribe`, {
+  // const fetchSSE = (lng, lat, size, time, placeInfo) => {
+  //   // header 보내기 위해 EventSourcePolyfill 사용
+  //   const eventSource = new EventSourcePolyfill(
+  //     `${import.meta.env.VITE_BE_API_URL}/sse/subscribe`,
+  //     {
   //       headers: {
-  //         Authorization: `${window.localStorage.getItem("token")}`,
+  //         Authorization: `Bearer ${window.localStorage.getItem("token")}`,
   //         "Content-Type": "application/json",
   //       },
-  //     })
-  //     .then(() => {
-  //       console.log("SSE구독");
-  //       axios
-  //         .post(
-  //           `${import.meta.env.VITE_BE_API_URL}/matching/request`,
-  //           {
-  //             userLon: lng,
-  //             userLat: lat,
-  //             groupSize: size,
-  //             matchingStartTime: time,
-  //             place: placeInfo,
+  //     }
+  //   );
+
+  //   eventSource.onopen = () => {
+  //     // 연결 시 매칭 요청 api 실행
+  //     axios
+  //       .post(
+  //         `${import.meta.env.VITE_BE_API_URL}/matching/request`,
+  //         {
+  //           userLon: lng,
+  //           userLat: lat,
+  //           groupSize: size,
+  //           matchingStartTime: time,
+  //           place: placeInfo,
+  //         },
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+  //             "Content-Type": "application/json",
   //           },
-  //           {
-  //             headers: {
-  //               Authorization: `${window.localStorage.getItem("token")}`,
-  //               "Content-Type": "application/json",
-  //             },
-  //           }
-  //         )
-  //         .then((res) => {
-  //           console.log(res.data);
-  //           setIsMatching("true");
-  //           window.sessionStorage.setItem("isMatching", "true");
-  //           // setTimeout(
-  //           //   () =>
-  //           //     axios
-  //           //       .get(
-  //           //         `http://${import.meta.env.VITE_BE_API_URL}/api/matching/complete`,
-  //           //         {
-  //           //           headers: {
-  //           //             Authorization: `${window.localStorage.getItem("token")}`,
-  //           //           },
-  //           //         }
-  //           //       )
-  //           //       .then((res) => {
-  //           //         setIsMatched(true);
-  //           //         window.sessionStorage.setItem(
-  //           //           "tempPosition",
-  //           //           JSON.stringify(position)
-  //           //         );
-  //           //         window.sessionStorage.setItem("isMatched", "true");
-  //           //         window.sessionStorage.setItem(
-  //           //           "matchingData",
-  //           //           JSON.stringify(res)
-  //           //         );
-  //           //         navigate(`/matching/check-place/${res.data.teamId}`);
-  //           //       })
-  //           //       .catch(function (error) {
-  //           //         console.log(error);
-  //           //       }),
-  //           //   [5000]
-  //           // );
-  //         })
-  //         .catch((err) => {
-  //           console.log(err);
-  //         });
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-  // }
+  //         }
+  //       )
+  //       .then((res) => {
+  //         console.log(res.data);
+  //         setIsMatching("true");
+  //         window.sessionStorage.setItem("isMatching", "true");
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   };
+  //   // 방법1. onmessage 이용
+  //   // eventSource.onmessage = async (e) => {
+  //   //   const res = await e.data;
+  //   //   const parsedData = JSON.parse(res);
+  //   //   받아오는 data로 할 일
+  //   //   if (parsedData === "임시 모임이 생성되었습니다.") {
+  //   //     setIsMatched(true);
+  //   //     window.sessionStorage.setItem("tempPosition", JSON.stringify(position));
+  //   //     window.sessionStorage.setItem("isMatched", "true");
+  //   //     window.sessionStorage.setItem(
+  //   //       "matchingData",
+  //   //       JSON.stringify(parsedData)
+  //   //     );
+  //   //     navigate(`/matching/check-place/${parsedData.teamId}`);
+  //   //   }
+  //   // };
+
+  //   // 방법2. EventListener
+  //   eventSource.addEventListener("TempTeam", (e) => {
+  //     setIsMatched(true);
+  //     window.sessionStorage.setItem("tempPosition", JSON.stringify(position));
+  //     window.sessionStorage.setItem("isMatched", "true");
+  //     window.sessionStorage.setItem("matchingData", JSON.stringify(e.data));
+  //     navigate(`/matching/check-place/${e.data.teamId}`);
+  //     eventSource.close();
+  //   });
+
+  //   eventSource.onerror = (e) => {
+  //     // 종료 또는 에러 발생 시 할 일
+  //     eventSource.close();
+  //     setIsMatching(false);
+  //     window.sessionStorage.removeItem("isMatching");
+  //     history.go(0);
+  //     // if (e.error) {
+  //     //   // 에러 발생 시 할 일
+  //     // }
+  //     // if (e.target.readyState === EventSource.CLOSED) {
+  //     //   // 종료 시 할 일
+  //     // }
+  //   };
+  // };
+
+  // // POST
+  async function apiPOSTMatching(lng, lat, size, time, placeInfo) {
+    await axios
+      .get(`${import.meta.env.VITE_BE_API_URL}/api/sse/subscribe`, {
+        headers: {
+          Authorization: `${window.localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then(() => {
+        console.log("SSE구독");
+        axios
+          .post(
+            `${import.meta.env.VITE_BE_API_URL}/matching/request`,
+            {
+              userLon: lng,
+              userLat: lat,
+              groupSize: size,
+              matchingStartTime: time,
+              place: placeInfo,
+            },
+            {
+              headers: {
+                Authorization: `${window.localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+            setIsMatching("true");
+            window.sessionStorage.setItem("isMatching", "true");
+            setTimeout(
+              () =>
+                axios
+                  .get(`${import.meta.env.VITE_BE_API_URL}/matching/complete`, {
+                    headers: {
+                      Authorization: `${window.localStorage.getItem("token")}`,
+                    },
+                  })
+                  .then((res) => {
+                    setIsMatched(true);
+                    window.sessionStorage.setItem(
+                      "tempPosition",
+                      JSON.stringify(position)
+                    );
+                    window.sessionStorage.setItem("isMatched", "true");
+                    window.sessionStorage.setItem(
+                      "matchingData",
+                      JSON.stringify(res)
+                    );
+                    navigate(`/matching/check-place/${res.data.teamId}`);
+                  })
+                  .catch(function (error) {
+                    console.log(error);
+                  }),
+              [5000]
+            );
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
   // 타이머
-  const MINUTES_IN_MS = 10 * 60 * 1000;
+  const MINUTES_IN_MS = 1 * 60 * 1000;
   const INTERVAL = 1000;
   const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
 
@@ -272,37 +269,37 @@ export default function Matching({
           />
         </Map>
       </div>
-      <div className="matching-container absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] bg-white rounded-lg drop-shadow-2xl z-20">
-        <div className="info-container absolute top-[47%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center gap-4 w-full h-full">
+      <div className="matching-container absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[380px] sm:h-[380px] bg-white rounded-lg drop-shadow-2xl z-20">
+        <div className="info-container absolute top-[49%] sm:top-[47%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center gap-4 w-full h-full">
           <ReactLoading
             type={"spin"}
             color={"#FF6445"}
             height={40}
             width={40}
           />
-          <p className="text-xl font-bold pt-5">
+          <p className="text-base sm:text-xl font-bold pt-0 sm:pt-5">
             {number}명의 인원과 매칭할 수 있는
             <br /> 주변 사람들을 찾고 있어요
           </p>
-          <p className="text-base">
+          <p className="text-sm sm:text-base">
             남은시간 {minutes}:{second}
           </p>
-          <div className="bg-[#F8F8F8] w-[310px] h-[90px] rounded-lg">
+          <div className="bg-[#F8F8F8] w-[270px] h-[70px] sm:w-[310px] sm:h-[90px] rounded-lg">
             <div className="flex flex-row items-center pt-[12px] pb-[5px] px-[16px] text-left">
-              <p className="max-w-[200px] text-overflow">
+              <p className="text-sm sm:text-base max-w-[200px] text-overflow">
                 {selectedMarker.place_name}
               </p>
-              <p className="max-w-[90px] text-overflow text-[12px] text-[#A2A2A2] pl-2">
+              <p className="max-w-[90px] text-overflow text-xs sm:text-[12px] text-[#A2A2A2] pl-2">
                 {categoryName}
               </p>
             </div>
-            <p className="text-[#555555] text-left text-[14px] px-[16px]">
+            <p className="text-[#555555] text-left text-xs sm:text-[14px] px-[16px]">
               {selectedMarker.road_address_name}
             </p>
           </div>
         </div>
         <button
-          className="absolute bottom-5 left-1/2 transform -translate-x-1/2 text-[#555555] text-[14px]"
+          className="absolute bottom-3 sm:bottom-5 left-1/2 transform -translate-x-1/2 text-[#555555] text-xs sm:text-[14px]"
           onClick={cancelMatching}
         >
           매칭취소

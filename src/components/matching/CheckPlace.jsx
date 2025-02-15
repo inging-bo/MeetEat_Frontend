@@ -45,105 +45,89 @@ export default function CheckPlace() {
 
     // SSE 재연결
     // apiSSESub();
-    fetchSSE();
+    // fetchSSE();
     const jsonData = JSON.parse(
       window.sessionStorage.getItem("matchingData")
     ).data;
     setMatchingData(jsonData.restaurantList);
   }, []);
 
-  // SSE fetch
-  const fetchSSE = () => {
-    // header 보내기 위해 EventSourcePolyfill 사용
-    const eventSource = new EventSourcePolyfill(
-      `${import.meta.env.VITE_BE_API_URL}/sse/subscribe`,
-      {
-        headers: {
-          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    eventSource.onopen = () => {
-      // 연결 시 할 일
-    };
-
-    // 방법1. onmessage 이용
-    // eventSource.onmessage = async (e) => {
-    //   const res = await e.data;
-    //   const parsedData = JSON.parse(res);
-    //   // 받아오는 data로 할 일
-    //   if (parsedData.message === "수락 알림이 도착했습니다.") {
-    //     if (parsedData.user.join === false) {
-    //       alert("매칭 인원 중 누군가가 거절하였습니다");
-    //       window.sessionStorage.clear();
-    //       return navigate("/");
-    //     }
-    //     setUser((prev) => {
-    //       const newState = new Map(prev);
-    //       newState.set(parsedData.user.nickname, true);
-    //       return newState;
-    //     });
-    //   }
-    //   if (parsedData.message === "모임이 생성되었습니다") {
-    //     window.sessionStorage.setItem("matchedData", JSON.stringify(res));
-    //     window.sessionStorage.removeItem("isMatching");
-    //     window.sessionStorage.removeItem("isMatched");
-    //     window.sessionStorage.setItem("isCompleted", "true");
-    //     navigate(`/matching/choice-place/${res.data.id}`);
-    //   }
-    // };
-
-    // 방법2. EventListener
-    eventSource.addEventListener("Join", (e) => {
-      if (e.data.user.join === false) {
-        alert("매칭 인원 중 누군가가 거절하였습니다");
-        window.sessionStorage.clear();
-        return navigate("/");
-      }
-      setUser((prev) => {
-        const newState = new Map(prev);
-        newState.set(e.data.user.nickname, true);
-        return newState;
-      });
-    });
-    eventSource.addEventListener("Team", (e) => {
-      window.sessionStorage.setItem("matchedData", JSON.stringify(e.data));
-      window.sessionStorage.removeItem("isMatching");
-      window.sessionStorage.removeItem("isMatched");
-      window.sessionStorage.setItem("isCompleted", "true");
-      navigate(`/matching/choice-place/${e.data.id}`);
-      eventSource.close();
-    });
-
-    eventSource.onerror = (e) => {
-      // 종료 또는 에러 발생 시 할 일
-      eventSource.close();
-      if (e.error) {
-        // 에러 발생 시 할 일
-      }
-      if (e.target.readyState === EventSource.CLOSED) {
-        // 종료 시 할 일
-      }
-    };
-  };
-
-  // async function apiSSESub() {
-  //   await axios
-  //     .get(`${import.meta.env.VITE_BE_API_URL}/sse/subscribe`, {
+  // // SSE fetch
+  // const fetchSSE = () => {
+  //   // header 보내기 위해 EventSourcePolyfill 사용
+  //   const eventSource = new EventSourcePolyfill(
+  //     `${import.meta.env.VITE_BE_API_URL}/sse/subscribe`,
+  //     {
   //       headers: {
-  //         Authorization: `${window.localStorage.getItem("token")}`,
+  //         Authorization: `Bearer ${window.localStorage.getItem("token")}`,
   //         "Content-Type": "application/json",
   //       },
-  //     })
-  //     .then(() => {
-  //       console.log("SSE구독");
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
+  //     }
+  //   );
+
+  //   eventSource.onopen = () => {
+  //     // 연결 시 할 일
+  //   };
+
+  //   // 방법1. onmessage 이용
+  //   // eventSource.onmessage = async (e) => {
+  //   //   const res = await e.data;
+  //   //   const parsedData = JSON.parse(res);
+  //   //   // 받아오는 data로 할 일
+  //   //   if (parsedData.message === "수락 알림이 도착했습니다.") {
+  //   //     if (parsedData.user.join === false) {
+  //   //       alert("매칭 인원 중 누군가가 거절하였습니다");
+  //   //       window.sessionStorage.clear();
+  //   //       return navigate("/");
+  //   //     }
+  //   //     setUser((prev) => {
+  //   //       const newState = new Map(prev);
+  //   //       newState.set(parsedData.user.nickname, true);
+  //   //       return newState;
+  //   //     });
+  //   //   }
+  //   //   if (parsedData.message === "모임이 생성되었습니다") {
+  //   //     window.sessionStorage.setItem("matchedData", JSON.stringify(res));
+  //   //     window.sessionStorage.removeItem("isMatching");
+  //   //     window.sessionStorage.removeItem("isMatched");
+  //   //     window.sessionStorage.setItem("isCompleted", "true");
+  //   //     navigate(`/matching/choice-place/${res.data.id}`);
+  //   //   }
+  //   // };
+
+  //   // 방법2. EventListener
+  //   eventSource.addEventListener("Join", (e) => {
+  //     if (e.data.user.join === false) {
+  //       alert("매칭 인원 중 누군가가 거절하였습니다");
+  //       window.sessionStorage.clear();
+  //       return navigate("/");
+  //     }
+  //     setUser((prev) => {
+  //       const newState = new Map(prev);
+  //       newState.set(e.data.user.nickname, true);
+  //       return newState;
   //     });
-  // }
+  //   });
+  //   eventSource.addEventListener("Team", (e) => {
+  //     window.sessionStorage.setItem("matchedData", JSON.stringify(e.data));
+  //     window.sessionStorage.removeItem("isMatching");
+  //     window.sessionStorage.removeItem("isMatched");
+  //     window.sessionStorage.setItem("isCompleted", "true");
+  //     navigate(`/matching/choice-place/${e.data.id}`);
+  //     eventSource.close();
+  //   });
+
+  //   eventSource.onerror = (e) => {
+  //     // 종료 또는 에러 발생 시 할 일
+  //     eventSource.close();
+  //     if (e.error) {
+  //       // 에러 발생 시 할 일
+  //     }
+  //     if (e.target.readyState === EventSource.CLOSED) {
+  //       // 종료 시 할 일
+  //     }
+  //   };
+  // };
 
   const isMounted = useRef(false);
   useEffect(() => {
@@ -151,25 +135,25 @@ export default function CheckPlace() {
       matchingData.map((data) => {
         setUser((pre) => new Map([...pre, [data.user.nickname, false]]));
       });
-      // apiGetU2();
-      // apiGetU3();
-      // apiGetU4();
+      apiGetU2();
+      apiGetU3();
+      apiGetU4();
     } else {
       isMounted.current = true;
     }
   }, [matchingData]);
 
-  // useEffect(() => {
-  //   if (
-  //     isMounted.current &&
-  //     agree &&
-  //     [...user.values()].indexOf(false) === -1
-  //   ) {
-  //     apiCompleted();
-  //   } else {
-  //     isMounted.current = true;
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    if (
+      isMounted.current &&
+      agree &&
+      [...user.values()].indexOf(false) === -1
+    ) {
+      apiCompleted();
+    } else {
+      isMounted.current = true;
+    }
+  }, [user]);
 
   useEffect(() => {
     user.forEach((value, key) => {
@@ -287,92 +271,92 @@ export default function CheckPlace() {
     }
   };
 
-  ///////////////////////////////////////////////////////////////
-  // 임시 함수 ////////////////////////////
-  ///////////////////////////////////////////////////////////////
-  // async function apiGetU2() {
-  //   setTimeout(() => {
-  //     console.log("3초 지남");
-  //     axios
-  //       .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname2`, {
-  //         headers: {
-  //           Authorization: `${window.localStorage.getItem("token")}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       })
-  //       .then((res) => {
-  //         if (res.data.user.join === false) {
-  //           alert("매칭 인원 중 누군가가 거절하였습니다");
-  //           window.sessionStorage.clear();
-  //           return navigate("/");
-  //         }
-  //         setUser((prev) => {
-  //           const newState = new Map(prev);
-  //           newState.set(res.data.user.nickname, true);
-  //           return newState;
-  //         });
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       });
-  //   }, [3000]);
-  // }
+  /////////////////////////////////////////////////////////////
+  //임시 함수 ////////////////////////////
+  /////////////////////////////////////////////////////////////
+  async function apiGetU2() {
+    setTimeout(() => {
+      console.log("3초 지남");
+      axios
+        .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname2`, {
+          headers: {
+            Authorization: `${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          if (res.data.user.join === false) {
+            alert("매칭 인원 중 누군가가 거절하였습니다");
+            window.sessionStorage.clear();
+            return navigate("/");
+          }
+          setUser((prev) => {
+            const newState = new Map(prev);
+            newState.set(res.data.user.nickname, true);
+            return newState;
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }, [3000]);
+  }
 
-  // async function apiGetU3() {
-  //   setTimeout(() => {
-  //     console.log("9초 지남");
-  //     axios
-  //       .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname3`, {
-  //         headers: {
-  //           Authorization: `${window.localStorage.getItem("token")}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       })
-  //       .then((res) => {
-  //         if (res.data.user.join === false) {
-  //           alert("매칭 인원 중 누군가가 거절하였습니다");
-  //           window.sessionStorage.clear();
-  //           return navigate("/");
-  //         }
-  //         setUser((prev) => {
-  //           const newState = new Map(prev);
-  //           newState.set(res.data.user.nickname, true);
-  //           return newState;
-  //         });
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       });
-  //   }, [9000]);
-  // }
+  async function apiGetU3() {
+    setTimeout(() => {
+      console.log("9초 지남");
+      axios
+        .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname3`, {
+          headers: {
+            Authorization: `${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          if (res.data.user.join === false) {
+            alert("매칭 인원 중 누군가가 거절하였습니다");
+            window.sessionStorage.clear();
+            return navigate("/");
+          }
+          setUser((prev) => {
+            const newState = new Map(prev);
+            newState.set(res.data.user.nickname, true);
+            return newState;
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }, [9000]);
+  }
 
-  // async function apiGetU4() {
-  //   setTimeout(() => {
-  //     console.log("7초 지남");
-  //     axios
-  //       .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname4`, {
-  //         headers: {
-  //           Authorization: `${window.localStorage.getItem("token")}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       })
-  //       .then((res) => {
-  //         if (res.data.user.join === false) {
-  //           alert("매칭 인원 중 누군가가 거절하였습니다");
-  //           window.sessionStorage.clear();
-  //           return navigate("/");
-  //         }
-  //         setUser((prev) => {
-  //           const newState = new Map(prev);
-  //           newState.set(res.data.user.nickname, true);
-  //           return newState;
-  //         });
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       });
-  //   }, [7000]);
-  // }
+  async function apiGetU4() {
+    setTimeout(() => {
+      console.log("7초 지남");
+      axios
+        .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname4`, {
+          headers: {
+            Authorization: `${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          if (res.data.user.join === false) {
+            alert("매칭 인원 중 누군가가 거절하였습니다");
+            window.sessionStorage.clear();
+            return navigate("/");
+          }
+          setUser((prev) => {
+            const newState = new Map(prev);
+            newState.set(res.data.user.nickname, true);
+            return newState;
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }, [7000]);
+  }
 
   async function apiAgree() {
     axios
@@ -438,25 +422,25 @@ export default function CheckPlace() {
       });
   }
 
-  // async function apiCompleted() {
-  //   axios
-  //     .get(`${import.meta.env.VITE_BE_API_URL}/matching/completed`, {
-  //       headers: {
-  //         Authorization: `${window.localStorage.getItem("token")}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     })
-  //     .then((res) => {
-  //       window.sessionStorage.setItem("matchedData", JSON.stringify(res));
-  //       window.sessionStorage.removeItem("isMatching");
-  //       window.sessionStorage.removeItem("isMatched");
-  //       window.sessionStorage.setItem("isCompleted", "true");
-  //       navigate(`/matching/choice-place/${res.data.id}`);
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-  // }
+  async function apiCompleted() {
+    axios
+      .get(`${import.meta.env.VITE_BE_API_URL}/matching/completed`, {
+        headers: {
+          Authorization: `${window.localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        window.sessionStorage.setItem("matchedData", JSON.stringify(res));
+        window.sessionStorage.removeItem("isMatching");
+        window.sessionStorage.removeItem("isMatched");
+        window.sessionStorage.setItem("isCompleted", "true");
+        navigate(`/matching/choice-place/${res.data.id}`);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
   ///////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////
@@ -474,35 +458,35 @@ export default function CheckPlace() {
           />
         )}
       </div>
-      <div className="absolute flex flex-col items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[525px] bg-white rounded-lg drop-shadow-2xl z-20 py-[40px]">
+      <div className="absolute flex flex-col items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[350px] md:w-[790px] h-[525px] bg-white rounded-lg drop-shadow-2xl z-20 py-[40px]">
         <div className="flex flex-col items-center">
           <CheckTitle />
-          <p className="text-xl pb-1 pt-[30px] font-semibold">
+          <p className="text-base md:text-xl pb-1 pt-[30px] font-semibold">
             매칭 인원을 찾았어요.
           </p>
-          <p className="text-xl pb-3 font-semibold">
+          <p className="text-base md:text-xl pb-3 font-semibold">
             모든 인원 동의시 매칭이 계속 진행됩니다.
           </p>
-          <p className="pb-5">
+          <p className="pb-5 text-sm md:text-base">
             남은시간 {minutes}:{second}
           </p>
         </div>
-        <div className="people-container w-[700px] h-[200px] flex flex-col justify-center gap-4 py-3 bg-[#F8F8F8] rounded-lg text-[#555555] text-[14px]">
+        <div className="people-container w-[340px] md:w-[700px] h-[200px] flex flex-col justify-center gap-6 md:gap-4 py-3 bg-[#F8F8F8] rounded-lg text-[#555555] text-xs md:text-[14px]">
           {matchingData.map((item, idx) => (
             <>
               <div
                 key={idx}
-                className="people-info grid w-[700px] grid-cols-[100px_150px_150px_150px_150px] justify-items-center"
+                className="people-info grid w-[700px] grid-cols-[40px_75px_75px_75px_75px] md:grid-cols-[100px_150px_150px_150px_150px] h-[15px] justify-items-center"
               >
                 <Waiting
                   id={item.user.nickname + `waiting`}
                   width="25px"
-                  className="waiting"
+                  className="waiting w-[20px] md:w-[25px]"
                 />
                 <Check
                   id={item.user.nickname + `check`}
                   width="25px"
-                  className="check hidden text-[#FF6445]"
+                  className="check hidden text-[#FF6445] w-[20px] md:w-[25px]"
                 />
                 <p className="text-overflow">{item.user.nickname}</p>
                 <p className="text-overflow">{item.place.name}</p>
@@ -527,14 +511,14 @@ export default function CheckPlace() {
         <div className="check-container flex flex-col justify-center">
           <button
             onClick={handleAgree}
-            className="w-[200px] pt-1 pb-[6px] bg-[#A2A2A2] rounded-lg text-white text-[16px] mt-4 mb-3 hover:bg-[#FF6445]"
+            className="w-[200px] pt-1 pb-[6px] bg-[#A2A2A2] rounded-lg text-white text-sm md:text-[16px] mt-6 md:mt-4 mb-3 hover:bg-[#FF6445]"
           >
             모든 장소에 대해 동의
           </button>
         </div>
         <button
           onClick={handleDisAgree}
-          className="text-[14px] absolute bottom-5"
+          className="text-xs md:text-[14px] absolute bottom-5"
         >
           매칭취소
         </button>
