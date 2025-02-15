@@ -6,13 +6,14 @@ import axios from "axios";
 import GoldMedal from "../../assets/Medal-Gold.svg?react";
 import SilverMedal from "../../assets/Medal-Silver.svg?react";
 import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import modalStore from "../../store/modalStore.js";
 import DeleteID from "../../components/account/DeleteID.jsx";
 import { motion } from "framer-motion"
 
 const RestInfo = observer(() => {
   const profileStore = useProfileStore(); // useProfileStore 사용
+  const navigate = useNavigate()
 
   useEffect(() => {
     authStore.checkLoggedIn();
@@ -134,8 +135,7 @@ const RestInfo = observer(() => {
           <motion.button
             whileTap={{ scale: 0.95, backgroundColor: "var(--tabBack)"  }}
             className="mb-auto rounded-md px-2 py-1">
-            <div >비밀번호 변경</div>
-            {/*<Link to="/mypage/changepw">비밀번호 변경</Link>*/}
+            <Link to="/mypage/changepw">비밀번호 변경</Link>
           </motion.button>
           <motion.button
             whileTap={{ scale: 0.95, backgroundColor: "var(--tabBack)"  }}
@@ -164,13 +164,13 @@ const RestInfo = observer(() => {
                       }
                     );
                     if (response.status === 200) {
-                      window.localStorage.removeItem("token"); // token 삭제
-                      authStore.setLoggedIn(false);
-                      navigate("/");
                       modalStore.openModal("oneBtn", {
                         message: "탈퇴하기 완료.",
                         onConfirm: async () => {
                           await modalStore.closeModal()
+                          window.localStorage.removeItem("token"); // token 삭제
+                          authStore.setLoggedIn(false);
+                          navigate("/");
                         }
                       });
                       console.log("탈퇴하기 완료")
