@@ -1,3 +1,9 @@
+:root {
+  --primary: #FF6445;
+  --secondary: #A2A2A2;
+  --tabBack: #00000010;
+}
+
 body {
   position: relative;
 }

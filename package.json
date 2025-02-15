@@ -13,6 +13,7 @@
     "@tailwindcss/postcss": "^4.0.0",
     "axios": "^1.7.9",
     "event-source-polyfill": "^1.0.31",
+    "framer-motion": "^12.4.3",
     "history": "^5.3.0",
     "lodash": "^4.17.21",
     "mobx": "^6.13.6",

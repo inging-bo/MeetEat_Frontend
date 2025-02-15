@@ -9,6 +9,7 @@ import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
 import { Link } from "react-router-dom";
 import modalStore from "../../store/modalStore.js";
 import DeleteID from "../../components/account/DeleteID.jsx";
+import { motion } from "framer-motion"
 
 const RestInfo = observer(() => {
   const profileStore = useProfileStore(); // useProfileStore 사용
@@ -42,6 +43,10 @@ const RestInfo = observer(() => {
     }
 
     async function saveField() {
+      if (value === profileStore.profile?.[fieldKey]) {
+        setIsEditing(false);
+        return; // 값이 변경되지 않았으므로 요청을 보내지 않음
+      }
       try {
         const url =
           fieldKey === "nickname"
@@ -126,10 +131,15 @@ const RestInfo = observer(() => {
       <div className="flex flex-col gap-2 h-full">
         <p className="text-[15px] text-left font-bold">계정 정보</p>
         <div className="flex flex-col text-[15px] text-[#909090] h-full items-start">
-          <button className="mb-auto">
-            <Link to="/mypage/changepw">비밀번호 변경</Link>
-          </button>
-          <button
+          <motion.button
+            whileTap={{ scale: 0.95, backgroundColor: "var(--tabBack)"  }}
+            className="mb-auto rounded-md px-2 py-1">
+            <div >비밀번호 변경</div>
+            {/*<Link to="/mypage/changepw">비밀번호 변경</Link>*/}
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.95, backgroundColor: "var(--tabBack)"  }}
+            className="rounded-md px-2 py-1"
             onClick={() =>
               modalStore.openModal("twoBtn", {
                 message: () => <DeleteID />,
@@ -182,7 +192,7 @@ const RestInfo = observer(() => {
             }
           >
             탈퇴하기
-          </button>
+          </motion.button>
         </div>
       </div>
     </div>
@@ -195,13 +205,17 @@ const EditableField = ({ label, field, maxLength }) => {
       <div className="text-[15px] flex items-center justify-between">
         <span className="font-bold">{label}</span>
         {field.isEditing ? (
-          <button className="rounded-md border border-black px-1.5" onClick={field.saveField}>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            className="rounded-md border border-black px-1.5" onClick={field.saveField}>
             완료
-          </button>
+          </motion.button>
         ) : (
-          <button className="text-[#909090] rounded-md border border-[#909090] px-1.5" onClick={field.changeField}>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            className="text-[#909090] rounded-md border border-[#909090] px-1.5" onClick={field.changeField}>
             수정
-          </button>
+          </motion.button>
         )}
       </div>
       <div className="relative flex h-10 justify-between items-center text-[15px] text-left border-b border-b-[#EAEAEA] bg-[#F8F8F8]">
