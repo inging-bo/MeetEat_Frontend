@@ -231,19 +231,9 @@ export default function RestList() {
       });
   }
 
-  // async function apiPOSTRestDetailView(restId) {
-  //   await axios
-  //     .get("/restaurants", { params: { restaurantId: restId } })
-  //     .then((res) => {
-  //       setPickedRest(res.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }
   async function apiPOSTRestDetailView(restId) {
     await axios
-      .get(`${import.meta.env.VITE_BE_API_URL}/restaurants/${restId}`)
+      .get("/restaurants", { params: { restaurantId: restId } })
       .then((res) => {
         setPickedRest(res.data);
       })
@@ -251,6 +241,16 @@ export default function RestList() {
         console.log(err);
       });
   }
+  // async function apiPOSTRestDetailView(restId) {
+  //   await axios
+  //     .get(`${import.meta.env.VITE_BE_API_URL}/restaurants/${restId}`)
+  //     .then((res) => {
+  //       setPickedRest(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
 
   const [center, setCenter] = useState({});
 
