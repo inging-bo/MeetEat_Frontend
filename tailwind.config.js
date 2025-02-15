@@ -4,8 +4,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#FF6445",
-        secondary: "#A2A2A2",
+        primary: 'var(--primary)',
+        secondary: 'var(--secondary)',
+        tabBack: 'var(--tabBack)',
       }
     },
     fontFamily: {
