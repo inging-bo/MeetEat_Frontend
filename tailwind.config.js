@@ -2,7 +2,12 @@
 export default {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "#FF6445",
+        secondary: "#A2A2A2",
+      }
+    },
     fontFamily: {
       primary: "Noto Sans KR",
     },
