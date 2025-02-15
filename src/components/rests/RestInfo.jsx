@@ -7,6 +7,8 @@ import GoldMedal from "../../assets/Medal-Gold.svg?react";
 import SilverMedal from "../../assets/Medal-Silver.svg?react";
 import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
 import { Link } from "react-router-dom";
+import modalStore from "../../store/modalStore.js";
+import DeleteID from "../../components/account/DeleteID.jsx";
 
 const RestInfo = observer(() => {
   const profileStore = useProfileStore(); // useProfileStore 사용
@@ -77,6 +79,7 @@ const RestInfo = observer(() => {
     return <span className="pl-2 pt-2">매칭을 하면 메달을 얻을 수 있어요!</span>;
   }, [profileStore.profile?.matchingCount]);
 
+
   return (
     <div className="flex flex-col gap-10 w-[380px] min-w-[380px] max-w-[380px] flex-1 justify-start border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-10">
       <h1 className="font-bold text-[28px] text-left">마이페이지</h1>
@@ -126,8 +129,59 @@ const RestInfo = observer(() => {
           <button className="mb-auto">
             <Link to="/mypage/changepw">비밀번호 변경</Link>
           </button>
-          <button>
-            <Link to="/mypage/deleteid">탈퇴하기</Link>
+          <button
+            onClick={() =>
+              modalStore.openModal("twoBtn", {
+                message: () => <DeleteID />,
+                onConfirm: async () => {
+                  try {
+                    const accessToken =
+                      window.localStorage.getItem("token"); // 저장된 토큰 가져오기
+                    if (!accessToken) {
+                      console.error(
+                        "탈퇴하기 요청 실패: 토큰이 없습니다."
+                      );
+                      return;
+                    }
+
+                    const response = await axios.delete(
+                      `${import.meta.env.VITE_BE_API_URL}/users/withdrawal`,
+                      {
+                        headers: {
+                          Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 추가
+                          "Content-Type": "application/json",
+                        },
+                      }
+                    );
+                    if (response.status === 200) {
+                      window.localStorage.removeItem("token"); // token 삭제
+                      authStore.setLoggedIn(false);
+                      navigate("/");
+                      modalStore.openModal("oneBtn", {
+                        message: "탈퇴하기 완료.",
+                        onConfirm: async () => {
+                          await modalStore.closeModal()
+                        }
+                      });
+                      console.log("탈퇴하기 완료")
+                    }
+                    // 토큰값 제거
+                  } catch (error) {
+                    console.error("탈퇴하기 요청 실패!:", error);
+                    // if (error.response?.status === 401) return setMessage("요청 주소가 없습니다.");
+                    // if (error.response?.status === 500) {
+                    //   setMessage("서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+                    // } else if (error.response?.status === 400) {
+                    //   setMessage(error.response?.data);
+                    // } else {
+                    //   setMessage("회원가입 요청 중 알 수 없는 오류가 발생했습니다.");
+                    // }
+                  }
+                },
+              })
+            }
+          >
+            탈퇴하기
           </button>
         </div>
       </div>
