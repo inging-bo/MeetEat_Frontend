@@ -117,20 +117,20 @@ export default function CheckPlace() {
           />
         )}
       </div>
-      <div className="absolute flex flex-col items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[790px] h-[412px] bg-white rounded-lg drop-shadow-2xl z-20 py-[40px] will-change-transform">
+      <div className="absolute flex flex-col items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[350px] md:w-[790px] h-[412px] bg-white rounded-lg drop-shadow-2xl z-20 py-[40px] will-change-transform">
         <div className="flex flex-col items-center">
           <CheckTitle />
-          <p className="text-xl pb-1 pt-[30px] font-semibold">
+          <p className="text-base md:text-xl pb-1 pt-[30px] font-semibold">
             방문할 음식점을 선택하는 중이에요.
           </p>
-          <p className="text-xl pb-3 font-semibold">
+          <p className="text-base md:text-xl pb-3 font-semibold">
             {second}초 뒤에 음식점이 공개됩니다!
           </p>
         </div>
-        <div className="people-container w-[700px] h-[200px] flex flex-col justify-center gap-4 py-3 bg-[#F8F8F8] rounded-lg text-[#555555] text-[14px] relative">
+        <div className="people-container w-[340px] md:w-[700px] h-[200px] flex flex-col justify-center gap-4 py-3 bg-[#F8F8F8] rounded-lg text-[#555555] text-[14px] relative">
           {matchingData.map((item) => (
             <>
-              <div className="people-info grid w-[700px] grid-cols-[200px_200px_200px] justify-center">
+              <div className="people-info grid w-[340px] md:w-[700px] grid-cols-[113px_113px_113px] md:grid-cols-[200px_200px_200px] justify-center">
                 <p className="place-name text-overflow">{item.place.name}</p>
                 <p className="text-overflow">
                   {item.place.category_name.slice(
@@ -149,7 +149,7 @@ export default function CheckPlace() {
               </div>
             </>
           ))}
-          <div className="pick-border w-[650px] h-[35px] absolute top-[68px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 border border-[#FF6445] rounded-lg"></div>
+          <div className="pick-border w-[340px] md:w-[650px] h-[35px] absolute top-[68px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 border border-[#FF6445] rounded-lg"></div>
         </div>
       </div>
     </>
