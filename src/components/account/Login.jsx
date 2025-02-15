@@ -6,7 +6,6 @@ import HidePWIcon from "../../assets/hidePW-icon.svg?react";
 import KakaoIcon from "../../assets/Login-icon-kakao.svg?react";
 import NaverIcon from "../../assets/Login-icon-naver.svg?react";
 import axios from "axios";
-import modalStore from "../../store/modalStore.js";
 import authStore from "../../store/authStore.js";
 
 export default function Login() {
@@ -87,15 +86,19 @@ export default function Login() {
   // ✅ 서비스별 로그인 URL 설정
   const OAUTH_PROVIDERS = {
     kakao: {
-      clientId: "a07fdc7a9364fd1acede10690029fc10",
+      clientId: import.meta.env.VITE_KAKAO_CLIENT_ID,
       authUrl: "https://kauth.kakao.com/oauth/authorize",
-      redirectUri:  "https://meet-eat-frontend.vercel.app/account",
+      redirectUri: window.location.hostname === "localhost"
+        ? "http://localhost:5173/account"
+        : "https://meet-eat-frontend.vercel.app/account",
       state: "", // 카카오는 state가 필요 없음
     },
     naver: {
       clientId: import.meta.env.VITE_NAVER_CLIENT_ID,
       authUrl: "https://nid.naver.com/oauth2.0/authorize",
-      redirectUri: "https://meet-eat-frontend.vercel.app/account",
+      redirectUri: window.location.hostname === "localhost"
+        ? "http://localhost:5173/account"
+        : "https://meet-eat-frontend.vercel.app/account",
       state: "RANDOM_STATE", // CSRF 방지를 위한 랜덤 값 (임시)
     },
   };
@@ -122,6 +125,7 @@ export default function Login() {
 
     const OAUTH_URL = `${authUrl}?${queryParams.toString()}`;
     window.location.href = OAUTH_URL; // 로그인 페이지로 이동
+
   };
 
   // ✅ URL에서 인가 코드 가져오기
@@ -138,7 +142,6 @@ export default function Login() {
       setMessage("인가 코드가 없습니다.");
       return;
     }
-
     const urlParams = new URLSearchParams(window.location.search);
     const state = urlParams.get("state");
 

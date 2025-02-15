@@ -7,7 +7,12 @@ const Modal = observer(() => {
   if (!modalStore.isOpen) return null;
 
   const { modalStyle, modalProps } = modalStore;
-  const { message, onConfirm } = modalProps; // onConfirm, onCancel 추가
+  let { message, onConfirm } = modalProps; // onConfirm, onCancel 등
+
+  // 만약 message가 함수라면 호출하여 최신 JSX 요소를 생성
+  if (typeof message === 'function') {
+    message = message();
+  }
 
   // one 버튼 예 클릭시
   const handleConfirm = async () => {
@@ -25,7 +30,7 @@ const Modal = observer(() => {
             message={message}
             onConfirm={handleConfirm}
           />
-        )
+        );
       case 'twoBtn':
         return (
           <TwoBtnModal
@@ -46,7 +51,8 @@ const Modal = observer(() => {
       >
       </div>
       <div
-        className="fixed z-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 p-10 min-w-fit bg-white rounded-lg drop-shadow-lg">
+        className="fixed z-20 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 p-10 min-w-fit bg-white rounded-lg drop-shadow-lg"
+      >
         {renderModalContent()}
       </div>
     </>
