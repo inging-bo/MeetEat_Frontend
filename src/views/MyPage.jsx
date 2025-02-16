@@ -5,10 +5,13 @@ import Header from "../components/layout/Header.jsx";
 export default function MyPage() {
   return (
     <>
-      <Header />
-      <div className="max-w-[1200px] w-full h-full pt-40 pb-20 flex gap-[30px]">
-        <RestInfo />
-        <RestReviews />
+      <Header/>
+      <div
+        className="flex-col m-4
+        sm:flex sm:flex-row sm:max-w-[1200px] sm:w-full sm:h-full sm:pt-40 sm:pb-20 sm:m-0 sm:gap-[30px]"
+      >
+        <RestInfo/>
+        <RestReviews/>
       </div>
     </>
   );
