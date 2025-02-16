@@ -51,15 +51,12 @@ export default function Login() {
           },
         }
       );
-      console.log("로그인 응답 데이터:", response.data);
-      authStore.setLoggedIn(true);
-
-      // // ✅ 토큰 저장
-      window.localStorage.setItem("token", response.data.accessToken);
-
       if (response.status === 200) {
+        console.log("로그인 응답 데이터:", response.data);
+        authStore.setLoggedIn(true);
+        // // ✅ 토큰 저장
+        window.localStorage.setItem("token", response.data.accessToken);
         setMessage("로그인 성공!");
-
         // 입력 필드 초기화
         setEmailInput("");
         setPwInput("");
@@ -201,7 +198,7 @@ export default function Login() {
       <div className="flex flex-1 flex-col gap-3 justify-center">
         <h1 className="flex justify-center h-8 mb-8">
           <Link to={"/"}>
-            <HeaderLogo className="h-full w-full" />
+            <HeaderLogo className="h-full w-full"/>
           </Link>
         </h1>
         {/* 이메일 형식일 때 통과 하도록 적기 */}
@@ -241,9 +238,9 @@ export default function Login() {
               onClick={togglePW}
             >
               {showPW ? (
-                <ShowPWIcon className="w-full h-full" />
+                <ShowPWIcon className="w-full h-full"/>
               ) : (
-                <HidePWIcon className="w-full h-full" />
+                <HidePWIcon className="w-full h-full"/>
               )}
             </div>
           </label>
@@ -268,10 +265,10 @@ export default function Login() {
         <p className="text-sm mt-5">SNS 간편 로그인</p>
         <div className="flex h-14 justify-center gap-4">
           <button onClick={(e) => handleOAuthLogin("naver", e)}>
-            <NaverIcon className="w-full h-full" />
+            <NaverIcon className="w-full h-full"/>
           </button>
           <button onClick={(e) => handleOAuthLogin("kakao", e)}>
-            <KakaoIcon className="w-full h-full" />
+            <KakaoIcon className="w-full h-full"/>
           </button>
         </div>
         {/* 에러 메시지 표시 */}
