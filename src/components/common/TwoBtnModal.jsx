@@ -7,7 +7,10 @@ export default function TwoBtnModal({ message, onConfirm, reverseOrder = false }
   const buttons = [
     <motion.button
       key="no"
-      whileTap={{ scale: 0.95 }}
+      whileTap={{
+        scale: 0.95,
+        backgroundColor: reverseOrder ? "rgb(230,80,50)" : "rgb(90,90,90)"
+      }}
       onClick={() => modalStore.closeModal()}
       className={`flex flex-1 items-center justify-center h-full px-5 py-2 rounded-md text-white ${reverseOrder ? "bg-primary" : "bg-secondary"}`}
     >
@@ -15,7 +18,10 @@ export default function TwoBtnModal({ message, onConfirm, reverseOrder = false }
     </motion.button>,
     <motion.button
       key="yes"
-      whileTap={{ scale: 0.95 }}
+      whileTap={{
+        scale: 0.95,
+        backgroundColor: reverseOrder ? "rgb(90,90,90)" : "rgb(230,80,50)"
+      }}
       className={`flex flex-1 items-center justify-center h-full px-5 py-2 rounded-md text-white ${reverseOrder ? "bg-secondary" : "bg-primary"}`}
       onClick={() => onConfirm()}
     >
