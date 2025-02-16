@@ -83,7 +83,7 @@ export default function WriteReview() {
         {
           matchingHistoryId: matchedId,
           restaurantId: restId,
-          starRate: starScore,
+          rating: starScore,
           description: textareaValue,
           files: imageList,
         },
