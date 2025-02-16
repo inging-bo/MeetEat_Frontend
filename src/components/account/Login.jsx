@@ -118,11 +118,11 @@ export default function Login() {
         }
       }
     } catch (error) {
-      console.log(error)
-      const errorMessage = error.response?.data?.message
-      const errorCode = error.response?.data?.error
-      const errorStatus = error.response?.data?.status
-      setMessage(errorMessage)
+      console.log(error);
+      const errorMessage = error.response?.data?.message;
+      const errorCode = error.response?.data?.error;
+      const errorStatus = error.response?.data?.status;
+      setMessage(errorMessage);
     }
   };
 
@@ -232,11 +232,11 @@ export default function Login() {
         //       window.sessionStorage.setItem("isCompleted", "true");
         //       window.sessionStorage.setItem("matchedData", JSON.stringify(res));
         //     }
-        //     navigate("/");
         //   })
         //   .catch(function (error) {
         //     console.log(error);
         //   });
+        navigate("/");
       } else {
         throw new Error("로그인 실패");
       }
