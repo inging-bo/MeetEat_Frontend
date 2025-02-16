@@ -43,7 +43,7 @@ export default function CheckPlace() {
 
   // SSE 재연결
   useEffect(() => {
-    // fetchSSE();
+    fetchSSE();
     const jsonData = JSON.parse(
       window.sessionStorage.getItem("matchingData")
     ).data;
@@ -71,82 +71,82 @@ export default function CheckPlace() {
   const [user, setUser] = useState(new Map());
   const [agree, setAgree] = useState(false);
 
-  // // SSE fetch
-  // const fetchSSE = () => {
-  //   // header 보내기 위해 EventSourcePolyfill 사용
-  //   const eventSource = new EventSourcePolyfill(
-  //     `${import.meta.env.VITE_BE_API_URL}/sse/subscribe`,
-  //     {
-  //       headers: {
-  //         Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     }
-  //   );
+  // SSE fetch
+  const fetchSSE = () => {
+    // header 보내기 위해 EventSourcePolyfill 사용
+    const eventSource = new EventSourcePolyfill(
+      `${import.meta.env.VITE_BE_API_URL}/sse/subscribe`,
+      {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-  //   eventSource.onopen = () => {
-  //     // 연결 시 할 일
-  //   };
+    eventSource.onopen = () => {
+      // 연결 시 할 일
+    };
 
-  //   // 방법1. onmessage 이용
-  //   // eventSource.onmessage = async (e) => {
-  //   //   const res = await e.data;
-  //   //   const parsedData = JSON.parse(res);
-  //   //   // 받아오는 data로 할 일
-  //   //   if (parsedData.message === "수락 알림이 도착했습니다.") {
-  //   //     if (parsedData.user.join === false) {
-  //   //       alert("매칭 인원 중 누군가가 거절하였습니다");
-  //   //       window.sessionStorage.clear();
-  //   //       return navigate("/");
-  //   //     }
-  //   //     setUser((prev) => {
-  //   //       const newState = new Map(prev);
-  //   //       newState.set(parsedData.user.nickname, true);
-  //   //       return newState;
-  //   //     });
-  //   //   }
-  //   //   if (parsedData.message === "모임이 생성되었습니다") {
-  //   //     window.sessionStorage.setItem("matchedData", JSON.stringify(res));
-  //   //     window.sessionStorage.removeItem("isMatching");
-  //   //     window.sessionStorage.removeItem("isMatched");
-  //   //     window.sessionStorage.setItem("isCompleted", "true");
-  //   //     navigate(`/matching/choice-place/${res.data.id}`);
-  //   //   }
-  //   // };
+    // 방법1. onmessage 이용
+    // eventSource.onmessage = async (e) => {
+    //   const res = await e.data;
+    //   const parsedData = JSON.parse(res);
+    //   // 받아오는 data로 할 일
+    //   if (parsedData.message === "수락 알림이 도착했습니다.") {
+    //     if (parsedData.user.join === false) {
+    //       alert("매칭 인원 중 누군가가 거절하였습니다");
+    //       window.sessionStorage.clear();
+    //       return navigate("/");
+    //     }
+    //     setUser((prev) => {
+    //       const newState = new Map(prev);
+    //       newState.set(parsedData.user.nickname, true);
+    //       return newState;
+    //     });
+    //   }
+    //   if (parsedData.message === "모임이 생성되었습니다") {
+    //     window.sessionStorage.setItem("matchedData", JSON.stringify(res));
+    //     window.sessionStorage.removeItem("isMatching");
+    //     window.sessionStorage.removeItem("isMatched");
+    //     window.sessionStorage.setItem("isCompleted", "true");
+    //     navigate(`/matching/choice-place/${res.data.id}`);
+    //   }
+    // };
 
-  //   // 방법2. EventListener
-  //   eventSource.addEventListener("Join", (e) => {
-  //     if (e.data.user.join === false) {
-  //       alert("매칭 인원 중 누군가가 거절하였습니다");
-  //       window.sessionStorage.clear();
-  //       return navigate("/");
-  //     }
-  //     setUser((prev) => {
-  //       const newState = new Map(prev);
-  //       newState.set(e.data.user.nickname, true);
-  //       return newState;
-  //     });
-  //   });
-  //   eventSource.addEventListener("Team", (e) => {
-  //     window.sessionStorage.setItem("matchedData", JSON.stringify(e.data));
-  //     window.sessionStorage.removeItem("isMatching");
-  //     window.sessionStorage.removeItem("isMatched");
-  //     window.sessionStorage.setItem("isCompleted", "true");
-  //     navigate(`/matching/choice-place/${e.data.id}`);
-  //     eventSource.close();
-  //   });
+    // 방법2. EventListener
+    eventSource.addEventListener("Join", (e) => {
+      if (e.data.user.join === false) {
+        alert("매칭 인원 중 누군가가 거절하였습니다");
+        window.sessionStorage.clear();
+        return navigate("/");
+      }
+      setUser((prev) => {
+        const newState = new Map(prev);
+        newState.set(e.data.user.nickname, true);
+        return newState;
+      });
+    });
+    eventSource.addEventListener("Team", (e) => {
+      window.sessionStorage.setItem("matchedData", JSON.stringify(e.data));
+      window.sessionStorage.removeItem("isMatching");
+      window.sessionStorage.removeItem("isMatched");
+      window.sessionStorage.setItem("isCompleted", "true");
+      navigate(`/matching/choice-place/${e.data.id}`);
+      eventSource.close();
+    });
 
-  //   eventSource.onerror = (e) => {
-  //     // 종료 또는 에러 발생 시 할 일
-  //     eventSource.close();
-  //     if (e.error) {
-  //       // 에러 발생 시 할 일
-  //     }
-  //     if (e.target.readyState === EventSource.CLOSED) {
-  //       // 종료 시 할 일
-  //     }
-  //   };
-  // };
+    eventSource.onerror = (e) => {
+      // 종료 또는 에러 발생 시 할 일
+      eventSource.close();
+      if (e.error) {
+        // 에러 발생 시 할 일
+      }
+      if (e.target.readyState === EventSource.CLOSED) {
+        // 종료 시 할 일
+      }
+    };
+  };
 
   const isMounted = useRef(false);
   useEffect(() => {
@@ -154,9 +154,9 @@ export default function CheckPlace() {
       matchingData.map((data) => {
         setUser((pre) => new Map([...pre, [data.user.nickname, false]]));
       });
-      apiGetU2();
-      apiGetU3();
-      apiGetU4();
+      // apiGetU2();
+      // apiGetU3();
+      // apiGetU4();
     } else {
       isMounted.current = true;
     }
@@ -168,7 +168,7 @@ export default function CheckPlace() {
       agree &&
       [...user.values()].indexOf(false) === -1
     ) {
-      apiCompleted();
+      // apiCompleted();
     } else {
       isMounted.current = true;
     }

@@ -24,13 +24,13 @@ export default function Login() {
   // 이메일 input 내용 삭제 용
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const clearEmailInput = () => {
-    setEmailInput('');
+    setEmailInput("");
     setIsEmailFocused(false); // 포커스 해제
   };
   // 비밀번호 input 내용 삭제 용
   const [isFocused, setIsPwFocused] = useState(false);
   const clearPwInput = () => {
-    setPwInput('');
+    setPwInput("");
     setIsPwFocused(false); // 포커스 해제
   };
   // 입력값 변경 시 hasValue 상태 업데이트
@@ -51,7 +51,7 @@ export default function Login() {
 
   const login = async (event) => {
     event.preventDefault(); // 기본 제출 동작 방지
-    setMessageKey(prevKey => prevKey + 1);
+    setMessageKey((prevKey) => prevKey + 1);
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailInput === "") return setMessage("이메일을 입력하세요");
@@ -81,10 +81,10 @@ export default function Login() {
               </>
             ),
             onConfirm: async () => {
-              await navigate("/mypage")
+              await navigate("/mypage");
               modalStore.closeModal();
-            }
-          })
+            },
+          });
         } else {
           navigate("/");
         }
@@ -122,7 +122,7 @@ export default function Login() {
       redirectUri:
         window.location.hostname === "localhost"
           ? "http://localhost:5173/account"
-          : "https://meet-eat-frontend.vercel.app/account",
+          : "https://meet--eat/account",
       state: "", // 카카오는 state가 필요 없음
     },
     naver: {
@@ -131,7 +131,7 @@ export default function Login() {
       redirectUri:
         window.location.hostname === "localhost"
           ? "http://localhost:5173/account"
-          : "https://meet-eat-frontend.vercel.app/account",
+          : "https://meet--eat/account",
       state: "RANDOM_STATE", // CSRF 방지를 위한 랜덤 값 (임시)
     },
   };
@@ -225,7 +225,7 @@ export default function Login() {
       handleOAuthCallback();
     }
   }, []);
-  console.log(messageKey)
+  console.log(messageKey);
   return (
     <form
       className="p-6 flex w-full h-full text-black
@@ -234,11 +234,11 @@ export default function Login() {
       <div className="flex flex-1 flex-col gap-3 justify-center">
         <h1 className="hidden sm:flex justify-center h-8 mb-8">
           <Link to={"/"}>
-            <HeaderLogo className="h-full w-full"/>
+            <HeaderLogo className="h-full w-full" />
           </Link>
         </h1>
         {/* 에러 메시지 표시 */}
-        <ErrorMessage key={messageKey} message={message} duration={3000}/>
+        <ErrorMessage key={messageKey} message={message} duration={3000} />
         {/* 이메일 형식일 때 통과 하도록 적기 */}
         <div className="flex flex-col items-start">
           <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
@@ -261,17 +261,20 @@ export default function Login() {
                 className="flex w-11 h-10 absolute top-1/2 -translate-y-1/2 right-0 text-gray-500 cursor-pointer "
                 onClick={clearEmailInput}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                     className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 p-0.5 bg-secondary/20 rounded-full">
-                  <path
-                    d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 p-0.5 bg-secondary/20 rounded-full"
+                >
+                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
                 </svg>
               </div>
             )}
           </label>
           {/* 에러 메시지 표시 */}
           {!emailRegex.test(emailInput) && emailInput !== "" ? (
-            <ErrorMessage message="이메일 형식이 아닙니다" persistent={true}/>
+            <ErrorMessage message="이메일 형식이 아닙니다" persistent={true} />
           ) : (
             <span className="text-sm text-[#FF0000] mt-2 h-5"></span>
           )}
@@ -297,10 +300,13 @@ export default function Login() {
                 className="flex w-10 h-10 absolute top-1/2 -translate-y-1/2 right-10 text-gray-500 cursor-pointer"
                 onClick={clearPwInput}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                     className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 p-0.5 bg-secondary/20 rounded-full">
-                  <path
-                    d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 p-0.5 bg-secondary/20 rounded-full"
+                >
+                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
                 </svg>
               </div>
             )}
@@ -309,9 +315,9 @@ export default function Login() {
               onClick={togglePW}
             >
               {showPW ? (
-                <ShowPWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5"/>
+                <ShowPWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5" />
               ) : (
-                <HidePWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5"/>
+                <HidePWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5" />
               )}
             </div>
           </label>
@@ -336,10 +342,10 @@ export default function Login() {
         <p className="text-sm mt-5">SNS 간편 로그인</p>
         <div className="flex h-14 justify-center gap-4">
           <button onClick={(e) => handleOAuthLogin("naver", e)}>
-            <NaverIcon className="w-full h-full"/>
+            <NaverIcon className="w-full h-full" />
           </button>
           <button onClick={(e) => handleOAuthLogin("kakao", e)}>
-            <KakaoIcon className="w-full h-full"/>
+            <KakaoIcon className="w-full h-full" />
           </button>
         </div>
       </div>
