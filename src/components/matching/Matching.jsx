@@ -221,12 +221,16 @@ export default function Matching({
 
   async function apiPOSTCancel() {
     await axios
-      .post(`${import.meta.env.VITE_BE_API_URL}/matching/cancel`, {
-        headers: {
-          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-      })
+      .post(
+        `${import.meta.env.VITE_BE_API_URL}/matching/cancel`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then((res) => {
         console.log(res);
       })

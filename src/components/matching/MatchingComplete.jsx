@@ -269,6 +269,7 @@ export default function MatchingComplete() {
     await axios
       .post(
         `${import.meta.env.VITE_BE_API_URL}/matching/cancel/legal/${matchingId}`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
@@ -291,6 +292,7 @@ export default function MatchingComplete() {
     await axios
       .post(
         `${import.meta.env.VITE_BE_API_URL}/matching/cancel/illegal/${matchingId}`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
