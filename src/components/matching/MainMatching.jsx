@@ -11,46 +11,39 @@ import InfoWindow from "./InfoWindow";
 import Matching from "./Matching";
 import { useNavigate } from "react-router-dom";
 import authStore from "../../store/authStore";
+import matchingStore from "../../store/matchingStore";
 import { BottomSheet } from "react-spring-bottom-sheet";
 import "../../customBottomSheet.css";
 
 export default function MainMatching() {
   const navigate = useNavigate();
-  const [isLoggedIn, setLoggedIn] = useState();
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
-  const handleDismiss = () => {
-    setBottomSheetOpen(false);
-  };
+  const [isLoggedIn, setLoggedIn] = useState();
+  const [isMatching, setIsMatching] = useState(false);
+  const [isMatched, setIsMatched] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
 
-  // 로그인 확인
+  // 로그인, 매칭 확인
   useLayoutEffect(() => {
     authStore.checkLoggedIn();
     setLoggedIn(authStore.loggedIn);
+    matchingStore.checkMatching();
+    matchingStore.checkMatched();
+    matchingStore.checkCompleted();
+    setIsMatching(matchingStore.isMatching);
+    setIsMatched(matchingStore.isMatched);
+    setIsCompleted(matchingStore.isCompleted);
   }, []);
 
-  // 매칭중 확인
-  const [isMatching, setIsMatching] = useState("false");
-  const [isMatched, setIsMatched] = useState("false");
-
   useEffect(() => {
-    window.sessionStorage.getItem("isMatching") !== null &&
-      setIsMatching(window.sessionStorage.getItem("isMatching"));
-    window.sessionStorage.getItem("isMatched") !== null &&
-      setIsMatched(window.sessionStorage.getItem("isMatched"));
-    // 매칭 완료된 상태인경우 매칭완료 페이지로 이동
-    if (
-      window.sessionStorage.getItem("isCompleted") === "true" &&
-      window.sessionStorage.getItem("matchedData") !== undefined
-    ) {
+    if (isCompleted) {
       const now = new Date(); // 오늘 날짜
       const firstDay = new Date(
         JSON.parse(window.sessionStorage.getItem("matchedData")).data.createdAt
       ); // 시작 날짜
-      console.log(firstDay);
       const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
       const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
       const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
-      console.log(passedTimeMin + "min");
       // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
       if (passedTimeMin >= 60) {
         const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
@@ -331,7 +324,7 @@ export default function MainMatching() {
 
   return (
     <>
-      {isMatching === "false" && (
+      {!isMatching && (
         <>
           <header className="fixed top-0 shadow-lg w-screen z-10 flex justify-center h-[77px] py-3 bg-white">
             <div className="flex w-full justify-between max-w-screen-xl">
@@ -588,7 +581,7 @@ export default function MainMatching() {
           </div>
         </>
       )}
-      {isMatching === "true" && (
+      {isMatching && (
         <Matching
           setIsMatching={setIsMatching}
           setIsMatched={setIsMatched}

@@ -268,7 +268,7 @@ export default function MatchingComplete() {
   async function apiPOSTCancel(matchingId) {
     await axios
       .post(
-        `${import.meta.env.VITE_BE_API_URL}/matching/cancel/illegal/${matchingId}`,
+        `${import.meta.env.VITE_BE_API_URL}/matching/cancel/legal/${matchingId}`,
         {
           headers: {
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
@@ -290,7 +290,7 @@ export default function MatchingComplete() {
   async function apiPOSTCancelIllegal(matchingId) {
     await axios
       .post(
-        `${import.meta.env.VITE_BE_API_URL}/matching/cancel/illegal${matchingId}`,
+        `${import.meta.env.VITE_BE_API_URL}/matching/cancel/illegal/${matchingId}`,
         {
           headers: {
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,

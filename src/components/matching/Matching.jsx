@@ -17,7 +17,6 @@ export default function Matching({
 
   // 뒤로가기 방지
   history.pushState(null, document.title, location.href); // push
-
   const categoryName = selectedMarker.category_name.slice(
     selectedMarker.category_name.lastIndexOf(">") + 2
   );
@@ -72,7 +71,7 @@ export default function Matching({
   //       .then((res) => {
   //         console.log(res.data);
   //         setIsMatching("true");
-  //         window.sessionStorage.setItem("isMatching", "true");
+  //         window.sessionStorage.setItem("isMatching", true);
   //       })
   //       .catch((err) => {
   //         console.log(err);
@@ -86,7 +85,7 @@ export default function Matching({
   //   //   if (parsedData === "임시 모임이 생성되었습니다.") {
   //   //     setIsMatched(true);
   //   //     window.sessionStorage.setItem("tempPosition", JSON.stringify(position));
-  //   //     window.sessionStorage.setItem("isMatched", "true");
+  //   //     window.sessionStorage.setItem("isMatched", true);
   //   //     window.sessionStorage.setItem(
   //   //       "matchingData",
   //   //       JSON.stringify(parsedData)
@@ -99,7 +98,7 @@ export default function Matching({
   //   eventSource.addEventListener("TempTeam", (e) => {
   //     setIsMatched(true);
   //     window.sessionStorage.setItem("tempPosition", JSON.stringify(position));
-  //     window.sessionStorage.setItem("isMatched", "true");
+  //     window.sessionStorage.setItem("isMatched", true);
   //     window.sessionStorage.setItem("matchingData", JSON.stringify(e.data));
   //     navigate(`/matching/check-place/${e.data.teamId}`);
   //     eventSource.close();
@@ -151,7 +150,7 @@ export default function Matching({
           .then((res) => {
             console.log(res.data);
             setIsMatching("true");
-            window.sessionStorage.setItem("isMatching", "true");
+            window.sessionStorage.setItem("isMatching", true);
             setTimeout(
               () =>
                 axios
@@ -166,7 +165,7 @@ export default function Matching({
                       "tempPosition",
                       JSON.stringify(position)
                     );
-                    window.sessionStorage.setItem("isMatched", "true");
+                    window.sessionStorage.setItem("isMatched", true);
                     window.sessionStorage.setItem(
                       "matchingData",
                       JSON.stringify(res)
