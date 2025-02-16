@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { StaticMap } from "react-kakao-maps-sdk";
@@ -6,9 +6,50 @@ import CheckTitle from "../../assets/check-title.svg?react";
 import Waiting from "../../assets/waiting.svg?react";
 import Check from "../../assets/check.svg?react";
 import modalStore from "../../store/modalStore.js";
+import authStore from "../../store/authStore";
+import matchingStore from "../../store/matchingStore";
 import { EventSourcePolyfill } from "event-source-polyfill";
 
 export default function CheckPlace() {
+  const [isLoggedIn, setLoggedIn] = useState();
+  const [isMatching, setIsMatching] = useState(false);
+  const [isMatched, setIsMatched] = useState(false);
+  // 로그인, 매칭 확인
+  useLayoutEffect(() => {
+    authStore.checkLoggedIn();
+    setLoggedIn(authStore.loggedIn);
+    matchingStore.checkMatching();
+    matchingStore.checkMatched();
+    setIsMatching(matchingStore.isMatching);
+    setIsMatched(matchingStore.isMatched);
+
+    // 유저가 매칭된 상태가 아니라면 메인페이지로 이동
+    if (!isMatched) {
+      if (isMatching) {
+        window.sessionStorage.removeItem("isMatching");
+        matchingStore.checkMatching();
+      }
+      return navigate("/");
+    }
+    if (!isMatching) {
+      alert("잘못된 접근입니다.");
+      return navigate("/");
+    }
+    if (!isLoggedIn) {
+      alert("로그인 후 이용해주세요 :)");
+      navigate("/");
+    }
+  }, []);
+
+  // SSE 재연결
+  useEffect(() => {
+    // fetchSSE();
+    const jsonData = JSON.parse(
+      window.sessionStorage.getItem("matchingData")
+    ).data;
+    setMatchingData(jsonData.restaurantList);
+  }, []);
+
   // 뒤로가기 발생시 매칭 취소
   history.pushState(null, document.title, location.href); // push
   const preventBack = () => {
@@ -29,28 +70,6 @@ export default function CheckPlace() {
   const [matchingData, setMatchingData] = useState([]);
   const [user, setUser] = useState(new Map());
   const [agree, setAgree] = useState(false);
-
-  // 초기 설정
-  useEffect(() => {
-    // 유저가 매칭된 상태가 아니라면 메인페이지로 이동
-    if (window.sessionStorage.getItem("isMatched") === "false") {
-      if (window.sessionStorage.getItem("isMatching") === "true") {
-        window.sessionStorage.setItem("isMatching", "false");
-      }
-      return navigate("/");
-    }
-    if (window.sessionStorage.getItem("isMatching") === "false") {
-      return navigate("/");
-    }
-
-    // SSE 재연결
-    // apiSSESub();
-    // fetchSSE();
-    const jsonData = JSON.parse(
-      window.sessionStorage.getItem("matchingData")
-    ).data;
-    setMatchingData(jsonData.restaurantList);
-  }, []);
 
   // // SSE fetch
   // const fetchSSE = () => {

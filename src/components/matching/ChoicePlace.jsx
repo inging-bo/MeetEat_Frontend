@@ -1,10 +1,41 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { StaticMap } from "react-kakao-maps-sdk";
 import { createBrowserHistory } from "history";
+import authStore from "../../store/authStore";
+import matchingStore from "../../store/matchingStore";
 import CheckTitle from "../../assets/check-title.svg?react";
 
 export default function CheckPlace() {
+  // 로그인, 매칭 확인
+  useLayoutEffect(() => {
+    authStore.checkLoggedIn();
+    matchingStore.checkCompleted();
+
+    if (!authStore.loggedIn) {
+      alert("로그인 후 이용해주세요 :)");
+      navigate("/");
+    }
+    // 유저가 매칭된 상태가 아니라면 메인페이지로 이동
+    if (!matchingStore.isCompleted) {
+      alert("잘못된 접근입니다.");
+      return navigate("/");
+    }
+    // 매칭 정보가 없으면 메인 페이지로 이동
+    if (window.sessionStorage.getItem("matchingData") === null) {
+      return navigate("/");
+    }
+    // 저장된 매칭데이터 저장
+    const jsonData = JSON.parse(
+      window.sessionStorage.getItem("matchingData")
+    ).data;
+    const jsonCurData = JSON.parse(
+      window.sessionStorage.getItem("matchedData")
+    ).data;
+    setMatchingData(jsonData.restaurantList);
+    setPickedPlace(jsonCurData.matching.restaurant.placeName);
+  }, []);
+
   // 뒤로가기 발생시 매칭 취소
   const history = createBrowserHistory();
   const { pathname } = useLocation();
@@ -24,26 +55,6 @@ export default function CheckPlace() {
   const position = JSON.parse(window.sessionStorage.getItem("tempPosition"));
   const [matchingData, setMatchingData] = useState([]);
   const [pickedPlace, setPickedPlace] = useState();
-
-  // 초기 설정
-  useEffect(() => {
-    // 유저가 매칭된 상태가 아니라면 메인페이지로 이동
-    if (window.sessionStorage.getItem("isCompleted") !== "true") {
-      alert("잘못된 접근입니다.");
-      return navigate("/");
-    }
-
-    // 저장된 매칭데이터 저장
-    const jsonData = JSON.parse(
-      window.sessionStorage.getItem("matchingData")
-    ).data;
-    const jsonCurData = JSON.parse(
-      window.sessionStorage.getItem("matchedData")
-    ).data;
-    console.log(jsonData);
-    setMatchingData(jsonData.restaurantList);
-    setPickedPlace(jsonCurData.matching.restaurant.placeName);
-  }, []);
 
   // 타이머
   const MINUTES_IN_MS = 1 * 5 * 1000;
