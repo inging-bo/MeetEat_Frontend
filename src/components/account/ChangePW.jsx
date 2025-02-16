@@ -6,6 +6,7 @@ import Header from "../layout/Header.jsx";
 import axios from "axios";
 import authStore from "../../store/authStore.js";
 import modalStore from "../../store/modalStore.js";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function ChangePW() {
   const navigate = useNavigate();
@@ -30,8 +31,8 @@ export default function ChangePW() {
   useEffect(() => {
     setHasValue(
       currentPwInput.length > 0 &&
-        newPwInput.length > 0 &&
-        subNewPwInput.length > 0
+      newPwInput.length > 0 &&
+      subNewPwInput.length > 0
     );
   }, [currentPwInput, newPwInput, subNewPwInput]);
 
@@ -93,7 +94,7 @@ export default function ChangePW() {
         return;
       }
       const PASSWORD_MISMATCH = error?.response?.data?.error;
-      console.log(error.response);
+      console.log(error);
       // console.log(error);
       // setMessage(error)
       // if (error === "UNAUTHORIZED") {
@@ -112,13 +113,12 @@ export default function ChangePW() {
 
   return (
     <form className="flex w-96 justify-center items-center">
-      <Header />
+      <Header/>
       <div className="flex flex-1 flex-col gap-3 justify-center">
         <h1 className="text-2xl text-center">비밀번호 변경</h1>
         <div className="relative flex flex-col items-start">
           <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
-            현재 비밀번호{" "}
-            <span className="text-red-500">- 임시로 현재 비번 1234입니다.</span>
+            현재 비밀번호
           </span>
           <label className="relative w-full">
             <input
@@ -135,17 +135,16 @@ export default function ChangePW() {
               onClick={toggleCurrentPW}
             >
               {showCurrentPW ? (
-                <ShowPWIcon className="w-full h-full" />
+                <ShowPWIcon className="w-full h-full"/>
               ) : (
-                <HidePWIcon className="w-full h-full" />
+                <HidePWIcon className="w-full h-full"/>
               )}
             </div>
           </label>
         </div>
         <div className="relative flex flex-col items-start">
           <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
-            새 비밀번호{" "}
-            <span className="text-red-500">- 3글자 이하면 오류</span>
+            새 비밀번호
           </span>
           <label className="relative w-full">
             <input
@@ -162,9 +161,9 @@ export default function ChangePW() {
               onClick={toggleNewPW}
             >
               {showNewPW ? (
-                <ShowPWIcon className="w-full h-full" />
+                <ShowPWIcon className="w-full h-full"/>
               ) : (
-                <HidePWIcon className="w-full h-full" />
+                <HidePWIcon className="w-full h-full"/>
               )}
             </div>
           </label>
@@ -188,9 +187,9 @@ export default function ChangePW() {
               onClick={toggleNewPWSub}
             >
               {showNewPWSub ? (
-                <ShowPWIcon className="w-full h-full" />
+                <ShowPWIcon className="w-full h-full"/>
               ) : (
-                <HidePWIcon className="w-full h-full" />
+                <HidePWIcon className="w-full h-full"/>
               )}
             </div>
           </label>
@@ -198,15 +197,26 @@ export default function ChangePW() {
             {newPwInput !== subNewPwInput && "비밀번호가 일치하지 않습니다."}
           </div>
         </div>
-        <button
-          type="submit"
-          className={`w-full h-11 rounded-md hover:bg-[#FF6445] hover:text-white ${
-            hasValue ? "bg-[#FF6445] text-white" : "bg-gray-200"
-          }`}
-          onClick={(e) => handleChangePW(e)}
-        >
-          변경하기
-        </button>
+        <div className="flex gap-2">
+          <motion.button
+            whileTap={{ scale:0.95, backgroundColor: "rgb(90,90,90)"} }
+            className={`w-full h-11 rounded-md text-white bg-secondary `}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/mypage")
+            }}
+          >
+              뒤로가기
+          </motion.button>
+          <motion.button
+            type="submit"
+            whileTap={{scale:0.95,backgroundColor: "rgb(230,80,50)",}}
+            className={`w-full h-11 rounded-md bg-primary text-white`}
+            onClick={(e) => handleChangePW(e)}
+          >
+              변경하기
+          </motion.button>
+        </div>
         {/* 에러 메시지 표시 */}
         <p className="text-sm text-[#FF0000] mt-2 min-h-5">{message}</p>
       </div>
