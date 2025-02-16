@@ -72,6 +72,14 @@ export default function Login() {
         }
       );
       if (response.status === 200) {
+        console.log("로그인 응답 데이터:", response.data);
+        authStore.setLoggedIn(true);
+        // // ✅ 토큰 저장
+        window.localStorage.setItem("token", response.data.accessToken);
+        setMessage("로그인 성공!");
+        // 입력 필드 초기화
+        setEmailInput("");
+        setPwInput("");
         if (response.data.needProfileUpdate) {
           modalStore.openModal("oneBtn", {
             message: (
@@ -86,16 +94,27 @@ export default function Login() {
             },
           });
         } else {
-          navigate("/");
+          axios
+            .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
+              headers: {
+                Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+              },
+            })
+            .then((res) => {
+              if (res.data.id !== undefined) {
+                window.sessionStorage.setItem("isCompleted", "true");
+                window.sessionStorage.setItem(
+                  "matchedData",
+                  JSON.stringify(res)
+                );
+              }
+              navigate("/");
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
         }
-        console.log("로그인 응답 데이터:", response.data);
-        authStore.setLoggedIn(true);
-        // // ✅ 토큰 저장
-        window.localStorage.setItem("token", response.data.accessToken);
-        setMessage("로그인 성공!");
-        // 입력 필드 초기화
-        setEmailInput("");
-        setPwInput("");
       } else {
         setMessage("로그인 실패");
       }
@@ -206,7 +225,23 @@ export default function Login() {
       if (response.status === 200) {
         window.localStorage.setItem("token", response.data.accessToken);
         authStore.setLoggedIn(true);
-        navigate("/"); // 메인 페이지로 리디렉션
+        axios
+          .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
+            headers: {
+              Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
+          })
+          .then((res) => {
+            if (res.data.id !== undefined) {
+              window.sessionStorage.setItem("isCompleted", "true");
+              window.sessionStorage.setItem("matchedData", JSON.stringify(res));
+            }
+            navigate("/");
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
       } else {
         throw new Error("로그인 실패");
       }
