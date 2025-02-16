@@ -19,9 +19,8 @@ export default function WriteReview() {
   // 이미지 핸들러
   const [imageList, setImageList] = useState([]);
   const handleAddImages = (e) => {
-    setImageList([]);
     const files = e.target.files;
-    let imageUrlLists = [];
+    let imageUrlLists = [...imageList];
 
     for (let i = 0; i < files.length; i++) {
       const currentImageUrl = URL.createObjectURL(files[i]);
@@ -33,6 +32,12 @@ export default function WriteReview() {
       alert("사진은 최대 7장까지 첨부 가능합니다.");
     }
     setImageList(imageUrlLists);
+  };
+
+  // 이미지 삭제 핸들러
+  const handleDeleteImage = (idx) => {
+    const tempArr = [...imageList].filter((_, index) => index !== idx);
+    return setImageList(tempArr);
   };
 
   // 초기 빈 별 그리기
@@ -54,7 +59,6 @@ export default function WriteReview() {
         </span>
       );
     }
-    console.log(result);
     return result;
   };
 
@@ -185,13 +189,22 @@ export default function WriteReview() {
               </>
             )}
             {imageList.map((image, idx) => (
-              <>
+              <div
+                className="relative min-w-[100px] min-h-[100px]"
+                key={"image_" + idx}
+              >
+                <button
+                  onClick={() => handleDeleteImage(idx)}
+                  className="absolute top-[2px] right-[5px] text-white text-[15px] font-thin drop-shadow-lg"
+                >
+                  ×
+                </button>
                 <img
                   src={image}
                   alt={`미리보기${idx}`}
                   className="w-[100px] h-[100px] object-cover rounded-lg border border-slate-200"
                 />
-              </>
+              </div>
             ))}
           </div>
         </div>
