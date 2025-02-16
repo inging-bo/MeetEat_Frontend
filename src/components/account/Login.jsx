@@ -102,6 +102,7 @@ export default function Login() {
               },
             })
             .then((res) => {
+              console.log("로그인 응당 데이터 ", res.data.id);
               if (res.data.id !== undefined) {
                 window.sessionStorage.setItem("isCompleted", "true");
                 window.sessionStorage.setItem(
@@ -115,19 +116,13 @@ export default function Login() {
               console.log(error);
             });
         }
-      } else {
-        setMessage("로그인 실패");
       }
     } catch (error) {
-      if (error.response?.status === 404)
-        return setMessage("사용자를 찾을 수 없습니다.");
-      if (error.response?.status === 500) {
-        setMessage("서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-      } else if (error.response?.status === 400) {
-        setMessage(error.response?.data?.message);
-      } else {
-        setMessage("회원가입 요청 중 알 수 없는 오류가 발생했습니다.");
-      }
+      console.log(error)
+      const errorMessage = error.response?.data?.message
+      const errorCode = error.response?.data?.error
+      const errorStatus = error.response?.data?.status
+      setMessage(errorMessage)
     }
   };
 
