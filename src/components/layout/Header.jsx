@@ -10,7 +10,10 @@ export default function Header() {
   const location = useLocation(); // 현재 경로 가져오기
 
   return (
-    <header className="fixed top-0 z-10 shadow-lg w-full flex justify-center min-h-[77px] bg-white">
+    <header
+      className="sticky top-0 z-10 shadow-lg w-screen flex justify-center min-h-[77px] bg-white
+      sm:fixed"
+    >
       <div className="flex w-full justify-between max-w-screen-xl">
         <div>
           <Link to="/" className="h-full px-4 flex items-center">
