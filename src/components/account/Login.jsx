@@ -141,7 +141,7 @@ export default function Login() {
       redirectUri:
         window.location.hostname === "localhost"
           ? "http://localhost:5173/account"
-          : "https://meet-eat-frontend.vercel.app/account",
+          : "https://meet--eat.com/account",
       state: "", // 카카오는 state가 필요 없음
     },
     naver: {
@@ -150,7 +150,7 @@ export default function Login() {
       redirectUri:
         window.location.hostname === "localhost"
           ? "http://localhost:5173/account"
-          : "https://meet-eat-frontend.vercel.app/account",
+          : "https://meet--eat.com/account",
       state: "RANDOM_STATE", // CSRF 방지를 위한 랜덤 값 (임시)
     },
   };

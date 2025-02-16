@@ -85,7 +85,7 @@ export default function WriteReview() {
           restaurantId: restId,
           starRate: starScore,
           description: textareaValue,
-          imgs: imageList,
+          files: imageList,
         },
         {
           headers: {
