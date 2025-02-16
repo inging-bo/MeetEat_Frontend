@@ -112,114 +112,116 @@ export default function ChangePW() {
   };
 
   return (
-    <form className="flex w-96 justify-center items-center">
+    <>
       <Header/>
-      <div className="flex flex-1 flex-col gap-3 justify-center">
-        <h1 className="text-2xl text-center">비밀번호 변경</h1>
-        <div className="relative flex flex-col items-start">
+      <form className="flex w-96 justify-center items-center">
+        <div className="flex flex-1 flex-col gap-3 justify-center">
+          <h1 className="text-2xl text-center">비밀번호 변경</h1>
+          <div className="relative flex flex-col items-start">
           <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
             현재 비밀번호
           </span>
-          <label className="relative w-full">
-            <input
-              type={showCurrentPW ? "text" : "password"}
-              name="password"
-              className="w-full h-11 outline-0 border-b px-2 border-gray-300"
-              value={currentPwInput}
-              onChange={currentPwChange}
-              placeholder="임시 현재 비밀번호 1234"
-              required
-            />
-            <div
-              className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
-              onClick={toggleCurrentPW}
-            >
-              {showCurrentPW ? (
-                <ShowPWIcon className="w-full h-full"/>
-              ) : (
-                <HidePWIcon className="w-full h-full"/>
-              )}
-            </div>
-          </label>
-        </div>
-        <div className="relative flex flex-col items-start">
+            <label className="relative w-full">
+              <input
+                type={showCurrentPW ? "text" : "password"}
+                name="password"
+                className="w-full h-11 outline-0 border-b px-2 border-gray-300"
+                value={currentPwInput}
+                onChange={currentPwChange}
+                placeholder="임시 현재 비밀번호 1234"
+                required
+              />
+              <div
+                className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
+                onClick={toggleCurrentPW}
+              >
+                {showCurrentPW ? (
+                  <ShowPWIcon className="w-full h-full"/>
+                ) : (
+                  <HidePWIcon className="w-full h-full"/>
+                )}
+              </div>
+            </label>
+          </div>
+          <div className="relative flex flex-col items-start">
           <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
             새 비밀번호
           </span>
-          <label className="relative w-full">
-            <input
-              type={showNewPW ? "text" : "password"}
-              name="password"
-              className="w-full h-11 outline-0 border-b px-2 border-gray-300"
-              value={newPwInput}
-              onChange={NewPwChange}
-              placeholder="비밀번호를 입력해주세요"
-              required
-            />
-            <div
-              className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
-              onClick={toggleNewPW}
-            >
-              {showNewPW ? (
-                <ShowPWIcon className="w-full h-full"/>
-              ) : (
-                <HidePWIcon className="w-full h-full"/>
-              )}
-            </div>
-          </label>
-        </div>
-        <div className="relative flex flex-col items-start">
+            <label className="relative w-full">
+              <input
+                type={showNewPW ? "text" : "password"}
+                name="password"
+                className="w-full h-11 outline-0 border-b px-2 border-gray-300"
+                value={newPwInput}
+                onChange={NewPwChange}
+                placeholder="비밀번호를 입력해주세요"
+                required
+              />
+              <div
+                className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
+                onClick={toggleNewPW}
+              >
+                {showNewPW ? (
+                  <ShowPWIcon className="w-full h-full"/>
+                ) : (
+                  <HidePWIcon className="w-full h-full"/>
+                )}
+              </div>
+            </label>
+          </div>
+          <div className="relative flex flex-col items-start">
           <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
             새 비밀번호 확인
           </span>
-          <label className="relative w-full">
-            <input
-              type={showNewPWSub ? "text" : "password"}
-              name="password"
-              className="w-full h-11 outline-0 border-b px-2 border-gray-300"
-              value={subNewPwInput}
-              onChange={subNewPwChange}
-              placeholder="비밀번호를 입력해주세요"
-              required
-            />
-            <div
-              className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
-              onClick={toggleNewPWSub}
-            >
-              {showNewPWSub ? (
-                <ShowPWIcon className="w-full h-full"/>
-              ) : (
-                <HidePWIcon className="w-full h-full"/>
-              )}
+            <label className="relative w-full">
+              <input
+                type={showNewPWSub ? "text" : "password"}
+                name="password"
+                className="w-full h-11 outline-0 border-b px-2 border-gray-300"
+                value={subNewPwInput}
+                onChange={subNewPwChange}
+                placeholder="비밀번호를 입력해주세요"
+                required
+              />
+              <div
+                className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
+                onClick={toggleNewPWSub}
+              >
+                {showNewPWSub ? (
+                  <ShowPWIcon className="w-full h-full"/>
+                ) : (
+                  <HidePWIcon className="w-full h-full"/>
+                )}
+              </div>
+            </label>
+            <div className="text-sm text-[#FF0000] mt-2 h-5">
+              {newPwInput !== subNewPwInput && "비밀번호가 일치하지 않습니다."}
             </div>
-          </label>
-          <div className="text-sm text-[#FF0000] mt-2 h-5">
-            {newPwInput !== subNewPwInput && "비밀번호가 일치하지 않습니다."}
           </div>
-        </div>
-        <div className="flex gap-2">
-          <motion.button
-            whileTap={{ scale:0.95, backgroundColor: "rgb(90,90,90)"} }
-            className={`w-full h-11 rounded-md text-white bg-secondary `}
-            onClick={(e) => {
-              e.preventDefault();
-              navigate("/mypage")
-            }}
-          >
+          <div className="flex gap-2">
+            <motion.button
+              whileTap={{ scale: 0.95, backgroundColor: "rgb(90,90,90)" }}
+              className={`w-full h-11 rounded-md text-white bg-secondary `}
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/mypage")
+              }}
+            >
               뒤로가기
-          </motion.button>
-          <motion.button
-            type="submit"
-            whileTap={{scale:0.95,backgroundColor: "rgb(230,80,50)",}}
-            className={`w-full h-11 rounded-md bg-primary text-white`}
-            onClick={(e) => handleChangePW(e)}
-          >
+            </motion.button>
+            <motion.button
+              type="submit"
+              whileTap={{ scale: 0.95, backgroundColor: "rgb(230,80,50)" }}
+              className={`w-full h-11 rounded-md bg-primary text-white`}
+              onClick={(e) => handleChangePW(e)}
+            >
               변경하기
-          </motion.button>
+            </motion.button>
+          </div>
+          {/* 에러 메시지 표시 */}
+          <p className="text-sm text-[#FF0000] mt-2 min-h-5">{message}</p>
         </div>
-        {/* 에러 메시지 표시 */}
-        <p className="text-sm text-[#FF0000] mt-2 min-h-5">{message}</p>
-      </div>
-    </form>
+      </form>
+    </>
   );
 }
