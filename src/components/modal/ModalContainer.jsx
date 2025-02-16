@@ -36,6 +36,7 @@ const Modal = observer(() => {
           <TwoBtnModal
             message={message}
             onConfirm={handleConfirm}
+            reverseOrder={modalProps.reverseOrder}
           />
         );
       default:
