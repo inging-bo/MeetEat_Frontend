@@ -558,7 +558,7 @@ export default function MainMatching() {
                 className="flex justify-center items-center cursor-pointer rounded-full w-[45px] h-[45px] bg-white shadow-[0_0_8px_#00000025]"
                 onClick={setCenterToMyPosition}
               >
-                <AccIcon width="25px" />
+                <AccIcon className="w-[20px] sm:w-[25px]" />
               </button>
             </div>
 
