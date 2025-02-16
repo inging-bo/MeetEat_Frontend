@@ -44,7 +44,7 @@ export default function RestReviewItem({ review }) {
               <>
                 <li className="shrink-0">
                   <img
-                    src={img}
+                    src={`https://meeteat.s3.ap-northeast-2.amazonaws.com/${img}`}
                     className=" w-[100px] h-[100px]  rounded-lg object-cover"
                   />
                 </li>
