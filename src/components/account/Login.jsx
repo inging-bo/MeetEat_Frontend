@@ -225,23 +225,23 @@ export default function Login() {
       if (response.status === 200) {
         window.localStorage.setItem("token", response.data.accessToken);
         authStore.setLoggedIn(true);
-        axios
-          .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
-            headers: {
-              Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-          })
-          .then((res) => {
-            if (res.data.id !== undefined) {
-              window.sessionStorage.setItem("isCompleted", "true");
-              window.sessionStorage.setItem("matchedData", JSON.stringify(res));
-            }
-            navigate("/");
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        // axios
+        //   .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
+        //     headers: {
+        //       Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+        //       "Content-Type": "application/json",
+        //     },
+        //   })
+        //   .then((res) => {
+        //     if (res.data.id !== undefined) {
+        //       window.sessionStorage.setItem("isCompleted", "true");
+        //       window.sessionStorage.setItem("matchedData", JSON.stringify(res));
+        //     }
+        //     navigate("/");
+        //   })
+        //   .catch(function (error) {
+        //     console.log(error);
+        //   });
       } else {
         throw new Error("로그인 실패");
       }
