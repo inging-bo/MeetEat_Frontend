@@ -3,16 +3,27 @@ import HeaderLogo from "../../assets/header-logo.svg?react";
 import modalStore from "../../store/modalStore.js";
 import authStore from "../../store/authStore.js";
 import axios from "axios";
+import { useEffect } from "react";
 
 export default function Header() {
   const navigate = useNavigate();
-  const loggedIn = authStore.loggedIn; //로그인 상태값
   const location = useLocation(); // 현재 경로 가져오기
+
+  useEffect(() => {
+    // 페이지 새로고침 시 localStorage에 토큰이 있다면 로그인 상태로 설정
+    const token = window.localStorage.getItem("token");
+    if (token) {
+      authStore.setLoggedIn(true);
+    } else {
+      authStore.setLoggedIn(false);
+    }
+  }, []);
+
+  const loggedIn = authStore.loggedIn; // 로그인 상태값
 
   return (
     <header
-      className="sticky top-0 z-10 shadow-lg w-screen flex justify-center min-h-[77px] bg-white
-      sm:fixed"
+      className="fixed top-0 z-10 shadow-lg w-screen flex justify-center min-h-[77px] bg-white"
     >
       <div className="flex w-full justify-between max-w-screen-xl">
         <div>
