@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HidePWIcon from "../../assets/hidePW-icon.svg?react";
 import ShowPWIcon from "../../assets/showPW-icon.svg?react";
@@ -7,6 +7,7 @@ import axios from "axios";
 import authStore from "../../store/authStore.js";
 import modalStore from "../../store/modalStore.js";
 import { AnimatePresence, motion } from "framer-motion";
+import ErrorMessage from "../common/ErrorMessage.jsx";
 
 export default function ChangePW() {
   const navigate = useNavigate();
@@ -26,6 +27,25 @@ export default function ChangePW() {
   const currentPwChange = (e) => setCurrentPwInput(e.target.value);
   const NewPwChange = (e) => setNewPwInput(e.target.value);
   const subNewPwChange = (e) => setSubNewPwInput(e.target.value);
+
+  // 현재 비밀번호 input 내용 삭제 용
+  const [currentPwIsFocused, setCurrentPwIsFocused] = useState(false);
+  const clearCurrentPwInput = () => {
+    setCurrentPwInput('');
+    setCurrentPwIsFocused(false); // 포커스 해제
+  };
+  // 새 비밀번호 input 내용 삭제 용
+  const [newPwIsFocused, setNewPwIsFocused] = useState(false);
+  const clearNewPwInput = () => {
+    setNewPwInput('');
+    setNewPwIsFocused(false); // 포커스 해제
+  };
+  // 새 비밀번호 확인 input 내용 삭제 용
+  const [subNewPwIsFocused, setNewSubPwIsFocused] = useState(false);
+  const clearNewSubPwInput = () => {
+    setSubNewPwInput('');
+    setNewSubPwIsFocused(false); // 포커스 해제
+  };
 
   // 입력값 변경 시 hasValue 상태 업데이트
   useEffect(() => {
@@ -47,6 +67,7 @@ export default function ChangePW() {
 
   // 변경하기 버튼 클릭 시 메시지
   const [message, setMessage] = useState("");
+  const [messageKey, setMessageKey] = useState(0);
 
   const handleChangePW = async (e) => {
     e.preventDefault();
@@ -55,15 +76,31 @@ export default function ChangePW() {
       const accessToken = window.localStorage.getItem("token"); // 저장된 토큰 가져오기
 
       if (!accessToken) {
+        setMessageKey((prevKey) => prevKey + 1);
         setMessage("로그인 정보가 없습니다.");
         return;
       }
-
-      if (newPwInput !== subNewPwInput) {
-        setMessage("입력한 새 비밀번호가 서로 다릅니다.");
+      if (currentPwInput === "") {
+        setMessageKey((prevKey) => prevKey + 1);
+        setMessage("현재 비밀번호를 입력하세요");
         return;
       }
-
+      if (newPwInput === "") {
+        setMessageKey((prevKey) => prevKey + 1);
+        setMessage("새 비밀번호를 입력하세요");
+        return;
+      }
+      if (subNewPwInput === "") {
+        setMessageKey((prevKey) => prevKey + 1);
+        setMessage("새 비밀번호를 확인 값을 입력하세요");
+        return;
+      }
+      if (newPwInput !== subNewPwInput) {
+        setMessageKey((prevKey) => prevKey + 1);
+        setMessage("새 비밀번호가 일치하지 않습니다.")
+        return;
+      }
+      setMessage("정보를 확인 중입니다.");
       const response = await axios.post(
         `${import.meta.env.VITE_BE_API_URL}/users/change-password`,
         {
@@ -89,38 +126,29 @@ export default function ChangePW() {
         })
       }
     } catch (error) {
-      if (!error.response) {
-        console.error("서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-        return;
-      }
-      const PASSWORD_MISMATCH = error?.response?.data?.error;
-      console.log(error);
-      // console.log(error);
-      // setMessage(error)
-      // if (error === "UNAUTHORIZED") {
-      //   setMessage(error.response.data ||"인증 토큰이 없습니다..");
-      // } else if (error === "INVALID_TOKEN") {
-      //   setMessage(error.response.data || "현재 비밀번호가 일치하지 않습니다.");
-      // } else if (PASSWORD_MISMATCH === "PASSWORD_MISMATCH") {
-      //   setMessage(error.response.data || "변경하는 비밀번호는 3글자 이상");
-      // } else if (error === "INVALID_PASSWORD") {
-      //   setMessage(error.response.data || "새 비밀번호가 유효하지 않습니다.");
-      // } else {
-      //   setMessage("서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
-      // }
+      const errorMessage = error.response?.data?.message
+      setMessage(errorMessage)
+      console.log(error)
+      const errorCode = error.response?.data?.error
+      const errorStatus = error.response?.data?.status
     }
   };
 
   return (
     <>
       <Header/>
-      <form className="flex w-96 justify-center items-center">
-        <div className="flex flex-1 flex-col gap-3 justify-center">
+      <form
+        className="p-6 flex w-full h-full text-black
+        sm:w-96 sm:p-0"
+      >
+        <div className="flex flex-1 flex-col gap-3 mt-[77px] sm:m-0 sm:justify-center">
           <h1 className="text-2xl text-center">비밀번호 변경</h1>
+          {/* 에러 메시지 표시 */}
+          <ErrorMessage key={messageKey} message={message} duration={5000}/>
           <div className="relative flex flex-col items-start">
-          <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
-            현재 비밀번호
-          </span>
+            <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
+              현재 비밀번호
+            </span>
             <label className="relative w-full">
               <input
                 type={showCurrentPW ? "text" : "password"}
@@ -128,9 +156,23 @@ export default function ChangePW() {
                 className="w-full h-11 outline-0 border-b px-2 border-gray-300"
                 value={currentPwInput}
                 onChange={currentPwChange}
-                placeholder="임시 현재 비밀번호 1234"
+                onFocus={() => setCurrentPwIsFocused(true)}
+                onBlur={() => setCurrentPwIsFocused(false)}
+                placeholder="현재 비밀번호를 입력해주세요."
                 required
               />
+              {currentPwInput && (
+                <div
+                  className="flex w-11 h-10 absolute top-1/2 -translate-y-1/2 right-10 text-gray-500 cursor-pointer "
+                  onClick={clearCurrentPwInput}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 p-0.5 bg-secondary/20 rounded-full">
+                    <path
+                      d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/>
+                  </svg>
+                </div>
+              )}
               <div
                 className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
                 onClick={toggleCurrentPW}
@@ -145,7 +187,7 @@ export default function ChangePW() {
           </div>
           <div className="relative flex flex-col items-start">
           <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
-            새 비밀번호
+            새 비밀번호 <span className="text-secondary text-[10px] sm:text-xs">- 8자 이상, 영문, 숫자, 특수문자 하나 이상 포함</span>
           </span>
             <label className="relative w-full">
               <input
@@ -154,9 +196,23 @@ export default function ChangePW() {
                 className="w-full h-11 outline-0 border-b px-2 border-gray-300"
                 value={newPwInput}
                 onChange={NewPwChange}
-                placeholder="비밀번호를 입력해주세요"
+                onFocus={() => setNewPwIsFocused(true)}
+                onBlur={() => setNewPwIsFocused(false)}
+                placeholder="새 비밀번호를 입력해주세요"
                 required
               />
+              {newPwInput && (
+                <div
+                  className="flex w-11 h-10 absolute top-1/2 -translate-y-1/2 right-10 text-gray-500 cursor-pointer "
+                  onClick={clearNewPwInput}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 p-0.5 bg-secondary/20 rounded-full">
+                    <path
+                      d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/>
+                  </svg>
+                </div>
+              )}
               <div
                 className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
                 onClick={toggleNewPW}
@@ -171,7 +227,7 @@ export default function ChangePW() {
           </div>
           <div className="relative flex flex-col items-start">
           <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
-            새 비밀번호 확인
+            새 비밀번호 확인 <span className="text-secondary text-[10px] sm:text-xs">- 8자 이상, 영문, 숫자, 특수문자 하나 이상 포함</span>
           </span>
             <label className="relative w-full">
               <input
@@ -180,9 +236,23 @@ export default function ChangePW() {
                 className="w-full h-11 outline-0 border-b px-2 border-gray-300"
                 value={subNewPwInput}
                 onChange={subNewPwChange}
-                placeholder="비밀번호를 입력해주세요"
+                onFocus={() => setNewSubPwIsFocused(true)}
+                onBlur={() => setNewSubPwIsFocused(false)}
+                placeholder="새 비밀번호를 입력해주세요"
                 required
               />
+              {subNewPwInput && (
+                <div
+                  className="flex w-11 h-10 absolute top-1/2 -translate-y-1/2 right-10 text-gray-500 cursor-pointer "
+                  onClick={clearNewSubPwInput}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 p-0.5 bg-secondary/20 rounded-full">
+                    <path
+                      d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/>
+                  </svg>
+                </div>
+              )}
               <div
                 className="flex w-5 absolute top-1/2 -translate-y-1/2 right-2 text-gray-500"
                 onClick={toggleNewPWSub}
@@ -194,9 +264,6 @@ export default function ChangePW() {
                 )}
               </div>
             </label>
-            <div className="text-sm text-[#FF0000] mt-2 h-5">
-              {newPwInput !== subNewPwInput && "비밀번호가 일치하지 않습니다."}
-            </div>
           </div>
           <div className="flex gap-2">
             <motion.button
@@ -218,8 +285,6 @@ export default function ChangePW() {
               변경하기
             </motion.button>
           </div>
-          {/* 에러 메시지 표시 */}
-          <p className="text-sm text-[#FF0000] mt-2 min-h-5">{message}</p>
         </div>
       </form>
     </>

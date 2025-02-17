@@ -22,16 +22,16 @@ export default function Login() {
 
   // input 내용 삭제 용
   // 이메일 input 내용 삭제 용
-  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [emailIsFocused, setEmailIsFocused] = useState(false);
   const clearEmailInput = () => {
     setEmailInput("");
-    setIsEmailFocused(false); // 포커스 해제
+    setEmailIsFocused(false); // 포커스 해제
   };
   // 비밀번호 input 내용 삭제 용
-  const [isFocused, setIsPwFocused] = useState(false);
+  const [pwIsFocused, setPwIsFocused] = useState(false);
   const clearPwInput = () => {
     setPwInput("");
-    setIsPwFocused(false); // 포커스 해제
+    setPwIsFocused(false); // 포커스 해제
   };
   // 입력값 변경 시 hasValue 상태 업데이트
   useEffect(() => {
@@ -51,13 +51,17 @@ export default function Login() {
 
   const login = async (event) => {
     event.preventDefault(); // 기본 제출 동작 방지
-    setMessageKey((prevKey) => prevKey + 1);
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailInput === "") return setMessage("이메일을 입력하세요");
-    if (!emailRegex.test(emailInput))
-      return setMessage("이메일 형식으로 작성해주세요.");
-    if (pwInput === "") return setMessage("비밀번호을 입력하세요");
+    if (emailInput === "") {
+      setMessageKey((prevKey) => prevKey + 1);
+      setMessage("이메일을 입력하세요");
+      return;
+    }
+    if (pwInput === "") {
+      setMessageKey((prevKey) => prevKey + 1);
+      setMessage("비밀번호을 입력하세요");
+      return;
+    }
+    setMessage("정보를 확인 중입니다.");
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BE_API_URL}/users/signin`,
@@ -74,9 +78,8 @@ export default function Login() {
       if (response.status === 200) {
         console.log("로그인 응답 데이터:", response.data);
         authStore.setLoggedIn(true);
-        // // ✅ 토큰 저장
+        // ✅ 토큰 저장
         window.localStorage.setItem("token", response.data.accessToken);
-        setMessage("로그인 성공!");
         // 입력 필드 초기화
         setEmailInput("");
         setPwInput("");
@@ -85,7 +88,7 @@ export default function Login() {
             message: (
               <>
                 <p>첫 접속을 환영합니다</p>
-                <p>마이페이지에서 한 줄 소개를 작성하세요!</p>
+                <p>마이페이지에서 정보를 수정하세요!</p>
               </>
             ),
             onConfirm: async () => {
@@ -105,24 +108,21 @@ export default function Login() {
               console.log("로그인 응당 데이터 ", res.data.id);
               if (res.data.id !== undefined) {
                 window.sessionStorage.setItem("isCompleted", "true");
-                window.sessionStorage.setItem(
-                  "matchedData",
-                  JSON.stringify(res)
-                );
+                window.sessionStorage.setItem("matchedData",JSON.stringify(res));
               }
-              navigate("/");
             })
             .catch(function (error) {
               console.log(error);
             });
+          navigate("/")
         }
       }
     } catch (error) {
-      console.log(error);
       const errorMessage = error.response?.data?.message;
-      const errorCode = error.response?.data?.error;
-      const errorStatus = error.response?.data?.status;
-      setMessage(errorMessage);
+      setMessage(errorMessage)
+      console.log(error)
+      // const errorCode = error.response?.data?.error;
+      // const errorStatus = error.response?.data?.status;
     }
   };
 
@@ -218,27 +218,43 @@ export default function Login() {
       );
 
       if (response.status === 200) {
-        window.localStorage.setItem("token", response.data.accessToken);
+        console.log("로그인 응답 데이터:", response.data);
         authStore.setLoggedIn(true);
-        // axios
-        //   .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
-        //     headers: {
-        //       Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-        //       "Content-Type": "application/json",
-        //     },
-        //   })
-        //   .then((res) => {
-        //     if (res.data.id !== undefined) {
-        //       window.sessionStorage.setItem("isCompleted", "true");
-        //       window.sessionStorage.setItem("matchedData", JSON.stringify(res));
-        //     }
-        //   })
-        //   .catch(function (error) {
-        //     console.log(error);
-        //   });
-        navigate("/");
-      } else {
-        throw new Error("로그인 실패");
+        window.localStorage.setItem("token", response.data.accessToken);
+        setEmailInput("");
+        setPwInput("");
+        if (response.data.needProfileUpdate) {
+          modalStore.openModal("oneBtn", {
+            message: (
+              <>
+                <p>첫 접속을 환영합니다</p>
+                <p>마이페이지에서 정보를 수정하세요!</p>
+              </>
+            ),
+            onConfirm: async () => {
+              await navigate("/mypage");
+              modalStore.closeModal();
+            },
+          });
+        } else {
+          axios
+            .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
+              headers: {
+                Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+              },
+            })
+            .then((res) => {
+              if (res.data.id !== undefined) {
+                window.sessionStorage.setItem("isCompleted", "true");
+                window.sessionStorage.setItem("matchedData", JSON.stringify(res));
+              }
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+          navigate("/");
+        }
       }
     } catch (error) {
       console.error("로그인 요청 실패:", error);
@@ -255,20 +271,19 @@ export default function Login() {
       handleOAuthCallback();
     }
   }, []);
-  console.log(messageKey);
   return (
     <form
       className="p-6 flex w-full h-full text-black
         sm:w-96 sm:p-0"
     >
-      <div className="flex flex-1 flex-col gap-3 justify-center">
+      <div className="flex flex-1 flex-col gap-3 mt-[77px] sm:m-0 sm:justify-center">
         <h1 className="hidden sm:flex justify-center h-8 mb-8">
           <Link to={"/"}>
-            <HeaderLogo className="h-full w-full" />
+            <HeaderLogo className="h-full w-full"/>
           </Link>
         </h1>
         {/* 에러 메시지 표시 */}
-        <ErrorMessage key={messageKey} message={message} duration={3000} />
+        <ErrorMessage key={messageKey} message={message} duration={5000}/>
         {/* 이메일 형식일 때 통과 하도록 적기 */}
         <div className="flex flex-col items-start">
           <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
@@ -281,8 +296,8 @@ export default function Login() {
               className="w-full h-11 outline-0 px-2 border-b border-gray-300"
               value={emailInput}
               onChange={emailChange}
-              onFocus={() => setIsEmailFocused(true)}
-              onBlur={() => setIsEmailFocused(false)}
+              onFocus={() => setEmailIsFocused(true)}
+              onBlur={() => setEmailIsFocused(false)}
               placeholder="email@example.com"
               required
             />
@@ -297,14 +312,15 @@ export default function Login() {
                   fill="currentColor"
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 p-0.5 bg-secondary/20 rounded-full"
                 >
-                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                  <path
+                    d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/>
                 </svg>
               </div>
             )}
           </label>
           {/* 에러 메시지 표시 */}
           {!emailRegex.test(emailInput) && emailInput !== "" ? (
-            <ErrorMessage message="이메일 형식이 아닙니다" persistent={true} />
+            <ErrorMessage message="이메일 형식이 아닙니다" persistent={true}/>
           ) : (
             <span className="text-sm text-[#FF0000] mt-2 h-5"></span>
           )}
@@ -320,8 +336,8 @@ export default function Login() {
               className="w-full h-11 outline-0 border-b px-2 border-gray-300"
               value={pwInput}
               onChange={pwChange}
-              onFocus={() => setIsPwFocused(true)}
-              onBlur={() => setIsPwFocused(false)}
+              onFocus={() => setPwIsFocused(true)}
+              onBlur={() => setPwIsFocused(false)}
               placeholder="비밀번호를 입력해주세요"
               required
             />
@@ -336,7 +352,8 @@ export default function Login() {
                   fill="currentColor"
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 p-0.5 bg-secondary/20 rounded-full"
                 >
-                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                  <path
+                    d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/>
                 </svg>
               </div>
             )}
@@ -345,9 +362,9 @@ export default function Login() {
               onClick={togglePW}
             >
               {showPW ? (
-                <ShowPWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5" />
+                <ShowPWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5"/>
               ) : (
-                <HidePWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5" />
+                <HidePWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5"/>
               )}
             </div>
           </label>
@@ -372,10 +389,10 @@ export default function Login() {
         <p className="text-sm mt-5">SNS 간편 로그인</p>
         <div className="flex h-14 justify-center gap-4">
           <button onClick={(e) => handleOAuthLogin("naver", e)}>
-            <NaverIcon className="w-full h-full" />
+            <NaverIcon className="w-full h-full"/>
           </button>
           <button onClick={(e) => handleOAuthLogin("kakao", e)}>
-            <KakaoIcon className="w-full h-full" />
+            <KakaoIcon className="w-full h-full"/>
           </button>
         </div>
       </div>

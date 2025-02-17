@@ -31,25 +31,25 @@ export default function SignUp() {
 
   // input 내용 삭제 용
   // 이메일 input 내용 삭제 용
-  const [isEmailFocused, setEmailIsFocused] = useState(false);
+  const [emailIsFocused, setEmailIsFocused] = useState(false);
   const clearEmailInput = () => {
     setEmailInput('');
     setEmailIsFocused(false); // 포커스 해제
   };
   // 비밀번호 input 내용 삭제 용
-  const [isPwFocused, setPwIsFocused] = useState(false);
+  const [pwIsFocused, setPwIsFocused] = useState(false);
   const clearPwInput = () => {
     setPwInput('');
     setPwIsFocused(false); // 포커스 해제
   };
   // 새 비밀번호 input 내용 삭제 용
-  const [isSubPwFocused, setSubPwIsFocused] = useState(false);
+  const [subPwIsFocused, setSubPwIsFocused] = useState(false);
   const clearSubPwInput = () => {
     setSubPwInput('');
     setSubPwIsFocused(false); // 포커스 해제
   };
   // 닉네임 input 내용 삭제 용
-  const [isNickNameFocused, setNickNameIsFocused] = useState(false);
+  const [nickNameisFocused, setNickNameIsFocused] = useState(false);
   const clearNickNameInput = () => {
     setNickNameInput('');
     setNickNameIsFocused(false); // 포커스 해제
@@ -75,13 +75,28 @@ export default function SignUp() {
 
   const signUp = async (event) => {
     event.preventDefault(); // 기본 제출 동작 방지
-    setMessageKey(prevKey => prevKey + 1);
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailInput === "") return setMessage("이메일을 입력하세요")
-    if (pwInput === "") return setMessage("비밀번호을 입력하세요")
-    if (subPwInput !== pwInput) return setMessage("새 비밀번호가 일치하지 않습니다.")
-    if (nickNameInput === "") return setMessage("닉네임을 입력하세요")
+    if (emailInput === "") {
+      setMessageKey((prevKey) => prevKey + 1);
+      setMessage("이메일을 입력하세요");
+      return;
+    }
+    if (pwInput === "") {
+      setMessageKey((prevKey) => prevKey + 1);
+      setMessage("비밀번호을 입력하세요");
+      return;
+    }
+    if (subPwInput !== pwInput) {
+      setMessageKey((prevKey) => prevKey + 1);
+      setMessage("새 비밀번호가 일치하지 않습니다.")
+      return;
+    }
+    if (nickNameInput === "") {
+      setMessageKey((prevKey) => prevKey + 1);
+      setMessage("닉네임을 입력하세요")
+      return;
+    }
+    setMessage("정보를 확인 중입니다.");
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BE_API_URL}/users/signup`,
@@ -101,7 +116,6 @@ export default function SignUp() {
         modalStore.openModal("oneBtn", {
           message: "회원가입이 완료되었습니다!.",
           onConfirm: async () => {
-            setMessage("회원가입 성공!");
             // 입력 필드 초기화
             setEmailInput("");
             setPwInput("");
@@ -111,15 +125,13 @@ export default function SignUp() {
             navigate("/account")
           }
         })
-      } else {
-        setMessage("회원가입 실패");
       }
     } catch (error) {
-      console.log(error)
       const errorMessage = error.response?.data?.message
+      setMessage(errorMessage)
+      console.log(error)
       const errorCode = error.response?.data?.error
       const errorStatus = error.response?.data?.status
-      setMessage(errorMessage)
     }
   };
 
@@ -130,14 +142,14 @@ export default function SignUp() {
         className="p-6 flex w-full h-full text-black
         sm:w-96 sm:p-0"
       >
-        <div className="flex flex-1 flex-col gap-3 justify-center">
+        <div className="flex flex-1 flex-col gap-3 mt-[77px] sm:m-0 sm:justify-center">
           <h1 className="hidden sm:flex justify-center h-8 mb-8">
             <Link to={"/"}>
               <HeaderLogo className="h-full w-full"/>
             </Link>
           </h1>
           {/* 에러 메시지 표시 */}
-          <ErrorMessage key={messageKey} message={message} duration={3000}/>
+          <ErrorMessage key={messageKey} message={message} duration={5000}/>
           <div className="flex flex-col items-start">
             <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
               이메일
@@ -169,14 +181,14 @@ export default function SignUp() {
             </label>
             {/* 에러 메시지 표시 */}
             {!emailRegex.test(emailInput) && emailInput !== "" ? (
-              <ErrorMessage message="이메일 형식이 아닙니다" persistent={true} />
+              <ErrorMessage message="이메일 형식이 아닙니다" persistent={true}/>
             ) : (
               <span className="text-sm text-[#FF0000] mt-2 h-5"></span>
             )}
           </div>
           <div className="relative flex flex-col items-start">
             <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
-              비밀번호 <span className="text-secondary text-xs">- 8자 이상, 영문, 숫자, 특수문자 하나 이상 포함</span>
+              비밀번호 <span className="text-secondary text-[10px] sm:text-xs">- 8자 이상, 영문, 숫자, 특수문자 하나 이상 포함</span>
             </span>
             <label className="relative w-full">
               <input
@@ -216,7 +228,7 @@ export default function SignUp() {
           </div>
           <div className="relative flex flex-col items-start">
             <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
-              비밀번호 확인 <span className="text-secondary text-xs">- 8자 이상, 영문, 숫자, 특수문자 하나 이상 포함</span>
+              비밀번호 확인 <span className="text-secondary text-[10px] sm:text-xs">- 8자 이상, 영문, 숫자, 특수문자 하나 이상 포함</span>
             </span>
             <label className="relative w-full">
               <input
@@ -255,7 +267,7 @@ export default function SignUp() {
             </label>
             {/* 에러 메시지 표시 */}
             {pwInput !== subPwInput ? (
-              <ErrorMessage message={"비밀번호가 일치하지 않습니다"} persistent={true} />
+              <ErrorMessage message={"비밀번호가 일치하지 않습니다"} persistent={true}/>
             ) : (
               <span className="text-sm text-[#FF0000] mt-2 h-5"></span>
             )}
