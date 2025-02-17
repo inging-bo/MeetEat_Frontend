@@ -108,7 +108,7 @@ export default function Login() {
               console.log("로그인 응당 데이터 ", res.data.id);
               if (res.data.id !== undefined) {
                 window.sessionStorage.setItem("isCompleted", "true");
-                window.sessionStorage.setItem("matchedData",JSON.stringify(res));
+                window.sessionStorage.setItem("matchedData", JSON.stringify(res));
               }
             })
             .catch(function (error) {
@@ -320,7 +320,9 @@ export default function Login() {
           </label>
           {/* 에러 메시지 표시 */}
           {!emailRegex.test(emailInput) && emailInput !== "" ? (
-            <ErrorMessage message="이메일 형식이 아닙니다" persistent={true}/>
+            <span className="mt-1">
+              <ErrorMessage message="이메일 형식이 아닙니다" persistent={true}/>
+            </span>
           ) : (
             <span className="text-sm text-[#FF0000] mt-2 h-5"></span>
           )}

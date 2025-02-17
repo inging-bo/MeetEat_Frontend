@@ -195,7 +195,7 @@ const RestReviews = observer(() => {
 
   return (
     <div
-      className="flex flex-col  gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl py-10 px-10">
+      className="flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <p className="font-bold text-[28px] text-left">나의 방문기록</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
         {visitStore.visit.content && visitStore.visit.content.length > 0 ? (
@@ -228,7 +228,7 @@ const RestReviews = observer(() => {
                 {visitItem.matching.restaurant.userList.map((user) => (
                   <li
                     key={user.id}
-                    className="relative flex text-sm justify-between items-center bg-[#F8F8F8] flex-1 lg:flex-[1_1_calc(50%-5px)] p-3 min-h-min rounded-lg"
+                    className="relative flex text-sm justify-between items-center bg-[#F8F8F8]   p-3  rounded-lg"
                   >
                     <div className="w-full flex flex-col gap-1">
                       <div className="flex gap-0.5">
