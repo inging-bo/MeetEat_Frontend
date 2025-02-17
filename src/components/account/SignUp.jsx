@@ -181,7 +181,9 @@ export default function SignUp() {
             </label>
             {/* 에러 메시지 표시 */}
             {!emailRegex.test(emailInput) && emailInput !== "" ? (
-              <ErrorMessage message="이메일 형식이 아닙니다" persistent={true}/>
+              <span className="mt-1">
+                <ErrorMessage message="이메일 형식이 아닙니다" persistent={true}/>
+              </span>
             ) : (
               <span className="text-sm text-[#FF0000] mt-2 h-5"></span>
             )}
@@ -267,7 +269,9 @@ export default function SignUp() {
             </label>
             {/* 에러 메시지 표시 */}
             {pwInput !== subPwInput ? (
-              <ErrorMessage message={"비밀번호가 일치하지 않습니다"} persistent={true}/>
+              <span className="mt-1">
+                <ErrorMessage message={"비밀번호가 일치하지 않습니다"} persistent={true}/>
+              </span>
             ) : (
               <span className="text-sm text-[#FF0000] mt-2 h-5"></span>
             )}

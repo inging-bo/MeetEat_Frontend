@@ -199,7 +199,7 @@ export default function Login() {
         return;
       }
     }
-
+    setMessage("정보를 확인 중입니다.");
     // 어떤 제공자인지 확인
     const provider = state ? "naver" : "kakao";
 
