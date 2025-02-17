@@ -7,8 +7,9 @@ export default function MyPage() {
     <>
       <Header/>
       <div
-        className="flex-col m-4
-        sm:flex sm:flex-row sm:max-w-[1200px] sm:w-full sm:h-full sm:pt-40 sm:pb-20 sm:m-0 sm:gap-[30px]"
+        className="flex m-4 flex-wrap h-full justify-center mx-20
+        {/*xl:flex-nowrap*/}
+        sm:flex sm:max-w-[1200px] sm:w-full sm:pt-40 sm:pb-20 sm:mx-0 sm:gap-[30px]"
       >
         <RestInfo/>
         <RestReviews/>

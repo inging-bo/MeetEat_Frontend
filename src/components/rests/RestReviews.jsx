@@ -195,7 +195,7 @@ const RestReviews = observer(() => {
 
   return (
     <div
-      className="flex flex-col gap-10 flex-auto min-w-fit border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl py-10 px-14">
+      className="flex flex-col  gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl py-10 px-10">
       <p className="font-bold text-[28px] text-left">나의 방문기록</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
         {visitStore.visit.content && visitStore.visit.content.length > 0 ? (
@@ -217,18 +217,18 @@ const RestReviews = observer(() => {
                   && visitItem.matching.restaurant.userList.review === "") && (
                     <div
                       onClick={() => writeReview(visitItem.id, visitItem.matching.restaurant.place_name, visitItem.matching)}
-                      className="flex flex-shrink-0 text-[15px] text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer"
+                      className="flex flex-shrink-0 text-[385px] text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer"
                     >
                       리뷰 작성하기
                     </div>
                   )}
                 </span>
               </div>
-              <ul className="flex flex-wrap gap-2.5">
+              <ul className="flex flex-wrap flex-col gap-2.5">
                 {visitItem.matching.restaurant.userList.map((user) => (
                   <li
                     key={user.id}
-                    className="relative flex text-sm justify-between items-center bg-[#F8F8F8] flex-[1_1_calc(50%-5px)] p-3 rounded-lg"
+                    className="relative flex text-sm justify-between items-center bg-[#F8F8F8] flex-1 lg:flex-[1_1_calc(50%-5px)] p-3 min-h-min rounded-lg"
                   >
                     <div className="w-full flex flex-col gap-1">
                       <div className="flex gap-0.5">
