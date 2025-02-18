@@ -51,9 +51,17 @@ export default function RestView({ center, close, pickedRest, star }) {
   //식당 리뷰 조회
   async function apiPOSTRestsLists(restId, page, size) {
     await axios
-      .get(`/restaurants/1`, {
-        params: { restId: restId, page: page, size: size },
-      })
+      .get(
+        `/restaurants/1`,
+        {
+          params: { restId: restId, page: page, size: size },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then((res) => {
         setReviews((prev) => [...prev, ...res.data.content]);
         setMaxNumber(res.data.page.totalElements);
