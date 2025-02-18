@@ -96,6 +96,15 @@ export default function SignUp() {
       setMessage("닉네임을 입력하세요")
       return;
     }
+
+    const specialCharRegex = /[^a-zA-Z0-9가-힣\s]/;
+
+    if (specialCharRegex.test(nickNameInput)) {
+      setMessageKey((prevKey) => prevKey + 1);
+      setMessage("특수문자는 포함할 수 없습니다.");
+      return;
+    }
+
     setMessage("정보를 확인 중입니다.");
     try {
       const response = await axios.post(
