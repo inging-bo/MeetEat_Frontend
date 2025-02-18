@@ -160,12 +160,14 @@ const RestInfo = observer(() => {
         <div className="flex flex-col text-[15px] text-[#909090] h-full items-start">
           <motion.button
             whileTap={{ scale: 0.95, backgroundColor: "#90909030" }}
+            transition={{ duration: 0.1 }}
             className="mb-auto rounded-md px-2 py-1"
           >
             <Link to="/mypage/changepw">비밀번호 변경</Link>
           </motion.button>
           <motion.button
             whileTap={{ scale: 0.95, backgroundColor: "#90909030" }}
+            transition={{ duration: 0.1 }}
             className="rounded-md px-2 py-1"
             onClick={() =>
               modalStore.openModal("twoBtn", {
