@@ -6,6 +6,7 @@ import SilverMedal from "../../assets/Medal-Silver.svg?react";
 import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
 import modalStore from "../../store/modalStore.js";
 import axios from "axios";
+import log from "eslint-plugin-react/lib/util/log.js";
 
 const RestReviews = observer(() => {
   const [historyData, setHistoryData] = useState(null);
@@ -211,7 +212,6 @@ const RestReviews = observer(() => {
       },
     });
   };
-
   return (
     <div className="flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <p className="font-bold text-[28px] text-left">나의 매칭 히스토리</p>
@@ -229,7 +229,8 @@ const RestReviews = observer(() => {
                 <span>
                   {item.matching.restaurant.userList.find(
                     (user) =>
-                      user.id === item.userId && user.review === ""
+                    {
+                      return user.userId === item.userId && user.review === ""}
                   ) && (
                     <div
                       onClick={() =>
