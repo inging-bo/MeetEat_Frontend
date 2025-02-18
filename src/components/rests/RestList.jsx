@@ -368,7 +368,7 @@ export default function RestList() {
                     <>
                       <img
                         src={rest.thumbnail}
-                        className="w-full max-h-40 object-cover rounded-lg"
+                        className="w-full max-h-40 object-cover h-full rounded-lg"
                       ></img>
                     </>
                   ) : (
@@ -405,7 +405,7 @@ export default function RestList() {
                     <>
                       <img
                         src={rest.thumbnail}
-                        className="w-full max-h-40 object-cover rounded-lg"
+                        className="w-full max-h-40 h-full object-cover rounded-lg"
                       ></img>
                     </>
                   ) : (

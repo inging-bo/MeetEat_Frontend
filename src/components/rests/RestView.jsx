@@ -84,8 +84,8 @@ export default function RestView({ center, close, pickedRest, star }) {
         <>
           <div className="bg-black/[0.1] fixed top-0 left-0 w-screen h-screen z-50 overflow-hidden"></div>
           <div
-            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex bg-white p-8 rounded-lg w-[1024px] max-lg:w-full h-[700px] overflow-hidden z-50">
-            <div className="flex flex-col gap-5 justify-between items-start max-w-[340px]">
+            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-xl flex bg-white p-8 rounded-lg w-[1024px] max-lg:w-full h-[700px] overflow-hidden z-50">
+            <div className="flex flex-col gap-5 justify-between items-start max-w-[340px] bg-white">
               <div className="w-[340px] h-[200px] bg-gray-300 rounded-lg text-left flex justify-center items-center">
                 {pickedRest.thumbnail ? (
                   <>
@@ -178,88 +178,94 @@ export default function RestView({ center, close, pickedRest, star }) {
           </div>
         </>
       ) : (
+        // 1024px 보다 작을 때
         <>
           <div className="bg-black/[0.1] fixed top-0 left-0 w-screen h-screen z-50 overflow-hidden"></div>
-          <div
-            className="fixed sm:top-1/2 sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:-translate-y-1/2 min-w-[320px] bg-white p-3 m-3 rounded-lg sm:w-[350px] sm:h-[600px] left-0 right-0 top-0 bottom-0 overflow-scroll z-50">
-            <div className="flex flex-col gap-5 items-start ">
-              <div className="relative flex flex-row gap-3 w-full">
-                <div
-                  className="basis-1/2 min-w-[100px] min-h-[100px] bg-gray-300 rounded-lg text-left content-center justify-items-center">
-                  {pickedRest.thumbnail ? (
-                    <>
-                      <img
-                        src={pickedRest.thumbnail}
-                        className="min-h-[100%] object-cover rounded-lg"
-                      ></img>
-                    </>
-                  ) : (
-                    <Logo/>
-                  )}
-                  <div className="absolute bg-white px-2 py-0.5 rounded-full left-1.5 bottom-1.5 flex gap-0.5 items-center">
-                    <FullStar width="16px" className="text-primary"/>
-                    <span className="text-gray-400 text-sm">{pickedRest.rating}.0</span>
-                  </div>
-                </div>
-                <div className="flex basis-1/2 flex-col text-sm justify-between">
-                  <div className="flex flex-row gap-0.5 items-start">
-                    <p className="font-bold text-left text-wrap">
-                      {pickedRest.place_name}
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <p className="font-bold">연락처</p>
-                    <p className="text-gray-400 text-xs">{pickedRest.phone}</p>
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <p className="font-bold min-w-fit">주소</p>
-                    <p className="text-gray-500 text-left text-xs">
-                      {pickedRest.road_address_name}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col items-start w-full">
-                <p className="font-bold mb-2">지도</p>
-                <div className="w-full h-[200px] rounded-lg">
-                  <Map
-                    className="w-full h-full z-50"
-                    id="map"
-                    center={center}
-                    level={3}
-                    ref={mapRef}
-                  >
-                    <MapMarker
-                      position={center}
-                      image={{
-                        src: "/assets/map-marker.svg",
-                        size: { width: 30, height: 30 },
-                      }}
-                    />
-                  </Map>
-                </div>
-              </div>
-              <div className="flex gap-2 flex-col flex-1 overflow-hidden">
-                <div className="font-bold text-left pt-5">방문자 리뷰</div>
-                <ul className="flex flex-col gap-6">
-                  {reviews.map((review, idx) =>
-                    reviews.length - 1 === idx ? (
+          <div className="fixed sm:w-[370px] sm:h-[620px] shadow-xl bg-white sm:top-1/2 sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:-translate-y-1/2 min-w-[320px] left-0 right-0 top-0 bottom-0 m-4 z-50 rounded-lg">
+            <div
+              className="absolute bg-white -shadow-lg rounded-lg left-4 right-4 top-4 bottom-4 overflow-scroll
+              shadow-[inset_0_15px_5px_-5px_rgba(0,0,0,0.03),inset_0_-15px_5px_-5px_rgba(0,0,0,0.03)]
+              ">
+              <div className="flex flex-col gap-5  items-start ">
+                <div className="relative flex flex-row gap-3 w-full">
+                  <div
+                    className="basis-1/2 min-w-[140px] min-h-[100px] bg-gray-300 rounded-lg text-left content-center justify-items-center">
+                    {pickedRest.thumbnail ? (
                       <>
-                        <RestReviewItem review={review} ref={boxRef}/>
+                        <img
+                          src={pickedRest.thumbnail}
+                          className="min-h-[100%] object-cover rounded-lg"
+                        ></img>
                       </>
                     ) : (
-                      <>
-                        <RestReviewItem review={review}/>
-                      </>
-                    )
-                  )}
-                </ul>
+                      <Logo/>
+                    )}
+                    <div
+                      className="absolute bg-white px-2 py-0.5 rounded-full left-1.5 bottom-1.5 flex gap-0.5 items-center">
+                      <FullStar width="16px" className="text-primary"/>
+                      <span className="text-gray-400 text-sm">{pickedRest.rating}</span>
+                    </div>
+                  </div>
+                  <div className="flex basis-1/2 flex-col text-sm justify-between">
+                    <div className="flex flex-row gap-0.5 items-start">
+                      <p className="font-bold text-left text-wrap">
+                        {pickedRest.place_name}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-start">
+                      <p className="font-bold">연락처</p>
+                      <p className="text-gray-400 text-xs">{pickedRest.phone}</p>
+                    </div>
+                    <div className="flex flex-col items-start">
+                      <p className="font-bold min-w-fit">주소</p>
+                      <p className="text-gray-500 text-left text-xs">
+                        {pickedRest.road_address_name}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col items-start w-full">
+                  <p className="font-bold mb-2">지도</p>
+                  <div className="w-full h-[200px] rounded-lg">
+                    <Map
+                      className="w-full h-full"
+                      id="map"
+                      center={center}
+                      level={3}
+                      ref={mapRef}
+                    >
+                      <MapMarker
+                        position={center}
+                        image={{
+                          src: "/assets/map-marker.svg",
+                          size: { width: 30, height: 30 },
+                        }}
+                      />
+                    </Map>
+                  </div>
+                </div>
+                <div className="flex gap-2 flex-col flex-1 overflow-hidden">
+                  <div className="font-bold text-left pt-5">방문자 리뷰</div>
+                  <ul className="flex flex-col gap-6">
+                    {reviews.map((review, idx) =>
+                      reviews.length - 1 === idx ? (
+                        <>
+                          <RestReviewItem review={review} ref={boxRef}/>
+                        </>
+                      ) : (
+                        <>
+                          <RestReviewItem review={review}/>
+                        </>
+                      )
+                    )}
+                  </ul>
+                </div>
               </div>
             </div>
             <motion.div
               whileTap={{ scale: 0.95, backgroundColor: "rgb(230,80,50)" }}
               transition={{ duration: 0.1 }}
-              className="w-14 h-14 flex justify-center  items-center fixed right-7 bottom-7 cursor-pointer bg-primary rounded-full"
+              className="w-14 h-14 flex z-50 justify-center items-center fixed right-12 bottom-12 sm:right-7 sm:bottom-7 cursor-pointer bg-primary rounded-full"
               onClick={close}
             >
               <Cancel width="19px" height="19px" className="invert"/>
