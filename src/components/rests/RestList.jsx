@@ -253,6 +253,7 @@ export default function RestList() {
         console.log(err);
       });
   }
+
   // async function apiPOSTRestDetailView(restId) {
   //   await axios
   //     .get(`${import.meta.env.VITE_BE_API_URL}/restaurants/${restId}`)
@@ -268,7 +269,8 @@ export default function RestList() {
 
   return (
     <>
-      <div className="absolute top-40 min-w-fit flex max-xl:ml-auto flex-col mb-auto items-center">
+      <div className="absolute top-40 flex flex-col items-center left-0 right-0">
+        {/* 식당 검색 Input*/}
         <div className="w-72 md:w-96 mb-7 search-bar border border-[#3BB82D] rounded-full relative">
           <input
             className="w-full h-10 rounded-full pl-5 pr-12 focus:outline-none"
@@ -279,7 +281,8 @@ export default function RestList() {
             placeholder="실제 방문한 식당을 검색해요."
           />
         </div>
-        <div className="flex gap-2 mb-3 ml-auto mr-2">
+        {/* 검색 필터 */}
+        <div className="flex gap-2 mb-3 mr-2 min-[750px]:w-[700px] min-[1150px]:w-[1100px] justify-end">
           <ul
             onClick={() => openSearchFilter("category")}
             className={`relative flex flex-col bg-white gap-2 justify-center items-center px-2 py-1 border border-gray-300 rounded-md
@@ -293,7 +296,8 @@ export default function RestList() {
             </li>
             {searchFilter === "category" && (
               <>
-                <ul className="absolute flex flex-col w-[67.41px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
+                <ul
+                  className="absolute flex flex-col w-[67.41px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
                   {category
                     .filter((item) => categoryName !== item)
                     .map((item) => (
@@ -318,7 +322,8 @@ export default function RestList() {
             </li>
             {searchFilter === "region" && (
               <>
-                <ul className="absolute flex flex-col w-[67.41px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
+                <ul
+                  className="absolute flex flex-col w-[67.41px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
                   {region
                     .filter((item) => regionName !== item)
                     .sort()
@@ -344,7 +349,8 @@ export default function RestList() {
             </li>
             {searchFilter === "option" && (
               <>
-                <ul className="absolute flex flex-col w-[82.1px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
+                <ul
+                  className="absolute flex flex-col w-[82.1px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
                   {sorted
                     .filter((item) => sortedName !== item)
                     .sort()
@@ -358,73 +364,72 @@ export default function RestList() {
             )}
           </ul>
         </div>
-        <div className="grid sm:grid-cols-[350px] min-[750px]:grid-cols-[350px_350px] min-[1150px]:grid-cols-[350px_350px_350px] gap-7 pb-10">
+        {/* 방문 식당 리스트 */}
+        <ul
+          className="grid grid-cols-1 min-[750px]:grid-cols-2 min-[1150px]:grid-cols-3 gap-7 px-2 pb-10 sm:px-0">
           {restaurants.map((rest, idx) =>
             restaurants.length - 3 === idx ? (
-              <>
-                <li
-                  key={rest.id}
-                  className="flex flex-col w-[340px] items-start bg-white rounded-lg drop-shadow-lg p-4 cursor-pointer text-left"
-                  onClick={() => RestViewToggle(rest)}
-                  ref={boxRef}
-                >
-                  <div className="bg-gray-300 h-40 w-full rounded-lg mb-3 content-center justify-items-center">
-                    {rest.thumbnail ? (
-                      <>
-                        <img
-                          src={rest.thumbnail}
-                          className="w-full max-h-40 object-cover rounded-lg"
-                        ></img>
-                      </>
-                    ) : (
-                      <Logo className="" />
-                    )}
-                  </div>
-                  <p className="text-lg text-overflow">{rest.place_name}</p>
-                  <p className="max-w-[330px] mb-1.5 text-gray-600 text-overflow">
-                    {rest.road_address_name}
-                  </p>
-                  <div className="flex h-6 gap-2 items-start text-base text-gray-500">
-                    <div className="flex gap-1 h-6">
+              <li
+                key={rest.id}
+                className="flex flex-col w-full items-start bg-white rounded-lg drop-shadow-lg p-4 cursor-pointer text-left"
+                onClick={() => RestViewToggle(rest)}
+                ref={boxRef}
+              >
+                <div className="bg-gray-300 h-40 w-full rounded-lg mb-3 flex justify-center items-center">
+                  {rest.thumbnail ? (
+                    <>
+                      <img
+                        src={rest.thumbnail}
+                        className="w-full max-h-40 object-cover rounded-lg"
+                      ></img>
+                    </>
+                  ) : (
+                    <Logo className=""/>
+                  )}
+                </div>
+                <p className="text-lg text-overflow">{rest.place_name}</p>
+                <p className="max-w-[300px] mb-1.5 text-gray-600 text-overflow">
+                  {rest.road_address_name}
+                </p>
+                <div className="flex h-6 gap-2 items-start text-base text-gray-500">
+                  <div className="flex gap-1 h-6">
                       <span className="flex justify-center items-center ">
-                        <FullStar className="w-full h-full text-[#FF6445]" />
+                        <FullStar className="w-full h-full text-[#FF6445]"/>
                       </span>
-                      <span>{rest.rating}</span>
-                    </div>
-                    <div className="flex gap-1 h-6">
-                      <span className="flex justify-center items-center ">
-                        <Review className="mt-0.5" width="20px" height="20px" />
-                      </span>
-                      <span>{rest.reviews}</span>
-                    </div>
+                    <span>{rest.rating}</span>
                   </div>
-                </li>
-              </>
+                  <div className="flex gap-1 h-6">
+                      <span className="flex justify-center items-center ">
+                        <Review className="mt-0.5" width="20px" height="20px"/>
+                      </span>
+                    <span>{rest.reviews}</span>
+                  </div>
+                </div>
+              </li>
             ) : (
-              <>
-                <li
-                  key={rest.id}
-                  className="flex flex-col w-[340px] items-start bg-white rounded-lg drop-shadow-lg p-4 cursor-pointer text-left"
-                  onClick={() => RestViewToggle(rest)}
-                >
-                  <div className="bg-gray-300 h-40 w-full rounded-lg mb-3 content-center justify-items-center">
-                    {rest.thumbnail ? (
-                      <>
-                        <img
-                          src={rest.thumbnail}
-                          className="w-full max-h-40 object-cover rounded-lg"
-                        ></img>
-                      </>
-                    ) : (
-                      <Logo />
-                    )}
-                  </div>
-                  <p className="text-lg text-overflow">{rest.place_name}</p>
-                  <p className="max-w-[330px] mb-1.5 text-gray-600 text-overflow">
-                    {rest.road_address_name}
-                  </p>
-                  <div className="flex h-6 gap-2 items-start text-base text-gray-500">
-                    <div className="flex gap-1 h-6">
+              <li
+                key={rest.id}
+                className="flex flex-col w-full items-start bg-white rounded-lg drop-shadow-lg p-4 cursor-pointer text-left"
+                onClick={() => RestViewToggle(rest)}
+              >
+                <div className="bg-gray-300 h-40 w-full rounded-lg mb-3 flex justify-center items-center">
+                  {rest.thumbnail ? (
+                    <>
+                      <img
+                        src={rest.thumbnail}
+                        className="w-full max-h-40 object-cover rounded-lg"
+                      ></img>
+                    </>
+                  ) : (
+                    <Logo/>
+                  )}
+                </div>
+                <p className="text-lg text-overflow">{rest.place_name}</p>
+                <p className="max-w-[300px] mb-1.5 text-gray-600 text-overflow">
+                  {rest.road_address_name}
+                </p>
+                <div className="flex h-6 gap-2 items-start text-base text-gray-500">
+                  <div className="flex gap-1 h-6">
                       <span className="flex justify-center items-center ">
                         <FullStar
                           width="20px"
@@ -432,20 +437,19 @@ export default function RestList() {
                           className=" text-[#FF6445]"
                         />
                       </span>
-                      <span>{rest.rating}</span>
-                    </div>
-                    <div className="flex gap-1 h-6">
-                      <span className="flex justify-center items-center ">
-                        <Review className="mt-0.5" width="20px" height="20px" />
-                      </span>
-                      <span>{rest.reviews}</span>
-                    </div>
+                    <span>{rest.rating}</span>
                   </div>
-                </li>
-              </>
+                  <div className="flex gap-1 h-6">
+                      <span className="flex justify-center items-center ">
+                        <Review className="mt-0.5" width="20px" height="20px"/>
+                      </span>
+                    <span>{rest.reviews}</span>
+                  </div>
+                </div>
+              </li>
             )
           )}
-        </div>
+        </ul>
       </div>
       {restViewModal && (
         <RestView
