@@ -257,9 +257,9 @@ export default function RestList() {
 
   return (
     <>
-      <div className="absolute top-40 flex flex-col items-center left-0 right-0">
+      <div className="absolute top-[101px] min-[750px]:top-40 flex flex-col items-center left-0 right-0">
         {/* 식당 검색 Input*/}
-        <div className="w-72 md:w-96 mb-7 search-bar border border-[#3BB82D] rounded-full relative">
+        <div className="w-72 md:w-96 mb-6 min-[750px]:mb-7 search-bar border border-[#3BB82D] rounded-full relative">
           <input
             className="w-full h-10 rounded-full pl-5 pr-12 focus:outline-none"
             id="keyword"
