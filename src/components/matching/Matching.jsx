@@ -28,8 +28,8 @@ export default function Matching({
       category_name: selectedMarker.category_name,
       road_address_name: selectedMarker.road_address_name,
       phone: selectedMarker.phone,
-      lon: selectedMarker.x,
-      lat: selectedMarker.y,
+      lon: selectedMarker.position.lng,
+      lat: selectedMarker.position.lat,
       place_url: selectedMarker.place_url,
     };
     // apiPOSTMatching(position.lng, position.lat, number, new Date(), place);
@@ -50,6 +50,8 @@ export default function Matching({
     );
 
     eventSource.onopen = () => {
+      console.log(position.lng);
+      console.log(position.lat);
       // 연결 시 매칭 요청 api 실행
       axios
         .post(
@@ -99,8 +101,9 @@ export default function Matching({
       setIsMatched(true);
       window.sessionStorage.setItem("tempPosition", JSON.stringify(position));
       window.sessionStorage.setItem("isMatched", true);
-      window.sessionStorage.setItem("matchingData", JSON.stringify(e.data));
-      navigate(`/matching/check-place/${e.data.teamId}`);
+      window.sessionStorage.setItem("matchingData", e.data);
+      console.log(JSON.parse(e.data));
+      navigate(`/matching/check-place/${JSON.parse(e.data).teamId}`);
       eventSource.close();
     });
 

@@ -14,6 +14,7 @@ export default function CheckPlace() {
   const [isLoggedIn, setLoggedIn] = useState();
   const [isMatching, setIsMatching] = useState(false);
   const [isMatched, setIsMatched] = useState(false);
+  const [profile, setProfile] = useState("");
   // 로그인, 매칭 확인
   useLayoutEffect(() => {
     authStore.checkLoggedIn();
@@ -43,10 +44,11 @@ export default function CheckPlace() {
 
   // SSE 재연결
   useEffect(() => {
+    apiGetProfile();
     fetchSSE();
-    const jsonData = JSON.parse(
-      window.sessionStorage.getItem("matchingData")
-    ).data;
+    const jsonData = JSON.parse(window.sessionStorage.getItem("matchingData"));
+    console.log("checkplace50");
+    console.log(JSON.parse(window.sessionStorage.getItem("matchingData")));
     setMatchingData(jsonData.restaurantList);
   }, []);
 
@@ -116,7 +118,8 @@ export default function CheckPlace() {
 
     // 방법2. EventListener
     eventSource.addEventListener("Join", (e) => {
-      if (e.data.user.join === false) {
+      console.log(e.data);
+      if (e.data.join === false) {
         alert("매칭 인원 중 누군가가 거절하였습니다");
         window.sessionStorage.clear();
         return navigate("/");
@@ -128,7 +131,7 @@ export default function CheckPlace() {
       });
     });
     eventSource.addEventListener("Team", (e) => {
-      window.sessionStorage.setItem("matchedData", JSON.stringify(e.data));
+      window.sessionStorage.setItem("matchedData", e.data);
       window.sessionStorage.removeItem("isMatching");
       window.sessionStorage.removeItem("isMatched");
       window.sessionStorage.setItem("isCompleted", "true");
@@ -234,8 +237,9 @@ export default function CheckPlace() {
   const unloadFunc = () => {
     window.sessionStorage.setItem("isMatched", "false");
     apiDisagree();
-    window.sessionStorage.removeItem("position");
+    window.sessionStorage.removeItem("tempPosition");
     window.sessionStorage.removeItem("isMatching");
+    window.sessionStorage.removeItem("matchingData");
   };
   //unload 이벤트
   window.addEventListener("unload", unloadFunc);
@@ -261,12 +265,16 @@ export default function CheckPlace() {
   // 장소 동의
   const handleAgree = () => {
     apiAgree();
-    document.querySelector(`#사과waiting`).classList.add("hidden");
-    document.querySelector(`#사과check`).classList.remove("hidden");
+    document
+      .querySelector(`#${profile.nickname}waiting`)
+      .classList.add("hidden");
+    document
+      .querySelector(`#${profile.nickname}check`)
+      .classList.remove("hidden");
     setAgree(true);
     setUser((prev) => {
       const newState = new Map(prev);
-      newState.set("사과", true);
+      newState.set(profile.nickname, true);
       return newState;
     });
   };
@@ -279,10 +287,8 @@ export default function CheckPlace() {
           await setAgree(false);
           apiDisagree();
           unloadFunc();
-          /////////////////////////////////////////
-          // 추후 삭제
-          ////////////////////////////////////////
-          location.reload();
+          matchingStore.isMatched(false);
+          matchingStore.isMatching(false);
         },
       });
     } catch (error) {
@@ -377,14 +383,31 @@ export default function CheckPlace() {
     }, [7000]);
   }
 
+  async function apiGetProfile() {
+    axios
+      .get(`${import.meta.env.VITE_BE_API_URL}/users/profile`, {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setProfile(res.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
   async function apiAgree() {
     axios
-      .get(
-        `${import.meta.env.VITE_BE_API_URL}/matching?response=accept`,
+      .post(
+        `${import.meta.env.VITE_BE_API_URL}/matching/join`,
         {
-          teamId: JSON.parse(window.sessionStorage.getItem("matchingData")).data
+          teamId: JSON.parse(window.sessionStorage.getItem("matchingData"))
             .teamId,
-          isJoin: true,
+          join: true,
         },
         {
           headers: {
@@ -403,12 +426,12 @@ export default function CheckPlace() {
 
   async function apiDisagree() {
     axios
-      .get(
-        `${import.meta.env.VITE_BE_API_URL}/matching?response=reject`,
+      .post(
+        `${import.meta.env.VITE_BE_API_URL}/matching/join`,
         {
-          teamId: JSON.parse(window.sessionStorage.getItem("matchingData")).data
+          teamId: JSON.parse(window.sessionStorage.getItem("matchingData"))
             .teamId,
-          isJoin: false,
+          join: false,
         },
         {
           headers: {
@@ -419,6 +442,7 @@ export default function CheckPlace() {
       )
       .then((res) => {
         console.log(res.data);
+        navigate("/");
       })
       .catch(function (error) {
         console.log(error);

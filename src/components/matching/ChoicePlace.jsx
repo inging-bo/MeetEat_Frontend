@@ -26,12 +26,10 @@ export default function CheckPlace() {
       return navigate("/");
     }
     // 저장된 매칭데이터 저장
-    const jsonData = JSON.parse(
-      window.sessionStorage.getItem("matchingData")
-    ).data;
+    const jsonData = JSON.parse(window.sessionStorage.getItem("matchingData"));
     const jsonCurData = JSON.parse(
       window.sessionStorage.getItem("matchedData")
-    ).data;
+    );
     setMatchingData(jsonData.restaurantList);
     setPickedPlace(jsonCurData.matching.restaurant.placeName);
   }, []);
@@ -73,8 +71,7 @@ export default function CheckPlace() {
       console.log("타이머가 종료되었습니다.");
       window.sessionStorage.removeItem("matchingData");
       window.sessionStorage.removeItem("tempPosition");
-      const id = JSON.parse(window.sessionStorage.getItem("matchedData")).data
-        .id;
+      const id = JSON.parse(window.sessionStorage.getItem("matchedData")).id;
       navigate(`/matching/complete/${id}`);
     }
 

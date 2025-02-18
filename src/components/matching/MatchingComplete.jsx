@@ -40,7 +40,7 @@ export default function MatchingComplete() {
     fetchSSE();
     const now = new Date(); // 오늘 날짜
     const firstDay = new Date(
-      JSON.parse(window.sessionStorage.getItem("matchedData")).data.createdAt
+      JSON.parse(window.sessionStorage.getItem("matchedData")).createdAt
     ); // 시작 날짜
     console.log(firstDay);
     const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
@@ -49,11 +49,12 @@ export default function MatchingComplete() {
 
     const goReviewPage = () => {
       const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
-        .data.matching.restaurant.id;
+        .matching.restaurant.id;
       const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
-        .data.matching.restaurant.placeName;
-      const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
-        .data.id;
+        .matching.restaurant.placeName;
+      const matchedId = JSON.parse(
+        window.sessionStorage.getItem("matchedData")
+      ).id;
       return navigate(`/rests/write/${restsId}`, {
         state: {
           restId: `${restsId}`,
@@ -314,7 +315,7 @@ export default function MatchingComplete() {
   const cancelMatched = () => {
     const now = new Date();
     const firstDay = new Date(
-      JSON.parse(window.sessionStorage.getItem("matchedData")).data.createdAt
+      JSON.parse(window.sessionStorage.getItem("matchedData")).createdAt
     );
     const toNow = now.getTime();
     const toFirst = firstDay.getTime();
@@ -324,12 +325,12 @@ export default function MatchingComplete() {
     if (passedTimeMin >= 3) {
       alert("매칭 3분 이후 취소로 패널티가 부과됩니다.");
       return apiPOSTCancelIllegal(
-        JSON.parse(window.sessionStorage.getItem("matchedData")).data.id
+        JSON.parse(window.sessionStorage.getItem("matchedData")).id
       );
     }
     alert("매칭 3분 이전 취소로 패널티가 부과되지 않습니다.");
     return apiPOSTCancel(
-      JSON.parse(window.sessionStorage.getItem("matchedData")).data.id
+      JSON.parse(window.sessionStorage.getItem("matchedData")).id
     );
   };
 
