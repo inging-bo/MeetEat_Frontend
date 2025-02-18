@@ -23,7 +23,7 @@ export default function Header() {
 
   return (
     <header
-      className="fixed top-0 z-10 shadow-lg w-screen flex justify-center min-h-[77px] bg-white"
+      className="fixed top-0 left-0 right-0 z-10 shadow-lg justify-center flex min-h-[77px] bg-white"
     >
       <div className="flex w-full justify-between max-w-screen-xl">
         <div>

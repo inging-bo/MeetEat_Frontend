@@ -16,8 +16,8 @@ const ErrorMessage = ({ message, duration = 3000, persistent = false }) => {
   }, [message, duration, persistent]);
 
   return (
-    <div className="text-sm text-[#FF0000] mt-2 min-h-5">
-      <AnimatePresence mode="wait">
+    <div className="text-primary h-6">
+      <AnimatePresence mode={"wait"}>
         {(isVisible || persistent) && message ? (
           <motion.p
             key={message}
