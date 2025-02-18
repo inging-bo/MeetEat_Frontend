@@ -6,7 +6,6 @@ import agreeUser2 from "./matching/agreeUser2.json";
 import agreeUser3 from "./matching/agreeUser3.json";
 import agreeUser4 from "./matching/agreeUser4.json";
 import userList from "./login/userList.json";
-import signInSuccess from "./login/signInSuccess.json";
 import profile from "./mypage/profile.json";
 import myMatchingHistory from "./mypage/myMatchingHistory.json";
 import restReviewList from "./rests/restReviewList.json";
@@ -341,23 +340,28 @@ export const handlers = [
   http.post("/ban", async ({ request }) => {
     try {
       const url = new URL(request.url);
-      const bannedId = url.searchParams.get("bannedId"); // bannedId 가져오기
+      const bannedId = url.searchParams.get("bannedId");
 
       if (!bannedId) {
         return HttpResponse.json(
-          { message: "bannedId가 필요합니다." },
+          { message: "bannedId 필요합니다." },
           { status: 400 }
         );
       }
 
+      const content = myMatchingHistory.content;
       let isUpdated = false;
-      myMatchingHistory.forEach((history) => {
-        history.visitors.forEach((visitor) => {
-          if (visitor.id === bannedId) {
-            visitor.ban = true; // 차단 추가
+
+      content.forEach(item => {
+        const userList = item.matching.restaurant.userList;
+        const userToBan = userList.find(user => user.userId === bannedId);
+
+        if (userToBan) {
+          if (!userToBan.hasOwnProperty('ban')) {
+            userToBan.ban = true;
             isUpdated = true;
           }
-        });
+        }
       });
 
       if (!isUpdated) {
@@ -368,10 +372,11 @@ export const handlers = [
       }
 
       return HttpResponse.json(
-        { message: "차단 상태가 추가되었습니다.", data: myMatchingHistory },
+        { message: "차단 상태가 추가되었습니다.", data: content },
         { status: 200 }
       );
     } catch (error) {
+      console.error("서버 오류:", error);
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
         { status: 500 }
@@ -379,7 +384,8 @@ export const handlers = [
     }
   }),
 
-  // ✅ 차단 API 핸들러 (DELETE 요청)
+
+// ✅ 차단 API 핸들러 (DELETE 요청)
   http.delete("/ban", async ({ request }) => {
     try {
       const url = new URL(request.url);
@@ -392,14 +398,17 @@ export const handlers = [
         );
       }
 
+      const content = myMatchingHistory.content;
       let isUpdated = false;
-      myMatchingHistory.forEach((history) => {
-        history.visitors.forEach((visitor) => {
-          if (visitor.id === bannedId && visitor.ban) {
-            delete visitor.ban; // 차단 해제
-            isUpdated = true;
-          }
-        });
+
+      content.forEach(item => {
+        const userList = item.matching.restaurant.userList;
+        const userToUnban = userList.find(user => user.userId === bannedId);
+
+        if (userToUnban && userToUnban.hasOwnProperty('ban')) {
+          delete userToUnban.ban;
+          isUpdated = true;
+        }
       });
 
       if (!isUpdated) {
@@ -434,14 +443,19 @@ export const handlers = [
         );
       }
 
+      const content = myMatchingHistory.content;
       let isUpdated = false;
-      myMatchingHistory.forEach((history) => {
-        history.visitors.forEach((visitor) => {
-          if (visitor.id === reportedId) {
-            visitor.report = true; // 신고 추가
+
+      content.forEach(item => {
+        const userList = item.matching.restaurant.userList;
+        const userToReported = userList.find(user => user.userId === reportedId);
+
+        if (userToReported) {
+          if (!userToReported.hasOwnProperty('report')) {
+            userToReported.report = true;
             isUpdated = true;
           }
-        });
+        }
       });
 
       if (!isUpdated) {
@@ -476,14 +490,17 @@ export const handlers = [
         );
       }
 
+      const content = myMatchingHistory.content;
       let isUpdated = false;
-      myMatchingHistory.forEach((history) => {
-        history.visitors.forEach((visitor) => {
-          if (visitor.id === reportedId && visitor.report) {
-            delete visitor.report; // 차단 해제
-            isUpdated = true;
-          }
-        });
+
+      content.forEach(item => {
+        const userList = item.matching.restaurant.userList;
+        const userToUnReported = userList.find(user => user.userId === reportedId);
+
+        if (userToUnReported && userToUnReported.hasOwnProperty('report')) {
+          delete userToUnReported.report;
+          isUpdated = true;
+        }
       });
 
       if (!isUpdated) {

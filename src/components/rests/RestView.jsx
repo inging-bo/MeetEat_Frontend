@@ -6,6 +6,7 @@ import Logo from "../../assets/header-logo.svg?react";
 import { useEffect, useRef } from "react";
 import RestReviewItem from "./RestReviewItem";
 import axios from "axios";
+import { motion } from "framer-motion"
 
 export default function RestView({ center, close, pickedRest, star }) {
   const mapRef = useRef(null);
@@ -62,6 +63,7 @@ export default function RestView({ center, close, pickedRest, star }) {
         console.log(err);
       });
   }
+
   // async function apiPOSTRestsLists(restId, page, size) {
   //   await axios
   //     .get(`${import.meta.env.VITE_BE_API_URL}/restaurants/${restId}/reviews`, {
@@ -81,9 +83,10 @@ export default function RestView({ center, close, pickedRest, star }) {
       {window.innerWidth > 1024 ? (
         <>
           <div className="bg-black/[0.1] fixed top-0 left-0 w-screen h-screen z-50 overflow-hidden"></div>
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex bg-white p-8 rounded-lg w-[1024px] max-lg:w-full h-[700px] overflow-hidden z-50">
+          <div
+            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex bg-white p-8 rounded-lg w-[1024px] max-lg:w-full h-[700px] overflow-hidden z-50">
             <div className="flex flex-col gap-5 justify-between items-start max-w-[340px]">
-              <div className="w-[340px] h-[200px] bg-gray-300 rounded-lg text-left content-center justify-items-center">
+              <div className="w-[340px] h-[200px] bg-gray-300 rounded-lg text-left flex justify-center items-center">
                 {pickedRest.thumbnail ? (
                   <>
                     <img
@@ -92,7 +95,7 @@ export default function RestView({ center, close, pickedRest, star }) {
                     ></img>
                   </>
                 ) : (
-                  <Logo />
+                  <Logo/>
                 )}
               </div>
               <div>
@@ -104,11 +107,11 @@ export default function RestView({ center, close, pickedRest, star }) {
                     {star.map((item) =>
                       item ? (
                         <>
-                          <FullStar width="24px" className="text-[#FF6445]" />
+                          <FullStar width="24px" className="text-[#FF6445]"/>
                         </>
                       ) : (
                         <>
-                          <FullStar width="24px" className="text-[#9ca3af]" />
+                          <FullStar width="24px" className="text-[#9ca3af]"/>
                         </>
                       )
                     )}
@@ -155,11 +158,11 @@ export default function RestView({ center, close, pickedRest, star }) {
                   {reviews.map((review, idx) =>
                     reviews.length - 1 === idx ? (
                       <>
-                        <RestReviewItem review={review} ref={boxRef} />
+                        <RestReviewItem review={review} ref={boxRef}/>
                       </>
                     ) : (
                       <>
-                        <RestReviewItem review={review} />
+                        <RestReviewItem review={review}/>
                       </>
                     )
                   )}
@@ -170,73 +173,57 @@ export default function RestView({ center, close, pickedRest, star }) {
               className="absolute right-0 top-0 p-4 m-4 cursor-pointer"
               onClick={close}
             >
-              <Cancel width="20px" height="20px" />
+              <Cancel width="20px" height="20px"/>
             </div>
           </div>
         </>
       ) : (
         <>
           <div className="bg-black/[0.1] fixed top-0 left-0 w-screen h-screen z-50 overflow-hidden"></div>
-          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-5 rounded-lg w-[350px] h-[600px] overflow-scroll z-50">
-            <div className="flex flex-col gap-5 items-start max-w-[330px] pt-5">
-              <div className="flex flex-row gap-3">
-                <div className="min-w-[100px] h-[100px] bg-gray-300 rounded-lg text-left content-center justify-items-center">
+          <div
+            className="fixed sm:top-1/2 sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:-translate-y-1/2 min-w-[320px] bg-white p-3 m-3 rounded-lg sm:w-[350px] sm:h-[600px] left-0 right-0 top-0 bottom-0 overflow-scroll z-50">
+            <div className="flex flex-col gap-5 items-start ">
+              <div className="relative flex flex-row gap-3 w-full">
+                <div
+                  className="basis-1/2 min-w-[100px] min-h-[100px] bg-gray-300 rounded-lg text-left content-center justify-items-center">
                   {pickedRest.thumbnail ? (
                     <>
                       <img
                         src={pickedRest.thumbnail}
-                        className="min-w-[100px] h-[100px] object-cover rounded-lg"
+                        className="min-h-[100%] object-cover rounded-lg"
                       ></img>
                     </>
                   ) : (
-                    <Logo />
+                    <Logo/>
                   )}
+                  <div className="absolute bg-white px-2 py-0.5 rounded-full left-1.5 bottom-1.5 flex gap-0.5 items-center">
+                    <FullStar width="16px" className="text-primary"/>
+                    <span className="text-gray-400 text-sm">{pickedRest.rating}.0</span>
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <div className="flex flex-row gap-2">
-                    <p className="font-bold text-left">
+                <div className="flex basis-1/2 flex-col text-sm justify-between">
+                  <div className="flex flex-row gap-0.5 items-start">
+                    <p className="font-bold text-left text-wrap">
                       {pickedRest.place_name}
                     </p>
-                    <div className="flex">
-                      <div className="flex">
-                        {star.map((item) =>
-                          item ? (
-                            <>
-                              <FullStar
-                                width="15px"
-                                className="text-[#FF6445]"
-                              />
-                            </>
-                          ) : (
-                            <>
-                              <FullStar
-                                width="15px"
-                                className="text-[#9ca3af]"
-                              />
-                            </>
-                          )
-                        )}
-                      </div>
-                      <span className="text-gray-400">{pickedRest.rating}</span>
-                    </div>
                   </div>
-                  <div className="flex flex-row gap-2 items-start">
+                  <div className="flex flex-col items-start">
                     <p className="font-bold">연락처</p>
-                    <p className="text-gray-400">{pickedRest.phone}</p>
+                    <p className="text-gray-400 text-xs">{pickedRest.phone}</p>
                   </div>
-                  <div className="flex flex-row gap-2 items-start">
-                    <p className="font-bold min-w-[30px]">주소</p>
-                    <p className="text-gray-500 text-left max-w-[130px] text-sm pt-[2px]">
+                  <div className="flex flex-col items-start">
+                    <p className="font-bold min-w-fit">주소</p>
+                    <p className="text-gray-500 text-left text-xs">
                       {pickedRest.road_address_name}
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col items-start">
+              <div className="flex flex-col items-start w-full">
                 <p className="font-bold mb-2">지도</p>
-                <div className="w-[330px] h-[140px] rounded-lg">
+                <div className="w-full h-[200px] rounded-lg">
                   <Map
-                    className="w-[310px] h-full z-50"
+                    className="w-full h-full z-50"
                     id="map"
                     center={center}
                     level={3}
@@ -258,23 +245,25 @@ export default function RestView({ center, close, pickedRest, star }) {
                   {reviews.map((review, idx) =>
                     reviews.length - 1 === idx ? (
                       <>
-                        <RestReviewItem review={review} ref={boxRef} />
+                        <RestReviewItem review={review} ref={boxRef}/>
                       </>
                     ) : (
                       <>
-                        <RestReviewItem review={review} />
+                        <RestReviewItem review={review}/>
                       </>
                     )
                   )}
                 </ul>
               </div>
             </div>
-            <div
-              className="absolute right-0 top-0 p-4 cursor-pointer"
+            <motion.div
+              whileTap={{ scale: 0.95, backgroundColor: "rgb(230,80,50)" }}
+              transition={{ duration: 0.1 }}
+              className="w-14 h-14 flex justify-center  items-center fixed right-7 bottom-7 cursor-pointer bg-primary rounded-full"
               onClick={close}
             >
-              <Cancel width="15px" height="15px" />
-            </div>
+              <Cancel width="19px" height="19px" className="invert"/>
+            </motion.div>
           </div>
         </>
       )}

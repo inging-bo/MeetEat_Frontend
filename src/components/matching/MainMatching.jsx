@@ -85,7 +85,7 @@ export default function MainMatching() {
 
   async function apiPOSTCancel() {
     await axios
-      .post(`${import.meta.env.VITE_BE_API_URL}/matching/cancel`, {
+      .post(`${import.meta.env.VITE_BE_API_URL}/matching/cancel`, {},{
         headers: {
           Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           "Content-Type": "application/json",
@@ -326,11 +326,11 @@ export default function MainMatching() {
     <>
       {!isMatching && (
         <>
-          <header className="fixed top-0 shadow-lg w-screen z-10 flex justify-center h-[77px] py-3 bg-white">
+          <header className="fixed top-0 left-0 right-0 shadow-lg z-10 flex justify-center h-[77px] py-3 bg-white">
             <div className="flex w-full justify-between max-w-screen-xl">
               <Link
                 to="/"
-                className="hidden sm:block h-full sm:px-4 sm:flex sm:items-center"
+                className="hidden h-full sm:px-4 sm:flex sm:items-center"
               >
                 <HeaderLogo />
               </Link>

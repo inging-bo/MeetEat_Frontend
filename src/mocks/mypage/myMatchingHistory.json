@@ -2,7 +2,7 @@
   "content": [
     {
       "id": 0,
-      "userId": 0,
+      "userId": "m",
       "matching": {
         "restaurant": {
           "id": "식당아이디",
@@ -11,10 +11,10 @@
           "userList": [
             {
               "id": 0,
-              "userId": 0,
+              "userId": "m",
               "nickname": "닉네임",
               "matchingCount": 5,
-              "review": "아 너무 어지럽다"
+              "review": ""
             },
             {
               "id": 1,
@@ -35,51 +35,6 @@
             {
               "id": 3,
               "userId": "user3",
-              "nickname": "민수",
-              "matchingCount": 2,
-              "review": "배고파",
-              "report": true
-            }
-          ],
-          "createdAt": "2024-08-08 11:11:11"
-        }
-      }
-    },
-    {
-      "id": 1,
-      "userId": 0,
-      "matching": {
-        "restaurant": {
-          "id": "식당아이디",
-          "place_name": "김밥천국",
-          "category_name": "한식",
-          "userList": [
-            {
-              "id": 0,
-              "userId": 0,
-              "nickname": "닉네임",
-              "matchingCount": 5,
-              "review": "아 너무 어지럽다"
-            },
-            {
-              "id": 1,
-              "userId": "user4",
-              "nickname": "철수",
-              "matchingCount": 5,
-              "review": "",
-              "report": true,
-              "ban": true
-            },
-            {
-              "id": 2,
-              "userId": "user5",
-              "nickname": "영희",
-              "matchingCount": 1,
-              "review": ""
-            },
-            {
-              "id": 3,
-              "userId": "user6",
               "nickname": "민수",
               "matchingCount": 2,
               "review": "배고파",
