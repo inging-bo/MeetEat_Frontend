@@ -119,7 +119,7 @@ export default function Login() {
                 window.sessionStorage.setItem("matchedData", JSON.stringify(res));
               }
             })
-            .catch(function (error) {
+            .catch((error) => {
               console.log(error);
             });
           navigate("/")

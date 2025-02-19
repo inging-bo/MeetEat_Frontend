@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import GoldMedal from "../../assets/Medal-Gold.svg?react";
@@ -6,18 +6,26 @@ import SilverMedal from "../../assets/Medal-Silver.svg?react";
 import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
 import modalStore from "../../store/modalStore.js";
 import axios from "axios";
-import log from "eslint-plugin-react/lib/util/log.js";
+import { useInView } from 'react-intersection-observer';
 
 const RestReviews = observer(() => {
-  const [historyData, setHistoryData] = useState(null);
+  const [historyData, setHistoryData] = useState([]);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  // 매칭 히스토리 정보를 가져오는 함수
-  const fetchHistory = async () => {
+
+  // 무한 스크롤 관련
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [ref, inView] = useInView();
+
+  // ✅ 매칭 히스토리 가져오기 (2개씩 추가)
+  const fetchHistory = useCallback(async () => {
+    if (!hasMore) return;
+
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_BE_API_URL}/matching/history`,
+        `${import.meta.env.VITE_BE_API_URL}/matching/history?page=${page}&size=4`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -25,17 +33,20 @@ const RestReviews = observer(() => {
           },
         }
       );
-      setHistoryData(data);
+
+      setHistoryData((prev) => [...prev, ...data.content]);
+      setHasMore(!data.last);
+      setPage((prevPage) => prevPage + 1);
     } catch (error) {
       console.error("매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
     }
-  };
+  }, [page, hasMore, token]);
 
-  // 컴포넌트 마운트 시 매칭 히스토리 정보 가져오기
   useEffect(() => {
-    fetchHistory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (inView && hasMore) {
+      fetchHistory();
+    }
+  }, [inView, hasMore, fetchHistory]);
 
   // ✅ 신고하기/차단하기 팝오버 관련 상태 및 ref
   const [activePopOver, setActivePopOver] = useState(null);
@@ -170,35 +181,38 @@ const RestReviews = observer(() => {
     setActivePopOver(null);
   };
 
-  const banOrReport = (user) => {
-    if (user.ban && user.report) {
-      return (
-        <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
-        차단 및 신고 유저
-        </span>
-      );
-    } else if (user.ban) {
-      return (
-        <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
-        차단 유저
-      </span>
-      );
-    } else if (user.report) {
-      return (
-        <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
-        신고 유저
-      </span>
-      );
-    }
-    return null;
-  };
+
+  // ✅ 신고 , 차단 위치 모호해서 주석주석
+
+  // const banOrReport = (user) => {
+  //   if (user.ban && user.report) {
+  //     return (
+  //       <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
+  //       차단 및 신고 유저
+  //       </span>
+  //     );
+  //   } else if (user.ban) {
+  //     return (
+  //       <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
+  //       차단 유저
+  //     </span>
+  //     );
+  //   } else if (user.report) {
+  //     return (
+  //       <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
+  //       신고 유저
+  //     </span>
+  //     );
+  //   }
+  //   return null;
+  // };
 
 
   // 매칭 횟수별 메달 표시 함수
   const viewMedal = (count) => {
-    if (count >= 5) return <GoldMedal width="16px" height="16px" />;
-    if (count >= 3) return <SilverMedal width="16px" height="16px" />;
-    if (count >= 1) return <BronzeMedal width="16px" height="16px" />;
+    if (count >= 5) return <GoldMedal width="16px" height="16px"/>;
+    if (count >= 3) return <SilverMedal width="16px" height="16px"/>;
+    if (count >= 1) return <BronzeMedal width="16px" height="16px"/>;
     return null;
   };
 
@@ -213,30 +227,31 @@ const RestReviews = observer(() => {
     });
   };
   return (
-    <div className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
+    <div
+      className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <p className="font-bold text-[28px] text-left">나의 매칭 히스토리</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
-        {historyData && historyData.content && historyData.content.length > 0 ? (
-          historyData.content.map((item) => (
+        {historyData.length > 0 ? (
+          historyData.map((item) => (
             <li key={item.id} className="flex flex-col gap-4 rounded-2xl">
               <div className="flex justify-between items-center">
                 <div className="flex flex-shrink-0 items-end">
-                  <span>{item.matching.restaurant.place_name}</span>
+                  <span>{item.matching.restaurant.placeName}</span>
                   <span className="text-sm text-gray-400 pl-2">
-                    {item.matching.restaurant.category_name}
+                    {item.matching.restaurant.categoryName}
                   </span>
                 </div>
                 <span>
                   {item.matching.restaurant.userList.find(
-                    (user) =>
-                    {
-                      return user.userId === item.userId && user.review === ""}
+                    (user) => {
+                      return user.userId === item.userId && user.review === ""
+                    }
                   ) && (
                     <div
                       onClick={() =>
                         writeReview(
                           item.id,
-                          item.matching.restaurant.place_name,
+                          item.matching.restaurant.placeName,
                           item.matching
                         )
                       }
@@ -258,11 +273,11 @@ const RestReviews = observer(() => {
                         <p className="whitespace-nowrap">{user.nickname}</p>
                         <div className="flex flex-1 flex-shrink-0 items-center">
                           {viewMedal(user.matchingCount)}
-                          {banOrReport(user)}
+                          {/*{banOrReport(user)}*/} {/*✅ 신고 차단위치 알게되면 수정하기*/}
                         </div>
                       </div>
                       <div className="text-left text-[#555555]">
-                        {user.review}
+                        {user?.review?.description}
                       </div>
                     </div>
                     <div>
@@ -274,55 +289,58 @@ const RestReviews = observer(() => {
                           ···
                         </p>
                       )}
-                      {activePopOver === user.userId && (
-                        <div
-                          ref={popOverRef}
-                          className="absolute flex flex-col gap-1 z-50 top-10 right-1 bg-white p-2 border border-gray-300 rounded-lg"
-                        >
-                          {user.ban ? (
-                            <button
-                              onClick={() => toggleModal("unBan", user.userId)}
-                              className="py-1 px-2 rounded-lg hover:bg-gray-200"
-                            >
-                              차단해제
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => toggleModal("ban", user.userId)}
-                              className="py-1 px-2 rounded-lg hover:bg-gray-200"
-                            >
-                              차단하기
-                            </button>
-                          )}
-                          {user.report ? (
-                            <button
-                              onClick={() => toggleModal("unReport", user.userId)}
-                              className="py-1 px-2 rounded-lg hover:bg-gray-200"
-                            >
-                              신고해제
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => toggleModal("report", user.userId)}
-                              className="py-1 px-2 rounded-lg hover:bg-gray-200"
-                            >
-                              신고하기
-                            </button>
-                          )}
-                          <div className="absolute -top-1.5 right-3 rotate-45 w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>
-                        </div>
-                      )}
+                      {/*{activePopOver === user.userId && (*/}
+                      {/*  <div*/}
+                      {/*    ref={popOverRef}*/}
+                      {/*    className="absolute flex flex-col gap-1 z-50 top-10 right-1 bg-white p-2 border border-gray-300 rounded-lg"*/}
+                      {/*  >*/}
+                      {/*    {user.ban ? (*/}
+                      {/*      <button*/}
+                      {/*        onClick={() => toggleModal("unBan", user.userId)}*/}
+                      {/*        className="py-1 px-2 rounded-lg hover:bg-gray-200"*/}
+                      {/*      >*/}
+                      {/*        차단해제*/}
+                      {/*      </button>*/}
+                      {/*    ) : (*/}
+                      {/*      <button*/}
+                      {/*        onClick={() => toggleModal("ban", user.userId)}*/}
+                      {/*        className="py-1 px-2 rounded-lg hover:bg-gray-200"*/}
+                      {/*      >*/}
+                      {/*        차단하기*/}
+                      {/*      </button>*/}
+                      {/*    )}*/}
+                      {/*    {user.report ? (*/}
+                      {/*      <button*/}
+                      {/*        onClick={() => toggleModal("unReport", user.userId)}*/}
+                      {/*        className="py-1 px-2 rounded-lg hover:bg-gray-200"*/}
+                      {/*      >*/}
+                      {/*        신고해제*/}
+                      {/*      </button>*/}
+                      {/*    ) : (*/}
+                      {/*      <button*/}
+                      {/*        onClick={() => toggleModal("report", user.userId)}*/}
+                      {/*        className="py-1 px-2 rounded-lg hover:bg-gray-200"*/}
+                      {/*      >*/}
+                      {/*        신고하기*/}
+                      {/*      </button>*/}
+                      {/*    )}*/}
+                      {/*    <div*/}
+                      {/*      className="absolute -top-1.5 right-3 rotate-45 w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>*/}
+                      {/*  </div>*/}
+                      {/*)}*/}
                     </div>
                   </li>
                 ))}
               </ul>
             </li>
+
           ))
         ) : (
           <div className="text-2xl text-gray-500">
             매칭 히스토리가 없습니다.
           </div>
         )}
+        {hasMore && <div ref={ref}>Loading more...</div>}
       </ul>
     </div>
   );
