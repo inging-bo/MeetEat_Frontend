@@ -9,6 +9,9 @@ import axios from "axios";
 import authStore from "../../store/authStore.js";
 import ErrorMessage from "../common/ErrorMessage.jsx";
 import modalStore from "../../store/modalStore.js";
+import { motion } from "framer-motion"
+import ReactLoading from "react-loading";
+import log from "eslint-plugin-react/lib/util/log.js";
 
 export default function Login() {
   // 이메일 패스워드 값 유무 확인 용
@@ -48,9 +51,12 @@ export default function Login() {
   // 로그인 버튼 클릭 시 메시지
   const [message, setMessage] = useState("");
   const [messageKey, setMessageKey] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const login = async (event) => {
     event.preventDefault(); // 기본 제출 동작 방지
+
     if (emailInput === "") {
       setMessageKey((prevKey) => prevKey + 1);
       setMessage("이메일을 입력하세요");
@@ -61,6 +67,7 @@ export default function Login() {
       setMessage("비밀번호을 입력하세요");
       return;
     }
+    setIsLoading(true);
     setMessage("정보를 확인 중입니다.");
     try {
       const response = await axios.post(
@@ -75,6 +82,7 @@ export default function Login() {
           },
         }
       );
+
       if (response.status === 200) {
         console.log("로그인 응답 데이터:", response.data);
         authStore.setLoggedIn(true);
@@ -119,11 +127,14 @@ export default function Login() {
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message;
-      setMessage(errorMessage)
+      setMessage(errorMessage || "서버에서 오류가 발생")
       console.log(error)
       // const errorCode = error.response?.data?.error;
       // const errorStatus = error.response?.data?.status;
+    } finally {
+      setIsLoading(false);
     }
+
   };
 
   const navigate = useNavigate();
@@ -271,6 +282,8 @@ export default function Login() {
       handleOAuthCallback();
     }
   }, []);
+
+  console.log(hasValue)
   return (
     <form
       className="p-6 flex w-full h-full text-black
@@ -374,11 +387,23 @@ export default function Login() {
         <button
           type="submit"
           onClick={login}
-          className={`w-full h-11 rounded-md hover:bg-primary hover:text-white ${
-            hasValue ? "bg-[#FF6445] text-white" : "bg-gray-200"
-          }`}
+          className={`relative w-full h-11 rounded-md transition duration-100
+          ${hasValue ? "bg-primary text-white" : "bg-gray-200"}
+          ${isLoading ? "bg-primary" : ""}
+          hover:bg-primary hover:text-white
+          active:scale-95 active:bg-[rgb(230,80,50)]`}
         >
-          로그인
+          {isLoading ? (
+            <ReactLoading
+              type={"spokes"}
+              color={"#ffffff"}
+              height={25}
+              width={25}
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+            />
+          ) : (
+            "로그인"
+          )}
         </button>
         <div className="flex gap-3 justify-center text-xs">
           <Link
@@ -399,5 +424,6 @@ export default function Login() {
         </div>
       </div>
     </form>
-  );
+  )
+    ;
 }

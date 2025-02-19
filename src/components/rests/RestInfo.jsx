@@ -112,7 +112,7 @@ const RestInfo = observer(() => {
   }, [profileData?.matchingCount]);
 
   return (
-    <div className="flex flex-col gap-10 basis-full md:w-[380px] md:min-w-[380px] md:max-w-[380px] justify-start border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
+    <div className="flex flex-col h-[inherit] gap-10 basis-full md:w-[380px] md:min-w-[380px] md:max-w-[380px] justify-start border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <h1 className="font-bold text-[28px] text-left">내 정보</h1>
 
       {/* 닉네임 수정 */}
