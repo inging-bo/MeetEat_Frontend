@@ -42,6 +42,7 @@ export default function MainMatching() {
             "matchedData",
             JSON.stringify(res.data)
           );
+          completed();
         } else matchingStore.setIsCompleted(false);
       })
       .catch(function (error) {
@@ -57,41 +58,39 @@ export default function MainMatching() {
     setIsCompleted(matchingStore.isCompleted);
   }, []);
 
-  useEffect(() => {
-    console.log(matchingStore.isCompleted);
-    if (isCompleted) {
-      const now = new Date(); // 오늘 날짜
-      const firstDay = new Date(
-        JSON.parse(window.sessionStorage.getItem("matchedData")).createdAt
-      ); // 시작 날짜
-      console.log(now);
-      console.log(firstDay);
-      const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
-      const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
-      const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
-      console.log(passedTimeMin);
-      // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
-      if (passedTimeMin >= 60) {
-        const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
-          .matching.restaurant.id;
-        const restsName = JSON.parse(
-          window.sessionStorage.getItem("matchedData")
-        ).matching.restaurant.name;
-        const matchedId = JSON.parse(
-          window.sessionStorage.getItem("matchedData")
-        ).matching.id;
-        return navigate(`/rests/write/${restsId}`, {
-          state: {
-            restId: `${restsId}`,
-            restName: `${restsName}`,
-            matchedId: `${matchedId}`,
-          },
-        });
-      }
-      const id = JSON.parse(window.sessionStorage.getItem("matchedData")).id;
-      return navigate(`/matching/complete/${id}`);
+  const completed = () => {
+    const now = new Date(); // 오늘 날짜
+    const firstDay = new Date(
+      JSON.parse(
+        window.sessionStorage.getItem("matchedData")
+      ).matching.createdAt
+    ); // 시작 날짜
+    console.log(now);
+    console.log(firstDay);
+    const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
+    const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
+    const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
+    console.log(passedTimeMin);
+    // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
+    if (passedTimeMin >= 60) {
+      const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.restaurant.id;
+      const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.restaurant.name;
+      const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.id;
+      return navigate(`/rests/write/${restsId}`, {
+        state: {
+          restId: `${restsId}`,
+          restName: `${restsName}`,
+          matchedId: `${matchedId}`,
+        },
+      });
     }
-  }, [isMatching, isMatched]);
+    const id = JSON.parse(window.sessionStorage.getItem("matchedData")).matching
+      .id;
+    return navigate(`/matching/complete/${id}`);
+  };
 
   // 브라우저 종료, 새로고침, 뒤로가기의 경우 매칭 취소 api 전송
   // sse의 경우 새로고침시 이전 메세지를 다시 받을 수 없음

@@ -71,7 +71,8 @@ export default function CheckPlace() {
       console.log("타이머가 종료되었습니다.");
       window.sessionStorage.removeItem("matchingData");
       window.sessionStorage.removeItem("tempPosition");
-      const id = JSON.parse(window.sessionStorage.getItem("matchedData")).id;
+      const id = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.id;
       navigate(`/matching/complete/${id}`);
     }
 

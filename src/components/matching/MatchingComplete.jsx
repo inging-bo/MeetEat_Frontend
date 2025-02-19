@@ -47,7 +47,21 @@ export default function MatchingComplete() {
     const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
     const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
     const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
-
+    if (passedTimeMin >= 60) {
+      const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.restaurant.id;
+      const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.restaurant.name;
+      const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.id;
+      return navigate(`/rests/write/${restsId}`, {
+        state: {
+          restId: `${restsId}`,
+          restName: `${restsName}`,
+          matchedId: `${matchedId}`,
+        },
+      });
+    }
     // const goReviewPage = () => {
     //   const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
     //     .matching.restaurant.id;
@@ -79,7 +93,7 @@ export default function MatchingComplete() {
     const jsonCurData = JSON.parse(
       window.sessionStorage.getItem("matchedData")
     );
-    setDate(jsonCurData.createdAt);
+    setDate(jsonCurData.matching.createdAt);
     setUserList(jsonCurData.matching.userList);
     setPickedRest(jsonCurData.matching.restaurant);
     setPositionTo({
