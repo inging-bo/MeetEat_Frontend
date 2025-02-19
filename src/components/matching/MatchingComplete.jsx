@@ -78,13 +78,13 @@ export default function MatchingComplete() {
     // 저장된 매칭데이터 저장
     const jsonCurData = JSON.parse(
       window.sessionStorage.getItem("matchedData")
-    ).data;
-    setDate(Object.entries(jsonCurData)[1][1]);
-    setUserList(Object.entries(jsonCurData)[3][1].userList);
-    setPickedRest(Object.entries(jsonCurData)[3][1].restaurant);
+    );
+    setDate(jsonCurData.createdAt);
+    setUserList(jsonCurData.matching.userList);
+    setPickedRest(jsonCurData.matching.restaurant);
     setPositionTo({
-      lat: Object.entries(jsonCurData)[3][1].restaurant.lat,
-      lng: Object.entries(jsonCurData)[3][1].restaurant.lon,
+      lat: jsonCurData.matching.restaurant.lat,
+      lng: jsonCurData.matching.restaurant.lon,
     });
 
     // 매칭 취소 발생
@@ -226,17 +226,23 @@ export default function MatchingComplete() {
       // 연결시 할 일
     };
 
-    eventSource.onmessage = async (e) => {
-      const res = await e.data;
-      const parsedData = JSON.parse(res);
-      // 받아오는 data로 할 일
-      if (parsedData === "모임이 취소되었습니다") {
-        alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
-        window.sessionStorage.clear();
-        navigate("/");
-        eventSource.close();
-      }
-    };
+    // eventSource.onmessage = async (e) => {
+    //   const res = await e.data;
+    //   const parsedData = JSON.parse(res);
+    //   // 받아오는 data로 할 일
+    //   if (parsedData === "모임이 취소되었습니다") {
+    //     alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
+    //     window.sessionStorage.clear();
+    //     navigate("/");
+    //     eventSource.close();
+    //   }
+    // };
+    eventSource.addEventListener("cancel", (e) => {
+      alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
+      window.sessionStorage.clear();
+      navigate("/");
+      eventSource.close();
+    });
 
     eventSource.onerror = (e) => {
       // 종료 또는 에러 발생 시 할 일
@@ -249,21 +255,6 @@ export default function MatchingComplete() {
       }
     };
   };
-  // async function apiSSESub() {
-  //   await axios
-  //     .get(`${import.meta.env.VITE_BE_API_URL}/sse/subscribe`, {
-  //       headers: {
-  //         Authorization: `${window.localStorage.getItem("token")}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     })
-  //     .then(() => {
-  //       console.log("SSE구독");
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-  // }
 
   // 3분 전 매칭취소
   async function apiPOSTCancel(matchingId) {
