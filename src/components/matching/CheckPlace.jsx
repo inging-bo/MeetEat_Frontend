@@ -239,6 +239,7 @@ export default function CheckPlace() {
     apiDisagree();
     window.sessionStorage.removeItem("tempPosition");
     window.sessionStorage.removeItem("isMatching");
+    window.sessionStorage.removeItem("isMatched");
     window.sessionStorage.removeItem("matchingData");
   };
   //unload 이벤트
@@ -287,8 +288,12 @@ export default function CheckPlace() {
           await setAgree(false);
           apiDisagree();
           unloadFunc();
-          matchingStore.isMatched(false);
-          matchingStore.isMatching(false);
+          matchingStore.setIsMatched(false);
+          matchingStore.setIsMatching(false);
+          setIsMatching(false);
+          setIsMatched(false);
+          navigate("/");
+          modalStore.closeModal();
         },
       });
     } catch (error) {
@@ -539,7 +544,7 @@ export default function CheckPlace() {
                 <p className="text-overflow">{item.place.name}</p>
                 <p className="text-overflow">
                   {item.place.category_name.slice(
-                    item.place.category_name.indexOf(">") + 2
+                    item.place.category_name.lastIndexOf(">") + 2
                   )}
                 </p>
                 <p>

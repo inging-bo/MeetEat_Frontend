@@ -25,6 +25,28 @@ export default function MainMatching() {
 
   // 로그인, 매칭 확인
   useLayoutEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        console.log("MainMatching 36");
+        console.log(res.data);
+        if (res.data !== null) {
+          matchingStore.setIsCompleted(true);
+          window.sessionStorage.setItem("isCompleted", "true");
+          window.sessionStorage.setItem(
+            "matchedData",
+            JSON.stringify(res.data)
+          );
+        } else matchingStore.setIsCompleted(false);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     authStore.checkLoggedIn();
     setLoggedIn(authStore.loggedIn);
     matchingStore.checkMatching();
@@ -36,24 +58,28 @@ export default function MainMatching() {
   }, []);
 
   useEffect(() => {
+    console.log(matchingStore.isCompleted);
     if (isCompleted) {
       const now = new Date(); // 오늘 날짜
       const firstDay = new Date(
-        JSON.parse(window.sessionStorage.getItem("matchedData")).data.createdAt
+        JSON.parse(window.sessionStorage.getItem("matchedData")).createdAt
       ); // 시작 날짜
+      console.log(now);
+      console.log(firstDay);
       const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
       const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
       const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
+      console.log(passedTimeMin);
       // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
       if (passedTimeMin >= 60) {
         const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
-          .data.matching.restaurant.id;
+          .matching.restaurant.id;
         const restsName = JSON.parse(
           window.sessionStorage.getItem("matchedData")
-        ).data.matching.restaurant.placeName;
+        ).matching.restaurant.name;
         const matchedId = JSON.parse(
           window.sessionStorage.getItem("matchedData")
-        ).data.id;
+        ).matching.id;
         return navigate(`/rests/write/${restsId}`, {
           state: {
             restId: `${restsId}`,
@@ -62,8 +88,7 @@ export default function MainMatching() {
           },
         });
       }
-      const id = JSON.parse(window.sessionStorage.getItem("matchedData")).data
-        .id;
+      const id = JSON.parse(window.sessionStorage.getItem("matchedData")).id;
       return navigate(`/matching/complete/${id}`);
     }
   }, [isMatching, isMatched]);
@@ -85,12 +110,16 @@ export default function MainMatching() {
 
   async function apiPOSTCancel() {
     await axios
-      .post(`${import.meta.env.VITE_BE_API_URL}/matching/cancel`, {},{
-        headers: {
-          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-      })
+      .post(
+        `${import.meta.env.VITE_BE_API_URL}/matching/cancel`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then((res) => {
         console.log(res);
       })
