@@ -17,7 +17,7 @@ const RestReviews = observer(() => {
   const fetchHistory = async () => {
     try {
       const { data } = await axios.get(
-        `/matching/history`,
+        `${import.meta.env.VITE_BE_API_URL}/matching/history`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -213,7 +213,7 @@ const RestReviews = observer(() => {
     });
   };
   return (
-    <div className="flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
+    <div className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <p className="font-bold text-[28px] text-left">나의 매칭 히스토리</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
         {historyData && historyData.content && historyData.content.length > 0 ? (
@@ -266,12 +266,14 @@ const RestReviews = observer(() => {
                       </div>
                     </div>
                     <div>
-                      <p
-                        className="font-bold rotate-90 tracking-[-0.15rem] cursor-pointer"
-                        onClick={() => popOver(user.userId)}
-                      >
-                        ···
-                      </p>
+                      {item.userId !== user.userId && (
+                        <p
+                          className="font-bold rotate-90 tracking-[-0.15rem] cursor-pointer"
+                          onClick={() => popOver(user.userId)}
+                        >
+                          ···
+                        </p>
+                      )}
                       {activePopOver === user.userId && (
                         <div
                           ref={popOverRef}
