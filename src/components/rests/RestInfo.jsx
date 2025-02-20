@@ -38,7 +38,7 @@ const RestInfo = observer(() => {
       setProfileData(data);
     } catch (error) {
       console.error("[Error] 프로필 정보를 불러오는데 실패:", error);
-
+      console.log(data)
       if (error.response) {
         console.error("응답 상태 코드:", error.response.status);
         console.error("응답 데이터:", error.response.data);

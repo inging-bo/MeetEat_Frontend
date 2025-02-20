@@ -18,16 +18,11 @@ const RestReviews = observer(() => {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [moreHistory, inView] = useInView({
-    threshold: 1,
+    threshold: 0,
   });
 
   // ✅ 매칭 히스토리 가져오기 (4개씩 추가)
   const fetchHistory = useCallback(async () => {
-    const nextPage = page + 1;
-    const startIndex = page * 4;
-    const endIndex = startIndex + 4;
-    if (!hasMore) return;
-
     try {
       const { data } = await axios.get(
         `${import.meta.env.VITE_BE_API_URL}/matching/history?page=${page}&size=4`,
@@ -38,23 +33,15 @@ const RestReviews = observer(() => {
           },
         }
       );
-      const newData = data.content.slice(startIndex, endIndex);
-      if (newData.length > 0) {
-        setHistoryData(prevData => [...prevData, ...newData]);
-        setPage(nextPage);
-        console.log("실행됨")
-      } else {
-
-      }
+      console.log(data)
+      setHistoryData(data);
     } catch (error) {
       console.error("매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
     }
-  }, []);
-
+  }, [token]);
   useEffect(() => {
-    fetchHistory()
+    fetchHistory();
   }, [])
-
 
   // ✅ 신고하기/차단하기 팝오버 관련 상태 및 ref
   const [activePopOver, setActivePopOver] = useState(null);
@@ -109,7 +96,7 @@ const RestReviews = observer(() => {
             let response;
             if (type === "ban") {
               response = await axios.post(
-                `/ban?bannedId=${userId}`,
+                `${import.meta.env.VITE_BE_API_URL}/ban?bannedId=${userId}`,
                 {},
                 {
                   headers: {
@@ -120,7 +107,7 @@ const RestReviews = observer(() => {
               );
             } else if (type === "unBan") {
               response = await axios.delete(
-                `/ban?bannedId=${userId}`,
+                `${import.meta.env.VITE_BE_API_URL}/ban?bannedId=${userId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
@@ -130,7 +117,7 @@ const RestReviews = observer(() => {
               );
             } else if (type === "report") {
               response = await axios.post(
-                `/report?reportedId=${userId}`,
+                `${import.meta.env.VITE_BE_API_URL}/report?reportedId=${userId}`,
                 {},
                 {
                   headers: {
@@ -141,7 +128,7 @@ const RestReviews = observer(() => {
               );
             } else if (type === "unReport") {
               response = await axios.delete(
-                `/report?reportedId=${userId}`,
+                `${import.meta.env.VITE_BE_API_URL}/report?reportedId=${userId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
@@ -191,7 +178,6 @@ const RestReviews = observer(() => {
 
 
   // ✅ 신고 , 차단 위치 모호해서 주석주석
-
   const banOrReport = (user) => {
     if (user.ban && user.report) {
       return (
@@ -252,7 +238,7 @@ const RestReviews = observer(() => {
                 <span>
                   {item.matching.restaurant.userList.find(
                     (user) => {
-                      return user.userId === item.userId && user.review === ""
+                      return item.userId === user.id && user.review === ""
                     }
                   ) && (
                     <div
@@ -341,14 +327,15 @@ const RestReviews = observer(() => {
                 ))}
               </ul>
             </li>
-
           ))
         ) : (
           <div className="text-2xl text-gray-500">
             매칭 히스토리가 없습니다.
           </div>
         )}
-        {hasMore && <div ref={moreHistory}>Loading more...</div>}
+        {hasMore && (
+          <div ref={moreHistory}>Loading more...</div>)
+        }
       </ul>
     </div>
   );

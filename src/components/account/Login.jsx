@@ -79,7 +79,8 @@ export default function Login() {
           },
         }
       );
-
+      setMessage("서버 응답 시도 성공")
+      console.log("서버 응답 시도 성공")
       if (response.status === 200) {
         console.log("로그인 응답 데이터:", response.data);
         authStore.setLoggedIn(true);
@@ -91,6 +92,8 @@ export default function Login() {
         // 입력 필드 초기화
         setEmailInput("");
         setPwInput("");
+        setMessage("응답 성공")
+        console.log("응답 성공")
         if (response.data.needProfileUpdate) {
           modalStore.openModal("oneBtn", {
             message: (
@@ -112,6 +115,7 @@ export default function Login() {
       const errorMessage = error.response?.data?.message;
       setMessage(errorMessage || "서버에서 오류가 발생");
       console.log(error);
+      setMessage(error);
       // const errorCode = error.response?.data?.error;
       // const errorStatus = error.response?.data?.status;
     } finally {
@@ -216,6 +220,8 @@ export default function Login() {
         window.localStorage.setItem("token", response.data.accessToken);
         setEmailInput("");
         setPwInput("");
+        setMessage("응답 성공")
+        console.log("응답 성공")
         if (response.data.needProfileUpdate) {
           modalStore.openModal("oneBtn", {
             message: (
