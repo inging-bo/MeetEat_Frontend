@@ -9,9 +9,7 @@ import axios from "axios";
 import authStore from "../../store/authStore.js";
 import ErrorMessage from "../common/ErrorMessage.jsx";
 import modalStore from "../../store/modalStore.js";
-import { motion } from "framer-motion"
 import ReactLoading from "react-loading";
-import log from "eslint-plugin-react/lib/util/log.js";
 
 export default function Login() {
   // 이메일 패스워드 값 유무 확인 용
@@ -87,7 +85,10 @@ export default function Login() {
         console.log("로그인 응답 데이터:", response.data);
         authStore.setLoggedIn(true);
         // ✅ 토큰 저장
-        window.localStorage.setItem("token", response.data.accessToken);
+        window.localStorage.setItem(
+          "token",
+          `Bearer ${response.data.accessToken}`
+        );
         // 입력 필드 초기화
         setEmailInput("");
         setPwInput("");
@@ -283,7 +284,6 @@ export default function Login() {
     }
   }, []);
 
-  console.log(hasValue)
   return (
     <form
       className="p-6 flex w-full h-full text-black

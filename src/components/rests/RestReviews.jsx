@@ -17,10 +17,15 @@ const RestReviews = observer(() => {
   // 무한 스크롤 관련
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [ref, inView] = useInView();
+  const [moreHistory, inView] = useInView({
+    threshold: 1,
+  });
 
-  // ✅ 매칭 히스토리 가져오기 (2개씩 추가)
+  // ✅ 매칭 히스토리 가져오기 (4개씩 추가)
   const fetchHistory = useCallback(async () => {
+    const nextPage = page + 1;
+    const startIndex = page * 4;
+    const endIndex = startIndex + 4;
     if (!hasMore) return;
 
     try {
@@ -33,20 +38,23 @@ const RestReviews = observer(() => {
           },
         }
       );
+      const newData = data.content.slice(startIndex, endIndex);
+      if (newData.length > 0) {
+        setHistoryData(prevData => [...prevData, ...newData]);
+        setPage(nextPage);
+        console.log("실행됨")
+      } else {
 
-      setHistoryData((prev) => [...prev, ...data.content]);
-      setHasMore(!data.last);
-      setPage((prevPage) => prevPage + 1);
+      }
     } catch (error) {
       console.error("매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
     }
-  }, [page, hasMore, token]);
+  }, []);
 
   useEffect(() => {
-    if (inView && hasMore) {
-      fetchHistory();
-    }
-  }, [inView, hasMore, fetchHistory]);
+    fetchHistory()
+  }, [])
+
 
   // ✅ 신고하기/차단하기 팝오버 관련 상태 및 ref
   const [activePopOver, setActivePopOver] = useState(null);
@@ -184,28 +192,28 @@ const RestReviews = observer(() => {
 
   // ✅ 신고 , 차단 위치 모호해서 주석주석
 
-  // const banOrReport = (user) => {
-  //   if (user.ban && user.report) {
-  //     return (
-  //       <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
-  //       차단 및 신고 유저
-  //       </span>
-  //     );
-  //   } else if (user.ban) {
-  //     return (
-  //       <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
-  //       차단 유저
-  //     </span>
-  //     );
-  //   } else if (user.report) {
-  //     return (
-  //       <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
-  //       신고 유저
-  //     </span>
-  //     );
-  //   }
-  //   return null;
-  // };
+  const banOrReport = (user) => {
+    if (user.ban && user.report) {
+      return (
+        <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
+        차단 및 신고 유저
+        </span>
+      );
+    } else if (user.ban) {
+      return (
+        <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
+        차단 유저
+      </span>
+      );
+    } else if (user.report) {
+      return (
+        <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
+        신고 유저
+      </span>
+      );
+    }
+    return null;
+  };
 
 
   // 매칭 횟수별 메달 표시 함수
@@ -273,7 +281,7 @@ const RestReviews = observer(() => {
                         <p className="whitespace-nowrap">{user.nickname}</p>
                         <div className="flex flex-1 flex-shrink-0 items-center">
                           {viewMedal(user.matchingCount)}
-                          {/*{banOrReport(user)}*/} {/*✅ 신고 차단위치 알게되면 수정하기*/}
+                          {banOrReport(user)}
                         </div>
                       </div>
                       <div className="text-left text-[#555555]">
@@ -281,53 +289,53 @@ const RestReviews = observer(() => {
                       </div>
                     </div>
                     <div>
-                      {item.userId !== user.userId && (
+                      {item.userId !== user.id && (
                         <p
                           className="font-bold rotate-90 tracking-[-0.15rem] cursor-pointer"
-                          onClick={() => popOver(user.userId)}
+                          onClick={() => popOver(user.id)}
                         >
                           ···
                         </p>
                       )}
-                      {/*{activePopOver === user.userId && (*/}
-                      {/*  <div*/}
-                      {/*    ref={popOverRef}*/}
-                      {/*    className="absolute flex flex-col gap-1 z-50 top-10 right-1 bg-white p-2 border border-gray-300 rounded-lg"*/}
-                      {/*  >*/}
-                      {/*    {user.ban ? (*/}
-                      {/*      <button*/}
-                      {/*        onClick={() => toggleModal("unBan", user.userId)}*/}
-                      {/*        className="py-1 px-2 rounded-lg hover:bg-gray-200"*/}
-                      {/*      >*/}
-                      {/*        차단해제*/}
-                      {/*      </button>*/}
-                      {/*    ) : (*/}
-                      {/*      <button*/}
-                      {/*        onClick={() => toggleModal("ban", user.userId)}*/}
-                      {/*        className="py-1 px-2 rounded-lg hover:bg-gray-200"*/}
-                      {/*      >*/}
-                      {/*        차단하기*/}
-                      {/*      </button>*/}
-                      {/*    )}*/}
-                      {/*    {user.report ? (*/}
-                      {/*      <button*/}
-                      {/*        onClick={() => toggleModal("unReport", user.userId)}*/}
-                      {/*        className="py-1 px-2 rounded-lg hover:bg-gray-200"*/}
-                      {/*      >*/}
-                      {/*        신고해제*/}
-                      {/*      </button>*/}
-                      {/*    ) : (*/}
-                      {/*      <button*/}
-                      {/*        onClick={() => toggleModal("report", user.userId)}*/}
-                      {/*        className="py-1 px-2 rounded-lg hover:bg-gray-200"*/}
-                      {/*      >*/}
-                      {/*        신고하기*/}
-                      {/*      </button>*/}
-                      {/*    )}*/}
-                      {/*    <div*/}
-                      {/*      className="absolute -top-1.5 right-3 rotate-45 w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>*/}
-                      {/*  </div>*/}
-                      {/*)}*/}
+                      {activePopOver === user.id && (
+                        <div
+                          ref={popOverRef}
+                          className="absolute flex flex-col gap-1 z-50 top-10 right-1 bg-white p-2 border border-gray-300 rounded-lg"
+                        >
+                          {user.ban ? (
+                            <button
+                              onClick={() => toggleModal("unBan", user.id)}
+                              className="py-1 px-2 rounded-lg hover:bg-gray-200"
+                            >
+                              차단해제
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => toggleModal("ban", user.id)}
+                              className="py-1 px-2 rounded-lg hover:bg-gray-200"
+                            >
+                              차단하기
+                            </button>
+                          )}
+                          {user.report ? (
+                            <button
+                              onClick={() => toggleModal("unReport", user.id)}
+                              className="py-1 px-2 rounded-lg hover:bg-gray-200"
+                            >
+                              신고해제
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => toggleModal("report", user.id)}
+                              className="py-1 px-2 rounded-lg hover:bg-gray-200"
+                            >
+                              신고하기
+                            </button>
+                          )}
+                          <div
+                            className="absolute -top-1.5 right-3 rotate-45 w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>
+                        </div>
+                      )}
                     </div>
                   </li>
                 ))}
@@ -340,7 +348,7 @@ const RestReviews = observer(() => {
             매칭 히스토리가 없습니다.
           </div>
         )}
-        {hasMore && <div ref={ref}>Loading more...</div>}
+        {hasMore && <div ref={moreHistory}>Loading more...</div>}
       </ul>
     </div>
   );

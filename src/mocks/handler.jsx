@@ -282,11 +282,6 @@ export const handlers = [
       );
     }
   }),
-
-  // 프로필 조회
-  http.get("/users/profile", () => {
-    return HttpResponse.json(profile, { status: 200 });
-  }),
   // 프로필 업데이트 (닉네임 또는 소개 수정)
   http.put("/users/profile", async ({ request }) => {
     const body = await request.json(); // 요청 바디 데이터 가져오기
@@ -354,7 +349,7 @@ export const handlers = [
 
       content.forEach(item => {
         const userList = item.matching.restaurant.userList;
-        const userToBan = userList.find(user => user.userId === bannedId);
+        const userToBan = userList.find(user => user.id === bannedId);
 
         if (userToBan) {
           if (!userToBan.hasOwnProperty('ban')) {
@@ -403,7 +398,7 @@ export const handlers = [
 
       content.forEach(item => {
         const userList = item.matching.restaurant.userList;
-        const userToUnban = userList.find(user => user.userId === bannedId);
+        const userToUnban = userList.find(user => user.id === bannedId);
 
         if (userToUnban && userToUnban.hasOwnProperty('ban')) {
           delete userToUnban.ban;
@@ -448,7 +443,7 @@ export const handlers = [
 
       content.forEach(item => {
         const userList = item.matching.restaurant.userList;
-        const userToReported = userList.find(user => user.userId === reportedId);
+        const userToReported = userList.find(user => user.id === reportedId);
 
         if (userToReported) {
           if (!userToReported.hasOwnProperty('report')) {
@@ -495,7 +490,7 @@ export const handlers = [
 
       content.forEach(item => {
         const userList = item.matching.restaurant.userList;
-        const userToUnReported = userList.find(user => user.userId === reportedId);
+        const userToUnReported = userList.find(user => user.id === reportedId);
 
         if (userToUnReported && userToUnReported.hasOwnProperty('report')) {
           delete userToUnReported.report;
