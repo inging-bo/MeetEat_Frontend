@@ -51,7 +51,6 @@ export default function Login() {
   const [messageKey, setMessageKey] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-
   const login = async (event) => {
     event.preventDefault(); // 기본 제출 동작 방지
 
@@ -106,36 +105,18 @@ export default function Login() {
             },
           });
         } else {
-          axios
-            .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
-              headers: {
-                Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-                "Content-Type": "application/json",
-              },
-            })
-            .then((res) => {
-              console.log("로그인 응당 데이터 ", res.data.id);
-              if (res.data.id !== undefined) {
-                window.sessionStorage.setItem("isCompleted", "true");
-                window.sessionStorage.setItem("matchedData", JSON.stringify(res));
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-          navigate("/")
+          navigate("/");
         }
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message;
-      setMessage(errorMessage || "서버에서 오류가 발생")
-      console.log(error)
+      setMessage(errorMessage || "서버에서 오류가 발생");
+      console.log(error);
       // const errorCode = error.response?.data?.error;
       // const errorStatus = error.response?.data?.status;
     } finally {
       setIsLoading(false);
     }
-
   };
 
   const navigate = useNavigate();
@@ -259,7 +240,10 @@ export default function Login() {
             .then((res) => {
               if (res.data.id !== undefined) {
                 window.sessionStorage.setItem("isCompleted", "true");
-                window.sessionStorage.setItem("matchedData", JSON.stringify(res));
+                window.sessionStorage.setItem(
+                  "matchedData",
+                  JSON.stringify(res)
+                );
               }
             })
             .catch(function (error) {
@@ -292,11 +276,11 @@ export default function Login() {
       <div className="flex flex-1 flex-col gap-3 mt-[77px] sm:m-0 sm:justify-center">
         <h1 className="hidden sm:flex justify-center h-8 mb-8">
           <Link to={"/"}>
-            <HeaderLogo className="h-full w-full"/>
+            <HeaderLogo className="h-full w-full" />
           </Link>
         </h1>
         {/* 에러 메시지 표시 */}
-        <ErrorMessage key={messageKey} message={message} duration={5000}/>
+        <ErrorMessage key={messageKey} message={message} duration={5000} />
         {/* 이메일 형식일 때 통과 하도록 적기 */}
         <div className="flex flex-col items-start">
           <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
@@ -325,8 +309,7 @@ export default function Login() {
                   fill="currentColor"
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 p-0.5 bg-secondary/20 rounded-full"
                 >
-                  <path
-                    d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/>
+                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
                 </svg>
               </div>
             )}
@@ -334,7 +317,10 @@ export default function Login() {
           {/* 에러 메시지 표시 */}
           {!emailRegex.test(emailInput) && emailInput !== "" ? (
             <span className="mt-1">
-              <ErrorMessage message="이메일 형식이 아닙니다" persistent={true}/>
+              <ErrorMessage
+                message="이메일 형식이 아닙니다"
+                persistent={true}
+              />
             </span>
           ) : (
             <span className="text-sm text-[#FF0000] mt-2 h-5"></span>
@@ -367,8 +353,7 @@ export default function Login() {
                   fill="currentColor"
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 p-0.5 bg-secondary/20 rounded-full"
                 >
-                  <path
-                    d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/>
+                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
                 </svg>
               </div>
             )}
@@ -377,9 +362,9 @@ export default function Login() {
               onClick={togglePW}
             >
               {showPW ? (
-                <ShowPWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5"/>
+                <ShowPWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5" />
               ) : (
-                <HidePWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5"/>
+                <HidePWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5" />
               )}
             </div>
           </label>
@@ -416,14 +401,13 @@ export default function Login() {
         <p className="text-sm mt-5">SNS 간편 로그인</p>
         <div className="flex h-14 justify-center gap-4">
           <button onClick={(e) => handleOAuthLogin("naver", e)}>
-            <NaverIcon className="w-full h-full"/>
+            <NaverIcon className="w-full h-full" />
           </button>
           <button onClick={(e) => handleOAuthLogin("kakao", e)}>
-            <KakaoIcon className="w-full h-full"/>
+            <KakaoIcon className="w-full h-full" />
           </button>
         </div>
       </div>
     </form>
-  )
-    ;
+  );
 }

@@ -212,20 +212,16 @@ export default function RestList() {
     page
   ) {
     await axios
-      .post(
-        `${import.meta.env.VITE_BE_API_URL}/restaurants/search`,
-        {
-          region: region,
-          categoryName: categoryName,
-          placeName: placeName,
-          userY: position.lat,
-          userX: position.lng,
-          sorted: sorted,
-          page: page,
-          size: "20",
-        },
-        { withCredentials: true }
-      )
+      .post(`http://3.34.224.225.58:8080/api/restaurants/search`, {
+        region: region,
+        categoryName: categoryName,
+        placeName: placeName,
+        userY: position.lat,
+        userX: position.lng,
+        sorted: sorted,
+        page: page,
+        size: "20",
+      })
       .then((res) => {
         setRestaurants((prev) => [...prev, ...res.data.content]);
         setMaxPage(res.data.totalPages);
@@ -296,8 +292,7 @@ export default function RestList() {
             </li>
             {searchFilter === "category" && (
               <>
-                <ul
-                  className="absolute flex flex-col w-[67.41px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
+                <ul className="absolute flex flex-col w-[67.41px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
                   {category
                     .filter((item) => categoryName !== item)
                     .map((item) => (
@@ -322,8 +317,7 @@ export default function RestList() {
             </li>
             {searchFilter === "region" && (
               <>
-                <ul
-                  className="absolute flex flex-col w-[67.41px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
+                <ul className="absolute flex flex-col w-[67.41px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
                   {region
                     .filter((item) => regionName !== item)
                     .sort()
@@ -349,8 +343,7 @@ export default function RestList() {
             </li>
             {searchFilter === "option" && (
               <>
-                <ul
-                  className="absolute flex flex-col w-[82.1px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
+                <ul className="absolute flex flex-col w-[82.1px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
                   {sorted
                     .filter((item) => sortedName !== item)
                     .sort()
@@ -365,8 +358,7 @@ export default function RestList() {
           </ul>
         </div>
         {/* 방문 식당 리스트 */}
-        <ul
-          className="grid grid-cols-1 min-[750px]:grid-cols-2 min-[1150px]:grid-cols-3 gap-7 px-2 pb-10 sm:px-0">
+        <ul className="grid grid-cols-1 min-[750px]:grid-cols-2 min-[1150px]:grid-cols-3 gap-7 px-2 pb-10 sm:px-0">
           {restaurants.map((rest, idx) =>
             restaurants.length - 3 === idx ? (
               <li
@@ -384,7 +376,7 @@ export default function RestList() {
                       ></img>
                     </>
                   ) : (
-                    <Logo className=""/>
+                    <Logo className="" />
                   )}
                 </div>
                 <p className="text-lg text-overflow">{rest.place_name}</p>
@@ -393,15 +385,15 @@ export default function RestList() {
                 </p>
                 <div className="flex h-6 gap-2 items-start text-base text-gray-500">
                   <div className="flex gap-1 h-6">
-                      <span className="flex justify-center items-center ">
-                        <FullStar className="w-full h-full text-[#FF6445]"/>
-                      </span>
+                    <span className="flex justify-center items-center ">
+                      <FullStar className="w-full h-full text-[#FF6445]" />
+                    </span>
                     <span>{rest.rating}</span>
                   </div>
                   <div className="flex gap-1 h-6">
-                      <span className="flex justify-center items-center ">
-                        <Review className="mt-0.5" width="20px" height="20px"/>
-                      </span>
+                    <span className="flex justify-center items-center ">
+                      <Review className="mt-0.5" width="20px" height="20px" />
+                    </span>
                     <span>{rest.reviews}</span>
                   </div>
                 </div>
@@ -421,7 +413,7 @@ export default function RestList() {
                       ></img>
                     </>
                   ) : (
-                    <Logo/>
+                    <Logo />
                   )}
                 </div>
                 <p className="text-lg text-overflow">{rest.place_name}</p>
@@ -430,19 +422,19 @@ export default function RestList() {
                 </p>
                 <div className="flex h-6 gap-2 items-start text-base text-gray-500">
                   <div className="flex gap-1 h-6">
-                      <span className="flex justify-center items-center ">
-                        <FullStar
-                          width="20px"
-                          height="20px"
-                          className=" text-[#FF6445]"
-                        />
-                      </span>
+                    <span className="flex justify-center items-center ">
+                      <FullStar
+                        width="20px"
+                        height="20px"
+                        className=" text-[#FF6445]"
+                      />
+                    </span>
                     <span>{rest.rating}</span>
                   </div>
                   <div className="flex gap-1 h-6">
-                      <span className="flex justify-center items-center ">
-                        <Review className="mt-0.5" width="20px" height="20px"/>
-                      </span>
+                    <span className="flex justify-center items-center ">
+                      <Review className="mt-0.5" width="20px" height="20px" />
+                    </span>
                     <span>{rest.reviews}</span>
                   </div>
                 </div>

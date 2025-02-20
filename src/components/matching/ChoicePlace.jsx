@@ -66,12 +66,13 @@ export default function CheckPlace() {
     }, INTERVAL);
 
     if (timeLeft <= 0) {
-      // 타이머 종료시 최종 매칭 완료 페이지 이동동
+      // 타이머 종료시 최종 매칭 완료 페이지 이동
       clearInterval(timer);
       console.log("타이머가 종료되었습니다.");
       window.sessionStorage.removeItem("matchingData");
       window.sessionStorage.removeItem("tempPosition");
-      const id = JSON.parse(window.sessionStorage.getItem("matchedData")).id;
+      const id = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.id;
       navigate(`/matching/complete/${id}`);
     }
 
@@ -142,7 +143,7 @@ export default function CheckPlace() {
                 <p className="place-name text-overflow">{item.place.name}</p>
                 <p className="text-overflow">
                   {item.place.category_name.slice(
-                    item.place.category_name.indexOf(">") + 2
+                    item.place.category_name.lastIndexOf(">") + 2
                   )}
                 </p>
                 <p>
