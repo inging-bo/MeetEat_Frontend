@@ -3,6 +3,7 @@ import { Map, MapMarker, Polyline } from "react-kakao-maps-sdk";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { EventSourcePolyfill } from "event-source-polyfill";
+import matchingStore from "../../store/matchingStore";
 
 export default function MatchingComplete() {
   // 현재 위치
@@ -46,15 +47,13 @@ export default function MatchingComplete() {
     const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
     const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
     const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
-
-    const goReviewPage = () => {
+    if (passedTimeMin >= 60) {
       const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.restaurant.id;
       const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
-        .matching.restaurant.placeName;
-      const matchedId = JSON.parse(
-        window.sessionStorage.getItem("matchedData")
-      ).id;
+        .matching.restaurant.name;
+      const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.id;
       return navigate(`/rests/write/${restsId}`, {
         state: {
           restId: `${restsId}`,
@@ -62,24 +61,39 @@ export default function MatchingComplete() {
           matchedId: `${matchedId}`,
         },
       });
-    };
-
-    // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
-    let timer = setTimeout(() => {
-      goReviewPage;
-    }, [360000]);
-
-    // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
-    if (passedTimeMin >= 60) {
-      clearTimeout(timer);
-      goReviewPage();
     }
+    // const goReviewPage = () => {
+    //   const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
+    //     .matching.restaurant.id;
+    //   const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
+    //     .matching.restaurant.placeName;
+    //   const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
+    //     .matching.id;
+    //   return navigate(`/rests/write/${restsId}`, {
+    //     state: {
+    //       restId: `${restsId}`,
+    //       restName: `${restsName}`,
+    //       matchedId: `${matchedId}`,
+    //     },
+    //   });
+    // };
+
+    // // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
+    // let timer = setTimeout(() => {
+    //   goReviewPage;
+    // }, [360000]);
+
+    // // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
+    // if (passedTimeMin >= 60) {
+    //   clearTimeout(timer);
+    //   goReviewPage();
+    // }
 
     // 저장된 매칭데이터 저장
     const jsonCurData = JSON.parse(
       window.sessionStorage.getItem("matchedData")
     );
-    setDate(jsonCurData.createdAt);
+    setDate(jsonCurData.matching.createdAt);
     setUserList(jsonCurData.matching.userList);
     setPickedRest(jsonCurData.matching.restaurant);
     setPositionTo({
@@ -207,7 +221,7 @@ export default function MatchingComplete() {
       positionTo.lng
     );
     setDistance(distance);
-  }, [position]);
+  }, [position, positionTo]);
 
   // SSE fetch
   const fetchSSE = () => {
@@ -226,22 +240,18 @@ export default function MatchingComplete() {
       // 연결시 할 일
     };
 
-    // eventSource.onmessage = async (e) => {
-    //   const res = await e.data;
-    //   const parsedData = JSON.parse(res);
-    //   // 받아오는 data로 할 일
-    //   if (parsedData === "모임이 취소되었습니다") {
-    //     alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
-    //     window.sessionStorage.clear();
-    //     navigate("/");
-    //     eventSource.close();
-    //   }
-    // };
     eventSource.addEventListener("cancel", (e) => {
       alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
       window.sessionStorage.clear();
+      matchingStore.setIsCompleted(false);
+      matchingStore.setIsMatched(false);
       navigate("/");
       eventSource.close();
+    });
+    eventSource.addEventListener("escape", (e) => {
+      // 3분후 취소 핸들링
+      const tempUser = [...userList].filter(tempUser.id !== e.data);
+      setUserList(tempUser);
     });
 
     eventSource.onerror = (e) => {
@@ -260,7 +270,7 @@ export default function MatchingComplete() {
   async function apiPOSTCancel(matchingId) {
     await axios
       .post(
-        `${import.meta.env.VITE_BE_API_URL}/matching/cancel/legal/${matchingId}`,
+        `${import.meta.env.VITE_BE_API_URL}/matching/${matchingId}`,
         {},
         {
           headers: {
@@ -274,6 +284,8 @@ export default function MatchingComplete() {
         window.sessionStorage.removeItem("isMatched");
         window.sessionStorage.removeItem("isCompleted");
         window.sessionStorage.removeItem("matchedData");
+        matchingStore.setIsCompleted(false);
+        matchingStore.setIsMatched(false);
       })
       .catch((err) => {
         console.log(err);
@@ -283,7 +295,7 @@ export default function MatchingComplete() {
   async function apiPOSTCancelIllegal(matchingId) {
     await axios
       .post(
-        `${import.meta.env.VITE_BE_API_URL}/matching/cancel/illegal/${matchingId}`,
+        `${import.meta.env.VITE_BE_API_URL}/matching/${matchingId}`,
         {},
         {
           headers: {
@@ -297,6 +309,8 @@ export default function MatchingComplete() {
         window.sessionStorage.removeItem("isMatched");
         window.sessionStorage.removeItem("isCompleted");
         window.sessionStorage.removeItem("matchedData");
+        matchingStore.setIsCompleted(false);
+        matchingStore.setIsMatched(false);
       })
       .catch((err) => {
         console.log(err);
@@ -313,6 +327,21 @@ export default function MatchingComplete() {
     const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000;
     console.log(passedTimeMin + "min");
     // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
+    if (passedTimeMin >= 60) {
+      const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.restaurant.id;
+      const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.restaurant.name;
+      const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.id;
+      return navigate(`/rests/write/${restsId}`, {
+        state: {
+          restId: `${restsId}`,
+          restName: `${restsName}`,
+          matchedId: `${matchedId}`,
+        },
+      });
+    }
     if (passedTimeMin >= 3) {
       alert("매칭 3분 이후 취소로 패널티가 부과됩니다.");
       return apiPOSTCancelIllegal(
@@ -347,13 +376,13 @@ export default function MatchingComplete() {
       </div>
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[350px] md:w-[790px] h-[600px] md:h-[520px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center py-[40px] flex flex-col gap-5">
         <div className="title-container text-base md:text-xl flex flex-col  font-semibold">
-          <h1>{pickedRest.placeName}에서</h1>
+          <h1>{pickedRest.name}에서</h1>
           <h1>
             오늘 {Number(date.slice(11, 13)) + 1}시 {date.slice(14, 16)}분에
             만나요 !
           </h1>
           <div className="font-normal text-sm md:text-base pt-2">
-            {pickedRest.roadAddressName}까지 내 위치에서 {distance}분
+            {pickedRest.road_address_name}까지 내 위치에서 {distance}분
           </div>
         </div>
         <div className="center-container max-w-[340px] md:w-full md:h-[300px] flex flex-col md:flex-row gap-5 md:gap-10 justify-center">
@@ -391,7 +420,6 @@ export default function MatchingComplete() {
                 <div className="people-item border border-slate-200 text-left rounded-lg p-3">
                   <div className="flex flex-row">
                     <p>{user.nickname}</p>
-                    <p>메달</p>
                   </div>
                   <p>{user.introduce}</p>
                 </div>
