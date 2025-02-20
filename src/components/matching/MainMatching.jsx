@@ -275,6 +275,7 @@ export default function MainMatching() {
   }
 
   const searchPlaces = () => {
+    setInfoWindowOpen(false);
     axios
       .get(`https://dapi.kakao.com/v2/local/search/keyword?`, {
         params: {
