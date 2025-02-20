@@ -25,6 +25,9 @@ export default function CheckPlace() {
     setIsMatched(matchingStore.isMatched);
 
     // 유저가 매칭된 상태가 아니라면 메인페이지로 이동
+    if (!window.sessionStorage.getItem("matchingData")) {
+      return navigate("/");
+    }
     if (!isMatched) {
       if (isMatching) {
         window.sessionStorage.removeItem("isMatching");
@@ -53,18 +56,36 @@ export default function CheckPlace() {
   }, []);
 
   // 뒤로가기 발생시 매칭 취소
-  history.pushState(null, document.title, location.href); // push
-  const preventBack = () => {
-    alert("페이지를 이동하여 자동으로 매칭이 취소됩니다.");
-    apiDisagree();
-    window.sessionStorage.removeItem("position");
+  history.pushState(null, null, "/"); // push
+  // const preventBack = () => {};
+
+  const befoeunloadFunc = () => {
+    e.preventDefault();
+    e.returnValue = "새로고침시 진행중인 매칭이 종료됩니다.";
+  };
+  const unloadFunc = () => {
+    window.sessionStorage.removeItem("tempPosition");
     window.sessionStorage.removeItem("isMatching");
-    location.href("/");
+    window.sessionStorage.removeItem("isMatched");
+    window.sessionStorage.removeItem("matchingData");
+    apiDisagree();
   };
 
   useEffect(() => {
-    window.addEventListener("popstate", preventBack);
-    return window.removeEventListener("popstate", preventBack);
+    console.log("addEventListener");
+    window.addEventListener("popstate", () => {
+      window.sessionStorage.removeItem("tempPosition");
+      window.sessionStorage.removeItem("isMatching");
+      window.sessionStorage.removeItem("isMatched");
+      window.sessionStorage.removeItem("matchingData");
+      apiDisagree();
+    });
+    window.addEventListener("beforeunload", befoeunloadFunc);
+    return window.removeEventListener("beforeunload", befoeunloadFunc);
+  }, []);
+  useEffect(() => {
+    window.addEventListener("unload", unloadFunc);
+    return window.addEventListener("unload", unloadFunc);
   }, []);
 
   const navigate = useNavigate();
@@ -118,15 +139,15 @@ export default function CheckPlace() {
 
     // 방법2. EventListener
     eventSource.addEventListener("Join", (e) => {
-      console.log(e.data);
-      if (e.data.join === false) {
+      console.log(JSON.parse(e.data));
+      if (JSON.parse(e.data).user.join === false) {
         alert("매칭 인원 중 누군가가 거절하였습니다");
         window.sessionStorage.clear();
         return navigate("/");
       }
       setUser((prev) => {
         const newState = new Map(prev);
-        newState.set(e.data.user.nickname, true);
+        newState.set(JSON.parse(e.data).user.nickname, true);
         return newState;
       });
     });
@@ -135,7 +156,7 @@ export default function CheckPlace() {
       window.sessionStorage.removeItem("isMatching");
       window.sessionStorage.removeItem("isMatched");
       window.sessionStorage.setItem("isCompleted", "true");
-      navigate(`/matching/choice-place/${e.data.id}`);
+      navigate(`/matching/choice-place/${JSON.parse(e.data).matching.id}`);
       eventSource.close();
     });
 
@@ -178,13 +199,14 @@ export default function CheckPlace() {
   }, [user]);
 
   useEffect(() => {
+    console.log(user);
     user.forEach((value, key) => {
       if (value === true) {
         console.log(key);
         console.log(`#${key}waiting`);
         console.log(document.querySelector(`#${key}waiting`));
-        document.querySelector(`#${key}waiting`).classList.add("hidden");
-        document.querySelector(`#${key}check`).classList.remove("hidden");
+        document.querySelector(`#${key}-waiting`).classList.add("hidden");
+        document.querySelector(`#${key}-check`).classList.remove("hidden");
       }
     });
   }, [user]);
@@ -221,30 +243,6 @@ export default function CheckPlace() {
   );
   const second = String(Math.floor((timeLeft / 1000) % 60)).padStart(2, "0");
 
-  const beforeunloadFunc = (e) => {
-    e.preventDefault();
-    e.returnValue = "새로고침시 진행중인 매칭이 종료됩니다.";
-  };
-
-  useEffect(() => {
-    window.addEventListener("beforeunload", beforeunloadFunc);
-    return () => {
-      window.removeEventListener("beforeunload", beforeunloadFunc);
-    };
-  }, []);
-
-  //새로고침 확인을 눌렀을 경우 unload 이벤트 실행
-  const unloadFunc = () => {
-    window.sessionStorage.setItem("isMatched", "false");
-    apiDisagree();
-    window.sessionStorage.removeItem("tempPosition");
-    window.sessionStorage.removeItem("isMatching");
-    window.sessionStorage.removeItem("isMatched");
-    window.sessionStorage.removeItem("matchingData");
-  };
-  //unload 이벤트
-  window.addEventListener("unload", unloadFunc);
-
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prevTime) => prevTime - INTERVAL);
@@ -253,7 +251,10 @@ export default function CheckPlace() {
     if (timeLeft <= 0) {
       clearInterval(timer);
       alert("선택 시간이 초과되어 매칭이 종료됩니다");
-      unloadFunc();
+      window.sessionStorage.removeItem("tempPosition");
+      window.sessionStorage.removeItem("isMatching");
+      window.sessionStorage.removeItem("isMatched");
+      window.sessionStorage.removeItem("matchingData");
       navigate("/");
       modalStore.isOpen && modalStore.closeModal();
     }
@@ -267,11 +268,12 @@ export default function CheckPlace() {
   const handleAgree = () => {
     apiAgree();
     document
-      .querySelector(`#${profile.nickname}waiting`)
+      .querySelector(`#${profile.nickname}-waiting`)
       .classList.add("hidden");
     document
-      .querySelector(`#${profile.nickname}check`)
+      .querySelector(`#${profile.nickname}-check`)
       .classList.remove("hidden");
+    document.querySelector(`#agreeBtn`).classList.add("hidden");
     setAgree(true);
     setUser((prev) => {
       const newState = new Map(prev);
@@ -287,7 +289,10 @@ export default function CheckPlace() {
         onConfirm: async () => {
           await setAgree(false);
           apiDisagree();
-          unloadFunc();
+          window.sessionStorage.removeItem("tempPosition");
+          window.sessionStorage.removeItem("isMatching");
+          window.sessionStorage.removeItem("isMatched");
+          window.sessionStorage.removeItem("matchingData");
           matchingStore.setIsMatched(false);
           matchingStore.setIsMatching(false);
           setIsMatching(false);
@@ -531,12 +536,12 @@ export default function CheckPlace() {
                 className="people-info grid w-[700px] grid-cols-[40px_75px_75px_75px_75px] md:grid-cols-[100px_150px_150px_150px_150px] h-[15px] justify-items-center"
               >
                 <Waiting
-                  id={item.user.nickname + `waiting`}
+                  id={`${item.user.nickname}-waiting`}
                   width="25px"
                   className="waiting w-[20px] md:w-[25px]"
                 />
                 <Check
-                  id={item.user.nickname + `check`}
+                  id={`${item.user.nickname}-check`}
                   width="25px"
                   className="check hidden text-[#FF6445] w-[20px] md:w-[25px]"
                 />
@@ -562,6 +567,7 @@ export default function CheckPlace() {
         </div>
         <div className="check-container flex flex-col justify-center">
           <button
+            id={"agreeBtn"}
             onClick={handleAgree}
             className="w-[200px] pt-1 pb-[6px] bg-[#A2A2A2] rounded-lg text-white text-sm md:text-[16px] mt-6 md:mt-4 mb-3 hover:bg-[#FF6445]"
           >

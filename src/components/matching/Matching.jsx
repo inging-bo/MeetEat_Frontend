@@ -17,7 +17,24 @@ export default function Matching({
   const navigate = useNavigate();
 
   // 뒤로가기 방지
-  history.pushState(null, document.title, location.href); // push
+  history.pushState(null, null, "/"); // push
+
+  useEffect(() => {
+    console.log("addEventListener");
+    const popStateFunc = () => {
+      alert("페이지를 이동하여 자동으로 매칭이 취소됩니다.");
+      window.sessionStorage.removeItem("tempPosition");
+      window.sessionStorage.removeItem("isMatching");
+      apiDisagree();
+    };
+
+    window.addEventListener("popstate", () => {
+      popStateFunc;
+    });
+
+    window.removeEventListener("popstate", popStateFunc);
+  }, []);
+
   const categoryName = selectedMarker.category_name.slice(
     selectedMarker.category_name.lastIndexOf(">") + 2
   );
@@ -192,7 +209,7 @@ export default function Matching({
   // }
 
   // 타이머
-  const MINUTES_IN_MS = 1 * 60 * 1000;
+  const MINUTES_IN_MS = 10 * 60 * 1000;
   const INTERVAL = 1000;
   const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
 

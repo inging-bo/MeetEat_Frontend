@@ -40,9 +40,20 @@ export default function MatchingComplete() {
     // apiSSESub();
     fetchSSE();
     const now = new Date(); // 오늘 날짜
+    // const firstDay = new Date(
+    //   JSON.parse(window.sessionStorage.getItem("matchedData")).createdAt
+    // ); // 시작 날짜
     const firstDay = new Date(
-      JSON.parse(window.sessionStorage.getItem("matchedData")).createdAt
+      JSON.parse(
+        window.sessionStorage.getItem("matchedData")
+      ).matching.createdAt.slice(
+        0,
+        JSON.parse(
+          window.sessionStorage.getItem("matchedData")
+        ).matching.createdAt.indexOf(".")
+      )
     ); // 시작 날짜
+    console.log("firstDay");
     console.log(firstDay);
     const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
     const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
@@ -241,16 +252,23 @@ export default function MatchingComplete() {
     };
 
     eventSource.addEventListener("cancel", (e) => {
+      console.log("3분전 취소");
+      console.log(e.data);
       alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
       window.sessionStorage.clear();
       matchingStore.setIsCompleted(false);
       matchingStore.setIsMatched(false);
-      navigate("/");
       eventSource.close();
+      window.location.replace("/");
     });
     eventSource.addEventListener("escape", (e) => {
+      console.log("3분후 취소");
+      console.log(e.data);
       // 3분후 취소 핸들링
-      const tempUser = [...userList].filter(tempUser.id !== e.data);
+      console.log(userList);
+      const tempUser = userList.filter((item) => item.id !== e.data);
+      console.log("tempUser");
+      console.log(tempUser);
       setUserList(tempUser);
     });
 
@@ -280,12 +298,12 @@ export default function MatchingComplete() {
         }
       )
       .then(() => {
-        navigate("/");
         window.sessionStorage.removeItem("isMatched");
         window.sessionStorage.removeItem("isCompleted");
         window.sessionStorage.removeItem("matchedData");
         matchingStore.setIsCompleted(false);
         matchingStore.setIsMatched(false);
+        navigate("/");
       })
       .catch((err) => {
         console.log(err);
@@ -320,7 +338,14 @@ export default function MatchingComplete() {
   const cancelMatched = () => {
     const now = new Date();
     const firstDay = new Date(
-      JSON.parse(window.sessionStorage.getItem("matchedData")).createdAt
+      JSON.parse(
+        window.sessionStorage.getItem("matchedData")
+      ).matching.createdAt.slice(
+        0,
+        JSON.parse(
+          window.sessionStorage.getItem("matchedData")
+        ).matching.createdAt.indexOf(".")
+      )
     );
     const toNow = now.getTime();
     const toFirst = firstDay.getTime();
@@ -345,12 +370,12 @@ export default function MatchingComplete() {
     if (passedTimeMin >= 3) {
       alert("매칭 3분 이후 취소로 패널티가 부과됩니다.");
       return apiPOSTCancelIllegal(
-        JSON.parse(window.sessionStorage.getItem("matchedData")).id
+        JSON.parse(window.sessionStorage.getItem("matchedData")).matching.id
       );
     }
     alert("매칭 3분 이전 취소로 패널티가 부과되지 않습니다.");
     return apiPOSTCancel(
-      JSON.parse(window.sessionStorage.getItem("matchedData")).id
+      JSON.parse(window.sessionStorage.getItem("matchedData")).matching.id
     );
   };
 
@@ -378,8 +403,8 @@ export default function MatchingComplete() {
         <div className="title-container text-base md:text-xl flex flex-col  font-semibold">
           <h1>{pickedRest.name}에서</h1>
           <h1>
-            오늘 {Number(date.slice(11, 13)) + 1}시 {date.slice(14, 16)}분에
-            만나요 !
+            한시간 뒤 {Number(date.slice(11, 13)) + 1}시 {date.slice(14, 16)}
+            분에 만나요 !
           </h1>
           <div className="font-normal text-sm md:text-base pt-2">
             {pickedRest.road_address_name}까지 내 위치에서 {distance}분
