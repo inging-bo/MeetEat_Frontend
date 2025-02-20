@@ -34,7 +34,7 @@ export default function CheckPlace() {
     setPickedPlace(jsonCurData.matching.restaurant.placeName);
   }, []);
 
-  // 뒤로가기 발생시 매칭 취소
+  // 뒤로가기 발생시 메인으로 이동
   const history = createBrowserHistory();
   const { pathname } = useLocation();
   useEffect(() => {
@@ -46,6 +46,18 @@ export default function CheckPlace() {
       }
     });
     return unlistenHistoryEvent;
+  }, []);
+
+  // 새로고침 발생시 메인으로 이동
+  useEffect(() => {
+    window.addEventListener("unload", () => {
+      location.replace("/");
+    });
+  }, []);
+  useEffect(() => {
+    window.addEventListener("beforeunload", () => {
+      location.replace("/");
+    });
   }, []);
 
   const navigate = useNavigate();
