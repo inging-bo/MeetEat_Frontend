@@ -5,6 +5,7 @@ import ReactLoading from "react-loading";
 import axios from "axios";
 import modalStore from "../../store/modalStore.js";
 import { EventSourcePolyfill } from "event-source-polyfill";
+import matchingStore from "../../store/matchingStore";
 
 export default function Matching({
   setIsMatching,
@@ -253,7 +254,9 @@ export default function Matching({
         window.sessionStorage.removeItem("isMatched");
         setIsMatching(false);
         setIsMatched(false);
-        history.go(0);
+        matchingStore.setIsMatching(false);
+        matchingStore.setIsMatched(false);
+        navigate("/");
         modalStore.closeModal();
       },
     });
