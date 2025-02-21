@@ -50,14 +50,26 @@ export default function CheckPlace() {
 
   // 새로고침 발생시 메인으로 이동
   useEffect(() => {
-    window.addEventListener("unload", () => {
-      location.replace("/");
+    window.addEventListener("unload", (e) => {
+      console.log(e);
+      window.location.replace("/");
     });
   }, []);
   useEffect(() => {
-    window.addEventListener("beforeunload", () => {
-      location.replace("/");
+    window.addEventListener("beforeunload", (e) => {
+      console.log(e);
+      e.preventDefault();
     });
+  }, []);
+  useEffect(() => {
+    if (window.sessionStorage.getItem("firstLoadDone") === null) {
+      console.log("첫 로드");
+      window.sessionStorage.setItem("firstLoadDone", "1");
+    } else {
+      console.log("리로드");
+      window.sessionStorage.removeItem("firstLoadDone");
+      window.location.replace("/");
+    }
   }, []);
 
   const navigate = useNavigate();
