@@ -10,7 +10,7 @@ export default function RestList() {
   // ✅ 확인용 식당 리스트
   const [restaurants, setRestaurants] = useState([]);
   const [maxPage, setMaxPage] = useState(0);
-  const [page, setPage] = useState("0");
+  const [page, setPage] = useState("1");
   const [regionName, setRegionName] = useState("경기");
   const [categoryName, setCategoryName] = useState("전체");
   const [sortedName, setSortedName] = useState("거리순");
@@ -63,7 +63,7 @@ export default function RestList() {
   // 필터 적용시 다시 불러오기
   useEffect(() => {
     setRestaurants([]);
-    setPage("0");
+    setPage("1");
     let sort = "DISTANCE";
     if (sortedName === "거리순") sort = "DISTANCE";
     else if (sortedName === "평점순") sort = "RATING";
@@ -102,7 +102,7 @@ export default function RestList() {
     if (isMounted.current) {
       const delayDebounceTimer = setTimeout(() => {
         setRestaurants([]);
-        setPage("0");
+        setPage("1");
         let sort = "DISTANCE";
         if (sortedName === "거리순") sort = "DISTANCE";
         else if (sortedName === "평점순") sort = "RATING";
