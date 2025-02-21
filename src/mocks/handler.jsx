@@ -532,7 +532,6 @@ export const handlers = [
 
 // 나의 모임 기록 조회
   http.get("/matching/history", async ({ request }) => {
-      let myMatchingHistory = matchingHistory.content.slice(0, 4);
       return HttpResponse.json(myMatchingHistory, { status: 200 });
   }),
   // http.get("/matching/history2", async ({ request }) => {
