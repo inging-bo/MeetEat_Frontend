@@ -34,22 +34,22 @@ const RestReviews = observer(() => {
         }
       );
 
-      setHistoryData(data);
-      console.log("API 응답 데이터:", data);
+      await setHistoryData(data);
+      console.log("API 응답 데이터:", historyData);
 
-      if (data && Array.isArray(data.content)) {
+      if (historyData && Array.isArray(historyData.content)) {
         // content 배열의 모든 항목에 matching이 없는지 확인
-        const hasNoMatching = data.content.every(item => !item.matching);
+        const hasNoMatching = historyData.content.every(item => !item.matching);
 
         if (hasNoMatching) {
-          console.log("매칭 데이터가 없습니다:", data);
+          console.log("매칭 데이터가 없습니다:", historyData);
           setHasMore(false);
           console.log("더 이상 데이터가 없습니다");
-        } else if (data.last === true) {
+        } else if (historyData.last === true) {
           setHasMore(false);
         }
       } else {
-        console.error("예상치 못한 데이터 구조:", data);
+        console.error("예상치 못한 데이터 구조:", historyData);
         setHasMore(false);
       }
 
@@ -239,7 +239,6 @@ const RestReviews = observer(() => {
       },
     });
   };
-  console.log(historyData , "있나")
   return (
     <div
       className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
@@ -256,7 +255,7 @@ const RestReviews = observer(() => {
           </span>
                 </div>
                 <span>
-          {item.userId === 'm' && !item.matching.userList.find(user => user.id === 'm')?.review?.description && (
+          {!item.matching.userList.find(user => user.id === item.userId)?.review?.description && (
             <div
               onClick={() =>
                 writeReview(
