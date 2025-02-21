@@ -144,6 +144,7 @@ export default function RestList() {
       };
     }
   }, [restViewModal]);
+
   const RestViewToggle = (rest) => {
     setStar(new Array(5).fill(false));
     if (!restViewModal) {
@@ -154,10 +155,23 @@ export default function RestList() {
         }
         setStar(temp);
       }
-      apiPOSTRestDetailView(rest.id - 1);
-      setCenter({ lat: rest.x, lng: rest.y });
+      axios
+        .get(`http://ggone.site/api/restaurants/${rest.id}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          setPickedRest(res.data);
+          setCenter({ lng: res.data.x, lat: res.data.y });
+          setRestViewModal(!restViewModal);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      setRestViewModal(!restViewModal);
     }
-    setRestViewModal(!restViewModal);
   };
 
   // 무한스크롤
@@ -238,20 +252,20 @@ export default function RestList() {
       });
   }
 
-  async function apiPOSTRestDetailView(restId) {
-    await axios
-      .get(`http://ggone.site/api/restaurants/${restId}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        setPickedRest(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+  // async function apiPOSTRestDetailView(restId) {
+  //   await axios
+  //     .get(`http://ggone.site/api/restaurants/${restId}`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+  //     .then((res) => {
+  //       setPickedRest(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
 
   // async function apiPOSTRestDetailView(restId) {
   //   await axios
@@ -361,7 +375,7 @@ export default function RestList() {
           </ul>
         </div>
         {/* 방문 식당 리스트 */}
-        <ul className="grid sm:grid-cols-[350px] min-[750px]:grid-cols-[350px_350px] min-[1150px]:grid-cols-[350px_350px_350px] gap-7 px-2 pb-10">
+        <ul className="grid grid-cols-1 min-[360px]:grid-cols-[350px] min-[750px]:grid-cols-[350px_350px] min-[1150px]:grid-cols-[350px_350px_350px] gap-7 px-2 pb-10">
           {restaurants.map((rest, idx) =>
             restaurants.length - 3 === idx ? (
               <li
@@ -411,7 +425,7 @@ export default function RestList() {
                   {rest.thumbnail ? (
                     <>
                       <img
-                        src={rest.thumbnail}
+                        src={`${import.meta.env.VITE_IMG_URL}${rest.thumbnail.split(",")[0]}`}
                         className="w-full max-h-40 h-full object-cover rounded-lg"
                       ></img>
                     </>
