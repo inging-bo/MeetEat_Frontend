@@ -240,15 +240,11 @@ export default function RestList() {
 
   async function apiPOSTRestDetailView(restId) {
     await axios
-      .get(
-        "http://ggone.site/api/restaurants",
-        { params: { restaurantId: restId } },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
+      .get(`http://ggone.site/api/restaurants/${restId}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
       .then((res) => {
         setPickedRest(res.data);
       })
