@@ -28,7 +28,7 @@ export default function Header() {
       <div className="flex w-full justify-between max-w-screen-xl">
         <div>
           <Link to="/" className="h-full px-4 flex items-center">
-            <HeaderLogo />
+            <HeaderLogo/>
           </Link>
         </div>
 
@@ -52,7 +52,6 @@ export default function Header() {
                             );
                             return;
                           }
-
                           const response = await axios.post(
                             `${import.meta.env.VITE_BE_API_URL}/users/signout`,
                             {}, // 본문 필요 없음
@@ -63,8 +62,13 @@ export default function Header() {
                               },
                             }
                           );
+                          const oauth_state = window.sessionStorage.getItem("oauth_state");
+                          console.log(oauth_state, "state확인");
                           if (response.status === 200) {
                             window.localStorage.removeItem("token"); // token 삭제
+                            if (oauth_state) {
+                              window.sessionStorage.removeItem("oauth_state"); // oauth_state 삭제
+                            }
                             authStore.setLoggedIn(false);
                             navigate("/");
                             modalStore.openModal("oneBtn", {
@@ -75,7 +79,6 @@ export default function Header() {
                             });
                             console.log("로그아웃 완료")
                           }
-                          // 토큰값 제거
                         } catch (error) {
                           console.error("로그아웃 요청 실패!:", error);
                         }
