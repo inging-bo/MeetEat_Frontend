@@ -25,29 +25,30 @@ export default function MainMatching() {
 
   // 로그인, 매칭 확인
   useLayoutEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
-        headers: {
-          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        console.log("MainMatching 36");
-        console.log(res.data);
-        if (res.data !== null) {
-          matchingStore.setIsCompleted(true);
-          window.sessionStorage.setItem("isCompleted", "true");
-          window.sessionStorage.setItem(
-            "matchedData",
-            JSON.stringify(res.data)
-          );
-          completed();
-        } else matchingStore.setIsCompleted(false);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    authStore.loggedIn &&
+      axios
+        .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
+          headers: {
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          console.log("MainMatching 36");
+          console.log(res.data);
+          if (res.data !== null && res.data.matching.status !== "CANCELLED") {
+            matchingStore.setIsCompleted(true);
+            window.sessionStorage.setItem("isCompleted", "true");
+            window.sessionStorage.setItem(
+              "matchedData",
+              JSON.stringify(res.data)
+            );
+            completed();
+          } else matchingStore.setIsCompleted(false);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     authStore.checkLoggedIn();
     setLoggedIn(authStore.loggedIn);
     matchingStore.checkMatching();

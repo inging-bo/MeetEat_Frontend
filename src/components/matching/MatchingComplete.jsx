@@ -246,7 +246,6 @@ export default function MatchingComplete() {
         },
       }
     );
-
     eventSource.onopen = () => {
       // 연결시 할 일
     };
