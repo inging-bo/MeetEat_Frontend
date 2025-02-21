@@ -255,7 +255,7 @@ const RestReviews = observer(() => {
           </span>
                 </div>
                 <span>
-          {!item.matching.userList.find(user => user.id === item.userId)?.review?.description && (
+          {!item.matching.userList.find(user => user.id === item.userId)?.review?.description?.trim() && (
             <div
               onClick={() =>
                 writeReview(
