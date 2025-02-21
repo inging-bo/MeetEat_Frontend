@@ -33,23 +33,35 @@ const RestReviews = observer(() => {
           },
         }
       );
-      setHistoryData(data);
-      if (historyData.content.length === 0) {
-      console.log("불러온 데이터:", data.content);
-        setHasMore(false);
-        console.log("더 이상 데이터가 없습니다")
-      } else if (data.last === true) {
+
+      await setHistoryData(data);
+      console.log("API 응답 데이터:", historyData);
+
+      if (historyData && Array.isArray(historyData.content)) {
+        // content 배열의 모든 항목에 matching이 없는지 확인
+        const hasNoMatching = historyData.content.every(item => !item.matching);
+
+        if (hasNoMatching) {
+          console.log("매칭 데이터가 없습니다:", historyData);
+          setHasMore(false);
+          console.log("더 이상 데이터가 없습니다");
+        } else if (historyData.last === true) {
+          setHasMore(false);
+        }
+      } else {
+        console.error("예상치 못한 데이터 구조:", historyData);
+
         setHasMore(false);
       }
-      // console.log(data)
 
     } catch (error) {
       console.error("매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
+      setHasMore(false);
     }
-  }, [token]);
+  }, [token, page]);
   useEffect(() => {
     fetchHistory();
-  }, [])
+  }, [fetchHistory])
 
   // ✅ 신고하기/차단하기 팝오버 관련 상태 및 ref
   const [activePopOver, setActivePopOver] = useState(null);
@@ -233,36 +245,34 @@ const RestReviews = observer(() => {
       className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <p className="font-bold text-[28px] text-left">나의 매칭 히스토리</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
-        {historyData.content && historyData.content.length > 0 ? (
+
+        {historyData && historyData.content && historyData.content.some(item => item.matching) ? (
+
           historyData.content.map((item) => (
             <li key={item.id} className="flex flex-col gap-4 rounded-2xl">
               <div className="flex justify-between items-center">
                 <div className="flex flex-shrink-0 items-end">
                   <span>{item.matching.restaurant.placeName}</span>
                   <span className="text-sm text-gray-400 pl-2">
-                    {item.matching.restaurant.categoryName}
-                  </span>
+            {item.matching.restaurant.categoryName}
+          </span>
                 </div>
                 <span>
-                  {item.matching.userList.find(
-                    (user) => {
-                      return item.userId === user.id && user.review === ""
-                    }
-                  ) && (
-                    <div
-                      onClick={() =>
-                        writeReview(
-                          item.id,
-                          item.matching.restaurant.placeName,
-                          item.matching
-                        )
-                      }
-                      className="flex flex-shrink-0 text-sm text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer"
-                    >
-                      리뷰 작성하기
-                    </div>
-                  )}
-                </span>
+          {!item.matching.userList.find(user => user.id === item.userId)?.review?.description?.trim() && (
+            <div
+              onClick={() =>
+                writeReview(
+                  item.id,
+                  item.matching.restaurant.placeName,
+                  item.matching
+                )
+              }
+              className="flex flex-shrink-0 text-sm text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer"
+            >
+              리뷰 작성하기
+            </div>
+          )}
+        </span>
               </div>
               <ul className="flex flex-col gap-2.5">
                 {item.matching.userList.map((user) => (
