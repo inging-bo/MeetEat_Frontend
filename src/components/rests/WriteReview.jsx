@@ -79,7 +79,7 @@ export default function WriteReview() {
   async function apiRestReviewWrite(matchedId, restId, textareaValue) {
     await axios
       .post(
-        `${import.meta.env.VITE_BE_API_URL}/restaurants/review`,
+        `http://ggone.site/api/restaurants/search/restaurants/review`,
         {
           matchingHistoryId: matchedId,
           restaurantId: restId,

@@ -105,10 +105,21 @@ export default function RestView({ center, close, pickedRest, star }) {
               <div className="w-[340px] h-[200px] bg-gray-300 rounded-lg text-left flex justify-center items-center">
                 {pickedRest.thumbnail ? (
                   <>
-                    <img
-                      src={`${import.meta.env.VITE_IMG_URL}${pickedRest.thumbnail}`}
-                      className="w-full h-[200px] object-cover rounded-lg"
-                    ></img>
+                    {pickedRest.thumbnail.indexOf(",") !== -1 ? (
+                      <>
+                        <img
+                          src={`${import.meta.env.VITE_IMG_URL}${pickedRest.thumbnail.split(",")[0]}`}
+                          className="w-full h-[100px] object-cover rounded-lg"
+                        ></img>
+                      </>
+                    ) : (
+                      <>
+                        <img
+                          src={`${import.meta.env.VITE_IMG_URL}${pickedRest.thumbnail}`}
+                          className="w-full h-[100px] object-cover rounded-lg"
+                        ></img>
+                      </>
+                    )}
                   </>
                 ) : (
                   <Logo />
@@ -205,16 +216,27 @@ export default function RestView({ center, close, pickedRest, star }) {
             >
               <div className="flex flex-col gap-5  items-start ">
                 <div className="relative flex flex-row gap-3 w-full">
-                  <div className="basis-1/2 min-w-[140px] min-h-[100px] bg-gray-300 rounded-lg text-left content-center justify-items-center">
+                  <div className="basis-1/2 w-[140px] h-[100px] bg-gray-300 rounded-lg text-left content-center justify-items-center">
                     {pickedRest.thumbnail ? (
                       <>
-                        <img
-                          src={`${import.meta.env.VITE_IMG_URL}${pickedRest.thumbnail}`}
-                          className="min-h-[100%] object-cover rounded-lg"
-                        ></img>
+                        {pickedRest.thumbnail.indexOf(",") !== -1 ? (
+                          <>
+                            <img
+                              src={`${import.meta.env.VITE_IMG_URL}${pickedRest.thumbnail.split(",")[0]}`}
+                              className="w-full h-[100px] object-cover rounded-lg"
+                            ></img>
+                          </>
+                        ) : (
+                          <>
+                            <img
+                              src={`${import.meta.env.VITE_IMG_URL}${pickedRest.thumbnail}`}
+                              className="w-full h-[100px] object-cover rounded-lg"
+                            ></img>
+                          </>
+                        )}
                       </>
                     ) : (
-                      <Logo />
+                      <Logo className="max-w-[120px] max-h-[100px]" />
                     )}
                     <div className="absolute bg-white px-2 py-0.5 rounded-full left-1.5 bottom-1.5 flex gap-0.5 items-center">
                       <FullStar width="16px" className="text-primary" />

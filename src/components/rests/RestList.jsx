@@ -375,7 +375,7 @@ export default function RestList() {
           </ul>
         </div>
         {/* 방문 식당 리스트 */}
-        <ul className="grid sm:grid-cols-[350px] min-[750px]:grid-cols-[350px_350px] min-[1150px]:grid-cols-[350px_350px_350px] gap-7 px-2 pb-10">
+        <ul className="grid grid-cols-1 min-[360px]:grid-cols-[350px] min-[750px]:grid-cols-[350px_350px] min-[1150px]:grid-cols-[350px_350px_350px] gap-7 px-2 pb-10">
           {restaurants.map((rest, idx) =>
             restaurants.length - 3 === idx ? (
               <li
@@ -425,7 +425,7 @@ export default function RestList() {
                   {rest.thumbnail ? (
                     <>
                       <img
-                        src={`${import.meta.env.VITE_IMG_URL}${rest.thumbnail}`}
+                        src={`${import.meta.env.VITE_IMG_URL}${rest.thumbnail.split(",")[0]}`}
                         className="w-full max-h-40 h-full object-cover rounded-lg"
                       ></img>
                     </>
