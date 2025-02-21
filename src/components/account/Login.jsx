@@ -87,7 +87,7 @@ export default function Login() {
         // ✅ 토큰 저장
         window.localStorage.setItem(
           "token",
-          `Bearer ${response.data.accessToken}`
+          response.data.accessToken
         );
         // 입력 필드 초기화
         setEmailInput("");
@@ -115,7 +115,6 @@ export default function Login() {
       const errorMessage = error.response?.data?.message;
       setMessage(errorMessage || "서버에서 오류가 발생");
       console.log(error);
-      setMessage(error);
       // const errorCode = error.response?.data?.error;
       // const errorStatus = error.response?.data?.status;
     } finally {
@@ -217,7 +216,10 @@ export default function Login() {
       if (response.status === 200) {
         console.log("로그인 응답 데이터:", response.data);
         authStore.setLoggedIn(true);
-        window.localStorage.setItem("token", response.data.accessToken);
+        window.localStorage.setItem(
+          "token",
+          response.data.accessToken
+        );
         setEmailInput("");
         setPwInput("");
         setMessage("응답 성공")
@@ -236,31 +238,13 @@ export default function Login() {
             },
           });
         } else {
-          axios
-            .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
-              headers: {
-                Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-                "Content-Type": "application/json",
-              },
-            })
-            .then((res) => {
-              if (res.data.id !== undefined) {
-                window.sessionStorage.setItem("isCompleted", "true");
-                window.sessionStorage.setItem(
-                  "matchedData",
-                  JSON.stringify(res)
-                );
-              }
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
           navigate("/");
         }
       }
     } catch (error) {
-      console.error("로그인 요청 실패:", error);
-      setMessage(error.response?.data || "로그인 실패");
+      const errorMessage = error.response?.data?.message;
+      setMessage(errorMessage || "서버에서 오류가 발생");
+      console.log(error);
     }
   };
 
