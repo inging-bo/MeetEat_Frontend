@@ -12,7 +12,7 @@ export default function RestView({ center, close, pickedRest, star }) {
   const mapRef = useRef(null);
   useEffect(() => {
     mapRef.current?.relayout();
-    apiPOSTRestsLists(pickedRest.restaurantId, "0", "10");
+    apiPOSTRestsLists(pickedRest.id, "0", "10");
   }, []);
 
   // 무한스크롤
@@ -33,7 +33,7 @@ export default function RestView({ center, close, pickedRest, star }) {
   const getInfo = async () => {
     if (maxNumber > Number(page) * 10 && maxNumber < (Number(page) + 1) * 10)
       return console.log("마지막페이지입니다.");
-    apiPOSTRestsLists(pickedRest.restaurantId, String(Number(page) + 1), 10);
+    apiPOSTRestsLists(pickedRest.id, String(Number(page) + 1), 10);
     setPage((prev) => prev + 1);
     console.log("info data add...");
   };

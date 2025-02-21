@@ -173,6 +173,8 @@ export default function RestList() {
   }, [restaurants]);
 
   const getInfo = async () => {
+    console.log(maxPage);
+    console.log(Number(page) + 1);
     if (maxPage < Number(page) + 1) return console.log("마지막페이지입니다.");
     let sort = "DISTANCE";
     if (sortedName === "거리순") sort = "DISTANCE";
@@ -185,7 +187,7 @@ export default function RestList() {
       sort,
       String(Number(page) + 1)
     );
-    setPage((prev) => prev + 1);
+    setPage((prev) => String(Number(prev) + 1));
     console.log("info data add...");
   };
 
@@ -229,7 +231,7 @@ export default function RestList() {
       )
       .then((res) => {
         setRestaurants((prev) => [...prev, ...res.data.content]);
-        setMaxPage(res.data.totalPages);
+        setMaxPage(res.data.page.totalPages);
       })
       .catch((err) => {
         console.log(err);
@@ -238,15 +240,11 @@ export default function RestList() {
 
   async function apiPOSTRestDetailView(restId) {
     await axios
-      .get(
-        "http://ggone.site/api/restaurants",
-        { params: { restaurantId: restId } },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
+      .get(`http://ggone.site/api/restaurants/${restId}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
       .then((res) => {
         setPickedRest(res.data);
       })
@@ -363,7 +361,7 @@ export default function RestList() {
           </ul>
         </div>
         {/* 방문 식당 리스트 */}
-        <ul className="grid sm:grid-cols-[350px] min-[750px]:grid-cols-[350px_350px] min-[1150px]:grid-cols-[350px_350px_350px] gap-7 px-2 pb-10 sm:px-0">
+        <ul className="grid sm:grid-cols-[350px] min-[750px]:grid-cols-[350px_350px] min-[1150px]:grid-cols-[350px_350px_350px] gap-7 px-2 pb-10">
           {restaurants.map((rest, idx) =>
             restaurants.length - 3 === idx ? (
               <li
