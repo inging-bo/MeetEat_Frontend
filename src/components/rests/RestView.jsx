@@ -6,7 +6,7 @@ import Logo from "../../assets/header-logo.svg?react";
 import { useEffect, useRef } from "react";
 import RestReviewItem from "./RestReviewItem";
 import axios from "axios";
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 
 export default function RestView({ center, close, pickedRest, star }) {
   const mapRef = useRef(null);
@@ -49,13 +49,35 @@ export default function RestView({ center, close, pickedRest, star }) {
     });
   };
 
-  //식당 리뷰 조회
+  // //식당 리뷰 조회
+  // async function apiPOSTRestsLists(restId, page, size) {
+  //   await axios
+  //     .get(
+  //       `/restaurants/1`,
+  //       {
+  //         params: { restId: restId, page: page, size: size },
+  //       },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     )
+  //     .then((res) => {
+  //       setReviews((prev) => [...prev, ...res.data.content]);
+  //       setMaxNumber(res.data.page.totalElements);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
+
   async function apiPOSTRestsLists(restId, page, size) {
     await axios
       .get(
-        `/restaurants/1`,
+        `http://ggone.site/api/restaurants/${restId}/reviews`,
         {
-          params: { restId: restId, page: page, size: size },
+          params: { page: page, size: size },
         },
         {
           headers: {
@@ -72,27 +94,12 @@ export default function RestView({ center, close, pickedRest, star }) {
       });
   }
 
-  // async function apiPOSTRestsLists(restId, page, size) {
-  //   await axios
-  //     .get(`${import.meta.env.VITE_BE_API_URL}/restaurants/${restId}/reviews`, {
-  //       params: { page: page, size: size },
-  //     })
-  //     .then((res) => {
-  //       setReviews((prev) => [...prev, ...res.data.content]);
-  //       setMaxNumber(res.data.page.totalElements);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }
-
   return (
     <>
       {window.innerWidth > 1024 ? (
         <>
           <div className="bg-black/[0.1] fixed top-0 left-0 w-screen h-screen z-50 overflow-hidden"></div>
-          <div
-            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-xl flex bg-white p-8 rounded-lg w-[1024px] max-lg:w-full h-[700px] overflow-hidden z-50">
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-xl flex bg-white p-8 rounded-lg w-[1024px] max-lg:w-full h-[700px] overflow-hidden z-50">
             <div className="flex flex-col gap-5 justify-between items-start max-w-[340px] bg-white">
               <div className="w-[340px] h-[200px] bg-gray-300 rounded-lg text-left flex justify-center items-center">
                 {pickedRest.thumbnail ? (
@@ -103,7 +110,7 @@ export default function RestView({ center, close, pickedRest, star }) {
                     ></img>
                   </>
                 ) : (
-                  <Logo/>
+                  <Logo />
                 )}
               </div>
               <div>
@@ -115,11 +122,11 @@ export default function RestView({ center, close, pickedRest, star }) {
                     {star.map((item) =>
                       item ? (
                         <>
-                          <FullStar width="24px" className="text-[#FF6445]"/>
+                          <FullStar width="24px" className="text-[#FF6445]" />
                         </>
                       ) : (
                         <>
-                          <FullStar width="24px" className="text-[#9ca3af]"/>
+                          <FullStar width="24px" className="text-[#9ca3af]" />
                         </>
                       )
                     )}
@@ -166,11 +173,11 @@ export default function RestView({ center, close, pickedRest, star }) {
                   {reviews.map((review, idx) =>
                     reviews.length - 1 === idx ? (
                       <>
-                        <RestReviewItem review={review} ref={boxRef}/>
+                        <RestReviewItem review={review} ref={boxRef} />
                       </>
                     ) : (
                       <>
-                        <RestReviewItem review={review}/>
+                        <RestReviewItem review={review} />
                       </>
                     )
                   )}
@@ -181,7 +188,7 @@ export default function RestView({ center, close, pickedRest, star }) {
               className="absolute right-0 top-0 p-4 m-4 cursor-pointer"
               onClick={close}
             >
-              <Cancel width="20px" height="20px"/>
+              <Cancel width="20px" height="20px" />
             </div>
           </div>
         </>
@@ -193,11 +200,11 @@ export default function RestView({ center, close, pickedRest, star }) {
             <div
               className="absolute bg-white -shadow-lg rounded-lg left-4 right-4 top-4 bottom-4 overflow-scroll
               shadow-[inset_0_15px_5px_-5px_rgba(0,0,0,0.03),inset_0_-15px_5px_-5px_rgba(0,0,0,0.03)]
-              ">
+              "
+            >
               <div className="flex flex-col gap-5  items-start ">
                 <div className="relative flex flex-row gap-3 w-full">
-                  <div
-                    className="basis-1/2 min-w-[140px] min-h-[100px] bg-gray-300 rounded-lg text-left content-center justify-items-center">
+                  <div className="basis-1/2 min-w-[140px] min-h-[100px] bg-gray-300 rounded-lg text-left content-center justify-items-center">
                     {pickedRest.thumbnail ? (
                       <>
                         <img
@@ -206,12 +213,13 @@ export default function RestView({ center, close, pickedRest, star }) {
                         ></img>
                       </>
                     ) : (
-                      <Logo/>
+                      <Logo />
                     )}
-                    <div
-                      className="absolute bg-white px-2 py-0.5 rounded-full left-1.5 bottom-1.5 flex gap-0.5 items-center">
-                      <FullStar width="16px" className="text-primary"/>
-                      <span className="text-gray-400 text-sm">{pickedRest.rating}</span>
+                    <div className="absolute bg-white px-2 py-0.5 rounded-full left-1.5 bottom-1.5 flex gap-0.5 items-center">
+                      <FullStar width="16px" className="text-primary" />
+                      <span className="text-gray-400 text-sm">
+                        {pickedRest.rating}
+                      </span>
                     </div>
                   </div>
                   <div className="flex basis-1/2 flex-col text-sm justify-between">
@@ -222,7 +230,9 @@ export default function RestView({ center, close, pickedRest, star }) {
                     </div>
                     <div className="flex flex-col items-start">
                       <p className="font-bold">연락처</p>
-                      <p className="text-gray-400 text-xs">{pickedRest.phone}</p>
+                      <p className="text-gray-400 text-xs">
+                        {pickedRest.phone}
+                      </p>
                     </div>
                     <div className="flex flex-col items-start">
                       <p className="font-bold min-w-fit">주소</p>
@@ -258,11 +268,11 @@ export default function RestView({ center, close, pickedRest, star }) {
                     {reviews.map((review, idx) =>
                       reviews.length - 1 === idx ? (
                         <>
-                          <RestReviewItem review={review} ref={boxRef}/>
+                          <RestReviewItem review={review} ref={boxRef} />
                         </>
                       ) : (
                         <>
-                          <RestReviewItem review={review}/>
+                          <RestReviewItem review={review} />
                         </>
                       )
                     )}
@@ -276,7 +286,7 @@ export default function RestView({ center, close, pickedRest, star }) {
               className="w-14 h-14 flex z-50 justify-center items-center fixed right-12 bottom-12 sm:right-7 sm:bottom-7 cursor-pointer bg-primary rounded-full"
               onClick={close}
             >
-              <Cancel width="19px" height="19px" className="invert"/>
+              <Cancel width="19px" height="19px" className="invert" />
             </motion.div>
           </div>
         </>
