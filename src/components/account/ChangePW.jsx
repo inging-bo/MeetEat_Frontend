@@ -129,8 +129,6 @@ export default function ChangePW() {
       const errorMessage = error.response?.data?.message
       setMessage(errorMessage)
       console.log(error)
-      const errorCode = error.response?.data?.error
-      const errorStatus = error.response?.data?.status
     }
   };
 
