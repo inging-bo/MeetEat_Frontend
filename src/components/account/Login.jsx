@@ -87,7 +87,7 @@ export default function Login() {
         // ✅ 토큰 저장
         window.localStorage.setItem(
           "token",
-          `Bearer ${response.data.accessToken}`
+          response.data.accessToken
         );
         // 입력 필드 초기화
         setEmailInput("");
@@ -218,7 +218,7 @@ export default function Login() {
         authStore.setLoggedIn(true);
         window.localStorage.setItem(
           "token",
-          `Bearer ${response.data.accessToken}`
+          response.data.accessToken
         );
         setEmailInput("");
         setPwInput("");
