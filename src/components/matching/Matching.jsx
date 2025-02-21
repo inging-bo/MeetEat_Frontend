@@ -64,6 +64,8 @@ export default function Matching({
           Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
+        // heartbeatTimeout: 120000,
+        // withCredentials: true,
       }
     );
 

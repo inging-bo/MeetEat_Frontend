@@ -31,7 +31,7 @@ export default function CheckPlace() {
       window.sessionStorage.getItem("matchedData")
     );
     setMatchingData(jsonData.restaurantList);
-    setPickedPlace(jsonCurData.matching.restaurant.placeName);
+    setPickedPlace(jsonCurData.matching.restaurant.name);
   }, []);
 
   // 뒤로가기 발생시 메인으로 이동
