@@ -20,7 +20,7 @@ const matching = new Map();
 const userListDB = [...userList];
 const reviewList = [...restReviewList];
 let profileData = { ...profile }; // profile을 객체로 유지
-
+let matchingHistory = { ...myMatchingHistory};
 export const handlers = [
   // 처음에 구글, cdn등의 경고가 뜨는걸 막기위해 해당 응답들에대한 지연추가
   http.all("*", async () => {
@@ -282,11 +282,6 @@ export const handlers = [
       );
     }
   }),
-
-  // 프로필 조회
-  http.get("/users/profile", () => {
-    return HttpResponse.json(profile, { status: 200 });
-  }),
   // 프로필 업데이트 (닉네임 또는 소개 수정)
   http.put("/users/profile", async ({ request }) => {
     const body = await request.json(); // 요청 바디 데이터 가져오기
@@ -349,15 +344,14 @@ export const handlers = [
         );
       }
 
-      const content = myMatchingHistory.content;
+      const content = matchingHistory.content;
       let isUpdated = false;
 
       content.forEach(item => {
         const userList = item.matching.restaurant.userList;
-        const userToBan = userList.find(user => user.userId === bannedId);
-
+        const userToBan = userList.find(user => user.id === bannedId);
         if (userToBan) {
-          if (!userToBan.hasOwnProperty('ban')) {
+          if (userToBan.ban === false) {
             userToBan.ban = true;
             isUpdated = true;
           }
@@ -398,15 +392,15 @@ export const handlers = [
         );
       }
 
-      const content = myMatchingHistory.content;
+      const content = matchingHistory.content;
       let isUpdated = false;
 
       content.forEach(item => {
         const userList = item.matching.restaurant.userList;
-        const userToUnban = userList.find(user => user.userId === bannedId);
+        const userToUnban = userList.find(user => user.id === bannedId);
 
         if (userToUnban && userToUnban.hasOwnProperty('ban')) {
-          delete userToUnban.ban;
+          userToUnban.ban = false;
           isUpdated = true;
         }
       });
@@ -419,7 +413,7 @@ export const handlers = [
       }
 
       return HttpResponse.json(
-        { message: "차단 상태가 해제되었습니다.", data: myMatchingHistory },
+        { message: "차단 상태가 해제되었습니다.", data: matchingHistory },
         { status: 200 }
       );
     } catch (error) {
@@ -443,15 +437,15 @@ export const handlers = [
         );
       }
 
-      const content = myMatchingHistory.content;
+      const content = matchingHistory.content;
       let isUpdated = false;
 
       content.forEach(item => {
         const userList = item.matching.restaurant.userList;
-        const userToReported = userList.find(user => user.userId === reportedId);
+        const userToReported = userList.find(user => user.id === reportedId);
 
         if (userToReported) {
-          if (!userToReported.hasOwnProperty('report')) {
+          if (userToReported.report === false) {
             userToReported.report = true;
             isUpdated = true;
           }
@@ -466,7 +460,7 @@ export const handlers = [
       }
 
       return HttpResponse.json(
-        { message: "신고 상태가 추가되었습니다.", data: myMatchingHistory },
+        { message: "신고 상태가 추가되었습니다.", data: matchingHistory },
         { status: 200 }
       );
     } catch (error) {
@@ -490,15 +484,15 @@ export const handlers = [
         );
       }
 
-      const content = myMatchingHistory.content;
+      const content = matchingHistory.content;
       let isUpdated = false;
 
       content.forEach(item => {
         const userList = item.matching.restaurant.userList;
-        const userToUnReported = userList.find(user => user.userId === reportedId);
+        const userToUnReported = userList.find(user => user.id === reportedId);
 
         if (userToUnReported && userToUnReported.hasOwnProperty('report')) {
-          delete userToUnReported.report;
+          userToUnReported.report = false;
           isUpdated = true;
         }
       });
@@ -511,7 +505,7 @@ export const handlers = [
       }
 
       return HttpResponse.json(
-        { message: "신고 상태가 해제되었습니다.", data: myMatchingHistory },
+        { message: "신고 상태가 해제되었습니다.", data: matchingHistory },
         { status: 200 }
       );
     } catch (error) {
@@ -522,10 +516,16 @@ export const handlers = [
     }
   }),
 
-  // 나의 모임 기록 조회
-  http.get("/matching/history", async () => {
-    return HttpResponse.json(myMatchingHistory, { status: 200 });
+// 나의 모임 기록 조회
+  http.get("/matching/history", async ({ request }) => {
+      let myMatchingHistory = matchingHistory.content.slice(0, 4);
+      return HttpResponse.json(myMatchingHistory, { status: 200 });
   }),
+  // http.get("/matching/history2", async ({ request }) => {
+  //     let myMatchingHistory = matchingHistory.content.slice(0, 4);
+  //     console.log(myMatchingHistory)
+  //     return HttpResponse.json(myMatchingHistory, { status: 200 });
+  // }),
 
   // 식당 리뷰 조회
   http.post("/restaurants/review", async ({ request }) => {
