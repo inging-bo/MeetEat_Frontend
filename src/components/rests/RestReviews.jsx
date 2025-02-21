@@ -33,6 +33,7 @@ const RestReviews = observer(() => {
           },
         }
       );
+      setHasMore(false)
       console.log(data)
       setHistoryData(data);
     } catch (error) {

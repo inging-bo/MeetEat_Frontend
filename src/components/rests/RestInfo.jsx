@@ -35,7 +35,9 @@ const RestInfo = observer(() => {
           },
         }
       );
-      setProfileData(data);
+      console.log("API 응답 데이터:", data); // 추가
+      setProfileData(data); // 수정: data.profile로 접근
+      console.log(profileData)
     } catch (error) {
       console.error("[Error] 프로필 정보를 불러오는데 실패:", error);
       console.log(data)
@@ -55,8 +57,9 @@ const RestInfo = observer(() => {
         window.location.replace("/");
       }
     }
-  };
 
+  };
+  console.log(profileData)
   // 페이지 진입 시 로그인 체크 및 프로필 정보 요청
   useEffect(() => {
     authStore.checkLoggedIn();
@@ -67,7 +70,7 @@ const RestInfo = observer(() => {
       fetchProfile();
     }
   }, []);
-
+  console.log("profileData", profileData);
   // EditableField 훅 (프로필 정보를 편집할 필드를 관리)
   function useEditableField(fieldKey) {
     const [isEditing, setIsEditing] = useState(false);
@@ -112,8 +115,8 @@ const RestInfo = observer(() => {
 
         await axios.patch(url, body, {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
           },
         });
 
@@ -157,6 +160,7 @@ const RestInfo = observer(() => {
       </span>
     );
   }, [profileData?.matchingCount]);
+  console.log(profileData?.signupType)
 
   return (
     <div
@@ -214,7 +218,9 @@ const RestInfo = observer(() => {
             transition={{ duration: 0.1 }}
             className="mb-auto rounded-md px-2 py-1"
           >
-            <Link to="/mypage/changepw">비밀번호 변경</Link>
+            {profileData && profileData.signupType?.toUpperCase() === "EMAIL" && (
+              <Link to="/mypage/changepw">비밀번호 변경</Link>
+            )}
           </motion.button>
           <motion.button
             whileTap={{ scale: 0.95, backgroundColor: "#90909030" }}
@@ -238,8 +244,8 @@ const RestInfo = observer(() => {
                           `${import.meta.env.VITE_BE_API_URL}/users/withdrawal`,
                           {
                             headers: {
-                              Authorization: `Bearer ${accessToken}`,
                               "Content-Type": "application/json",
+                              Authorization: `Bearer ${accessToken}`,
                             },
                           }
                         );

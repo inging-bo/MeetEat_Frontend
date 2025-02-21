@@ -282,16 +282,30 @@ export const handlers = [
       );
     }
   }),
+
+  http.get("/users/profile", () => {
+    return HttpResponse.json(profileData);
+  }),
   // 프로필 업데이트 (닉네임 또는 소개 수정)
-  http.put("/users/profile", async ({ request }) => {
+  http.patch("/users/profile/nickname", async ({ request }) => {
     const body = await request.json(); // 요청 바디 데이터 가져오기
 
     // 기존 profile 객체를 업데이트
-    profileData = { ...profile, ...body };
+    profileData = { ...profileData, ...body };
 
     console.log(profileData);
 
-    return HttpResponse.json(profile, { status: 200 });
+    return HttpResponse.json(profileData, { status: 200 });
+  }),
+  http.patch("/users/profile/introduce", async ({ request }) => {
+    const body = await request.json(); // 요청 바디 데이터 가져오기
+
+    // 기존 profile 객체를 업데이트
+    profileData = { ...profileData, ...body };
+
+    console.log(profileData);
+
+    return HttpResponse.json(profileData, { status: 200 });
   }),
   // 비밀번호 변경하기
   http.post("/users/change-password", async ({ request }) => {
