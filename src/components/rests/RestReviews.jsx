@@ -34,7 +34,7 @@ const RestReviews = observer(() => {
         }
       );
       setHistoryData(data);
-      if (!data.content) {
+      if (historyData.content.length === 0) {
       console.log("불러온 데이터:", data.content);
         setHasMore(false);
         console.log("더 이상 데이터가 없습니다")
@@ -233,7 +233,7 @@ const RestReviews = observer(() => {
       className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <p className="font-bold text-[28px] text-left">나의 매칭 히스토리</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
-        {historyData.content ? (
+        {historyData.content && historyData.content.length > 0 ? (
           historyData.content.map((item) => (
             <li key={item.id} className="flex flex-col gap-4 rounded-2xl">
               <div className="flex justify-between items-center">
