@@ -34,11 +34,12 @@ const RestReviews = observer(() => {
         }
       );
       setHistoryData(data);
-      if (historyData.content.length === 0) {
-      console.log("불러온 데이터:", data.content);
+      console.log(historyData.content)
+      if (!historyData.content || historyData.content.length === 0) {
+        console.log("불러온 데이터:", historyData.content);
         setHasMore(false);
-        console.log("더 이상 데이터가 없습니다")
-      } else if (data.last === true) {
+        console.log("더 이상 데이터가 없습니다");
+      } else if (historyData.last === true) {
         setHasMore(false);
       }
       // console.log(data)
@@ -49,7 +50,7 @@ const RestReviews = observer(() => {
   }, [token]);
   useEffect(() => {
     fetchHistory();
-  }, [])
+  }, [fetchHistory])
 
   // ✅ 신고하기/차단하기 팝오버 관련 상태 및 ref
   const [activePopOver, setActivePopOver] = useState(null);
@@ -233,36 +234,32 @@ const RestReviews = observer(() => {
       className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <p className="font-bold text-[28px] text-left">나의 매칭 히스토리</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
-        {historyData.content && historyData.content.length > 0 ? (
+        {historyData && historyData.content && Array.isArray(historyData.content) && historyData.content.length > 0 ? (
           historyData.content.map((item) => (
             <li key={item.id} className="flex flex-col gap-4 rounded-2xl">
               <div className="flex justify-between items-center">
                 <div className="flex flex-shrink-0 items-end">
                   <span>{item.matching.restaurant.placeName}</span>
                   <span className="text-sm text-gray-400 pl-2">
-                    {item.matching.restaurant.categoryName}
-                  </span>
+            {item.matching.restaurant.categoryName}
+          </span>
                 </div>
                 <span>
-                  {item.matching.userList.find(
-                    (user) => {
-                      return item.userId === user.id && user.review === ""
-                    }
-                  ) && (
-                    <div
-                      onClick={() =>
-                        writeReview(
-                          item.id,
-                          item.matching.restaurant.placeName,
-                          item.matching
-                        )
-                      }
-                      className="flex flex-shrink-0 text-sm text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer"
-                    >
-                      리뷰 작성하기
-                    </div>
-                  )}
-                </span>
+          {item.userId === 'm' && !item.matching.userList.find(user => user.id === 'm')?.review?.description && (
+            <div
+              onClick={() =>
+                writeReview(
+                  item.id,
+                  item.matching.restaurant.placeName,
+                  item.matching
+                )
+              }
+              className="flex flex-shrink-0 text-sm text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer"
+            >
+              리뷰 작성하기
+            </div>
+          )}
+        </span>
               </div>
               <ul className="flex flex-col gap-2.5">
                 {item.matching.userList.map((user) => (
