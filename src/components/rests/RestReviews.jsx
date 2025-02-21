@@ -33,9 +33,16 @@ const RestReviews = observer(() => {
           },
         }
       );
-      setHasMore(false)
-      console.log(data)
       setHistoryData(data);
+      if (!data.content) {
+      console.log("불러온 데이터:", data.content);
+        setHasMore(false);
+        console.log("더 이상 데이터가 없습니다")
+      } else if (data.last === true) {
+        setHasMore(false);
+      }
+      // console.log(data)
+
     } catch (error) {
       console.error("매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
     }
