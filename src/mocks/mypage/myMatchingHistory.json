@@ -6,31 +6,32 @@
       "matching": {
         "restaurant": {
           "id": "식당아이디36",
-          "placeName": "식당_88",
+          "placeName": "스시히로",
           "categoryName": "일식",
-          "userList": [
-            {
-              "id": "m",
-              "nickname": "본인",
-              "matchingCount": 3,
-              "review": ""
+          "createdAt": "2025-02-15 18:30:00"
+        },
+        "userList": [
+          {
+            "id": "m",
+            "nickname": "본인",
+            "matchingCount": 3,
+            "review": ""
+          },
+          {
+            "id": "user7",
+            "nickname": "민지",
+            "matchingCount": 2,
+            "review": {
+              "description": "신선한 회가 맛있어요",
+              "rating": 4,
+              "createdAt": "2025-02-15 21:00:00",
+              "updatedAt": "2025-02-15 21:30:00"
             },
-            {
-              "id": "user7",
-              "nickname": "민지",
-              "matchingCount": 2,
-              "review": {
-                "description": "괜찮아요",
-                "rating": 3,
-                "createdAt": "2024-08-08 13:00:00",
-                "updatedAt": "2024-08-08 14:00:00"
-              },
-              "ban": false,
-              "report": false
-            }
-          ],
-          "createdAt": "2024-08-08 11:11:11"
-        }
+            "ban": false,
+            "report": false,
+            "join":true
+          }
+        ]
       }
     },
     {
@@ -39,51 +40,37 @@
       "matching": {
         "restaurant": {
           "id": "식당아이디27",
-          "placeName": "식당_13",
+          "placeName": "버거킹",
           "categoryName": "패스트푸드",
-          "userList": [
-            {
-              "id": "m",
-              "nickname": "본인",
-              "matchingCount": 4,
-              "review": {
-                "description": "다시 가고 싶어요",
-                "rating": 4,
-                "createdAt": "2024-08-09 10:30:00",
-                "updatedAt": "2024-08-09 11:00:00"
-              },
-              "ban": false,
-              "report": true
-            },
-            {
-              "id": "user9",
-              "nickname": "수지",
-              "matchingCount": 2,
-              "review": {
-                "description": "실망했어요",
-                "rating": 5,
-                "createdAt": "2024-08-09 11:15:00",
-                "updatedAt": "2024-08-09 12:00:00"
-              },
-              "ban": true,
-              "report": false
-            },
-            {
-              "id": "user8",
-              "nickname": "서연",
-              "matchingCount": 1,
-              "review": {
-                "description": "가격이 합리적이에요",
-                "rating": 4,
-                "createdAt": "2024-08-09 12:30:00",
-                "updatedAt": "2024-08-09 13:00:00"
-              },
-              "ban": true,
-              "report": false
+          "createdAt": "2025-02-16 12:00:00"
+        },
+        "userList": [
+          {
+            "id": "m",
+            "nickname": "본인",
+            "matchingCount": 4,
+            "review": {
+              "description": "와퍼가 역시 최고예요",
+              "rating": 4,
+              "createdAt": "2025-02-16 13:30:00",
+              "updatedAt": "2025-02-16 14:00:00"
             }
-          ],
-          "createdAt": "2024-08-09 10:30:00"
-        }
+          },
+          {
+            "id": "user9",
+            "nickname": "수지",
+            "matchingCount": 2,
+            "review": {
+              "description": "감자튀김이 짰어요",
+              "rating": 3,
+              "createdAt": "2025-02-16 13:45:00",
+              "updatedAt": "2025-02-16 14:15:00"
+            },
+            "ban": false,
+            "report": false,
+            "join":true
+          }
+        ]
       }
     },
     {
@@ -91,39 +78,86 @@
       "userId": "m",
       "matching": {
         "restaurant": {
-          "id": "식당아이디98",
-          "placeName": "식당_19",
-          "categoryName": "카페",
-          "userList": [
-            {
-              "id": "m",
-              "nickname": "본인",
-              "matchingCount": 7,
-              "review": {
-                "description": "다시 가고 싶어요",
-                "rating": 5,
-                "createdAt": "2024-08-10 14:00:00",
-                "updatedAt": "2024-08-10 15:00:00"
-              },
-              "ban": false,
-              "report": false
-            },
-            {
-              "id": "user10",
-              "nickname": "지영",
-              "matchingCount": 3,
-              "review": {
-                "description": "분위기가 좋아요",
-                "rating": 4,
-                "createdAt": "2024-08-10 16:00:00",
-                "updatedAt": "2024-08-10 17:00:00"
-              },
-              "ban": true,
-              "report": false
+          "id": "식당아이디48",
+          "placeName": "화로집",
+          "categoryName": "한식",
+          "createdAt": "2025-02-17 19:00:00"
+        },
+        "userList": [
+          {
+            "id": "m",
+            "nickname": "본인",
+            "matchingCount": 5,
+            "review": {
+              "description": "고기 질이 좋아요",
+              "rating": 5,
+              "createdAt": "2025-02-17 21:30:00",
+              "updatedAt": "2025-02-17 22:00:00"
             }
-          ],
-          "createdAt": "2024-08-10 14:00:00"
-        }
+          },
+          {
+            "id": "user12",
+            "nickname": "지민",
+            "matchingCount": 3,
+            "review": {
+              "description": "분위기가 좋아요",
+              "rating": 4,
+              "createdAt": "2025-02-17 21:45:00",
+              "updatedAt": "2025-02-17 22:15:00"
+            },
+            "ban": false,
+            "report": false,
+            "join":true
+          },
+          {
+            "id": "user15",
+            "nickname": "태현",
+            "matchingCount": 1,
+            "review": {
+              "description": "서비스가 친절해요",
+              "rating": 5,
+              "createdAt": "2025-02-17 22:00:00",
+              "updatedAt": "2025-02-17 22:30:00"
+            },
+            "ban": false,
+            "report": false,
+            "join":true
+          }
+        ]
+      }
+    },
+    {
+      "id": "126",
+      "userId": "m",
+      "matching": {
+        "restaurant": {
+          "id": "식당아이디59",
+          "placeName": "피자헛",
+          "categoryName": "양식",
+          "createdAt": "2025-02-18 18:00:00"
+        },
+        "userList": [
+          {
+            "id": "m",
+            "nickname": "본인",
+            "matchingCount": 2,
+            "review": ""
+          },
+          {
+            "id": "user23",
+            "nickname": "유진",
+            "matchingCount": 4,
+            "review": {
+              "description": "치즈가 풍부해요",
+              "rating": 4,
+              "createdAt": "2025-02-18 20:00:00",
+              "updatedAt": "2025-02-18 20:30:00"
+            },
+            "ban": false,
+            "report": false,
+            "join":true
+          }
+        ]
       }
     },
     {
@@ -131,264 +165,178 @@
       "userId": "m",
       "matching": {
         "restaurant": {
-          "id": "식당아이디49",
-          "placeName": "식당_55",
-          "categoryName": "한식",
-          "userList": [
-            {
-              "id": "m",
-              "nickname": "본인",
-              "matchingCount": 5,
-              "review": {
-                "description": "최고예요",
-                "rating": 4,
-                "createdAt": "2024-08-11 18:30:00",
-                "updatedAt": "2024-08-11 19:00:00"
-              },
-              "ban": true,
-              "report": true
-            },
-            {
-              "id": "user3",
-              "nickname": "민수",
-              "matchingCount": 3,
-              "review": {
-                "description": "맛있어요!",
-                "rating": 5,
-                "createdAt": "2024-08-11 19:15:00",
-                "updatedAt": "2024-08-11 20:00:00"
-              },
-              "ban": true,
-              "report": true
-            },
-            {
-              "id": "user4",
-              "nickname": "지훈",
-              "matchingCount": 2,
-              "review": {
-                "description": "추천합니다",
-                "rating": 4,
-                "createdAt": "2024-08-11 20:30:00",
-                "updatedAt": "2024-08-11 21:00:00"
-              },
-              "ban": true,
-              "report": true
+          "id": "식당아이디72",
+          "placeName": "짜장명가",
+          "categoryName": "중식",
+          "createdAt": "2025-02-19 12:30:00"
+        },
+        "userList": [
+          {
+            "id": "m",
+            "nickname": "본인",
+            "matchingCount": 6,
+            "review": {
+              "description": "양이 많아요",
+              "rating": 3,
+              "createdAt": "2025-02-19 14:00:00",
+              "updatedAt": "2025-02-19 14:30:00"
             }
-          ],
-          "createdAt": "2024-08-11 18:30:00"
-        }
+          },
+          {
+            "id": "user31",
+            "nickname": "서준",
+            "matchingCount": 2,
+            "review": {
+              "description": "짜장면이 맛있어요",
+              "rating": 4,
+              "createdAt": "2025-02-19 14:15:00",
+              "updatedAt": "2025-02-19 14:45:00"
+            },
+            "ban": false,
+            "report": false,
+            "join":true
+          },
+          {
+            "id": "user35",
+            "nickname": "민서",
+            "matchingCount": 1,
+            "review": {
+              "description": "탕수육이 바삭해요",
+              "rating": 5,
+              "createdAt": "2025-02-19 14:30:00",
+              "updatedAt": "2025-02-19 15:00:00"
+            },
+            "ban": false,
+            "report": false,
+            "join":true
+          }
+        ]
       }
     },
     {
-      "id": "1255",
+      "id": "128",
       "userId": "m",
       "matching": {
         "restaurant": {
-          "id": "식당아이디9",
-          "placeName": "식당_10",
-          "categoryName": "일식",
-          "userList": [
-            {
-              "id": "m",
-              "nickname": "본인",
-              "matchingCount": 2,
-              "review": {
-                "description": "평범해요",
-                "rating": 2,
-                "createdAt": "2024-08-12 12:00:00",
-                "updatedAt": "2024-08-12 13:00:00"
-              },
-              "ban": false,
-              "report": false
-            },
-            {
-              "id": "user6",
-              "nickname": "도윤",
-              "matchingCount": 1,
-              "review": {
-                "description": "추천합니다",
-                "rating": 3,
-                "createdAt": "2024-08-12 13:30:00",
-                "updatedAt": "2024-08-12 14:00:00"
-              },
-              "ban": true,
-              "report": true
-            },
-            {
-              "id": "user11",
-              "nickname": "유진",
-              "matchingCount": 4,
-              "review": {
-                "description": "서비스가 좋아요",
-                "rating": 4,
-                "createdAt": "2024-08-12 15:00:00",
-                "updatedAt": "2024-08-12 16:00:00"
-              },
-              "ban": false,
-              "report": false
+          "id": "식당아이디85",
+          "placeName": "스타벅스",
+          "categoryName": "카페",
+          "createdAt": "2025-02-20 15:00:00"
+        },
+        "userList": [
+          {
+            "id": "m",
+            "nickname": "본인",
+            "matchingCount": 3,
+            "review": {
+              "description": "아메리카노가 진해요",
+              "rating": 4,
+              "createdAt": "2025-02-20 16:30:00",
+              "updatedAt": "2025-02-20 17:00:00"
             }
-          ],
-          "createdAt": "2024-08-12 12:00:00"
-        }
+          },
+          {
+            "id": "user42",
+            "nickname": "지우",
+            "matchingCount": 5,
+            "review": {
+              "description": "프라푸치노가 맛있어요",
+              "rating": 5,
+              "createdAt": "2025-02-20 16:45:00",
+              "updatedAt": "2025-02-20 17:15:00"
+            },
+            "ban": false,
+            "report": false,
+            "join":false
+          }
+        ]
       }
     },
     {
-      "id": "555",
+      "id": "129",
       "userId": "m",
       "matching": {
         "restaurant": {
-          "id": "식당아이디77",
-          "placeName": "식당_66",
-          "categoryName": "바",
-          "userList": [
-            {
-              "id": "m",
-              "nickname": "본인",
-              "matchingCount": 6,
-              "review": {
-                "description": "평범해요",
-                "rating": 3,
-                "createdAt": "2024-08-13 20:00:00",
-                "updatedAt": "2024-08-13 21:00:00"
-              },
-              "ban": false,
-              "report": true
+          "id": "식당아이디98",
+          "placeName": "쌀국수집",
+          "categoryName": "아시안",
+          "createdAt": "2025-02-21 11:30:00"
+        },
+        "userList": [
+          {
+            "id": "m",
+            "nickname": "본인",
+            "matchingCount": 1,
+            "review": ""
+          },
+          {
+            "id": "user50",
+            "nickname": "하은",
+            "matchingCount": 3,
+            "review": {
+              "description": "국물이 깔끔해요",
+              "rating": 4,
+              "createdAt": "2025-02-21 13:00:00",
+              "updatedAt": "2025-02-21 13:30:00"
             },
-            {
-              "id": "user9",
-              "nickname": "수지",
-              "matchingCount": 4,
-              "review": {
-                "description": "최고예요",
-                "rating": 5,
-                "createdAt": "2024-08-13 21:30:00",
-                "updatedAt": "2024-08-13 22:00:00"
-              },
-              "ban": true,
-              "report": false
+            "ban": false,
+            "report": false,
+            "join":false
+          },
+          {
+            "id": "user53",
+            "nickname": "도윤",
+            "matchingCount": 2,
+            "review": {
+              "description": "고기양이 적어요",
+              "rating": 3,
+              "createdAt": "2025-02-21 13:15:00",
+              "updatedAt": "2025-02-21 13:45:00"
             },
-            {
-              "id": "user1",
-              "nickname": "철수",
-              "matchingCount": 3,
-              "review": {
-                "description": "평범해요",
-                "rating": 4,
-                "createdAt": "2024-08-13 22:30:00",
-                "updatedAt": "2024-08-13 23:00:00"
-              },
-              "ban": true,
-              "report": true
-            },
-            {
-              "id": "user12",
-              "nickname": "현우",
-              "matchingCount": 2,
-              "review": {
-                "description": "분위기가 좋아요",
-                "rating": 4,
-                "createdAt": "2024-08-13 23:30:00",
-                "updatedAt": "2024-08-14 00:00:00"
-              },
-              "ban": true,
-              "report": false
-            }
-          ],
-          "createdAt": "2024-08-13 20:00:00"
-        }
+            "ban": false,
+            "report": false,
+            "join":true
+          }
+        ]
       }
     },
     {
-      "id": "4545",
+      "id": "130",
       "userId": "m",
       "matching": {
         "restaurant": {
-          "id": "식당아이디82",
-          "placeName": "식당_49",
-          "categoryName": "한식",
-          "userList": [
-            {
-              "id": "m",
-              "nickname": "본인",
-              "matchingCount": 1,
-              "review": {
-                "description": "다시 가고 싶어요",
-                "rating": 1,
-                "createdAt": "2024-08-14 11:00:00",
-                "updatedAt": "2024-08-14 12:00:00"
-              },
-              "ban": true,
-              "report": false
-            },
-            {
-              "id": "user13",
-              "nickname": "민아",
-              "matchingCount": 3,
-              "review": {
-                "description": "맛있어요",
-                "rating": 4,
-                "createdAt": "2024-08-14 13:00:00",
-                "updatedAt": "2024-08-14 14:00:00"
-              },
-              "ban": false,
-              "report": false
+          "id": "식당아이디105",
+          "placeName": "서브웨이",
+          "categoryName": "샌드위치",
+          "createdAt": "2025-02-21 18:00:00"
+        },
+        "userList": [
+          {
+            "id": "m",
+            "nickname": "본인",
+            "matchingCount": 7,
+            "review": {
+              "description": "야채가 신선해요",
+              "rating": 4,
+              "createdAt": "2025-02-21 19:30:00",
+              "updatedAt": "2025-02-21 20:00:00"
             }
-          ],
-          "createdAt": "2024-08-14 11:00:00"
-        }
-      }
-    },
-    {
-      "id": "56342",
-      "userId": "m",
-      "matching": {
-        "restaurant": {
-          "id": "식당아이디27",
-          "placeName": "식당_2",
-          "categoryName": "패스트푸드",
-          "userList": [
-            {
-              "id": "m",
-              "nickname": "본인",
-              "matchingCount": 8,
-              "review": {
-                "description": "맛있어요!",
-                "rating": 4,
-                "createdAt": "2024-08-15 18:00:00",
-                "updatedAt": "2024-08-15 19:00:00"
-              },
-              "ban": true,
-              "report": false
+          },
+          {
+            "id": "user61",
+            "nickname": "서연",
+            "matchingCount": 4,
+            "review": {
+              "description": "빵이 부드러워요",
+              "rating": 5,
+              "createdAt": "2025-02-21 19:45:00",
+              "updatedAt": "2025-02-21 20:15:00"
             },
-            {
-              "id": "user4",
-              "nickname": "지훈",
-              "matchingCount": 5,
-              "review": {
-                "description": "별로였어요",
-                "rating": 5,
-                "createdAt": "2024-08-15 19:30:00",
-                "updatedAt": "2024-08-15 20:00:00"
-              },
-              "ban": false,
-              "report": false
-            },
-            {
-              "id": "user1",
-              "nickname": "철수",
-              "matchingCount": 3,
-              "review": {
-                "description": "실망했어요",
-                "rating": 3,
-                "createdAt": "2024-08-15 20:30:00",
-                "updatedAt": "2024-08-15 21:00:00"
-              },
-              "ban": false,
-              "report": false
-            }
-          ],
-          "createdAt": "2024-08-15 18:00:00"
-        }
+            "ban": false,
+            "report": false,
+            "join":true
+          }
+        ]
       }
     }
   ],
@@ -404,17 +352,17 @@
     "paged": true,
     "unpaged": false
   },
-  "last": false,
-  "totalPages": 2,
+  "last": true,
+  "totalPages": 1,
   "totalElements": 8,
   "first": true,
-  "size": 4,
+  "size": 8,
   "number": 0,
   "sort": {
     "empty": false,
     "sorted": true,
     "unsorted": false
   },
-  "numberOfElements": 4,
+  "numberOfElements": 8,
   "empty": false
 }

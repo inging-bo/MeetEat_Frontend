@@ -236,7 +236,7 @@ const RestReviews = observer(() => {
                   </span>
                 </div>
                 <span>
-                  {item.matching.restaurant.userList.find(
+                  {item.matching.userList.find(
                     (user) => {
                       return item.userId === user.id && user.review === ""
                     }
@@ -257,7 +257,7 @@ const RestReviews = observer(() => {
                 </span>
               </div>
               <ul className="flex flex-col gap-2.5">
-                {item.matching.restaurant.userList.map((user) => (
+                {item.matching.userList.map((user) => (
                   <li
                     key={user.id}
                     className="relative flex text-sm justify-between items-center bg-[#F8F8F8] p-3 rounded-lg"
