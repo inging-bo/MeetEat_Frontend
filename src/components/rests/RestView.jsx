@@ -12,6 +12,7 @@ export default function RestView({ center, close, pickedRest, star }) {
   const mapRef = useRef(null);
   useEffect(() => {
     mapRef.current?.relayout();
+    console.log(pickedRest);
     apiPOSTRestsLists(pickedRest.id, "0", "10");
   }, []);
 
@@ -105,7 +106,7 @@ export default function RestView({ center, close, pickedRest, star }) {
                 {pickedRest.thumbnail ? (
                   <>
                     <img
-                      src={pickedRest.thumbnail}
+                      src={`${import.meta.env.VITE_IMG_URL}${pickedRest.thumbnail}`}
                       className="w-full h-[200px] object-cover rounded-lg"
                     ></img>
                   </>
@@ -208,7 +209,7 @@ export default function RestView({ center, close, pickedRest, star }) {
                     {pickedRest.thumbnail ? (
                       <>
                         <img
-                          src={pickedRest.thumbnail}
+                          src={`${import.meta.env.VITE_IMG_URL}${pickedRest.thumbnail}`}
                           className="min-h-[100%] object-cover rounded-lg"
                         ></img>
                       </>
