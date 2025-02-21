@@ -33,21 +33,31 @@ const RestReviews = observer(() => {
           },
         }
       );
+
       setHistoryData(data);
-      console.log(historyData.content)
-      if (!historyData.content || historyData.content.length === 0) {
-        console.log("불러온 데이터:", historyData.content);
-        setHasMore(false);
-        console.log("더 이상 데이터가 없습니다");
-      } else if (historyData.last === true) {
+      console.log("API 응답 데이터:", data);
+
+      if (data && Array.isArray(data.content)) {
+        // content 배열의 모든 항목에 matching이 없는지 확인
+        const hasNoMatching = data.content.every(item => !item.matching);
+
+        if (hasNoMatching) {
+          console.log("매칭 데이터가 없습니다:", data);
+          setHasMore(false);
+          console.log("더 이상 데이터가 없습니다");
+        } else if (data.last === true) {
+          setHasMore(false);
+        }
+      } else {
+        console.error("예상치 못한 데이터 구조:", data);
         setHasMore(false);
       }
-      // console.log(data)
 
     } catch (error) {
       console.error("매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
+      setHasMore(false);
     }
-  }, [token]);
+  }, [token, page]);
   useEffect(() => {
     fetchHistory();
   }, [fetchHistory])
@@ -229,12 +239,13 @@ const RestReviews = observer(() => {
       },
     });
   };
+  console.log(historyData , "있나")
   return (
     <div
       className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <p className="font-bold text-[28px] text-left">나의 매칭 히스토리</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
-        {historyData && historyData.content && Array.isArray(historyData.content) && historyData.content.length > 0 ? (
+        {historyData && historyData.content && historyData.content.some(item => item.matching) ? (
           historyData.content.map((item) => (
             <li key={item.id} className="flex flex-col gap-4 rounded-2xl">
               <div className="flex justify-between items-center">
