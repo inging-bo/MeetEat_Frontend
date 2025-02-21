@@ -200,9 +200,6 @@ export default function RestList() {
     });
   };
 
-  //////////////////////////////////////////////////
-  // 임시함수
-  //////////////////////////////////////////////////
   async function apiPOSTRestsLists(
     region,
     categoryName,
@@ -212,16 +209,24 @@ export default function RestList() {
     page
   ) {
     await axios
-      .post(`${import.meta.env.VITE_BE_API_URL}/restaurants/search`, {
-        region: region,
-        categoryName: categoryName,
-        placeName: placeName,
-        userY: position.lat,
-        userX: position.lng,
-        sorted: sorted,
-        page: page,
-        size: "20",
-      })
+      .post(
+        `${import.meta.env.VITE_BE_API_URL}/restaurants/search`,
+        {
+          region: region,
+          categoryName: categoryName,
+          placeName: placeName,
+          userY: position.lat,
+          userX: position.lng,
+          sorted: sorted,
+          page: page,
+          size: "20",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then((res) => {
         setRestaurants((prev) => [...prev, ...res.data.content]);
         setMaxPage(res.data.totalPages);
