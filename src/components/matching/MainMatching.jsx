@@ -424,7 +424,7 @@ export default function MainMatching() {
                       size: { width: 25, height: 25 },
                     }}
                   />
-                  {window.innerWidth > 767 &&
+                  {window.innerWidth > 950 &&
                     isInfoWindowOpen &&
                     info &&
                     info.place_name === marker.place_name &&
@@ -443,7 +443,7 @@ export default function MainMatching() {
                         />
                       </CustomOverlayMap>
                     )}
-                  {window.innerWidth <= 767 &&
+                  {window.innerWidth <= 950 &&
                     isInfoWindowOpen &&
                     info &&
                     info.place_name === marker.place_name &&
@@ -467,7 +467,7 @@ export default function MainMatching() {
               {/* 검색 된 리스트 표시 */}
               <div
                 key={key}
-                className="hidden md:block bg-white text-black absolute z-10 top-[20%] left-10 min-w-[320px] max-w-[320px] rounded-lg max-h-[650px] overflow-y-scroll scrollbar-hide px-5 drop-shadow-2xl"
+                className="hidden min-[950px]:block bg-white text-black absolute z-10 top-[20%] left-10 min-w-[320px] max-w-[320px] rounded-lg max-h-[650px] overflow-y-scroll scrollbar-hide px-5 drop-shadow-2xl"
               >
                 {markers.length !== 0 && (
                   <div className="font-bold py-[15px] text-left">검색결과</div>
@@ -498,7 +498,7 @@ export default function MainMatching() {
                 )}
               </div>
               {/*검색된 리스트 표시 : 모바일 */}
-              {window.innerWidth <= 767 && (
+              {window.innerWidth <= 950 && (
                 <>
                   <BottomSheet
                     open={bottomSheetOpen}
