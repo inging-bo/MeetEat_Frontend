@@ -8,7 +8,6 @@ import axios from "axios";
 import authStore from "../../store/authStore.js";
 import modalStore from "../../store/modalStore.js";
 import ErrorMessage from "../common/ErrorMessage.jsx";
-import { motion } from "framer-motion";
 import ReactLoading from "react-loading";
 
 export default function SignUp() {

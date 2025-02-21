@@ -212,7 +212,7 @@ export default function RestList() {
     page
   ) {
     await axios
-      .post(`http://3.34.224.225.58:8080/api/restaurants/search`, {
+      .post(`${import.meta.env.VITE_BE_API_URL}/restaurants/search`, {
         region: region,
         categoryName: categoryName,
         placeName: placeName,
