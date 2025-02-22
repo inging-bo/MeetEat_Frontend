@@ -42,6 +42,19 @@ export default function InfoWindow({
           modalStore.closeModal();
         },
       });
+    if (!window.sessionStorage.getItem("isPenalty"))
+      return modalStore.openModal("twoBtn", {
+        message: (
+          <>
+            <div>매칭 3분 후 취소로</div>
+            <div>패널티가 부여된 계정입니다.</div>
+          </>
+        ),
+        onConfirm: async () => {
+          await navigate("/");
+          modalStore.closeModal();
+        },
+      });
     setIsMatching("true");
     setSelectedMarker(marker);
     setNumber(choicedNumber);
