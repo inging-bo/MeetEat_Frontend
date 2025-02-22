@@ -64,11 +64,27 @@ export default function WriteReview() {
 
   const navigate = useNavigate();
   const handleWriteNext = () => {
-    alert("해당 리뷰는 마이페이지에서 다시 작성하실 수 있습니다.");
-    window.sessionStorage.removeItem("isCompleted");
-    window.sessionStorage.removeItem("isMatched");
-    window.sessionStorage.removeItem("matchedData");
-    navigate("/");
+    axios
+      .post(
+        `${import.meta.env.VITE_BE_API_URL}/matching/hisotry/${info.matchedId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(() => {
+        alert("해당 리뷰는 마이페이지에서 다시 작성하실 수 있습니다.");
+        window.sessionStorage.removeItem("isCompleted");
+        window.sessionStorage.removeItem("isMatched");
+        window.sessionStorage.removeItem("matchedData");
+        navigate("/");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleWriteComplete = () => {
