@@ -7,7 +7,9 @@ import agreeUser3 from "./matching/agreeUser3.json";
 import agreeUser4 from "./matching/agreeUser4.json";
 import userList from "./login/userList.json";
 import profile from "./mypage/profile.json";
-import myMatchingHistory from "./mypage/myMatchingHistory.json";
+import myMatchingHistory from "./mypage/historyApi.json";
+import myMatchingHistory2 from "./mypage/historyApi2.json";
+import myReviewHistory from "./mypage/myReview.json";
 import restReviewList from "./rests/restReviewList.json";
 import restList from "./rests/restList.json";
 import restList2 from "./rests/restList2.json";
@@ -530,15 +532,30 @@ export const handlers = [
     }
   }),
 
-// 나의 모임 기록 조회
+  // 나의 모임 기록 조회
   http.get("/matching/history", async ({ request }) => {
+    const url = new URL(request.url);
+    const pageId = url.searchParams.get('page');
+    if (pageId === '0') {
       return HttpResponse.json(myMatchingHistory, { status: 200 });
+    }
+    if (pageId === "1") {
+      return HttpResponse.json(myMatchingHistory2, { status: 200 });
+    }
+
   }),
-  // http.get("/matching/history2", async ({ request }) => {
-  //     let myMatchingHistory = matchingHistory.content.slice(0, 4);
-  //     console.log(myMatchingHistory)
-  //     return HttpResponse.json(myMatchingHistory, { status: 200 });
-  // }),
+
+  // 나의 식당 후기 조회
+  http.get(`${import.meta.env.VITE_BE_API_URL}/restaurants/myreview`, async ({ request }) => {
+    // 쿼리 파라미터에서 matchingHistoryId 추출
+    const url = new URL(request.url);
+    const matchingHistoryId = url.searchParams.get('matchingHistoryId');
+
+    console.log("Requested matchingHistoryId:", matchingHistoryId);
+
+    // 항상 리뷰 데이터 반환
+    return HttpResponse.json(myReviewHistory, { status: 200 });
+  }),
 
   // 식당 리뷰 조회
   http.post("/restaurants/review", async ({ request }) => {

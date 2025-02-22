@@ -1,0 +1,208 @@
+{
+  "content": [
+    {
+      "id": 22,
+      "userId": 24,
+      "matchingStatus": "MATCHED",
+      "matching": {
+        "id": 22,
+        "count": 1,
+        "status": "MATCHED",
+        "restaurant": {
+          "id": 39,
+          "kakaomapsId": null,
+          "name": "픽미",
+          "category_name": "음식점 > 카페",
+          "road_address_name": "서울 금천구 독산로 194",
+          "phone": "",
+          "lon": 126.903193791302,
+          "lat": 37.4643594750229,
+          "rating": null,
+          "place": null,
+          "user": null
+        },
+        "userList": [
+          {
+            "id": 24,
+            "nickname": "hib",
+            "introduce": "ffff",
+            "review": {
+              "description": "신선한 회가 맛있어요",
+              "rating": 4,
+              "createdAt": "2025-02-15 21:00:00",
+              "updatedAt": "2025-02-15 21:30:00"
+            },
+            "matchingCount": 9,
+            "ban": false,
+            "report": false,
+            "join": null
+          },
+          {
+            "id": 2423,
+            "nickname": "h",
+            "introduce": "f",
+            "review": {
+              "description": "신선한 회가 맛있어요",
+              "rating": 4,
+              "createdAt": "2025-02-15 21:00:00",
+              "updatedAt": "2025-02-15 21:30:00"
+            },
+            "matchingCount": 9,
+            "ban": false,
+            "report": false,
+            "join": null
+          }
+        ],
+        "createdAt": "2025-02-19T17:12:29.055528"
+      },
+      "createdAt": "2025-02-19T17:12:29.074224"
+    },
+    {
+      "id": 21,
+      "userId": 24,
+      "matchingStatus": "MATCHED",
+      "matching": {
+        "id": 21,
+        "count": 1,
+        "status": "MATCHED",
+        "restaurant": {
+          "id": 38,
+          "kakaomapsId": null,
+          "name": "미진솔테크",
+          "category_name": "서비스,산업 > 제조업 > 산업용품 > 공구,공작기계",
+          "road_address_name": "서울 금천구 가산디지털1로 19",
+          "phone": "02-2108-5800",
+          "lon": 126.886513831047,
+          "lat": 37.4676071939583,
+          "rating": null,
+          "place": null,
+          "user": null
+        },
+        "userList": [
+          {
+            "id": 24,
+            "nickname": "hib",
+            "introduce": "ffff",
+            "review": null,
+            "matchingCount": 9,
+            "ban": false,
+            "report": false,
+            "join": null
+          },
+          {
+            "id": 294,
+            "nickname": "hib1",
+            "introduce": "fff",
+            "review": null,
+            "matchingCount": 9,
+            "ban": false,
+            "report": false,
+            "join": null
+          }
+        ],
+        "createdAt": "2025-02-19T17:10:30.956275"
+      },
+      "createdAt": "2025-02-19T17:10:30.984948"
+    },
+    {
+      "id": 20,
+      "userId": 24,
+      "matchingStatus": "MATCHED",
+      "matching": {
+        "id": 20,
+        "count": 1,
+        "status": "MATCHED",
+        "restaurant": {
+          "id": 37,
+          "kakaomapsId": null,
+          "name": "체인지미미용실",
+          "category_name": "가정,생활 > 미용 > 미용실",
+          "road_address_name": "서울 금천구 범안로 1192",
+          "phone": "02-808-5604",
+          "lon": 126.894195529099,
+          "lat": 37.4663943530416,
+          "rating": null,
+          "place": null,
+          "user": null
+        },
+        "userList": [
+          {
+            "id": 24,
+            "nickname": "hib",
+            "introduce": "ffff",
+            "review": null,
+            "matchingCount": 9,
+            "ban": false,
+            "report": false,
+            "join": null
+          },
+          {
+            "id": 294,
+            "nickname": "hib1",
+            "introduce": "fff",
+            "review": null,
+            "matchingCount": 9,
+            "ban": false,
+            "report": false,
+            "join": null
+          }
+        ],
+        "createdAt": "2025-02-19T16:57:03.831294"
+      },
+      "createdAt": "2025-02-19T16:57:03.847335"
+    },
+    {
+      "id": 19,
+      "userId": 24,
+      "matchingStatus": "MATCHED",
+      "matching": {
+        "id": 19,
+        "count": 1,
+        "status": "MATCHED",
+        "restaurant": {
+          "id": 36,
+          "kakaomapsId": null,
+          "name": "미가위소리 시흥점",
+          "category_name": "가정,생활 > 미용 > 미용실",
+          "road_address_name": "서울 금천구 독산로 67",
+          "phone": "02-809-8857",
+          "lon": 126.90595424251,
+          "lat": 37.453436932556,
+          "rating": null,
+          "place": null,
+          "user": null
+        },
+        "userList": [
+          {
+            "id": 24,
+            "nickname": "hib",
+            "introduce": "ffff",
+            "review": null,
+            "matchingCount": 9,
+            "ban": false,
+            "report": false,
+            "join": null
+          },
+          {
+            "id": 24,
+            "nickname": "hibb",
+            "introduce": "ffff",
+            "review": null,
+            "matchingCount": 9,
+            "ban": false,
+            "report": false,
+            "join": null
+          }
+        ],
+        "createdAt": "2025-02-19T16:43:50.749963"
+      },
+      "createdAt": "2025-02-19T16:43:50.790862"
+    }
+  ],
+  "page": {
+    "size": 4,
+    "number": 0,
+    "totalElements": 8,
+    "totalPages": 2
+  }
+}
