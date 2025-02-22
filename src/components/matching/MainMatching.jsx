@@ -399,7 +399,7 @@ export default function MainMatching() {
                 <>
                   <Link
                     to={`/mypage`}
-                    className="h-full min-w-[80px] px-4 flex items-center text-xs sm:text-base"
+                    className="h-full min-w-[80px] pl-4 flex items-center text-xs sm:text-base"
                   >
                     <MypageIcon width="25px" />
                   </Link>
