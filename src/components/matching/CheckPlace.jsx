@@ -45,7 +45,7 @@ export default function CheckPlace() {
   useEffect(() => {
     fetchSSE();
     const jsonData = JSON.parse(
-      window.sessionStorage.getItem("matchingData")
+      window.sessionStorage.getItem("matchingData"),
     ).data;
     setMatchingData(jsonData.restaurantList);
   }, []);
@@ -81,7 +81,7 @@ export default function CheckPlace() {
           Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     eventSource.onopen = () => {
@@ -214,7 +214,7 @@ export default function CheckPlace() {
 
   const minutes = String(Math.floor((timeLeft / (1000 * 60)) % 60)).padStart(
     2,
-    "0"
+    "0",
   );
   const second = String(Math.floor((timeLeft / 1000) % 60)).padStart(2, "0");
 
@@ -391,7 +391,7 @@ export default function CheckPlace() {
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       )
       .then((res) => {
         console.log(res.data);
@@ -415,7 +415,7 @@ export default function CheckPlace() {
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       )
       .then((res) => {
         console.log(res.data);
@@ -435,7 +435,7 @@ export default function CheckPlace() {
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       )
       .then((res) => {
         console.log(res);
@@ -470,36 +470,36 @@ export default function CheckPlace() {
 
   return (
     <>
-      <div className="bg-map relative w-full h-full">
-        <div className="bg-black/40 absolute w-full h-full z-10"></div>
+      <div className="bg-map relative h-full w-full">
+        <div className="absolute z-10 h-full w-full bg-black/40"></div>
         {position && (
           <StaticMap
             id="map"
-            className="w-full h-full"
+            className="h-full w-full"
             center={position}
             level={5}
           />
         )}
       </div>
-      <div className="absolute flex flex-col items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[350px] md:w-[790px] h-[525px] bg-white rounded-lg drop-shadow-2xl z-20 py-[40px]">
+      <div className="absolute left-1/2 top-1/2 z-20 flex h-[525px] w-[350px] -translate-x-1/2 -translate-y-1/2 transform flex-col items-center rounded-lg bg-white py-[40px] drop-shadow-2xl md:w-[790px]">
         <div className="flex flex-col items-center">
           <CheckTitle />
-          <p className="text-base md:text-xl pb-1 pt-[30px] font-semibold">
+          <p className="pb-1 pt-[30px] text-base font-semibold md:text-xl">
             매칭 인원을 찾았어요.
           </p>
-          <p className="text-base md:text-xl pb-3 font-semibold">
+          <p className="pb-3 text-base font-semibold md:text-xl">
             모든 인원 동의시 매칭이 계속 진행됩니다.
           </p>
           <p className="pb-5 text-sm md:text-base">
             남은시간 {minutes}:{second}
           </p>
         </div>
-        <div className="people-container w-[340px] md:w-[700px] h-[200px] flex flex-col justify-center gap-6 md:gap-4 py-3 bg-[#F8F8F8] rounded-lg text-[#555555] text-xs md:text-[14px]">
+        <div className="people-container flex h-[200px] w-[340px] flex-col justify-center gap-6 rounded-lg bg-[#F8F8F8] py-3 text-xs text-[#555555] md:w-[700px] md:gap-4 md:text-[14px]">
           {matchingData.map((item, idx) => (
             <>
               <div
                 key={idx}
-                className="people-info grid w-[700px] grid-cols-[40px_75px_75px_75px_75px] md:grid-cols-[100px_150px_150px_150px_150px] h-[15px] justify-items-center"
+                className="people-info grid h-[15px] w-[700px] grid-cols-[40px_75px_75px_75px_75px] justify-items-center md:grid-cols-[100px_150px_150px_150px_150px]"
               >
                 <Waiting
                   id={item.user.nickname + `waiting`}
@@ -509,13 +509,13 @@ export default function CheckPlace() {
                 <Check
                   id={item.user.nickname + `check`}
                   width="25px"
-                  className="check hidden text-[#FF6445] w-[20px] md:w-[25px]"
+                  className="check hidden w-[20px] text-[#FF6445] md:w-[25px]"
                 />
                 <p className="text-overflow">{item.user.nickname}</p>
                 <p className="text-overflow">{item.place.name}</p>
                 <p className="text-overflow">
                   {item.place.category_name.slice(
-                    item.place.category_name.indexOf(">") + 2
+                    item.place.category_name.indexOf(">") + 2,
                   )}
                 </p>
                 <p>
@@ -523,7 +523,7 @@ export default function CheckPlace() {
                     item.place.lat,
                     item.place.lon,
                     position.lat,
-                    position.lng
+                    position.lng,
                   )}
                   분 소요
                 </p>
@@ -534,14 +534,14 @@ export default function CheckPlace() {
         <div className="check-container flex flex-col justify-center">
           <button
             onClick={handleAgree}
-            className="w-[200px] pt-1 pb-[6px] bg-[#A2A2A2] rounded-lg text-white text-sm md:text-[16px] mt-6 md:mt-4 mb-3 hover:bg-[#FF6445]"
+            className="mb-3 mt-6 w-[200px] rounded-lg bg-[#A2A2A2] pb-[6px] pt-1 text-sm text-white hover:bg-[#FF6445] md:mt-4 md:text-[16px]"
           >
             모든 장소에 대해 동의
           </button>
         </div>
         <button
           onClick={handleDisAgree}
-          className="text-xs md:text-[14px] absolute bottom-5"
+          className="absolute bottom-5 text-xs md:text-[14px]"
         >
           매칭취소
         </button>
