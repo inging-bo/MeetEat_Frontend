@@ -154,9 +154,9 @@ export default function WriteReview() {
 
   return (
     <>
-      <div className="bg-map relative w-full h-full">
-        <div className="bg-black/40 absolute w-full h-full z-10"></div>
-        <Map id="map" className="w-full h-full" center={position} level={5} />
+      <div className="bg-map relative w-full h-svh">
+        <div className="bg-black/40 absolute w-full h-svh z-10"></div>
+        <Map id="map" className="w-full h-svh" center={position} level={5} />
       </div>
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[350px] md:w-[790px] h-[550px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center flex flex-col gap-3 pt-14">
         <h1 className="text-2xl font-bold">{info.restName}</h1>
