@@ -351,11 +351,11 @@ export const handlers = [
   http.post("/ban", async ({ request }) => {
     try {
       const url = new URL(request.url);
-      const bannedId = url.searchParams.get("bannedId");
+      const bannedId = url.searchParams.get("bannedId"); // bannedId 가져오기
 
       if (!bannedId) {
         return HttpResponse.json(
-          { message: "bannedId 필요합니다." },
+          { message: "bannedId가 필요합니다." },
           { status: 400 }
         );
       }
@@ -364,33 +364,21 @@ export const handlers = [
       let isUpdated = false;
 
       content.forEach(item => {
-        const userList = item.matching.restaurant.userList;
-        const userToBan = userList.find(user => user.id === bannedId);
-        if (userToBan) {
-          if (userToBan.ban === false) {
-            userToBan.ban = true;
-            isUpdated = true;
-          }
+        const userList = item.matching.userList;
+        const userToBan = userList.find(user => user.id === Number(bannedId));
+        if (userToBan && userToBan.ban === false) {
+          userToBan.ban = true;
+          isUpdated = true;
         }
       });
 
-      if (!isUpdated) {
-        return HttpResponse.json(
-          { message: "잘못된 요청입니다." },
-          { status: 400 }
-        );
+      if (isUpdated) {
+        return HttpResponse.json({ message: "사용자가 성공적으로 차단되었습니다." }, { status: 200 });
+      } else {
+        return HttpResponse.json({ message: "차단할 사용자를 찾을 수 없거나 이미 차단되었습니다." }, { status: 404 });
       }
-
-      return HttpResponse.json(
-        { message: "차단 상태가 추가되었습니다.", data: content },
-        { status: 200 }
-      );
     } catch (error) {
-      console.error("서버 오류:", error);
-      return HttpResponse.json(
-        { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
-        { status: 500 }
-      );
+      return HttpResponse.json({ message: "서버 오류가 발생했습니다." }, { status: 500 });
     }
   }),
 
@@ -412,8 +400,8 @@ export const handlers = [
       let isUpdated = false;
 
       content.forEach(item => {
-        const userList = item.matching.restaurant.userList;
-        const userToUnban = userList.find(user => user.id === bannedId);
+        const userList = item.matching.userList;
+        const userToUnban = userList.find(user => user.id === Number(bannedId))
 
         if (userToUnban && userToUnban.hasOwnProperty('ban')) {
           userToUnban.ban = false;
@@ -457,8 +445,8 @@ export const handlers = [
       let isUpdated = false;
 
       content.forEach(item => {
-        const userList = item.matching.restaurant.userList;
-        const userToReported = userList.find(user => user.id === reportedId);
+        const userList = item.matching.userList;
+        const userToReported = userList.find(user => user.id === Number(reportedId));
 
         if (userToReported) {
           if (userToReported.report === false) {
@@ -504,8 +492,8 @@ export const handlers = [
       let isUpdated = false;
 
       content.forEach(item => {
-        const userList = item.matching.restaurant.userList;
-        const userToUnReported = userList.find(user => user.id === reportedId);
+        const userList = item.matching.userList;
+        const userToUnReported = userList.find(user => user.id === Number(reportedId));
 
         if (userToUnReported && userToUnReported.hasOwnProperty('report')) {
           userToUnReported.report = false;

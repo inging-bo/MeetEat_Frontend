@@ -108,9 +108,11 @@ export default function WriteReview() {
     formData.append("rating", starScore);
     formData.append("description", textareaValue);
     formData.append("files", postImageList);
+
     for (const x of formData.entries()) {
       console.log(x);
     }
+
     await axios
       .post(`${import.meta.env.VITE_BE_API_URL}/restaurants/review`, formData, {
         headers: {
