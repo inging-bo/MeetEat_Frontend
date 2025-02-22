@@ -27,24 +27,43 @@ export default function MainMatching() {
   useLayoutEffect(() => {
     authStore.loggedIn &&
       axios
-        .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
+        .get(`${import.meta.env.VITE_BE_API_URL}/users/profile`, {
           headers: {
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
         })
         .then((res) => {
-          console.log("MainMatching 36");
-          console.log(res.data);
-          if (res.data !== null && res.data.matching.status !== "CANCELLED") {
-            matchingStore.setIsCompleted(true);
-            window.sessionStorage.setItem("isCompleted", "true");
-            window.sessionStorage.setItem(
-              "matchedData",
-              JSON.stringify(res.data)
-            );
-            completed();
-          } else matchingStore.setIsCompleted(false);
+          res.data.isPenalty
+            ? window.sessionStorage.setItem("isPenalty", true)
+            : window.sessionStorage.setItem("isPenalty", false);
+          !res.data.isPenalty &&
+            axios
+              .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
+                headers: {
+                  Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+                  "Content-Type": "application/json",
+                },
+              })
+              .then((res) => {
+                console.log("MainMatching 36");
+                console.log(res.data);
+                if (
+                  res.data !== null &&
+                  res.data.matching.status !== "CANCELLED"
+                ) {
+                  matchingStore.setIsCompleted(true);
+                  window.sessionStorage.setItem("isCompleted", "true");
+                  window.sessionStorage.setItem(
+                    "matchedData",
+                    JSON.stringify(res.data)
+                  );
+                  completed();
+                } else matchingStore.setIsCompleted(false);
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
         })
         .catch(function (error) {
           console.log(error);

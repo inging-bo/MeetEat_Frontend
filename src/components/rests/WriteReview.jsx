@@ -18,8 +18,15 @@ export default function WriteReview() {
 
   // 이미지 핸들러
   const [imageList, setImageList] = useState([]);
+  const [postImageList, setPostImageList] = useState([]);
   const handleAddImages = (e) => {
+    const postFiles = Array.from(e.target.files);
     const files = e.target.files;
+
+    if (postFiles.length > 7) {
+      setPostImageList(postFiles.slice(0, 7));
+    }
+
     let imageUrlLists = [...imageList];
 
     for (let i = 0; i < files.length; i++) {
@@ -56,7 +63,7 @@ export default function WriteReview() {
           ) : (
             <EmptyStar className="star" />
           )}
-        </span>
+        </span>,
       );
     }
     return result;
@@ -73,7 +80,7 @@ export default function WriteReview() {
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       )
       .then(() => {
         alert("해당 리뷰는 마이페이지에서 다시 작성하실 수 있습니다.");
@@ -93,23 +100,20 @@ export default function WriteReview() {
   };
 
   async function apiRestReviewWrite(matchedId, restId, textareaValue) {
+    console.log(matchedId, restId, textareaValue);
+    const formData = new FormData();
+    formData.append("matchingHistoryId", matchedId);
+    formData.append("restaurantId", restId);
+    formData.append("rating", starScore);
+    formData.append("description", textareaValue);
+    formData.append("files", postImageList);
     await axios
-      .post(
-        `http://ggone.site/api/restaurants/search/restaurants/review`,
-        {
-          matchingHistoryId: matchedId,
-          restaurantId: restId,
-          rating: starScore,
-          description: textareaValue,
-          files: imageList,
+      .post(`${import.meta.env.VITE_BE_API_URL}/restaurants/review`, formData, {
+        headers: {
+          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data",
         },
-        {
-          headers: {
-            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        }
-      )
+      })
       .then(() => {
         alert("작성 완료되었습니다.");
         window.sessionStorage.removeItem("isCompleted");
@@ -148,7 +152,7 @@ export default function WriteReview() {
         }
       },
       gpsError,
-      geolocationOptions
+      geolocationOptions,
     );
   }, []);
 
