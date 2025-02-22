@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import GoldMedal from "../../assets/Medal-Gold.svg?react";
@@ -6,18 +6,26 @@ import SilverMedal from "../../assets/Medal-Silver.svg?react";
 import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
 import modalStore from "../../store/modalStore.js";
 import axios from "axios";
-import log from "eslint-plugin-react/lib/util/log.js";
+import { useInView } from 'react-intersection-observer';
 
 const RestReviews = observer(() => {
-  const [historyData, setHistoryData] = useState(null);
+  const [historyData, setHistoryData] = useState([]);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  // 매칭 히스토리 정보를 가져오는 함수
-  const fetchHistory = async () => {
+
+  // 무한 스크롤 관련
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [moreHistory, inView] = useInView({
+    threshold: 0,
+  });
+
+  // ✅ 매칭 히스토리 가져오기 (4개씩 추가)
+  const fetchHistory = useCallback(async () => {
     try {
       const { data } = await axios.get(
-        `/matching/history`,
+        `${import.meta.env.VITE_BE_API_URL}/matching/history?page=${page}&size=4`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -25,17 +33,35 @@ const RestReviews = observer(() => {
           },
         }
       );
-      setHistoryData(data);
+
+      await setHistoryData(data);
+      console.log("API 응답 데이터:", historyData);
+
+      if (historyData && Array.isArray(historyData.content)) {
+        // content 배열의 모든 항목에 matching이 없는지 확인
+        const hasNoMatching = historyData.content.every(item => !item.matching);
+
+        if (hasNoMatching) {
+          console.log("매칭 데이터가 없습니다:", historyData);
+          setHasMore(false);
+          console.log("더 이상 데이터가 없습니다");
+        } else if (historyData.last === true) {
+          setHasMore(false);
+        }
+      } else {
+        console.error("예상치 못한 데이터 구조:", historyData);
+
+        setHasMore(false);
+      }
+
     } catch (error) {
       console.error("매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
+      setHasMore(false);
     }
-  };
-
-  // 컴포넌트 마운트 시 매칭 히스토리 정보 가져오기
+  }, [token, page]);
   useEffect(() => {
     fetchHistory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchHistory])
 
   // ✅ 신고하기/차단하기 팝오버 관련 상태 및 ref
   const [activePopOver, setActivePopOver] = useState(null);
@@ -90,7 +116,7 @@ const RestReviews = observer(() => {
             let response;
             if (type === "ban") {
               response = await axios.post(
-                `/ban?bannedId=${userId}`,
+                `${import.meta.env.VITE_BE_API_URL}/ban?bannedId=${userId}`,
                 {},
                 {
                   headers: {
@@ -101,7 +127,7 @@ const RestReviews = observer(() => {
               );
             } else if (type === "unBan") {
               response = await axios.delete(
-                `/ban?bannedId=${userId}`,
+                `${import.meta.env.VITE_BE_API_URL}/ban?bannedId=${userId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
@@ -111,7 +137,7 @@ const RestReviews = observer(() => {
               );
             } else if (type === "report") {
               response = await axios.post(
-                `/report?reportedId=${userId}`,
+                `${import.meta.env.VITE_BE_API_URL}/report?reportedId=${userId}`,
                 {},
                 {
                   headers: {
@@ -122,7 +148,7 @@ const RestReviews = observer(() => {
               );
             } else if (type === "unReport") {
               response = await axios.delete(
-                `/report?reportedId=${userId}`,
+                `${import.meta.env.VITE_BE_API_URL}/report?reportedId=${userId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
@@ -170,6 +196,8 @@ const RestReviews = observer(() => {
     setActivePopOver(null);
   };
 
+
+  // ✅ 신고 , 차단 위치 모호해서 주석주석
   const banOrReport = (user) => {
     if (user.ban && user.report) {
       return (
@@ -196,9 +224,9 @@ const RestReviews = observer(() => {
 
   // 매칭 횟수별 메달 표시 함수
   const viewMedal = (count) => {
-    if (count >= 5) return <GoldMedal width="16px" height="16px" />;
-    if (count >= 3) return <SilverMedal width="16px" height="16px" />;
-    if (count >= 1) return <BronzeMedal width="16px" height="16px" />;
+    if (count >= 5) return <GoldMedal width="16px" height="16px"/>;
+    if (count >= 3) return <SilverMedal width="16px" height="16px"/>;
+    if (count >= 1) return <BronzeMedal width="16px" height="16px"/>;
     return null;
   };
 
@@ -213,42 +241,41 @@ const RestReviews = observer(() => {
     });
   };
   return (
-    <div className="flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
+    <div
+      className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <p className="font-bold text-[28px] text-left">나의 매칭 히스토리</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
-        {historyData && historyData.content && historyData.content.length > 0 ? (
+
+        {historyData && historyData.content && historyData.content.some(item => item.matching) ? (
+
           historyData.content.map((item) => (
             <li key={item.id} className="flex flex-col gap-4 rounded-2xl">
               <div className="flex justify-between items-center">
                 <div className="flex flex-shrink-0 items-end">
-                  <span>{item.matching.restaurant.place_name}</span>
+                  <span>{item.matching.restaurant.placeName}</span>
                   <span className="text-sm text-gray-400 pl-2">
-                    {item.matching.restaurant.category_name}
-                  </span>
+            {item.matching.restaurant.categoryName}
+          </span>
                 </div>
                 <span>
-                  {item.matching.restaurant.userList.find(
-                    (user) =>
-                    {
-                      return user.userId === item.userId && user.review === ""}
-                  ) && (
-                    <div
-                      onClick={() =>
-                        writeReview(
-                          item.id,
-                          item.matching.restaurant.place_name,
-                          item.matching
-                        )
-                      }
-                      className="flex flex-shrink-0 text-sm text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer"
-                    >
-                      리뷰 작성하기
-                    </div>
-                  )}
-                </span>
+          {!item.matching.userList.find(user => user.id === item.userId)?.review?.description?.trim() && (
+            <div
+              onClick={() =>
+                writeReview(
+                  item.id,
+                  item.matching.restaurant.placeName,
+                  item.matching
+                )
+              }
+              className="flex flex-shrink-0 text-sm text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer"
+            >
+              리뷰 작성하기
+            </div>
+          )}
+        </span>
               </div>
               <ul className="flex flex-col gap-2.5">
-                {item.matching.restaurant.userList.map((user) => (
+                {item.matching.userList.map((user) => (
                   <li
                     key={user.id}
                     className="relative flex text-sm justify-between items-center bg-[#F8F8F8] p-3 rounded-lg"
@@ -262,31 +289,33 @@ const RestReviews = observer(() => {
                         </div>
                       </div>
                       <div className="text-left text-[#555555]">
-                        {user.review}
+                        {user?.review?.description}
                       </div>
                     </div>
                     <div>
-                      <p
-                        className="font-bold rotate-90 tracking-[-0.15rem] cursor-pointer"
-                        onClick={() => popOver(user.userId)}
-                      >
-                        ···
-                      </p>
-                      {activePopOver === user.userId && (
+                      {item.userId !== user.id && (
+                        <p
+                          className="font-bold rotate-90 tracking-[-0.15rem] cursor-pointer"
+                          onClick={() => popOver(user.id)}
+                        >
+                          ···
+                        </p>
+                      )}
+                      {activePopOver === user.id && (
                         <div
                           ref={popOverRef}
                           className="absolute flex flex-col gap-1 z-50 top-10 right-1 bg-white p-2 border border-gray-300 rounded-lg"
                         >
                           {user.ban ? (
                             <button
-                              onClick={() => toggleModal("unBan", user.userId)}
+                              onClick={() => toggleModal("unBan", user.id)}
                               className="py-1 px-2 rounded-lg hover:bg-gray-200"
                             >
                               차단해제
                             </button>
                           ) : (
                             <button
-                              onClick={() => toggleModal("ban", user.userId)}
+                              onClick={() => toggleModal("ban", user.id)}
                               className="py-1 px-2 rounded-lg hover:bg-gray-200"
                             >
                               차단하기
@@ -294,20 +323,21 @@ const RestReviews = observer(() => {
                           )}
                           {user.report ? (
                             <button
-                              onClick={() => toggleModal("unReport", user.userId)}
+                              onClick={() => toggleModal("unReport", user.id)}
                               className="py-1 px-2 rounded-lg hover:bg-gray-200"
                             >
                               신고해제
                             </button>
                           ) : (
                             <button
-                              onClick={() => toggleModal("report", user.userId)}
+                              onClick={() => toggleModal("report", user.id)}
                               className="py-1 px-2 rounded-lg hover:bg-gray-200"
                             >
                               신고하기
                             </button>
                           )}
-                          <div className="absolute -top-1.5 right-3 rotate-45 w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>
+                          <div
+                            className="absolute -top-1.5 right-3 rotate-45 w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>
                         </div>
                       )}
                     </div>
@@ -321,6 +351,9 @@ const RestReviews = observer(() => {
             매칭 히스토리가 없습니다.
           </div>
         )}
+        {hasMore && (
+          <div ref={moreHistory}>Loading more...</div>)
+        }
       </ul>
     </div>
   );

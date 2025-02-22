@@ -9,6 +9,7 @@ import axios from "axios";
 import authStore from "../../store/authStore.js";
 import ErrorMessage from "../common/ErrorMessage.jsx";
 import modalStore from "../../store/modalStore.js";
+import ReactLoading from "react-loading";
 
 export default function Login() {
   // 이메일 패스워드 값 유무 확인 용
@@ -48,9 +49,11 @@ export default function Login() {
   // 로그인 버튼 클릭 시 메시지
   const [message, setMessage] = useState("");
   const [messageKey, setMessageKey] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const login = async (event) => {
     event.preventDefault(); // 기본 제출 동작 방지
+
     if (emailInput === "") {
       setMessageKey((prevKey) => prevKey + 1);
       setMessage("이메일을 입력하세요");
@@ -61,6 +64,7 @@ export default function Login() {
       setMessage("비밀번호을 입력하세요");
       return;
     }
+    setIsLoading(true);
     setMessage("정보를 확인 중입니다.");
     try {
       const response = await axios.post(
@@ -75,14 +79,21 @@ export default function Login() {
           },
         }
       );
+      setMessage("서버 응답 시도 성공")
+      console.log("서버 응답 시도 성공")
       if (response.status === 200) {
         console.log("로그인 응답 데이터:", response.data);
         authStore.setLoggedIn(true);
         // ✅ 토큰 저장
-        window.localStorage.setItem("token", response.data.accessToken);
+        window.localStorage.setItem(
+          "token",
+          response.data.accessToken
+        );
         // 입력 필드 초기화
         setEmailInput("");
         setPwInput("");
+        setMessage("응답 성공")
+        console.log("응답 성공")
         if (response.data.needProfileUpdate) {
           modalStore.openModal("oneBtn", {
             message: (
@@ -97,32 +108,17 @@ export default function Login() {
             },
           });
         } else {
-          axios
-            .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
-              headers: {
-                Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-                "Content-Type": "application/json",
-              },
-            })
-            .then((res) => {
-              console.log("로그인 응당 데이터 ", res.data.id);
-              if (res.data.id !== undefined) {
-                window.sessionStorage.setItem("isCompleted", "true");
-                window.sessionStorage.setItem("matchedData", JSON.stringify(res));
-              }
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-          navigate("/")
+          navigate("/");
         }
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message;
-      setMessage(errorMessage)
-      console.log(error)
+      setMessage(errorMessage || "서버에서 오류가 발생");
+      console.log(error);
       // const errorCode = error.response?.data?.error;
       // const errorStatus = error.response?.data?.status;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -220,9 +216,14 @@ export default function Login() {
       if (response.status === 200) {
         console.log("로그인 응답 데이터:", response.data);
         authStore.setLoggedIn(true);
-        window.localStorage.setItem("token", response.data.accessToken);
+        window.localStorage.setItem(
+          "token",
+          response.data.accessToken
+        );
         setEmailInput("");
         setPwInput("");
+        setMessage("응답 성공")
+        console.log("응답 성공")
         if (response.data.needProfileUpdate) {
           modalStore.openModal("oneBtn", {
             message: (
@@ -237,28 +238,13 @@ export default function Login() {
             },
           });
         } else {
-          axios
-            .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
-              headers: {
-                Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-                "Content-Type": "application/json",
-              },
-            })
-            .then((res) => {
-              if (res.data.id !== undefined) {
-                window.sessionStorage.setItem("isCompleted", "true");
-                window.sessionStorage.setItem("matchedData", JSON.stringify(res));
-              }
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
           navigate("/");
         }
       }
     } catch (error) {
-      console.error("로그인 요청 실패:", error);
-      setMessage(error.response?.data || "로그인 실패");
+      const errorMessage = error.response?.data?.message;
+      setMessage(errorMessage || "서버에서 오류가 발생");
+      console.log(error);
     }
   };
 
@@ -271,6 +257,7 @@ export default function Login() {
       handleOAuthCallback();
     }
   }, []);
+
   return (
     <form
       className="p-6 flex w-full h-full text-black
@@ -279,11 +266,11 @@ export default function Login() {
       <div className="flex flex-1 flex-col gap-3 mt-[77px] sm:m-0 sm:justify-center">
         <h1 className="hidden sm:flex justify-center h-8 mb-8">
           <Link to={"/"}>
-            <HeaderLogo className="h-full w-full"/>
+            <HeaderLogo className="h-full w-full" />
           </Link>
         </h1>
         {/* 에러 메시지 표시 */}
-        <ErrorMessage key={messageKey} message={message} duration={5000}/>
+        <ErrorMessage key={messageKey} message={message} duration={5000} />
         {/* 이메일 형식일 때 통과 하도록 적기 */}
         <div className="flex flex-col items-start">
           <span className="text-gray-700 after:ml-0.5 after:text-red-500 after:content-['*']">
@@ -312,8 +299,7 @@ export default function Login() {
                   fill="currentColor"
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 p-0.5 bg-secondary/20 rounded-full"
                 >
-                  <path
-                    d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/>
+                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
                 </svg>
               </div>
             )}
@@ -321,7 +307,10 @@ export default function Login() {
           {/* 에러 메시지 표시 */}
           {!emailRegex.test(emailInput) && emailInput !== "" ? (
             <span className="mt-1">
-              <ErrorMessage message="이메일 형식이 아닙니다" persistent={true}/>
+              <ErrorMessage
+                message="이메일 형식이 아닙니다"
+                persistent={true}
+              />
             </span>
           ) : (
             <span className="text-sm text-[#FF0000] mt-2 h-5"></span>
@@ -354,8 +343,7 @@ export default function Login() {
                   fill="currentColor"
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 p-0.5 bg-secondary/20 rounded-full"
                 >
-                  <path
-                    d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/>
+                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
                 </svg>
               </div>
             )}
@@ -364,9 +352,9 @@ export default function Login() {
               onClick={togglePW}
             >
               {showPW ? (
-                <ShowPWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5"/>
+                <ShowPWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5" />
               ) : (
-                <HidePWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5"/>
+                <HidePWIcon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7 p-0.5" />
               )}
             </div>
           </label>
@@ -374,11 +362,23 @@ export default function Login() {
         <button
           type="submit"
           onClick={login}
-          className={`w-full h-11 rounded-md hover:bg-primary hover:text-white ${
-            hasValue ? "bg-[#FF6445] text-white" : "bg-gray-200"
-          }`}
+          className={`relative w-full h-11 rounded-md transition duration-100
+          ${hasValue ? "bg-primary text-white" : "bg-gray-200"}
+          ${isLoading ? "bg-primary" : ""}
+          hover:bg-primary hover:text-white
+          active:scale-95 active:bg-[rgb(230,80,50)]`}
         >
-          로그인
+          {isLoading ? (
+            <ReactLoading
+              type={"spokes"}
+              color={"#ffffff"}
+              height={25}
+              width={25}
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+            />
+          ) : (
+            "로그인"
+          )}
         </button>
         <div className="flex gap-3 justify-center text-xs">
           <Link
@@ -391,10 +391,10 @@ export default function Login() {
         <p className="text-sm mt-5">SNS 간편 로그인</p>
         <div className="flex h-14 justify-center gap-4">
           <button onClick={(e) => handleOAuthLogin("naver", e)}>
-            <NaverIcon className="w-full h-full"/>
+            <NaverIcon className="w-full h-full" />
           </button>
           <button onClick={(e) => handleOAuthLogin("kakao", e)}>
-            <KakaoIcon className="w-full h-full"/>
+            <KakaoIcon className="w-full h-full" />
           </button>
         </div>
       </div>

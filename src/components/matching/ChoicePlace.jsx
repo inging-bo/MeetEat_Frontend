@@ -26,17 +26,15 @@ export default function CheckPlace() {
       return navigate("/");
     }
     // 저장된 매칭데이터 저장
-    const jsonData = JSON.parse(
-      window.sessionStorage.getItem("matchingData")
-    ).data;
+    const jsonData = JSON.parse(window.sessionStorage.getItem("matchingData"));
     const jsonCurData = JSON.parse(
       window.sessionStorage.getItem("matchedData")
-    ).data;
+    );
     setMatchingData(jsonData.restaurantList);
-    setPickedPlace(jsonCurData.matching.restaurant.placeName);
+    setPickedPlace(jsonCurData.matching.restaurant.name);
   }, []);
 
-  // 뒤로가기 발생시 매칭 취소
+  // 뒤로가기 발생시 메인으로 이동
   const history = createBrowserHistory();
   const { pathname } = useLocation();
   useEffect(() => {
@@ -48,6 +46,30 @@ export default function CheckPlace() {
       }
     });
     return unlistenHistoryEvent;
+  }, []);
+
+  // 새로고침 발생시 메인으로 이동
+  useEffect(() => {
+    window.addEventListener("unload", (e) => {
+      console.log(e);
+      window.location.replace("/");
+    });
+  }, []);
+  useEffect(() => {
+    window.addEventListener("beforeunload", (e) => {
+      console.log(e);
+      e.preventDefault();
+    });
+  }, []);
+  useEffect(() => {
+    if (window.sessionStorage.getItem("firstLoadDone") === null) {
+      console.log("첫 로드");
+      window.sessionStorage.setItem("firstLoadDone", "1");
+    } else {
+      console.log("리로드");
+      window.sessionStorage.removeItem("firstLoadDone");
+      window.location.replace("/");
+    }
   }, []);
 
   const navigate = useNavigate();
@@ -68,13 +90,13 @@ export default function CheckPlace() {
     }, INTERVAL);
 
     if (timeLeft <= 0) {
-      // 타이머 종료시 최종 매칭 완료 페이지 이동동
+      // 타이머 종료시 최종 매칭 완료 페이지 이동
       clearInterval(timer);
       console.log("타이머가 종료되었습니다.");
       window.sessionStorage.removeItem("matchingData");
       window.sessionStorage.removeItem("tempPosition");
-      const id = JSON.parse(window.sessionStorage.getItem("matchedData")).data
-        .id;
+      const id = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.id;
       navigate(`/matching/complete/${id}`);
     }
 
@@ -145,7 +167,7 @@ export default function CheckPlace() {
                 <p className="place-name text-overflow">{item.place.name}</p>
                 <p className="text-overflow">
                   {item.place.category_name.slice(
-                    item.place.category_name.indexOf(">") + 2
+                    item.place.category_name.lastIndexOf(">") + 2
                   )}
                 </p>
                 <p>

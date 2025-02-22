@@ -3,7 +3,17 @@ import FullStar from "../../assets/full-star.svg?react";
 
 export default function RestReviewItem({ review }) {
   const [star, setStar] = useState(new Array(5).fill(false));
-  const imgs = review.imgUrl.split(",");
+  console.log(review);
+  let imgs = "";
+  if (review.imgUrl === null) {
+    imgs = "";
+  } else if (review.imgUrl.indexOf(",") !== -1) {
+    imgs = review.imgUrl.split(",");
+  } else if (review.imgUrl === "") {
+    imgs = "";
+  } else {
+    imgs = [review.imgUrl];
+  }
 
   useEffect(() => {
     let temp = [...star];
@@ -39,7 +49,7 @@ export default function RestReviewItem({ review }) {
           {review.description}
         </p>
         <ul className="flex gap-2 max-w-[554px] overflow-x-scroll scrollbar-hide">
-          {imgs[0] !== "" &&
+          {imgs !== "" &&
             imgs.map((img) => (
               <>
                 <li className="shrink-0">

@@ -10,7 +10,7 @@ export default function RestList() {
   // ✅ 확인용 식당 리스트
   const [restaurants, setRestaurants] = useState([]);
   const [maxPage, setMaxPage] = useState(0);
-  const [page, setPage] = useState("0");
+  const [page, setPage] = useState("1");
   const [regionName, setRegionName] = useState("경기");
   const [categoryName, setCategoryName] = useState("전체");
   const [sortedName, setSortedName] = useState("거리순");
@@ -63,7 +63,7 @@ export default function RestList() {
   // 필터 적용시 다시 불러오기
   useEffect(() => {
     setRestaurants([]);
-    setPage("0");
+    setPage("1");
     let sort = "DISTANCE";
     if (sortedName === "거리순") sort = "DISTANCE";
     else if (sortedName === "평점순") sort = "RATING";
@@ -102,7 +102,7 @@ export default function RestList() {
     if (isMounted.current) {
       const delayDebounceTimer = setTimeout(() => {
         setRestaurants([]);
-        setPage("0");
+        setPage("1");
         let sort = "DISTANCE";
         if (sortedName === "거리순") sort = "DISTANCE";
         else if (sortedName === "평점순") sort = "RATING";
@@ -144,6 +144,7 @@ export default function RestList() {
       };
     }
   }, [restViewModal]);
+
   const RestViewToggle = (rest) => {
     setStar(new Array(5).fill(false));
     if (!restViewModal) {
@@ -154,10 +155,23 @@ export default function RestList() {
         }
         setStar(temp);
       }
-      apiPOSTRestDetailView(rest.id - 1);
-      setCenter({ lat: rest.x, lng: rest.y });
+      axios
+        .get(`${import.meta.env.VITE_BE_API_URL}/restaurants/${rest.id}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          setPickedRest(res.data);
+          setCenter({ lng: res.data.x, lat: res.data.y });
+          setRestViewModal(!restViewModal);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      setRestViewModal(!restViewModal);
     }
-    setRestViewModal(!restViewModal);
   };
 
   // 무한스크롤
@@ -173,6 +187,8 @@ export default function RestList() {
   }, [restaurants]);
 
   const getInfo = async () => {
+    console.log(maxPage);
+    console.log(Number(page) + 1);
     if (maxPage < Number(page) + 1) return console.log("마지막페이지입니다.");
     let sort = "DISTANCE";
     if (sortedName === "거리순") sort = "DISTANCE";
@@ -185,7 +201,7 @@ export default function RestList() {
       sort,
       String(Number(page) + 1)
     );
-    setPage((prev) => prev + 1);
+    setPage((prev) => String(Number(prev) + 1));
     console.log("info data add...");
   };
 
@@ -200,9 +216,6 @@ export default function RestList() {
     });
   };
 
-  //////////////////////////////////////////////////
-  // 임시함수
-  //////////////////////////////////////////////////
   async function apiPOSTRestsLists(
     region,
     categoryName,
@@ -212,35 +225,47 @@ export default function RestList() {
     page
   ) {
     await axios
-      .post(`${import.meta.env.VITE_BE_API_URL}/restaurants/search`, {
-        region: region,
-        categoryName: categoryName,
-        placeName: placeName,
-        userY: position.lat,
-        userX: position.lng,
-        sorted: sorted,
-        page: page,
-        size: "20",
-      })
+      .post(
+        `${import.meta.env.VITE_BE_API_URL}/restaurants/search`,
+        {
+          region: region,
+          categoryName: categoryName,
+          placeName: placeName,
+          userY: position.lat,
+          userX: position.lng,
+          sorted: sorted,
+          page: page,
+          size: "20",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then((res) => {
         setRestaurants((prev) => [...prev, ...res.data.content]);
-        setMaxPage(res.data.totalPages);
+        setMaxPage(res.data.page.totalPages);
       })
       .catch((err) => {
         console.log(err);
       });
   }
 
-  async function apiPOSTRestDetailView(restId) {
-    await axios
-      .get("/restaurants", { params: { restaurantId: restId } })
-      .then((res) => {
-        setPickedRest(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+  // async function apiPOSTRestDetailView(restId) {
+  //   await axios
+  //     .get(`http://ggone.site/api/restaurants/${restId}`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+  //     .then((res) => {
+  //       setPickedRest(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }
 
   // async function apiPOSTRestDetailView(restId) {
   //   await axios
@@ -257,9 +282,9 @@ export default function RestList() {
 
   return (
     <>
-      <div className="absolute top-40 flex flex-col items-center left-0 right-0">
+      <div className="absolute top-[101px] min-[750px]:top-40 flex flex-col items-center left-0 right-0">
         {/* 식당 검색 Input*/}
-        <div className="w-72 md:w-96 mb-7 search-bar border border-[#3BB82D] rounded-full relative">
+        <div className="w-72 md:w-96 mb-6 min-[750px]:mb-7 search-bar border border-[#3BB82D] rounded-full relative">
           <input
             className="w-full h-10 rounded-full pl-5 pr-12 focus:outline-none"
             id="keyword"
@@ -284,8 +309,7 @@ export default function RestList() {
             </li>
             {searchFilter === "category" && (
               <>
-                <ul
-                  className="absolute flex flex-col w-[67.41px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
+                <ul className="absolute flex flex-col w-[67.41px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
                   {category
                     .filter((item) => categoryName !== item)
                     .map((item) => (
@@ -310,8 +334,7 @@ export default function RestList() {
             </li>
             {searchFilter === "region" && (
               <>
-                <ul
-                  className="absolute flex flex-col w-[67.41px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
+                <ul className="absolute flex flex-col w-[67.41px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
                   {region
                     .filter((item) => regionName !== item)
                     .sort()
@@ -337,8 +360,7 @@ export default function RestList() {
             </li>
             {searchFilter === "option" && (
               <>
-                <ul
-                  className="absolute flex flex-col w-[82.1px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
+                <ul className="absolute flex flex-col w-[82.1px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
                   {sorted
                     .filter((item) => sortedName !== item)
                     .sort()
@@ -353,8 +375,7 @@ export default function RestList() {
           </ul>
         </div>
         {/* 방문 식당 리스트 */}
-        <ul
-          className="grid grid-cols-1 min-[750px]:grid-cols-2 min-[1150px]:grid-cols-3 gap-7 px-2 pb-10 sm:px-0">
+        <ul className="grid grid-cols-1 min-[360px]:grid-cols-[350px] min-[750px]:grid-cols-[350px_350px] min-[1150px]:grid-cols-[350px_350px_350px] gap-7 px-2 pb-10">
           {restaurants.map((rest, idx) =>
             restaurants.length - 3 === idx ? (
               <li
@@ -368,11 +389,11 @@ export default function RestList() {
                     <>
                       <img
                         src={rest.thumbnail}
-                        className="w-full max-h-40 object-cover rounded-lg"
+                        className="w-full max-h-40 object-cover h-full rounded-lg"
                       ></img>
                     </>
                   ) : (
-                    <Logo className=""/>
+                    <Logo className="" />
                   )}
                 </div>
                 <p className="text-lg text-overflow">{rest.place_name}</p>
@@ -381,15 +402,15 @@ export default function RestList() {
                 </p>
                 <div className="flex h-6 gap-2 items-start text-base text-gray-500">
                   <div className="flex gap-1 h-6">
-                      <span className="flex justify-center items-center ">
-                        <FullStar className="w-full h-full text-[#FF6445]"/>
-                      </span>
+                    <span className="flex justify-center items-center ">
+                      <FullStar className="w-full h-full text-[#FF6445]" />
+                    </span>
                     <span>{rest.rating}</span>
                   </div>
                   <div className="flex gap-1 h-6">
-                      <span className="flex justify-center items-center ">
-                        <Review className="mt-0.5" width="20px" height="20px"/>
-                      </span>
+                    <span className="flex justify-center items-center ">
+                      <Review className="mt-0.5" width="20px" height="20px" />
+                    </span>
                     <span>{rest.reviews}</span>
                   </div>
                 </div>
@@ -404,12 +425,12 @@ export default function RestList() {
                   {rest.thumbnail ? (
                     <>
                       <img
-                        src={rest.thumbnail}
-                        className="w-full max-h-40 object-cover rounded-lg"
+                        src={`${import.meta.env.VITE_IMG_URL}${rest.thumbnail.split(",")[0]}`}
+                        className="w-full max-h-40 h-full object-cover rounded-lg"
                       ></img>
                     </>
                   ) : (
-                    <Logo/>
+                    <Logo />
                   )}
                 </div>
                 <p className="text-lg text-overflow">{rest.place_name}</p>
@@ -418,19 +439,19 @@ export default function RestList() {
                 </p>
                 <div className="flex h-6 gap-2 items-start text-base text-gray-500">
                   <div className="flex gap-1 h-6">
-                      <span className="flex justify-center items-center ">
-                        <FullStar
-                          width="20px"
-                          height="20px"
-                          className=" text-[#FF6445]"
-                        />
-                      </span>
+                    <span className="flex justify-center items-center ">
+                      <FullStar
+                        width="20px"
+                        height="20px"
+                        className=" text-[#FF6445]"
+                      />
+                    </span>
                     <span>{rest.rating}</span>
                   </div>
                   <div className="flex gap-1 h-6">
-                      <span className="flex justify-center items-center ">
-                        <Review className="mt-0.5" width="20px" height="20px"/>
-                      </span>
+                    <span className="flex justify-center items-center ">
+                      <Review className="mt-0.5" width="20px" height="20px" />
+                    </span>
                     <span>{rest.reviews}</span>
                   </div>
                 </div>

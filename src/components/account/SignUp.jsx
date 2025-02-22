@@ -8,6 +8,7 @@ import axios from "axios";
 import authStore from "../../store/authStore.js";
 import modalStore from "../../store/modalStore.js";
 import ErrorMessage from "../common/ErrorMessage.jsx";
+import ReactLoading from "react-loading";
 
 export default function SignUp() {
   // 로그인 확인
@@ -72,6 +73,8 @@ export default function SignUp() {
   const navigate = useNavigate()
   const [message, setMessage] = useState("");
   const [messageKey, setMessageKey] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const signUp = async (event) => {
     event.preventDefault(); // 기본 제출 동작 방지
@@ -96,6 +99,15 @@ export default function SignUp() {
       setMessage("닉네임을 입력하세요")
       return;
     }
+
+    const specialCharRegex = /[^a-zA-Z0-9가-힣\s]/;
+
+    if (specialCharRegex.test(nickNameInput)) {
+      setMessageKey((prevKey) => prevKey + 1);
+      setMessage("특수문자는 포함할 수 없습니다.");
+      return;
+    }
+    setIsLoading(true);
     setMessage("정보를 확인 중입니다.");
     try {
       const response = await axios.post(
@@ -117,6 +129,7 @@ export default function SignUp() {
           message: "회원가입이 완료되었습니다!.",
           onConfirm: async () => {
             // 입력 필드 초기화
+
             setEmailInput("");
             setPwInput("");
             setSubPwInput("");
@@ -128,10 +141,12 @@ export default function SignUp() {
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message
-      setMessage(errorMessage)
-      console.log(error)
+      setMessage(errorMessage || "서버에서 오류가 발생.")
+      console.log(errorMessage)
       const errorCode = error.response?.data?.error
       const errorStatus = error.response?.data?.status
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -309,11 +324,23 @@ export default function SignUp() {
           <button
             type="submit"
             onClick={(e) => signUp(e)}
-            className={`w-full h-11 rounded-md hover:bg-[#FF6445] hover:text-white ${
-              hasValue ? "bg-[#FF6445] text-white" : "bg-gray-200"
-            }`}
+            className={`relative w-full h-11 rounded-md transition duration-100
+            ${hasValue ? "bg-primary text-white" : "bg-gray-200"}
+            ${isLoading ? "bg-primary" : ""}
+            hover:bg-primary hover:text-white
+            active:scale-95 active:bg-[rgb(230,80,50)]`}
           >
-            회원가입
+            {isLoading ? (
+              <ReactLoading
+                type={"spokes"}
+                color={"#ffffff"}
+                height={25}
+                width={25}
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+              />
+            ) : (
+              "회원가입"
+            )}
           </button>
         </div>
       </form>

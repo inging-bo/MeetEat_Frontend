@@ -5,6 +5,7 @@ import ReactLoading from "react-loading";
 import axios from "axios";
 import modalStore from "../../store/modalStore.js";
 import { EventSourcePolyfill } from "event-source-polyfill";
+import matchingStore from "../../store/matchingStore";
 
 export default function Matching({
   setIsMatching,
@@ -16,7 +17,24 @@ export default function Matching({
   const navigate = useNavigate();
 
   // 뒤로가기 방지
-  history.pushState(null, document.title, location.href); // push
+  history.pushState(null, null, "/"); // push
+
+  useEffect(() => {
+    console.log("addEventListener");
+    const popStateFunc = () => {
+      alert("페이지를 이동하여 자동으로 매칭이 취소됩니다.");
+      window.sessionStorage.removeItem("tempPosition");
+      window.sessionStorage.removeItem("isMatching");
+      apiDisagree();
+    };
+
+    window.addEventListener("popstate", () => {
+      popStateFunc;
+    });
+
+    window.removeEventListener("popstate", popStateFunc);
+  }, []);
+
   const categoryName = selectedMarker.category_name.slice(
     selectedMarker.category_name.lastIndexOf(">") + 2
   );
@@ -28,8 +46,8 @@ export default function Matching({
       category_name: selectedMarker.category_name,
       road_address_name: selectedMarker.road_address_name,
       phone: selectedMarker.phone,
-      lon: selectedMarker.x,
-      lat: selectedMarker.y,
+      lon: selectedMarker.position.lng,
+      lat: selectedMarker.position.lat,
       place_url: selectedMarker.place_url,
     };
     // apiPOSTMatching(position.lng, position.lat, number, new Date(), place);
@@ -46,10 +64,14 @@ export default function Matching({
           Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
+        // heartbeatTimeout: 120000,
+        // withCredentials: true,
       }
     );
 
     eventSource.onopen = () => {
+      console.log(position.lng);
+      console.log(position.lat);
       // 연결 시 매칭 요청 api 실행
       axios
         .post(
@@ -99,8 +121,9 @@ export default function Matching({
       setIsMatched(true);
       window.sessionStorage.setItem("tempPosition", JSON.stringify(position));
       window.sessionStorage.setItem("isMatched", true);
-      window.sessionStorage.setItem("matchingData", JSON.stringify(e.data));
-      navigate(`/matching/check-place/${e.data.teamId}`);
+      window.sessionStorage.setItem("matchingData", e.data);
+      console.log(JSON.parse(e.data));
+      navigate(`/matching/check-place/${JSON.parse(e.data).teamId}`);
       eventSource.close();
     });
 
@@ -188,7 +211,7 @@ export default function Matching({
   // }
 
   // 타이머
-  const MINUTES_IN_MS = 1 * 60 * 1000;
+  const MINUTES_IN_MS = 10 * 60 * 1000;
   const INTERVAL = 1000;
   const [timeLeft, setTimeLeft] = useState(MINUTES_IN_MS);
 
@@ -250,7 +273,9 @@ export default function Matching({
         window.sessionStorage.removeItem("isMatched");
         setIsMatching(false);
         setIsMatched(false);
-        history.go(0);
+        matchingStore.setIsMatching(false);
+        matchingStore.setIsMatched(false);
+        navigate("/");
         modalStore.closeModal();
       },
     });
