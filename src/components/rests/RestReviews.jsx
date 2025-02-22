@@ -15,7 +15,6 @@ const RestReviews = observer(() => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-
   // 무한 스크롤 관련
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
@@ -39,7 +38,7 @@ const RestReviews = observer(() => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       setIsLoading(true)
       setHistoryData(prevData => {
@@ -131,7 +130,7 @@ const RestReviews = observer(() => {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
                   },
-                }
+                },
               );
             } else if (type === "unBan") {
               response = await axios.delete(
@@ -141,7 +140,7 @@ const RestReviews = observer(() => {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
                   },
-                }
+                },
               );
             } else if (type === "report") {
               response = await axios.post(
@@ -152,7 +151,7 @@ const RestReviews = observer(() => {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
                   },
-                }
+                },
               );
             } else if (type === "unReport") {
               response = await axios.delete(
@@ -162,7 +161,7 @@ const RestReviews = observer(() => {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
                   },
-                }
+                },
               );
             }
             if (response.status === 200) {
@@ -204,37 +203,35 @@ const RestReviews = observer(() => {
     setActivePopOver(null);
   };
 
-
   // ✅ 신고 , 차단 위치 모호해서 주석주석
   const banOrReport = (user) => {
     if (user.ban && user.report) {
       return (
         <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
-        차단 및 신고 유저
+          차단 및 신고 유저
         </span>
       );
     } else if (user.ban) {
       return (
         <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
-        차단 유저
-      </span>
+          차단 유저
+        </span>
       );
     } else if (user.report) {
       return (
         <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
-        신고 유저
-      </span>
+          신고 유저
+        </span>
       );
     }
     return null;
   };
 
-
   // 매칭 횟수별 메달 표시 함수
   const viewMedal = (count) => {
-    if (count >= 5) return <GoldMedal width="16px" height="16px"/>;
-    if (count >= 3) return <SilverMedal width="16px" height="16px"/>;
-    if (count >= 1) return <BronzeMedal width="16px" height="16px"/>;
+    if (count >= 5) return <GoldMedal width="16px" height="16px" />;
+    if (count >= 3) return <SilverMedal width="16px" height="16px" />;
+    if (count >= 1) return <BronzeMedal width="16px" height="16px" />;
     return null;
   };
 
@@ -289,8 +286,7 @@ const RestReviews = observer(() => {
 
   console.log(Object.values(historyData))
   return (
-    <div
-      className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
+    <div className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <p className="font-bold text-[28px] text-left">나의 매칭 히스토리</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
         {Object.values(historyData) ? (
@@ -390,8 +386,7 @@ const RestReviews = observer(() => {
                               신고하기
                             </button>
                           )}
-                          <div
-                            className="absolute -top-1.5 right-3 rotate-45 w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>
+                          <div className="absolute -top-1.5 right-3 rotate-45 w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>
                         </div>
                       )}
                     </div>
