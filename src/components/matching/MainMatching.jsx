@@ -6,6 +6,7 @@ import axios from "axios";
 import AccIcon from "../../assets/acc-icon.svg?react";
 import HeaderLogo from "../../assets/header-logo.svg?react";
 import FoodIcon from "../../assets/food-line.svg?react";
+import MypageIcon from "../../assets/ham-bar.svg?react";
 import SearchList from "./SearchList";
 import InfoWindow from "./InfoWindow";
 import Matching from "./Matching";
@@ -56,7 +57,7 @@ export default function MainMatching() {
                   window.sessionStorage.setItem("isCompleted", "true");
                   window.sessionStorage.setItem(
                     "matchedData",
-                    JSON.stringify(res.data)
+                    JSON.stringify(res.data),
                   );
                   completed();
                 } else matchingStore.setIsCompleted(false);
@@ -82,8 +83,8 @@ export default function MainMatching() {
     const now = new Date(); // 오늘 날짜
     const firstDay = new Date(
       JSON.parse(
-        window.sessionStorage.getItem("matchedData")
-      ).matching.createdAt
+        window.sessionStorage.getItem("matchedData"),
+      ).matching.createdAt,
     ); // 시작 날짜
     console.log(now);
     console.log(firstDay);
@@ -137,7 +138,7 @@ export default function MainMatching() {
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       )
       .then((res) => {
         console.log(res);
@@ -182,7 +183,7 @@ export default function MainMatching() {
           lng: map.getCenter().getLng(),
         });
       }, 100),
-    []
+    [],
   );
 
   // 지도가 처음 렌더링되면 중심좌표를 현위치로 설정하고 위치 변화 감지
@@ -207,7 +208,7 @@ export default function MainMatching() {
         }
       },
       gpsError,
-      geolocationOptions
+      geolocationOptions,
     );
 
     navigator.geolocation.watchPosition(
@@ -220,7 +221,7 @@ export default function MainMatching() {
         }
       },
       gpsError,
-      geolocationOptions
+      geolocationOptions,
     );
   }, []);
 
@@ -398,11 +399,9 @@ export default function MainMatching() {
                 <>
                   <Link
                     to={`/mypage`}
-                    className="h-full min-w-[80px] px-4 flex items-center text-xs sm:text-base"
+                    className="h-full min-w-[80px] pl-4 flex items-center text-xs sm:text-base"
                   >
-                    마이
-                    <br />
-                    페이지
+                    <MypageIcon width="25px" />
                   </Link>
                 </>
               ) : (
