@@ -1,6 +1,8 @@
 {
   "editor.tabSize": 2,
   "editor.fontSize": 14,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.renderWhitespace": "boundary",
   "workbench.editor.enablePreview": true
 }

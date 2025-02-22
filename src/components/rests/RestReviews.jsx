@@ -6,17 +6,16 @@ import SilverMedal from "../../assets/Medal-Silver.svg?react";
 import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
 import modalStore from "../../store/modalStore.js";
 import axios from "axios";
-import { useInView } from 'react-intersection-observer';
+import { useInView } from "react-intersection-observer";
 
 const RestReviews = observer(() => {
   const [historyData, setHistoryData] = useState([]);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-
   // 무한 스크롤 관련
   const [page, setPage] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
   const [moreHistory, inView] = useInView({
     threshold: 0,
   });
@@ -31,7 +30,7 @@ const RestReviews = observer(() => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       await setHistoryData(data);
@@ -39,7 +38,9 @@ const RestReviews = observer(() => {
 
       if (historyData && Array.isArray(historyData.content)) {
         // content 배열의 모든 항목에 matching이 없는지 확인
-        const hasNoMatching = historyData.content.every(item => !item.matching);
+        const hasNoMatching = historyData.content.every(
+          (item) => !item.matching,
+        );
 
         if (hasNoMatching) {
           console.log("매칭 데이터가 없습니다:", historyData);
@@ -53,7 +54,6 @@ const RestReviews = observer(() => {
 
         setHasMore(false);
       }
-
     } catch (error) {
       console.error("매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
       setHasMore(false);
@@ -61,7 +61,7 @@ const RestReviews = observer(() => {
   }, [token, page]);
   useEffect(() => {
     fetchHistory();
-  }, [fetchHistory])
+  }, [fetchHistory]);
 
   // ✅ 신고하기/차단하기 팝오버 관련 상태 및 ref
   const [activePopOver, setActivePopOver] = useState(null);
@@ -123,7 +123,7 @@ const RestReviews = observer(() => {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
                   },
-                }
+                },
               );
             } else if (type === "unBan") {
               response = await axios.delete(
@@ -133,7 +133,7 @@ const RestReviews = observer(() => {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
                   },
-                }
+                },
               );
             } else if (type === "report") {
               response = await axios.post(
@@ -144,7 +144,7 @@ const RestReviews = observer(() => {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
                   },
-                }
+                },
               );
             } else if (type === "unReport") {
               response = await axios.delete(
@@ -154,7 +154,7 @@ const RestReviews = observer(() => {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
                   },
-                }
+                },
               );
             }
             if (response.status === 200) {
@@ -196,37 +196,35 @@ const RestReviews = observer(() => {
     setActivePopOver(null);
   };
 
-
   // ✅ 신고 , 차단 위치 모호해서 주석주석
   const banOrReport = (user) => {
     if (user.ban && user.report) {
       return (
         <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
-        차단 및 신고 유저
+          차단 및 신고 유저
         </span>
       );
     } else if (user.ban) {
       return (
         <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
-        차단 유저
-      </span>
+          차단 유저
+        </span>
       );
     } else if (user.report) {
       return (
         <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
-        신고 유저
-      </span>
+          신고 유저
+        </span>
       );
     }
     return null;
   };
 
-
   // 매칭 횟수별 메달 표시 함수
   const viewMedal = (count) => {
-    if (count >= 5) return <GoldMedal width="16px" height="16px"/>;
-    if (count >= 3) return <SilverMedal width="16px" height="16px"/>;
-    if (count >= 1) return <BronzeMedal width="16px" height="16px"/>;
+    if (count >= 5) return <GoldMedal width="16px" height="16px" />;
+    if (count >= 3) return <SilverMedal width="16px" height="16px" />;
+    if (count >= 1) return <BronzeMedal width="16px" height="16px" />;
     return null;
   };
 
@@ -241,38 +239,39 @@ const RestReviews = observer(() => {
     });
   };
   return (
-    <div
-      className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
+    <div className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <p className="font-bold text-[28px] text-left">나의 매칭 히스토리</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
-
-        {historyData && historyData.content && historyData.content.some(item => item.matching) ? (
-
+        {historyData &&
+        historyData.content &&
+        historyData.content.some((item) => item.matching) ? (
           historyData.content.map((item) => (
             <li key={item.id} className="flex flex-col gap-4 rounded-2xl">
               <div className="flex justify-between items-center">
                 <div className="flex flex-shrink-0 items-end">
                   <span>{item.matching.restaurant.placeName}</span>
                   <span className="text-sm text-gray-400 pl-2">
-            {item.matching.restaurant.categoryName}
-          </span>
+                    {item.matching.restaurant.categoryName}
+                  </span>
                 </div>
                 <span>
-          {!item.matching.userList.find(user => user.id === item.userId)?.review?.description?.trim() && (
-            <div
-              onClick={() =>
-                writeReview(
-                  item.id,
-                  item.matching.restaurant.placeName,
-                  item.matching
-                )
-              }
-              className="flex flex-shrink-0 text-sm text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer"
-            >
-              리뷰 작성하기
-            </div>
-          )}
-        </span>
+                  {!item.matching.userList
+                    .find((user) => user.id === item.userId)
+                    ?.review?.description?.trim() && (
+                    <div
+                      onClick={() =>
+                        writeReview(
+                          item.id,
+                          item.matching.restaurant.placeName,
+                          item.matching,
+                        )
+                      }
+                      className="flex flex-shrink-0 text-sm text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer"
+                    >
+                      리뷰 작성하기
+                    </div>
+                  )}
+                </span>
               </div>
               <ul className="flex flex-col gap-2.5">
                 {item.matching.userList.map((user) => (
@@ -336,8 +335,7 @@ const RestReviews = observer(() => {
                               신고하기
                             </button>
                           )}
-                          <div
-                            className="absolute -top-1.5 right-3 rotate-45 w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>
+                          <div className="absolute -top-1.5 right-3 rotate-45 w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>
                         </div>
                       )}
                     </div>
@@ -351,9 +349,7 @@ const RestReviews = observer(() => {
             매칭 히스토리가 없습니다.
           </div>
         )}
-        {hasMore && (
-          <div ref={moreHistory}>Loading more...</div>)
-        }
+        {hasMore && <div ref={moreHistory}>Loading more...</div>}
       </ul>
     </div>
   );
