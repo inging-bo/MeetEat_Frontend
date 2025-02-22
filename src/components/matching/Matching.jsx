@@ -14,6 +14,7 @@ export default function Matching({
   position,
   number,
 }) {
+  let eventSource = undefined;
   const navigate = useNavigate();
 
   // 뒤로가기 방지
@@ -26,6 +27,7 @@ export default function Matching({
       window.sessionStorage.removeItem("tempPosition");
       window.sessionStorage.removeItem("isMatching");
       apiDisagree();
+      eventSource.close();
     };
 
     window.addEventListener("popstate", () => {
@@ -36,7 +38,7 @@ export default function Matching({
   }, []);
 
   const categoryName = selectedMarker.category_name.slice(
-    selectedMarker.category_name.lastIndexOf(">") + 2
+    selectedMarker.category_name.lastIndexOf(">") + 2,
   );
 
   useEffect(() => {
@@ -57,16 +59,16 @@ export default function Matching({
   // SSE fetch
   const fetchSSE = (lng, lat, size, time, placeInfo) => {
     // header 보내기 위해 EventSourcePolyfill 사용
-    const eventSource = new EventSourcePolyfill(
+    eventSource = new EventSourcePolyfill(
       `${import.meta.env.VITE_BE_API_URL}/sse/subscribe`,
       {
         headers: {
           Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
-        // heartbeatTimeout: 120000,
-        // withCredentials: true,
-      }
+        heartbeatTimeout: 10 * 60 * 1000,
+        withCredentials: true,
+      },
     );
 
     eventSource.onopen = () => {
@@ -88,7 +90,7 @@ export default function Matching({
               Authorization: `Bearer ${window.localStorage.getItem("token")}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         )
         .then((res) => {
           console.log(res.data);
@@ -130,6 +132,7 @@ export default function Matching({
     eventSource.onerror = (e) => {
       // 종료 또는 에러 발생 시 할 일
       eventSource.close();
+      console.log("eventSource close");
       setIsMatching(false);
       window.sessionStorage.removeItem("isMatching");
       history.go(0);
@@ -217,7 +220,7 @@ export default function Matching({
 
   const minutes = String(Math.floor((timeLeft / (1000 * 60)) % 60)).padStart(
     2,
-    "0"
+    "0",
   );
   const second = String(Math.floor((timeLeft / 1000) % 60)).padStart(2, "0");
 
@@ -230,6 +233,7 @@ export default function Matching({
       // 타이머 종료시 매칭 취소 api 전송
       clearInterval(timer);
       console.log("타이머가 종료되었습니다.");
+      eventSource.close();
       apiPOSTCancel();
       window.sessionStorage.removeItem("isMatching");
       setIsMatching(false);
@@ -252,7 +256,7 @@ export default function Matching({
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       )
       .then((res) => {
         console.log(res);
@@ -275,6 +279,7 @@ export default function Matching({
         setIsMatched(false);
         matchingStore.setIsMatching(false);
         matchingStore.setIsMatched(false);
+        eventSource.close();
         navigate("/");
         modalStore.closeModal();
       },
