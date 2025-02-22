@@ -37,10 +37,8 @@ const RestInfo = observer(() => {
       );
       console.log("API 응답 데이터:", data); // 추가
       setProfileData(data); // 수정: data.profile로 접근
-      console.log(profileData)
     } catch (error) {
       console.error("[Error] 프로필 정보를 불러오는데 실패:", error);
-      console.log(data)
       if (error.response) {
         console.error("응답 상태 코드:", error.response.status);
         console.error("응답 데이터:", error.response.data);
@@ -59,7 +57,6 @@ const RestInfo = observer(() => {
     }
 
   };
-  console.log(profileData)
   // 페이지 진입 시 로그인 체크 및 프로필 정보 요청
   useEffect(() => {
     authStore.checkLoggedIn();
@@ -70,7 +67,6 @@ const RestInfo = observer(() => {
       fetchProfile();
     }
   }, []);
-  console.log("profileData", profileData);
   // EditableField 훅 (프로필 정보를 편집할 필드를 관리)
   function useEditableField(fieldKey) {
     const [isEditing, setIsEditing] = useState(false);
@@ -160,8 +156,6 @@ const RestInfo = observer(() => {
       </span>
     );
   }, [profileData?.matchingCount]);
-  console.log(profileData?.signupType)
-
   return (
     <div
       className="flex flex-col h-[inherit] gap-10 basis-full md:w-[380px] md:min-w-[380px] md:max-w-[380px] justify-start border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">

@@ -7,14 +7,17 @@ import { Map } from "react-kakao-maps-sdk";
 import authStore from "../../store/authStore";
 
 export default function WriteReview() {
+  const location = useLocation();
+  const info = { ...location.state };
+
   // 로그인 확인
   useEffect(() => {
     !authStore.loggedIn && alert("로그인 후 이용해주세요!");
     !authStore.loggedIn && window.location.replace("/");
+    if(Object.keys(info).length === 0 ) return window.location.replace("/");
   }, []);
 
-  const location = useLocation();
-  const info = { ...location.state };
+  
 
   // 이미지 핸들러
   const [imageList, setImageList] = useState([]);
@@ -107,6 +110,7 @@ export default function WriteReview() {
     formData.append("rating", starScore);
     formData.append("description", textareaValue);
     formData.append("files", postImageList);
+    console.log(formData);
     await axios
       .post(`${import.meta.env.VITE_BE_API_URL}/restaurants/review`, formData, {
         headers: {

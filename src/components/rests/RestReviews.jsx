@@ -6,7 +6,8 @@ import SilverMedal from "../../assets/Medal-Silver.svg?react";
 import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
 import modalStore from "../../store/modalStore.js";
 import axios from "axios";
-import { useInView } from "react-intersection-observer";
+import { useInView } from 'react-intersection-observer';
+import RestReviewItem from "./RestReviewItem.jsx";
 
 const RestReviews = observer(() => {
   const [historyData, setHistoryData] = useState([]);
@@ -15,13 +16,15 @@ const RestReviews = observer(() => {
 
   // 무한 스크롤 관련
   const [page, setPage] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [moreHistory, inView] = useInView({
     threshold: 0,
   });
 
   // ✅ 매칭 히스토리 가져오기 (4개씩 추가)
-  const fetchHistory = useCallback(async () => {
+  const fetchHistory = async () => {
+
     try {
       const { data } = await axios.get(
         `${import.meta.env.VITE_BE_API_URL}/matching/history?page=${page}&size=4`,
@@ -33,14 +36,13 @@ const RestReviews = observer(() => {
         },
       );
 
-      await setHistoryData(data);
-      console.log("API 응답 데이터:", historyData);
+      await setHistoryData({ ...historyData, ...data.content });
+      await setTotalPage(data.page.totalPages)
+      console.log(totalPage)
 
       if (historyData && Array.isArray(historyData.content)) {
         // content 배열의 모든 항목에 matching이 없는지 확인
-        const hasNoMatching = historyData.content.every(
-          (item) => !item.matching,
-        );
+        const hasNoMatching = historyData.content.every(item => !item?.matching);
 
         if (hasNoMatching) {
           console.log("매칭 데이터가 없습니다:", historyData);
@@ -49,19 +51,15 @@ const RestReviews = observer(() => {
         } else if (historyData.last === true) {
           setHasMore(false);
         }
-      } else {
-        console.error("예상치 못한 데이터 구조:", historyData);
-
-        setHasMore(false);
       }
     } catch (error) {
       console.error("매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
       setHasMore(false);
     }
-  }, [token, page]);
+  }
   useEffect(() => {
     fetchHistory();
-  }, [fetchHistory]);
+  }, [])
 
   // ✅ 신고하기/차단하기 팝오버 관련 상태 및 ref
   const [activePopOver, setActivePopOver] = useState(null);
@@ -238,38 +236,83 @@ const RestReviews = observer(() => {
       },
     });
   };
+
+  const myReviewChk = async (thisID) => {
+    try {
+      const matchingHistoryId = thisID;
+      const token = window.localStorage.getItem("token");
+
+      const response = await axios.get(
+        `${import.meta.env.VITE_BE_API_URL}/restaurants/myreview?matchingHistoryId=${matchingHistoryId}`,
+        {
+          params: {
+            matchingHistoryId: matchingHistoryId  // 쿼리 파라미터 설정
+          },
+          headers: {
+            "Content-Type": "application/json", // Content-Type 설정
+            Authorization: `Bearer ${token}` // Authorization 설정
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const reviewData = response.data;
+        modalStore.openModal("oneBtn", {
+          message: <RestReviewItem review={reviewData}/>, // 모달 메시지 설정
+          onConfirm: async () => {
+            await modalStore.closeModal();
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching review:", error);
+      modalStore.openModal("oneBtn", {
+        message: "리뷰를 불러오는 데 실패했습니다.",
+        onConfirm: async () => {
+          await modalStore.closeModal();
+        },
+      });
+    }
+  };
+
+
+  console.log(Object.values(historyData))
   return (
     <div className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <p className="font-bold text-[28px] text-left">나의 매칭 히스토리</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
-        {historyData &&
-        historyData.content &&
-        historyData.content.some((item) => item.matching) ? (
-          historyData.content.map((item) => (
+        {Object.values(historyData) ? (
+          Object.values(historyData).map((item) => (
             <li key={item.id} className="flex flex-col gap-4 rounded-2xl">
               <div className="flex justify-between items-center">
                 <div className="flex flex-shrink-0 items-end">
-                  <span>{item.matching.restaurant.placeName}</span>
-                  <span className="text-sm text-gray-400 pl-2">
-                    {item.matching.restaurant.categoryName}
+                  <span>{item.matching.restaurant.name}</span>
+                  <span className="text-xs text-gray-400 pl-2">
+                    {item.matching.restaurant.category_name}
                   </span>
                 </div>
                 <span>
-                  {!item.matching.userList
-                    .find((user) => user.id === item.userId)
-                    ?.review?.description?.trim() && (
+                  {!item.matching.userList.find(user => user.id === item.userId)?.review?.description?.trim() ? (
                     <div
                       onClick={() =>
                         writeReview(
                           item.id,
-                          item.matching.restaurant.placeName,
-                          item.matching,
+                          item.matching.restaurant.name,
+                          item.matching
                         )
                       }
                       className="flex flex-shrink-0 text-sm text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer"
                     >
                       리뷰 작성하기
                     </div>
+                  ) : (
+                    <>
+                      <div
+                        onClick={() => myReviewChk(item.id)}
+                        className="flex flex-shrink-0 text-sm text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer">
+                        리뷰 확인하기
+                      </div>
+                    </>
                   )}
                 </span>
               </div>
