@@ -14,10 +14,8 @@ export default function WriteReview() {
   useEffect(() => {
     !authStore.loggedIn && alert("로그인 후 이용해주세요!");
     !authStore.loggedIn && window.location.replace("/");
-    if(Object.keys(info).length === 0 ) return window.location.replace("/");
+    if (Object.keys(info).length === 0) return window.location.replace("/");
   }, []);
-
-  
 
   // 이미지 핸들러
   const [imageList, setImageList] = useState([]);
