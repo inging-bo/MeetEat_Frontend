@@ -76,7 +76,7 @@ export default function RestView({ center, close, pickedRest, star }) {
   async function apiPOSTRestsLists(restId, page, size) {
     await axios
       .get(
-        `http://ggone.site/api/restaurants/${restId}/reviews`,
+        `${import.meta.env.VITE_BE_API_URL}/restaurants/${restId}/reviews`,
         {
           params: { page: page, size: size },
         },

@@ -156,7 +156,7 @@ export default function RestList() {
         setStar(temp);
       }
       axios
-        .get(`http://ggone.site/api/restaurants/${rest.id}`, {
+        .get(`${import.meta.env.VITE_BE_API_URL}/restaurants/${rest.id}`, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -226,7 +226,7 @@ export default function RestList() {
   ) {
     await axios
       .post(
-        `http://ggone.site/api/restaurants/search`,
+        `${import.meta.env.VITE_BE_API_URL}/restaurants/search`,
         {
           region: region,
           categoryName: categoryName,
