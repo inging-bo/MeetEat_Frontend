@@ -16,7 +16,7 @@ const RestReviews = observer(() => {
   const navigate = useNavigate();
 
   // 무한 스크롤 관련
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [moreHistory, inView] = useInView({
@@ -24,12 +24,33 @@ const RestReviews = observer(() => {
   });
   const [isLoading, setIsLoading] = useState(true);
   // ✅ 매칭 히스토리 가져오기 (4개씩 추가)
-  const fetchHistory = async () => {
-    if (page > totalPage) {
+  const initialFetchHistory = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BE_API_URL}/matching/history?page=0&size=4`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      setHistoryData(data.content);
+      setTotalPage(data.page.totalPages);
+      setHasMore(data.page.totalPages > 1);
+    } catch (error) {
+      console.error("초기 매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
+      setHasMore(false);
+    }
+  };
+
+  const fetchMoreHistory = async () => {
+    if (page >= totalPage) {
       setHasMore(false);
       return;
     }
-
+    console.log(page , "page")
+    setIsLoading(true);
     try {
       const { data } = await axios.get(
         `${import.meta.env.VITE_BE_API_URL}/matching/history?page=${page}&size=4`,
@@ -40,7 +61,6 @@ const RestReviews = observer(() => {
           },
         },
       );
-      setIsLoading(true)
       setHistoryData(prevData => {
         const newContent = { ...prevData };
         Object.keys(data.content).forEach(key => {
@@ -48,22 +68,23 @@ const RestReviews = observer(() => {
         });
         return newContent;
       });
-      setTotalPage(data.page.totalPages);
       setPage(prevPage => prevPage + 1);
+      setHasMore(page + 1 < data.page.totalPages);
     } catch (error) {
-      console.error("매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
+      console.error("추가 매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
       setHasMore(false);
     } finally {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
-    fetchHistory();
+    initialFetchHistory();
   }, [])
 
   useEffect(() => {
     if (inView && hasMore) {
-      fetchHistory();
+      fetchMoreHistory();
     }
   }, [inView, hasMore]);
   console.log(historyData);
@@ -94,7 +115,7 @@ const RestReviews = observer(() => {
   }, [activePopOver]);
 
   // ✅ 모달 열고 닫기 함수
-  const toggleModal = async (type, userId) => {
+  const toggleModal = async (type, userId, matchingId) => {
     console.log(typeof userId)
     try {
       let modalMessage = "";
@@ -144,7 +165,7 @@ const RestReviews = observer(() => {
               );
             } else if (type === "report") {
               response = await axios.post(
-                `${import.meta.env.VITE_BE_API_URL}/report?reportedId=${userId}`,
+                `${import.meta.env.VITE_BE_API_URL}/report?reportedId=${userId}&matchingId=${matchingId}`,
                 {},
                 {
                   headers: {
@@ -155,7 +176,7 @@ const RestReviews = observer(() => {
               );
             } else if (type === "unReport") {
               response = await axios.delete(
-                `${import.meta.env.VITE_BE_API_URL}/report?reportedId=${userId}`,
+                `${import.meta.env.VITE_BE_API_URL}/report?reportedId=${userId}&matchingId=${matchingId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
@@ -189,8 +210,12 @@ const RestReviews = observer(() => {
                   await modalStore.closeModal();
                 },
               });
-              // 매칭 히스토리 정보를 갱신합니다.
-              await fetchHistory();
+              // 매칭 히스토리 정보 갱신
+              const updatedHistoryData = await fetchUpdatedHistory();
+              setHistoryData(prevData => ({
+                ...prevData,
+                ...updatedHistoryData
+              }));
             }
           } catch (error) {
             console.error("서버 요청 실패:", error);
@@ -201,6 +226,25 @@ const RestReviews = observer(() => {
       console.error("모달 열기 실패:", error);
     }
     setActivePopOver(null);
+  };
+
+  // 차단, 신고 변경 시 함수: 업데이트된 히스토리 데이터 가져오기
+  const fetchUpdatedHistory = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BE_API_URL}/matching/history?page=0&size=${Object.keys(historyData).length}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return data.content;
+    } catch (error) {
+      console.error("업데이트된 매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
+      return {};
+    }
   };
 
   // ✅ 신고 , 차단 위치 모호해서 주석주석
@@ -254,9 +298,6 @@ const RestReviews = observer(() => {
       const response = await axios.get(
         `${import.meta.env.VITE_BE_API_URL}/restaurants/myreview?matchingHistoryId=${matchingHistoryId}`,
         {
-          params: {
-            matchingHistoryId: matchingHistoryId  // 쿼리 파라미터 설정
-          },
           headers: {
             "Content-Type": "application/json", // Content-Type 설정
             Authorization: `Bearer ${token}` // Authorization 설정
@@ -286,7 +327,7 @@ const RestReviews = observer(() => {
 
   console.log(Object.values(historyData))
   return (
-    <div className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
+    <div className="h-[inherit] flex flex-col basis-full gap-10 mb-6 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <p className="font-bold text-[28px] text-left">나의 매칭 히스토리</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
         {Object.values(historyData) && Object.values(historyData).length > 0 ? (
@@ -295,11 +336,11 @@ const RestReviews = observer(() => {
               <div className="flex justify-between items-center">
                 <div className="flex flex-shrink-0 items-end">
                   <span>{item.matching.restaurant.name}</span>
-                  <span className="text-xs text-gray-400 pl-2">
+                  <span className="text-xs hidden lg:block text-gray-400 pl-2">
                     {item.matching.restaurant.category_name}
                   </span>
                 </div>
-                <span>
+                <span className="flex">
                   {!item.matching.userList.find(user => user.id === item.userId)?.review?.description?.trim() ? (
                     <div
                       onClick={() =>
@@ -354,18 +395,18 @@ const RestReviews = observer(() => {
                       {activePopOver === `${user.id}-${item.id}` && (
                         <div
                           ref={popOverRef}
-                          className="absolute flex flex-col gap-1 z-50 top-10 right-1 bg-white p-2 border border-gray-300 rounded-lg"
+                          className="absolute flex flex-col gap-1 z-50 bottom-10 right-1 bg-white p-2 border border-gray-300 rounded-lg"
                         >
                           {user.ban ? (
                             <button
-                              onClick={() => toggleModal("unBan", user.id)}
+                              onClick={() => toggleModal("unBan", user.id, item.id)}
                               className="py-1 px-2 rounded-lg hover:bg-gray-200"
                             >
                               차단해제
                             </button>
                           ) : (
                             <button
-                              onClick={() => toggleModal("ban", user.id)}
+                              onClick={() => toggleModal("ban", user.id, item.id)}
                               className="py-1 px-2 rounded-lg hover:bg-gray-200"
                             >
                               차단하기
@@ -373,20 +414,20 @@ const RestReviews = observer(() => {
                           )}
                           {user.report ? (
                             <button
-                              onClick={() => toggleModal("unReport", user.id)}
+                              onClick={() => toggleModal("unReport", user.id, item.id)}
                               className="py-1 px-2 rounded-lg hover:bg-gray-200"
                             >
                               신고해제
                             </button>
                           ) : (
                             <button
-                              onClick={() => toggleModal("report", user.id)}
+                              onClick={() => toggleModal("report", user.id, item.id)}
                               className="py-1 px-2 rounded-lg hover:bg-gray-200"
                             >
                               신고하기
                             </button>
                           )}
-                          <div className="absolute -top-1.5 right-3 rotate-45 w-2.5 h-2.5 bg-white border-l border-t border-gray-300"></div>
+                          <div className="absolute -bottom-1.5 right-3 rotate-45 w-2.5 h-2.5 bg-white border-r border-b border-gray-300"></div>
                         </div>
                       )}
                     </div>
@@ -402,11 +443,6 @@ const RestReviews = observer(() => {
         )}
         {page !== totalPage && hasMore && (
           <div ref={moreHistory} className="relative pb-8 w-full h-8">
-           더 보기
-          </div>
-        )}
-        {isLoading && (
-          <div className="relative h-30 w-full">
             <ReactLoading
               type={"spokes"}
               color={"#000000"}
@@ -416,6 +452,11 @@ const RestReviews = observer(() => {
             />
           </div>
         )}
+        {/*{isLoading && (*/}
+        {/*  <div className="relative h-30 w-full">*/}
+        {/*    */}
+        {/*  </div>*/}
+        {/*)}*/}
       </ul>
     </div>
   );
