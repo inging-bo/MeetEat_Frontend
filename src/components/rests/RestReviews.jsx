@@ -38,6 +38,9 @@ const RestReviews = observer(() => {
       setHistoryData(data.content);
       setTotalPage(data.page.totalPages);
       setHasMore(data.page.totalPages > 1);
+      if (page >= totalPage) {
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error(
         "초기 매칭 히스토리 정보를 불러오는데 실패했습니다.",
@@ -458,7 +461,7 @@ const RestReviews = observer(() => {
             매칭 히스토리가 없습니다.
           </div>
         )}
-        {page !== totalPage && hasMore && (
+        {page < totalPage && hasMore && (
           <div ref={moreHistory} className="relative h-8 w-full pb-8">
             더 보기
           </div>
@@ -474,11 +477,6 @@ const RestReviews = observer(() => {
             />
           </div>
         )}
-        {/*{isLoading && (*/}
-        {/*  <div className="relative h-30 w-full">*/}
-        {/*    */}
-        {/*  </div>*/}
-        {/*)}*/}
       </ul>
     </div>
   );
