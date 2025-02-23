@@ -11,7 +11,7 @@
         "restaurant": {
           "id": 39,
           "kakaomapsId": null,
-          "name": "픽미",
+          "name": "픽미d",
           "category_name": "음식점 > 카페",
           "road_address_name": "서울 금천구 독산로 194",
           "phone": "",
@@ -23,8 +23,23 @@
         },
         "userList": [
           {
-            "id": 214,
+            "id": 24,
             "nickname": "hib",
+            "introduce": "ffff",
+            "review": {
+              "description": "신선한 어요",
+              "rating": 4,
+              "createdAt": "2025-02-15 21:00:00",
+              "updatedAt": "2025-02-15 21:30:00"
+            },
+            "matchingCount": 9,
+            "ban": false,
+            "report": false,
+            "join": null
+          },
+          {
+            "id": 22,
+            "nickname": "hib2",
             "introduce": "ffff",
             "review": {
               "description": "신선한 어요",
@@ -141,6 +156,16 @@
           {
             "id": 24,
             "nickname": "hib",
+            "introduce": "ffff",
+            "review": null,
+            "matchingCount": 9,
+            "ban": false,
+            "report": false,
+            "join": null
+          },
+          {
+            "id": 247,
+            "nickname": "hiba",
             "introduce": "ffff",
             "review": null,
             "matchingCount": 9,
