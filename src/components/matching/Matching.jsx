@@ -6,28 +6,38 @@ import axios from "axios";
 import modalStore from "../../store/modalStore.js";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import matchingStore from "../../store/matchingStore";
+import { callApi } from "../hooks/useAxios";
 
 export default function Matching({
   setIsMatching,
-  setIsMatched,
   selectedMarker,
+  setInfo,
   position,
   number,
 }) {
-  let eventSource = undefined;
   const navigate = useNavigate();
 
-  // 뒤로가기 방지
-  history.pushState(null, null, "/"); // push
+  const apiPOSTCancel = async () => {
+    const resPostCancel = await callApi("/matching/cancel", "POST", {});
+    if (resPostCancel.status === 200) {
+      window.sessionStorage.removeItem("isMatching");
+      window.sessionStorage.removeItem("isMatched");
+      matchingStore.setIsMatching(false);
+      matchingStore.setIsMatched(false);
+      setIsMatching(false);
+      setInfo(false);
+      window.location.replace("/");
+    }
+  };
 
+  // 뒤로가기 방지
+  history.pushState(null, null, "/");
   useEffect(() => {
-    console.log("addEventListener");
     const popStateFunc = () => {
       alert("페이지를 이동하여 자동으로 매칭이 취소됩니다.");
       window.sessionStorage.removeItem("tempPosition");
       window.sessionStorage.removeItem("isMatching");
-      apiDisagree();
-      eventSource.close();
+      apiPOSTCancel();
     };
 
     window.addEventListener("popstate", () => {
@@ -37,10 +47,10 @@ export default function Matching({
     window.removeEventListener("popstate", popStateFunc);
   }, []);
 
+  // fetchSSE
   const categoryName = selectedMarker.category_name.slice(
     selectedMarker.category_name.lastIndexOf(">") + 2,
   );
-
   useEffect(() => {
     const place = {
       id: selectedMarker.id,
@@ -52,98 +62,57 @@ export default function Matching({
       lat: selectedMarker.position.lat,
       place_url: selectedMarker.place_url,
     };
-    // apiPOSTMatching(position.lng, position.lat, number, new Date(), place);
-    fetchSSE(position.lng, position.lat, number, new Date(), place);
-  }, []);
 
-  // SSE fetch
-  const fetchSSE = (lng, lat, size, time, placeInfo) => {
-    // header 보내기 위해 EventSourcePolyfill 사용
-    eventSource = new EventSourcePolyfill(
-      `${import.meta.env.VITE_BE_API_URL}/sse/subscribe`,
-      {
-        headers: {
-          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
+    // SSE fetch
+    const fetchSSE = (lng, lat, size, time, placeInfo) => {
+      // header 보내기 위해 EventSourcePolyfill 사용
+      const eventSource = new EventSourcePolyfill(
+        `${import.meta.env.VITE_BE_API_URL}/sse/subscribe`,
+        {
+          headers: {
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          heartbeatTimeout: 10 * 60 * 1000,
+          withCredentials: true,
         },
-        heartbeatTimeout: 10 * 60 * 1000,
-        withCredentials: true,
-      },
-    );
+      );
 
-    eventSource.onopen = () => {
-      console.log(position.lng);
-      console.log(position.lat);
-      // 연결 시 매칭 요청 api 실행
-      axios
-        .post(
-          `${import.meta.env.VITE_BE_API_URL}/matching/request`,
-          {
-            userLon: lng,
-            userLat: lat,
-            groupSize: size,
-            matchingStartTime: time,
-            place: placeInfo,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-          },
-        )
-        .then((res) => {
-          console.log(res.data);
+      // SSE fetch 완료 후 매칭 요청 전송
+      eventSource.onopen = () => {
+        console.log("lng:" + position.lng + ",lat:" + position.lat);
+        const resPostReq = callApi("/matching/request", "POST", {
+          userLon: lng,
+          userLat: lat,
+          groupSize: size,
+          matchingStartTime: time,
+          place: placeInfo,
+        });
+        if (resPostReq.status === 200) {
+          console.log(resPostReq.data);
           setIsMatching("true");
           window.sessionStorage.setItem("isMatching", true);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    // 방법1. onmessage 이용
-    // eventSource.onmessage = async (e) => {
-    //   const res = await e.data;
-    //   const parsedData = JSON.parse(res);
-    //   받아오는 data로 할 일
-    //   if (parsedData === "임시 모임이 생성되었습니다.") {
-    //     setIsMatched(true);
-    //     window.sessionStorage.setItem("tempPosition", JSON.stringify(position));
-    //     window.sessionStorage.setItem("isMatched", true);
-    //     window.sessionStorage.setItem(
-    //       "matchingData",
-    //       JSON.stringify(parsedData)
-    //     );
-    //     navigate(`/matching/check-place/${parsedData.teamId}`);
-    //   }
-    // };
+        }
+      };
 
-    // 방법2. EventListener
-    eventSource.addEventListener("TempTeam", (e) => {
-      setIsMatched(true);
-      window.sessionStorage.setItem("tempPosition", JSON.stringify(position));
-      window.sessionStorage.setItem("isMatched", true);
-      window.sessionStorage.setItem("matchingData", e.data);
-      console.log(JSON.parse(e.data));
-      navigate(`/matching/check-place/${JSON.parse(e.data).teamId}`);
-      eventSource.close();
-    });
+      // 임시 모임 생성 Event 발생
+      eventSource.addEventListener("TempTeam", (e) => {
+        window.sessionStorage.setItem("tempPosition", JSON.stringify(position));
+        window.sessionStorage.setItem("isMatched", true);
+        window.sessionStorage.setItem("matchingData", e.data);
+        console.log(JSON.parse(e.data));
+        navigate(`/matching/check-place/${JSON.parse(e.data).teamId}`);
+        eventSource.close();
+      });
 
-    eventSource.onerror = (e) => {
-      // 종료 또는 에러 발생 시 할 일
-      eventSource.close();
-      console.log("eventSource close");
-      setIsMatching(false);
-      window.sessionStorage.removeItem("isMatching");
-      history.go(0);
-      // if (e.error) {
-      //   // 에러 발생 시 할 일
-      // }
-      // if (e.target.readyState === EventSource.CLOSED) {
-      //   // 종료 시 할 일
-      // }
+      eventSource.onerror = () => {
+        apiPOSTCancel();
+        eventSource.close();
+      };
     };
-  };
+
+    fetchSSE(position.lng, position.lat, number, new Date(), place);
+  }, []);
 
   // // POST
   // async function apiPOSTMatching(lng, lat, size, time, placeInfo) {
@@ -230,15 +199,10 @@ export default function Matching({
     }, INTERVAL);
 
     if (timeLeft <= 0) {
-      // 타이머 종료시 매칭 취소 api 전송
+      // 타이머 종료시 매칭 취소
       clearInterval(timer);
       console.log("타이머가 종료되었습니다.");
-      eventSource.close();
       apiPOSTCancel();
-      window.sessionStorage.removeItem("isMatching");
-      setIsMatching(false);
-      setIsMatched(false);
-      history.go(0);
     }
 
     return () => {
@@ -246,41 +210,12 @@ export default function Matching({
     };
   }, [timeLeft]);
 
-  async function apiPOSTCancel() {
-    await axios
-      .post(
-        `${import.meta.env.VITE_BE_API_URL}/matching/cancel`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        },
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
   const cancelMatching = () => {
     // 모달을 열고 콜백 함수 전달
     modalStore.openModal("twoBtn", {
       message: "매칭을 취소하시겠습니까?",
-      onConfirm: async () => {
-        // 예를 선택했을 때 실행할 코드
-        await apiPOSTCancel();
-        window.sessionStorage.removeItem("isMatching");
-        window.sessionStorage.removeItem("isMatched");
-        setIsMatching(false);
-        setIsMatched(false);
-        matchingStore.setIsMatching(false);
-        matchingStore.setIsMatched(false);
-        eventSource.close();
-        navigate("/");
+      onConfirm: () => {
+        apiPOSTCancel();
         modalStore.closeModal();
       },
     });

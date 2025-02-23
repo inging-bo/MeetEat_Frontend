@@ -1,8 +1,6 @@
 import axios from "axios";
 
 export async function callApi(url, method, body) {
-  // props: api url 엔드포인트, 요청 method, 요청 body
-
   const headers = {
     Authorization: `Bearer ${window.localStorage.getItem("token")}`,
     "Content-Type": "application/json",
