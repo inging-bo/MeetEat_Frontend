@@ -336,7 +336,7 @@ const RestReviews = observer(() => {
 
   console.log(Object.values(historyData));
   return (
-    <div className="mb-5 flex max-w-[300px] flex-col gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg min-[400px]:min-w-[380px] min-[600px]:h-full">
+    <div className="mb-5 flex flex-col gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg max-[760px]:max-w-[300px] min-[400px]:w-full min-[400px]:min-w-[380px] min-[760px]:h-full">
       <p className="text-left text-[28px] font-bold">나의 매칭 히스토리</p>
       <ul className="flex flex-1 flex-col gap-4 overflow-y-scroll scrollbar-hide">
         {Object.values(historyData) && Object.values(historyData).length > 0 ? (

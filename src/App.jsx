@@ -6,11 +6,7 @@ import Modal from "./components/modal/ModalContainer.jsx";
 function App() {
   return (
     <BrowserRouter>
-      <section
-        className="relative flex flex-col items-center w-full min-w-[320px] h-svh
-      sm:justify-center
-      "
-      >
+      <section className="relative flex h-svh w-full min-w-[320px] flex-col items-center">
         <Router />
       </section>
       <Modal />

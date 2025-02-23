@@ -151,7 +151,7 @@ const RestInfo = observer(() => {
     );
   }, [profileData?.matchingCount]);
   return (
-    <div className="flex max-w-[300px] flex-col justify-start gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg min-[400px]:min-w-[380px] md:max-w-[380px]">
+    <div className="flex max-w-[300px] flex-col justify-start gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg min-[400px]:min-w-[380px] min-[760px]:max-w-[380px]">
       <h1 className="text-left text-[28px] font-bold">내 정보</h1>
 
       {/* 닉네임 수정 */}
