@@ -43,7 +43,7 @@ export default function RestList() {
         }
       },
       gpsError,
-      geolocationOptions
+      geolocationOptions,
     );
 
     navigator.geolocation.watchPosition(
@@ -56,7 +56,7 @@ export default function RestList() {
         }
       },
       gpsError,
-      geolocationOptions
+      geolocationOptions,
     );
   }, []);
 
@@ -112,7 +112,7 @@ export default function RestList() {
           placeName,
           position,
           sort,
-          "0"
+          "0",
         );
       }, 1000); // 디바운스 지연 시간
       return () => clearTimeout(delayDebounceTimer);
@@ -199,7 +199,7 @@ export default function RestList() {
       placeName,
       position,
       sort,
-      String(Number(page) + 1)
+      String(Number(page) + 1),
     );
     setPage((prev) => String(Number(prev) + 1));
     console.log("info data add...");
@@ -222,7 +222,7 @@ export default function RestList() {
     placeName,
     position,
     sorted,
-    page
+    page,
   ) {
     await axios
       .post(
@@ -241,7 +241,7 @@ export default function RestList() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       )
       .then((res) => {
         setRestaurants((prev) => [...prev, ...res.data.content]);
@@ -282,11 +282,11 @@ export default function RestList() {
 
   return (
     <>
-      <div className="absolute top-[101px] min-[750px]:top-40 flex flex-col items-center left-0 right-0">
+      <div className="absolute left-0 right-0 top-[101px] flex flex-col items-center min-[750px]:top-40">
         {/* 식당 검색 Input*/}
-        <div className="w-72 md:w-96 mb-6 min-[750px]:mb-7 search-bar border border-[#3BB82D] rounded-full relative">
+        <div className="search-bar relative mb-6 w-72 rounded-full border border-[#3BB82D] min-[750px]:mb-7 md:w-96">
           <input
-            className="w-full h-10 rounded-full pl-5 pr-12 focus:outline-none"
+            className="h-10 w-full rounded-full pl-5 pr-12 focus:outline-none"
             id="keyword"
             onChange={handleInputChange}
             value={placeName}
@@ -295,13 +295,12 @@ export default function RestList() {
           />
         </div>
         {/* 검색 필터 */}
-        <div className="flex gap-2 mb-3 mr-2 min-[750px]:w-[700px] min-[1150px]:w-[1100px] justify-end">
+        <div className="mb-3 mr-2 flex justify-end gap-2 min-[750px]:w-[700px] min-[1150px]:w-[1100px]">
           <ul
             onClick={() => openSearchFilter("category")}
-            className={`relative flex flex-col bg-white gap-2 justify-center items-center px-2 py-1 border border-gray-300 rounded-md
-                    ${searchFilter === "category" && "border-b-[transparent] rounded-b-none"}`}
+            className={`relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "category" && "rounded-b-none border-b-[transparent]"}`}
           >
-            <li className="flex justify-center gap-2 items-center">
+            <li className="flex items-center justify-center gap-2">
               {categoryName}
               <Arrow
                 className={`${searchFilter === "category" ? "rotate-180 duration-300 ease-in-out" : "duration-300"} `}
@@ -309,7 +308,7 @@ export default function RestList() {
             </li>
             {searchFilter === "category" && (
               <>
-                <ul className="absolute flex flex-col w-[67.41px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
+                <ul className="absolute top-[105%] z-10 flex w-[67.41px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
                   {category
                     .filter((item) => categoryName !== item)
                     .map((item) => (
@@ -323,10 +322,9 @@ export default function RestList() {
           </ul>
           <ul
             onClick={() => openSearchFilter("region")}
-            className={`relative flex flex-col bg-white gap-2 justify-center items-center px-2 py-1 border border-gray-300 rounded-md
-                    ${searchFilter === "region" && "border-b-[transparent] rounded-b-none"}`}
+            className={`relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "region" && "rounded-b-none border-b-[transparent]"}`}
           >
-            <li className="flex justify-center gap-2 items-center">
+            <li className="flex items-center justify-center gap-2">
               {regionName}
               <Arrow
                 className={`${searchFilter === "region" ? "rotate-180 duration-300 ease-in-out" : "duration-300"} `}
@@ -334,7 +332,7 @@ export default function RestList() {
             </li>
             {searchFilter === "region" && (
               <>
-                <ul className="absolute flex flex-col w-[67.41px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
+                <ul className="absolute top-[105%] z-10 flex w-[67.41px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
                   {region
                     .filter((item) => regionName !== item)
                     .sort()
@@ -349,10 +347,9 @@ export default function RestList() {
           </ul>
           <ul
             onClick={() => openSearchFilter("option")}
-            className={`relative flex flex-col bg-white gap-2 justify-center items-center px-2 py-1 border border-gray-300 rounded-md 
-                    ${searchFilter === "option" && "border-b-[transparent] rounded-b-none"}`}
+            className={`relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "option" && "rounded-b-none border-b-[transparent]"}`}
           >
-            <li className="flex justify-center gap-2 items-center">
+            <li className="flex items-center justify-center gap-2">
               {sortedName}
               <Arrow
                 className={`${searchFilter === "option" ? "rotate-180 duration-300 ease-in-out" : "duration-300"} `}
@@ -360,7 +357,7 @@ export default function RestList() {
             </li>
             {searchFilter === "option" && (
               <>
-                <ul className="absolute flex flex-col w-[82.1px] gap-2 top-[105%] py-1 z-10 bg-[#eeeeee] border border-t-0 rounded-b-md">
+                <ul className="absolute top-[105%] z-10 flex w-[82.1px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
                   {sorted
                     .filter((item) => sortedName !== item)
                     .sort()
@@ -375,40 +372,40 @@ export default function RestList() {
           </ul>
         </div>
         {/* 방문 식당 리스트 */}
-        <ul className="grid grid-cols-1 min-[360px]:grid-cols-[350px] min-[750px]:grid-cols-[350px_350px] min-[1150px]:grid-cols-[350px_350px_350px] gap-7 px-2 pb-10">
+        <ul className="grid grid-cols-1 gap-7 px-2 pb-10 min-[360px]:grid-cols-[350px] min-[750px]:grid-cols-[350px_350px] min-[1150px]:grid-cols-[350px_350px_350px]">
           {restaurants.map((rest, idx) =>
             restaurants.length - 3 === idx ? (
               <li
                 key={rest.id}
-                className="flex flex-col w-full items-start bg-white rounded-lg drop-shadow-lg p-4 cursor-pointer text-left"
+                className="flex w-full cursor-pointer flex-col items-start rounded-lg bg-white p-4 text-left drop-shadow-lg"
                 onClick={() => RestViewToggle(rest)}
                 ref={boxRef}
               >
-                <div className="bg-gray-300 h-40 w-full rounded-lg mb-3 flex justify-center items-center">
+                <div className="mb-3 flex h-40 w-full items-center justify-center rounded-lg bg-gray-300">
                   {rest.thumbnail ? (
                     <>
                       <img
                         src={rest.thumbnail}
-                        className="w-full max-h-40 object-cover h-full rounded-lg"
+                        className="h-full max-h-40 w-full rounded-lg object-cover"
                       ></img>
                     </>
                   ) : (
                     <Logo className="" />
                   )}
                 </div>
-                <p className="text-lg text-overflow">{rest.place_name}</p>
-                <p className="max-w-[300px] mb-1.5 text-gray-600 text-overflow">
+                <p className="text-overflow text-lg">{rest.place_name}</p>
+                <p className="text-overflow mb-1.5 max-w-[300px] text-gray-600">
                   {rest.road_address_name}
                 </p>
-                <div className="flex h-6 gap-2 items-start text-base text-gray-500">
-                  <div className="flex gap-1 h-6">
-                    <span className="flex justify-center items-center ">
-                      <FullStar className="w-full h-full text-[#FF6445]" />
+                <div className="flex h-6 items-start gap-2 text-base text-gray-500">
+                  <div className="flex h-6 gap-1">
+                    <span className="flex items-center justify-center">
+                      <FullStar className="h-full w-full text-[#FF6445]" />
                     </span>
                     <span>{rest.rating}</span>
                   </div>
-                  <div className="flex gap-1 h-6">
-                    <span className="flex justify-center items-center ">
+                  <div className="flex h-6 gap-1">
+                    <span className="flex items-center justify-center">
                       <Review className="mt-0.5" width="20px" height="20px" />
                     </span>
                     <span>{rest.reviews}</span>
@@ -418,45 +415,45 @@ export default function RestList() {
             ) : (
               <li
                 key={rest.id}
-                className="flex flex-col w-full items-start bg-white rounded-lg drop-shadow-lg p-4 cursor-pointer text-left"
+                className="flex w-full cursor-pointer flex-col items-start rounded-lg bg-white p-4 text-left drop-shadow-lg"
                 onClick={() => RestViewToggle(rest)}
               >
-                <div className="bg-gray-300 h-40 w-full rounded-lg mb-3 flex justify-center items-center">
+                <div className="mb-3 flex h-40 w-full items-center justify-center rounded-lg bg-gray-300">
                   {rest.thumbnail ? (
                     <>
                       <img
                         src={`${import.meta.env.VITE_IMG_URL}${rest.thumbnail.split(",")[0]}`}
-                        className="w-full max-h-40 h-full object-cover rounded-lg"
+                        className="h-full max-h-40 w-full rounded-lg object-cover"
                       ></img>
                     </>
                   ) : (
                     <Logo />
                   )}
                 </div>
-                <p className="text-lg text-overflow">{rest.place_name}</p>
-                <p className="max-w-[300px] mb-1.5 text-gray-600 text-overflow">
+                <p className="text-overflow text-lg">{rest.place_name}</p>
+                <p className="text-overflow mb-1.5 max-w-[300px] text-gray-600">
                   {rest.road_address_name}
                 </p>
-                <div className="flex h-6 gap-2 items-start text-base text-gray-500">
-                  <div className="flex gap-1 h-6">
-                    <span className="flex justify-center items-center ">
+                <div className="flex h-6 items-start gap-2 text-base text-gray-500">
+                  <div className="flex h-6 gap-1">
+                    <span className="flex items-center justify-center">
                       <FullStar
                         width="20px"
                         height="20px"
-                        className=" text-[#FF6445]"
+                        className="text-[#FF6445]"
                       />
                     </span>
                     <span>{rest.rating}</span>
                   </div>
-                  <div className="flex gap-1 h-6">
-                    <span className="flex justify-center items-center ">
+                  <div className="flex h-6 gap-1">
+                    <span className="flex items-center justify-center">
                       <Review className="mt-0.5" width="20px" height="20px" />
                     </span>
                     <span>{rest.reviews}</span>
                   </div>
                 </div>
               </li>
-            )
+            ),
           )}
         </ul>
       </div>

@@ -6,7 +6,7 @@ import SilverMedal from "../../assets/Medal-Silver.svg?react";
 import BronzeMedal from "../../assets/Medal-Bronze.svg?react";
 import modalStore from "../../store/modalStore.js";
 import axios from "axios";
-import { useInView } from 'react-intersection-observer';
+import { useInView } from "react-intersection-observer";
 import RestReviewItem from "./RestReviewItem.jsx";
 import ReactLoading from "react-loading";
 
@@ -39,7 +39,10 @@ const RestReviews = observer(() => {
       setTotalPage(data.page.totalPages);
       setHasMore(data.page.totalPages > 1);
     } catch (error) {
-      console.error("초기 매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
+      console.error(
+        "초기 매칭 히스토리 정보를 불러오는데 실패했습니다.",
+        error,
+      );
       setHasMore(false);
     }
   };
@@ -49,7 +52,7 @@ const RestReviews = observer(() => {
       setHasMore(false);
       return;
     }
-    console.log(page , "page")
+    console.log(page, "page");
     setIsLoading(true);
     try {
       const { data } = await axios.get(
@@ -61,17 +64,20 @@ const RestReviews = observer(() => {
           },
         },
       );
-      setHistoryData(prevData => {
+      setHistoryData((prevData) => {
         const newContent = { ...prevData };
-        Object.keys(data.content).forEach(key => {
+        Object.keys(data.content).forEach((key) => {
           newContent[Object.keys(newContent).length] = data.content[key];
         });
         return newContent;
       });
-      setPage(prevPage => prevPage + 1);
+      setPage((prevPage) => prevPage + 1);
       setHasMore(page + 1 < data.page.totalPages);
     } catch (error) {
-      console.error("추가 매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
+      console.error(
+        "추가 매칭 히스토리 정보를 불러오는데 실패했습니다.",
+        error,
+      );
       setHasMore(false);
     } finally {
       setIsLoading(false);
@@ -80,7 +86,7 @@ const RestReviews = observer(() => {
 
   useEffect(() => {
     initialFetchHistory();
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (inView && hasMore) {
@@ -116,7 +122,7 @@ const RestReviews = observer(() => {
 
   // ✅ 모달 열고 닫기 함수
   const toggleModal = async (type, userId, matchingId) => {
-    console.log(typeof userId)
+    console.log(typeof userId);
     try {
       let modalMessage = "";
       switch (type) {
@@ -212,9 +218,9 @@ const RestReviews = observer(() => {
               });
               // 매칭 히스토리 정보 갱신
               const updatedHistoryData = await fetchUpdatedHistory();
-              setHistoryData(prevData => ({
+              setHistoryData((prevData) => ({
                 ...prevData,
-                ...updatedHistoryData
+                ...updatedHistoryData,
               }));
             }
           } catch (error) {
@@ -238,11 +244,14 @@ const RestReviews = observer(() => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       return data.content;
     } catch (error) {
-      console.error("업데이트된 매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
+      console.error(
+        "업데이트된 매칭 히스토리 정보를 불러오는데 실패했습니다.",
+        error,
+      );
       return {};
     }
   };
@@ -251,19 +260,19 @@ const RestReviews = observer(() => {
   const banOrReport = (user) => {
     if (user.ban && user.report) {
       return (
-        <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
+        <span className="ml-2 whitespace-nowrap rounded-md bg-[#FFACAC] px-1.5 py-0.5 text-[#E62222]">
           차단 및 신고 유저
         </span>
       );
     } else if (user.ban) {
       return (
-        <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
+        <span className="ml-2 whitespace-nowrap rounded-md bg-[#FFACAC] px-1.5 py-0.5 text-[#E62222]">
           차단 유저
         </span>
       );
     } else if (user.report) {
       return (
-        <span className="ml-2 px-1.5 py-0.5 bg-[#FFACAC] text-[#E62222] rounded-md whitespace-nowrap">
+        <span className="ml-2 whitespace-nowrap rounded-md bg-[#FFACAC] px-1.5 py-0.5 text-[#E62222]">
           신고 유저
         </span>
       );
@@ -300,15 +309,15 @@ const RestReviews = observer(() => {
         {
           headers: {
             "Content-Type": "application/json", // Content-Type 설정
-            Authorization: `Bearer ${token}` // Authorization 설정
+            Authorization: `Bearer ${token}`, // Authorization 설정
           },
-        }
+        },
       );
 
       if (response.status === 200) {
         const reviewData = response.data;
         modalStore.openModal("oneBtn", {
-          message: <RestReviewItem review={reviewData}/>, // 모달 메시지 설정
+          message: <RestReviewItem review={reviewData} />, // 모달 메시지 설정
           onConfirm: async () => {
             await modalStore.closeModal();
           },
@@ -325,32 +334,39 @@ const RestReviews = observer(() => {
     }
   };
 
-  console.log(Object.values(historyData))
+  console.log(Object.values(historyData));
   return (
-    <div className="h-[inherit] flex flex-col basis-full gap-10 mb-6 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
-      <p className="font-bold text-[28px] text-left">나의 매칭 히스토리</p>
-      <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
+    <div className="mb-5 flex flex-col gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg max-[760px]:max-w-[300px] min-[400px]:w-full min-[400px]:min-w-[380px] min-[760px]:h-full">
+      <p className="text-left text-[28px] font-bold">나의 매칭 히스토리</p>
+      <ul className="flex flex-1 flex-col gap-4 overflow-y-scroll scrollbar-hide">
         {Object.values(historyData) && Object.values(historyData).length > 0 ? (
           Object.values(historyData).map((item) => (
             <li key={item.id} className="flex flex-col gap-4 rounded-2xl">
-              <div className="flex justify-between items-center">
-                <div className="flex flex-shrink-0 items-end">
-                  <span>{item.matching.restaurant.name}</span>
-                  <span className="text-xs hidden lg:block text-gray-400 pl-2">
-                    {item.matching.restaurant.category_name}
+              <div className="flex items-center justify-between">
+                <div className="flex flex-shrink-0 items-baseline">
+                  <span className="text-sm min-[600px]:text-base">
+                    {item.matching.restaurant.name}
+                  </span>
+                  <span className="pl-1 text-xs text-gray-400">
+                    {item.matching.restaurant.category_name.slice(
+                      item.matching.restaurant.category_name.lastIndexOf(">") +
+                        2,
+                    )}
                   </span>
                 </div>
-                <span className="flex">
-                  {!item.matching.userList.find(user => user.id === item.userId)?.review?.description?.trim() ? (
+                <span>
+                  {!item.matching.userList
+                    .find((user) => user.id === item.userId)
+                    ?.review?.description?.trim() ? (
                     <div
                       onClick={() =>
                         writeReview(
                           item.id,
                           item.matching.restaurant.name,
-                          item.matching
+                          item.matching,
                         )
                       }
-                      className="flex flex-shrink-0 text-sm text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer"
+                      className="flex flex-shrink-0 cursor-pointer rounded-md border border-[#909090] px-1.5 text-xs text-[#909090] min-[600px]:text-sm"
                     >
                       리뷰 작성하기
                     </div>
@@ -358,7 +374,8 @@ const RestReviews = observer(() => {
                     <>
                       <div
                         onClick={() => myReviewChk(item.id)}
-                        className="flex flex-shrink-0 text-sm text-[#909090] border border-[#909090] px-1.5 rounded-md cursor-pointer">
+                        className="flex flex-shrink-0 cursor-pointer rounded-md border border-[#909090] px-1.5 text-xs text-[#909090] min-[600px]:text-sm"
+                      >
                         리뷰 확인하기
                       </div>
                     </>
@@ -369,9 +386,9 @@ const RestReviews = observer(() => {
                 {item.matching.userList.map((user, idx) => (
                   <li
                     key={idx}
-                    className="relative flex text-sm justify-between items-center bg-[#F8F8F8] p-3 rounded-lg"
+                    className="relative flex items-center justify-between rounded-lg bg-[#F8F8F8] p-3 text-sm"
                   >
-                    <div className="w-full flex flex-col gap-1">
+                    <div className="flex w-full flex-col gap-1">
                       <div className="flex gap-0.5">
                         <p className="whitespace-nowrap">{user.nickname}</p>
                         <div className="flex flex-1 flex-shrink-0 items-center">
@@ -386,7 +403,7 @@ const RestReviews = observer(() => {
                     <div>
                       {item.userId !== user.id && (
                         <p
-                          className="font-bold rotate-90 tracking-[-0.15rem] cursor-pointer"
+                          className="rotate-90 cursor-pointer font-bold tracking-[-0.15rem]"
                           onClick={() => popOver(user.id, item.id)}
                         >
                           ···
@@ -395,39 +412,39 @@ const RestReviews = observer(() => {
                       {activePopOver === `${user.id}-${item.id}` && (
                         <div
                           ref={popOverRef}
-                          className="absolute flex flex-col gap-1 z-50 bottom-10 right-1 bg-white p-2 border border-gray-300 rounded-lg"
+                          className="absolute right-1 top-10 z-50 flex flex-col gap-1 rounded-lg border border-gray-300 bg-white p-2"
                         >
                           {user.ban ? (
                             <button
-                              onClick={() => toggleModal("unBan", user.id, item.id)}
-                              className="py-1 px-2 rounded-lg hover:bg-gray-200"
+                              onClick={() => toggleModal("unBan", user.id)}
+                              className="rounded-lg px-2 py-1 hover:bg-gray-200"
                             >
                               차단해제
                             </button>
                           ) : (
                             <button
-                              onClick={() => toggleModal("ban", user.id, item.id)}
-                              className="py-1 px-2 rounded-lg hover:bg-gray-200"
+                              onClick={() => toggleModal("ban", user.id)}
+                              className="rounded-lg px-2 py-1 hover:bg-gray-200"
                             >
                               차단하기
                             </button>
                           )}
                           {user.report ? (
                             <button
-                              onClick={() => toggleModal("unReport", user.id, item.id)}
-                              className="py-1 px-2 rounded-lg hover:bg-gray-200"
+                              onClick={() => toggleModal("unReport", user.id)}
+                              className="rounded-lg px-2 py-1 hover:bg-gray-200"
                             >
                               신고해제
                             </button>
                           ) : (
                             <button
-                              onClick={() => toggleModal("report", user.id, item.id)}
-                              className="py-1 px-2 rounded-lg hover:bg-gray-200"
+                              onClick={() => toggleModal("report", user.id)}
+                              className="rounded-lg px-2 py-1 hover:bg-gray-200"
                             >
                               신고하기
                             </button>
                           )}
-                          <div className="absolute -bottom-1.5 right-3 rotate-45 w-2.5 h-2.5 bg-white border-r border-b border-gray-300"></div>
+                          <div className="absolute -top-1.5 right-3 h-2.5 w-2.5 rotate-45 border-l border-t border-gray-300 bg-white"></div>
                         </div>
                       )}
                     </div>
@@ -442,13 +459,18 @@ const RestReviews = observer(() => {
           </div>
         )}
         {page !== totalPage && hasMore && (
-          <div ref={moreHistory} className="relative pb-8 w-full h-8">
+          <div ref={moreHistory} className="relative h-8 w-full pb-8">
+            더 보기
+          </div>
+        )}
+        {isLoading && (
+          <div className="h-30 relative w-full">
             <ReactLoading
               type={"spokes"}
               color={"#000000"}
               height={25}
               width={25}
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform"
             />
           </div>
         )}

@@ -288,9 +288,9 @@ export default function Matching({
 
   return (
     <>
-      <div className="bg-map relative w-full h-full">
-        <div className="bg-black/40 absolute w-full h-full z-10"></div>
-        <Map className="w-full h-full" id="map" center={position} level={5}>
+      <div className="bg-map relative h-full w-full">
+        <div className="absolute z-10 h-full w-full bg-black/40"></div>
+        <Map className="h-full w-full" id="map" center={position} level={5}>
           <Circle
             center={position}
             radius={2000}
@@ -302,37 +302,37 @@ export default function Matching({
           />
         </Map>
       </div>
-      <div className="matching-container absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[380px] sm:h-[380px] bg-white rounded-lg drop-shadow-2xl z-20">
-        <div className="info-container absolute top-[49%] sm:top-[47%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center gap-4 w-full h-full">
+      <div className="matching-container absolute left-1/2 top-1/2 z-20 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-white drop-shadow-2xl sm:h-[380px] sm:w-[380px]">
+        <div className="info-container absolute left-1/2 top-[49%] flex h-full w-full -translate-x-1/2 -translate-y-1/2 transform flex-col items-center justify-center gap-4 sm:top-[47%]">
           <ReactLoading
             type={"spin"}
             color={"#FF6445"}
             height={40}
             width={40}
           />
-          <p className="text-base sm:text-xl font-bold pt-0 sm:pt-5">
+          <p className="pt-0 text-base font-bold sm:pt-5 sm:text-xl">
             {number}명의 인원과 매칭할 수 있는
             <br /> 주변 사람들을 찾고 있어요
           </p>
           <p className="text-sm sm:text-base">
             남은시간 {minutes}:{second}
           </p>
-          <div className="bg-[#F8F8F8] w-[270px] h-[70px] sm:w-[310px] sm:h-[90px] rounded-lg">
-            <div className="flex flex-row items-center pt-[12px] pb-[5px] px-[16px] text-left">
-              <p className="text-sm sm:text-base max-w-[200px] text-overflow">
+          <div className="h-[70px] w-[270px] rounded-lg bg-[#F8F8F8] sm:h-[90px] sm:w-[310px]">
+            <div className="flex flex-row items-center px-[16px] pb-[5px] pt-[12px] text-left">
+              <p className="text-overflow max-w-[200px] text-sm sm:text-base">
                 {selectedMarker.place_name}
               </p>
-              <p className="max-w-[90px] text-overflow text-xs sm:text-[12px] text-[#A2A2A2] pl-2">
+              <p className="text-overflow max-w-[90px] pl-2 text-xs text-[#A2A2A2] sm:text-[12px]">
                 {categoryName}
               </p>
             </div>
-            <p className="text-[#555555] text-left text-xs sm:text-[14px] px-[16px]">
+            <p className="px-[16px] text-left text-xs text-[#555555] sm:text-[14px]">
               {selectedMarker.road_address_name}
             </p>
           </div>
         </div>
         <button
-          className="absolute bottom-3 sm:bottom-5 left-1/2 transform -translate-x-1/2 text-[#555555] text-xs sm:text-[14px]"
+          className="absolute bottom-3 left-1/2 -translate-x-1/2 transform text-xs text-[#555555] sm:bottom-5 sm:text-[14px]"
           onClick={cancelMatching}
         >
           매칭취소

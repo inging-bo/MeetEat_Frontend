@@ -376,18 +376,18 @@ export default function MainMatching() {
     <>
       {!isMatching && (
         <>
-          <header className="fixed top-0 left-0 right-0 shadow-lg z-10 flex justify-center h-[77px] py-3 bg-white">
-            <div className="flex w-full justify-between max-w-screen-xl">
+          <header className="fixed left-0 right-0 top-0 z-10 flex h-[77px] justify-center bg-white py-3 shadow-lg">
+            <div className="flex w-full max-w-screen-xl justify-between">
               <Link
                 to="/"
-                className="hidden h-full sm:px-4 sm:flex sm:items-center"
+                className="hidden h-full sm:flex sm:items-center sm:px-4"
               >
                 <HeaderLogo />
               </Link>
 
-              <div className="search-bar w-[70%] lg:max-w-[600px] flex flex-row mx-4 bg-emerald-600 border border-[#3BB82D] rounded-full relative">
+              <div className="search-bar relative mx-4 flex w-[70%] flex-row rounded-full border border-[#3BB82D] bg-emerald-600 lg:max-w-[600px]">
                 <input
-                  className="w-full lg:max-w-[600px] rounded-full px-5 focus:outline-none"
+                  className="w-full rounded-full px-5 focus:outline-none lg:max-w-[600px]"
                   id="keyword"
                   type="text"
                   onChange={handleInputChange}
@@ -399,23 +399,23 @@ export default function MainMatching() {
                 <>
                   <Link
                     to={`/mypage`}
-                    className="h-full min-w-[80px] pl-4 flex items-center text-xs sm:text-base"
+                    className="flex h-full min-w-[80px] items-center pl-4 text-xs sm:text-base"
                   >
                     <MypageIcon width="25px" />
                   </Link>
                 </>
               ) : (
                 <>
-                  <Link to="/account" className="h-full px-4 flex items-center">
+                  <Link to="/account" className="flex h-full items-center px-4">
                     로그인
                   </Link>
                 </>
               )}
             </div>
           </header>
-          <div className="relative w-full h-full">
+          <div className="relative h-full w-full">
             <Map
-              className="w-full h-full"
+              className="h-full w-full"
               id="map"
               center={center}
               level={5}
@@ -485,10 +485,10 @@ export default function MainMatching() {
               {/* 검색 된 리스트 표시 */}
               <div
                 key={key}
-                className="hidden min-[950px]:block bg-white text-black absolute z-10 top-[20%] left-10 min-w-[320px] max-w-[320px] rounded-lg max-h-[650px] overflow-y-scroll scrollbar-hide px-5 drop-shadow-2xl"
+                className="absolute left-10 top-[20%] z-10 hidden max-h-[650px] min-w-[320px] max-w-[320px] overflow-y-scroll rounded-lg bg-white px-5 text-black drop-shadow-2xl scrollbar-hide min-[950px]:block"
               >
                 {markers.length !== 0 && (
-                  <div className="font-bold py-[15px] text-left">검색결과</div>
+                  <div className="py-[15px] text-left font-bold">검색결과</div>
                 )}
                 {markers.map((marker) => (
                   <>
@@ -533,14 +533,14 @@ export default function MainMatching() {
                   >
                     {markers.length === 0 && (
                       <>
-                        <div className="font-bold py-[15px] text-left">
+                        <div className="py-[15px] text-left font-bold">
                           검색결과
                         </div>
                         <div>검색 결과가 없습니다.</div>
                       </>
                     )}
                     {markers.length !== 0 && (
-                      <div className="font-bold py-[15px] text-left">
+                      <div className="py-[15px] text-left font-bold">
                         검색결과
                       </div>
                     )}
@@ -562,7 +562,7 @@ export default function MainMatching() {
                     ))}
                     {hasMore && (
                       <button
-                        className="py-3 font-bold drop-shadow-md w-full"
+                        className="w-full py-3 font-bold drop-shadow-md"
                         onClick={() => searchPlaces()}
                       >
                         더보기
@@ -594,9 +594,9 @@ export default function MainMatching() {
             </Map>
 
             {/* 현위치로 지도도 이동 버튼 */}
-            <div className="flex flex-col gap-[10px] absolute z-[10] top-[5.5rem] right-2 p-[10px]">
+            <div className="absolute right-2 top-[5.5rem] z-[10] flex flex-col gap-[10px] p-[10px]">
               <button
-                className="flex justify-center items-center cursor-pointer rounded-full w-[45px] h-[45px] bg-white shadow-[0_0_8px_#00000025]"
+                className="flex h-[45px] w-[45px] cursor-pointer items-center justify-center rounded-full bg-white shadow-[0_0_8px_#00000025]"
                 onClick={setCenterToMyPosition}
               >
                 <AccIcon className="w-[20px] sm:w-[25px]" />
@@ -604,7 +604,7 @@ export default function MainMatching() {
             </div>
 
             {/* 맛집탐방단, 내돈내산맛집 */}
-            <div className="flex flex-col gap-[10px] absolute z-[1] top-[9rem] sm:top-[10rem] sm:bottom-2 right-2 p-[10px]">
+            <div className="absolute right-2 top-[9rem] z-[1] flex flex-col gap-[10px] p-[10px] sm:bottom-2 sm:top-[10rem]">
               {/* <Link
                 to="/openchat"
                 className="flex flex-col justify-center items-center rounded-lg w-[80px] h-[80px] bg-[#FF6445] text-white text-sm"
@@ -616,7 +616,7 @@ export default function MainMatching() {
               </Link> */}
               <Link
                 to="meeteatdb"
-                className="flex flex-col justify-center items-center rounded-full sm:rounded-lg w-[45px] h-[45px] sm:w-[80px] sm:h-[80px] bg-[#FF6445] text-white text-sm shadow-[0_0_8px_#00000025]"
+                className="flex h-[45px] w-[45px] flex-col items-center justify-center rounded-full bg-[#FF6445] text-sm text-white shadow-[0_0_8px_#00000025] sm:h-[80px] sm:w-[80px] sm:rounded-lg"
               >
                 <FoodIcon width="15px" />
                 <div className="hidden sm:block">
