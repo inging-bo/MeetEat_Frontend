@@ -28,7 +28,7 @@ export default function CheckPlace() {
     // 저장된 매칭데이터 저장
     const jsonData = JSON.parse(window.sessionStorage.getItem("matchingData"));
     const jsonCurData = JSON.parse(
-      window.sessionStorage.getItem("matchedData")
+      window.sessionStorage.getItem("matchedData"),
     );
     setMatchingData(jsonData.restaurantList);
     setPickedPlace(jsonCurData.matching.restaurant.name);
@@ -97,6 +97,7 @@ export default function CheckPlace() {
       window.sessionStorage.removeItem("tempPosition");
       const id = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.id;
+      window.sessionStorage.removeItem("firstLoadDone");
       navigate(`/matching/complete/${id}`);
     }
 
@@ -139,35 +140,35 @@ export default function CheckPlace() {
 
   return (
     <>
-      <div className="bg-map relative w-full h-full">
-        <div className="bg-black/40 absolute w-full h-full z-10"></div>
+      <div className="bg-map relative h-full w-full">
+        <div className="absolute z-10 h-full w-full bg-black/40"></div>
         {position && (
           <StaticMap
             id="map"
-            className="w-full h-full"
+            className="h-full w-full"
             center={JSON.parse(window.sessionStorage.getItem("tempPosition"))}
             level={5}
           />
         )}
       </div>
-      <div className="absolute flex flex-col items-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[350px] md:w-[790px] h-[412px] bg-white rounded-lg drop-shadow-2xl z-20 py-[40px] will-change-transform">
+      <div className="absolute left-1/2 top-1/2 z-20 flex h-[412px] w-[350px] -translate-x-1/2 -translate-y-1/2 transform flex-col items-center rounded-lg bg-white py-[40px] drop-shadow-2xl will-change-transform md:w-[790px]">
         <div className="flex flex-col items-center">
           <CheckTitle />
-          <p className="text-base md:text-xl pb-1 pt-[30px] font-semibold">
+          <p className="pb-1 pt-[30px] text-base font-semibold md:text-xl">
             방문할 음식점을 선택하는 중이에요.
           </p>
-          <p className="text-base md:text-xl pb-3 font-semibold">
+          <p className="pb-3 text-base font-semibold md:text-xl">
             {second}초 뒤에 음식점이 공개됩니다!
           </p>
         </div>
-        <div className="people-container w-[340px] md:w-[700px] h-[200px] flex flex-col justify-center gap-4 py-3 bg-[#F8F8F8] rounded-lg text-[#555555] text-[14px] relative">
+        <div className="people-container relative flex h-[200px] w-[340px] flex-col justify-center gap-4 rounded-lg bg-[#F8F8F8] py-3 text-[14px] text-[#555555] md:w-[700px]">
           {matchingData.map((item) => (
             <>
-              <div className="people-info grid w-[340px] md:w-[700px] grid-cols-[113px_113px_113px] md:grid-cols-[200px_200px_200px] justify-center">
+              <div className="people-info grid w-[340px] grid-cols-[113px_113px_113px] justify-center md:w-[700px] md:grid-cols-[200px_200px_200px]">
                 <p className="place-name text-overflow">{item.place.name}</p>
                 <p className="text-overflow">
                   {item.place.category_name.slice(
-                    item.place.category_name.lastIndexOf(">") + 2
+                    item.place.category_name.lastIndexOf(">") + 2,
                   )}
                 </p>
                 <p>
@@ -175,14 +176,14 @@ export default function CheckPlace() {
                     item.place.lat,
                     item.place.lon,
                     position.lat,
-                    position.lng
+                    position.lng,
                   )}
                   분 소요
                 </p>
               </div>
             </>
           ))}
-          <div className="pick-border w-[340px] md:w-[650px] h-[35px] absolute top-[68px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 border border-[#FF6445] rounded-lg"></div>
+          <div className="pick-border absolute left-1/2 top-[68px] h-[35px] w-[340px] -translate-x-1/2 -translate-y-1/2 transform rounded-lg border border-[#FF6445] md:w-[650px]"></div>
         </div>
       </div>
     </>

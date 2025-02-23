@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Map, MapMarker, Circle, CustomOverlayMap } from "react-kakao-maps-sdk";
 import { debounce } from "lodash";
 import axios from "axios";
+import { callApi } from "../hooks/useAxios";
 import AccIcon from "../../assets/acc-icon.svg?react";
 import HeaderLogo from "../../assets/header-logo.svg?react";
 import FoodIcon from "../../assets/food-line.svg?react";
@@ -15,19 +16,15 @@ import authStore from "../../store/authStore";
 import matchingStore from "../../store/matchingStore";
 import { BottomSheet } from "react-spring-bottom-sheet";
 import "../../customBottomSheet.css";
-import { callApi } from "../hooks/useAxios";
 
 export default function MainMatching() {
   const navigate = useNavigate();
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
   const [isLoggedIn, setLoggedIn] = useState();
   const [isMatching, setIsMatching] = useState(false);
-  const [isMatched, setIsMatched] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
 
   // 로그인, 매칭 확인
   useLayoutEffect(() => {
-    // const resProfile = callApi("/users/profile", "GET");
     const getProfile = async () => {
       const resProfile = await callApi("/users/profile", "GET");
       console.log(resProfile.data);
@@ -40,6 +37,7 @@ export default function MainMatching() {
         }
       }
     };
+
     const getMatching = async () => {
       const resMatching = await callApi("/matching", "GET");
       console.log("MainMatching 36");
@@ -57,38 +55,15 @@ export default function MainMatching() {
         completed();
       } else matchingStore.setIsCompleted(false);
     };
+
     getProfile();
-    // console.log(resProfile);
-    // if (resProfile !== undefined) {
-    //   resProfile.penalty
-    //     ? window.sessionStorage.setItem("isPenalty", true)
-    //     : window.sessionStorage.setItem("isPenalty", false);
-    //   if (!resProfile.penalty) {
-    //     const resMatching = callApi("/matching", "GET");
-    //     console.log("MainMatching 36");
-    //     console.log(resMatching);
-    //     if (
-    //       resMatching !== null &&
-    //       resMatching.matching.status !== "CANCELLED"
-    //     ) {
-    //       matchingStore.setIsCompleted(true);
-    //       window.sessionStorage.setItem("isCompleted", "true");
-    //       window.sessionStorage.setItem(
-    //         "matchedData",
-    //         JSON.stringify(resMatching),
-    //       );
-    //       completed();
-    //     } else matchingStore.setIsCompleted(false);
-    //   }
-    // }
+
     authStore.checkLoggedIn();
     setLoggedIn(authStore.loggedIn);
     matchingStore.checkMatching();
     matchingStore.checkMatched();
     matchingStore.checkCompleted();
     setIsMatching(matchingStore.isMatching);
-    setIsMatched(matchingStore.isMatched);
-    setIsCompleted(matchingStore.isCompleted);
   }, []);
 
   const completed = () => {
@@ -140,32 +115,16 @@ export default function MainMatching() {
     };
   }, [isMatching]);
 
-  async function apiPOSTCancel() {
-    await axios
-      .post(
-        `${import.meta.env.VITE_BE_API_URL}/matching/cancel`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        },
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
   //새로고침 확인을 눌렀을 경우 unload 이벤트 실행
   const unloadFunc = () => {
     console.log("실행");
-    setIsMatching("false");
     window.sessionStorage.removeItem("isMatching");
-    apiPOSTCancel();
+    setIsMatching(false);
+    setPage(1);
+    setHasMore(false);
+    setMarkers([]);
+    setInfo(false);
+    setCurText("");
   };
   //unload 이벤트
   window.addEventListener("unload", unloadFunc);
@@ -411,9 +370,12 @@ export default function MainMatching() {
                 <>
                   <Link
                     to={`/mypage`}
-                    className="flex h-full min-w-[80px] items-center pl-4 text-xs sm:text-base"
+                    className="flex h-full min-w-[60px] items-center pl-4 text-xs sm:text-base"
                   >
-                    <MypageIcon width="25px" />
+                    <MypageIcon width="25px" className="sm:hidden" />
+                    <div className="hidden pr-5 sm:block sm:min-w-[75px]">
+                      프로필
+                    </div>
                   </Link>
                 </>
               ) : (
@@ -615,17 +577,8 @@ export default function MainMatching() {
               </button>
             </div>
 
-            {/* 맛집탐방단, 내돈내산맛집 */}
+            {/* 내돈내산맛집 */}
             <div className="absolute right-2 top-[9rem] z-[1] flex flex-col gap-[10px] p-[10px] sm:bottom-2 sm:top-[10rem]">
-              {/* <Link
-                to="/openchat"
-                className="flex flex-col justify-center items-center rounded-lg w-[80px] h-[80px] bg-[#FF6445] text-white text-sm"
-              >
-                <ChatIcon width="15px" />
-                맛집
-                <br />
-                탐방단
-              </Link> */}
               <Link
                 to="meeteatdb"
                 className="flex h-[45px] w-[45px] flex-col items-center justify-center rounded-full bg-[#FF6445] text-sm text-white shadow-[0_0_8px_#00000025] sm:h-[80px] sm:w-[80px] sm:rounded-lg"
@@ -644,8 +597,8 @@ export default function MainMatching() {
       {isMatching && (
         <Matching
           setIsMatching={setIsMatching}
-          setIsMatched={setIsMatched}
           selectedMarker={selectedMarker}
+          setInfo={setInfo}
           position={position}
           number={number}
         />
