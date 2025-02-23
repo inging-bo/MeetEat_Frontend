@@ -23,13 +23,13 @@ export default function WriteReview() {
   const handleAddImages = (e) => {
     const postFiles = Array.from(e.target.files);
     const files = e.target.files;
-
     if (postFiles.length > 7) {
       setPostImageList(postFiles.slice(0, 7));
+    } else {
+      setPostImageList(postFiles);
     }
 
     let imageUrlLists = [...imageList];
-
     for (let i = 0; i < files.length; i++) {
       const currentImageUrl = URL.createObjectURL(files[i]);
       imageUrlLists.push(currentImageUrl);
@@ -97,17 +97,20 @@ export default function WriteReview() {
 
   const handleWriteComplete = () => {
     const textareaValue = document.getElementById("textarea").value;
-    apiRestReviewWrite(info.matchedId, info.restId, textareaValue);
+    apiRestReviewWrite(info.matchedId, textareaValue);
   };
 
-  async function apiRestReviewWrite(matchedId, restId, textareaValue) {
-    console.log(matchedId, restId, textareaValue);
+  async function apiRestReviewWrite(matchedId, textareaValue) {
+    const reviewData = {
+      matchingHistoryId: matchedId,
+      rating: starScore,
+      description: textareaValue,
+    };
+    const jsonReviewData = JSON.stringify(reviewData);
+    const reviewInfo = new Blob([jsonReviewData], { type: "application/json" });
     const formData = new FormData();
-    formData.append("matchingHistoryId", matchedId);
-    formData.append("restaurantId", restId);
-    formData.append("rating", starScore);
-    formData.append("description", textareaValue);
     formData.append("files", postImageList);
+    formData.append("review", reviewInfo);
 
     for (const x of formData.entries()) {
       console.log(x);

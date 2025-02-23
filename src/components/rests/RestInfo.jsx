@@ -33,7 +33,7 @@ const RestInfo = observer(() => {
             Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       console.log("API 응답 데이터:", data); // 추가
       setProfileData(data); // 수정: data.profile로 접근
@@ -55,7 +55,6 @@ const RestInfo = observer(() => {
         window.location.replace("/");
       }
     }
-
   };
   // 페이지 진입 시 로그인 체크 및 프로필 정보 요청
   useEffect(() => {
@@ -74,7 +73,7 @@ const RestInfo = observer(() => {
 
     useEffect(() => {
       console.log(
-        `ProfileData 업데이트 감지됨: ${fieldKey} = ${profileData?.[fieldKey]}`
+        `ProfileData 업데이트 감지됨: ${fieldKey} = ${profileData?.[fieldKey]}`,
       ); // 수정 - 전찬민
       setValue(profileData?.[fieldKey] || "");
     }, [profileData, fieldKey]);
@@ -129,10 +128,7 @@ const RestInfo = observer(() => {
           console.error("응답 상태 코드:", error.response.status);
           console.error("응답 데이터:", error.response.data);
         } else if (error.request) {
-          console.error(
-            "요청은 보내졌으나 응답 없음:",
-            error.request
-          );
+          console.error("요청은 보내졌으나 응답 없음:", error.request);
         } else {
           console.error("요청 설정 중 에러 발생:", error.message);
         }
@@ -147,56 +143,50 @@ const RestInfo = observer(() => {
 
   const viewMedal = useMemo(() => {
     const count = profileData?.matchingCount || 0;
-    if (count >= 5) return <GoldMedal/>;
-    if (count >= 3) return <SilverMedal/>;
-    if (count >= 1) return <BronzeMedal/>;
+    if (count >= 5) return <GoldMedal />;
+    if (count >= 3) return <SilverMedal />;
+    if (count >= 1) return <BronzeMedal />;
     return (
-      <span className="pl-2 pt-2">
-        매칭을 하면 메달을 얻을 수 있어요!
-      </span>
+      <span className="pl-2 pt-2">매칭을 하면 메달을 얻을 수 있어요!</span>
     );
   }, [profileData?.matchingCount]);
   return (
-    <div
-      className="flex flex-col h-[inherit] gap-10 basis-full md:w-[380px] md:min-w-[380px] md:max-w-[380px] justify-start border border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
-      <h1 className="font-bold text-[28px] text-left">내 정보</h1>
+    <div className="flex max-w-[300px] flex-col justify-start gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg min-[400px]:min-w-[380px] md:max-w-[380px]">
+      <h1 className="text-left text-[28px] font-bold">내 정보</h1>
 
       {/* 닉네임 수정 */}
-      <EditableField label="닉네임" field={nicknameField} maxLength={8}/>
+      <EditableField label="닉네임" field={nicknameField} maxLength={8} />
 
       {/* 한 줄 소개 수정 */}
-      <EditableField label="짧은 소개" field={introduceField}/>
+      <EditableField label="짧은 소개" field={introduceField} />
 
       {/* 메달 표시 */}
       <div>
-        <div className="flex gap-1 items-center text-[15px] text-left border-b-gray-300">
+        <div className="flex items-center gap-1 border-b-gray-300 text-left text-[15px]">
           <p className="font-bold">메달</p>
-          <div
-            className="relative text-gray-400 flex justify-center items-center bg-[#CDCDCD] rounded-full w-5 h-5 cursor-pointer group">
-            <span className="text-sm text-white cursor-pointer -mr-5 pr-5">
+          <div className="group relative flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-[#CDCDCD] text-gray-400">
+            <span className="-mr-5 cursor-pointer pr-5 text-sm text-white">
               ?
             </span>
             {/* 도움말 박스 */}
-            <div
-              className="absolute text-black flex-col gap-1 ml-3 min-w-min left-full bottom-[-10px] text-base bg-white border border-gray-300 p-4 rounded-md hidden group-hover:block cursor-default">
-              <h3 className="text-center pb-1">식사 횟수별 메달 안내</h3>
+            <div className="absolute bottom-[-10px] left-full ml-3 hidden min-w-min cursor-default flex-col gap-1 rounded-md border border-gray-300 bg-white p-4 text-base text-black group-hover:block">
+              <h3 className="pb-1 text-center">식사 횟수별 메달 안내</h3>
               <div className="flex flex-col">
-                <div className="flex items-center text-sm text-nowrap">
-                  <GoldMedal/>
+                <div className="flex items-center text-nowrap text-sm">
+                  <GoldMedal />
                   <span>연간 누적 참여 5회</span>
                 </div>
-                <div className="flex items-center text-sm text-nowrap">
-                  <SilverMedal/>
+                <div className="flex items-center text-nowrap text-sm">
+                  <SilverMedal />
                   <span>연간 누적 참여 3회</span>
                 </div>
-                <div className="flex items-center text-sm text-nowrap">
-                  <BronzeMedal/>
+                <div className="flex items-center text-nowrap text-sm">
+                  <BronzeMedal />
                   <span>연간 누적 참여 1회</span>
                 </div>
               </div>
               {/* 화살표 모양 */}
-              <div
-                className="absolute bottom-3 rotate-45 right-[calc(100%-0.35rem)] w-3 h-3 border-l border-b border-gray-300 bg-white"></div>
+              <div className="absolute bottom-3 right-[calc(100%-0.35rem)] h-3 w-3 rotate-45 border-b border-l border-gray-300 bg-white"></div>
             </div>
           </div>
         </div>
@@ -204,17 +194,18 @@ const RestInfo = observer(() => {
       </div>
 
       {/* 계정 정보 */}
-      <div className="flex flex-col gap-2 h-full">
-        <p className="text-[15px] text-left font-bold">계정 정보</p>
-        <div className="flex flex-col text-[15px] text-[#909090] h-full items-start">
+      <div className="flex h-full flex-col gap-2">
+        <p className="text-left text-[15px] font-bold">계정 정보</p>
+        <div className="flex h-full flex-col items-start text-[15px] text-[#909090]">
           <motion.button
             whileTap={{ scale: 0.95, backgroundColor: "#90909030" }}
             transition={{ duration: 0.1 }}
             className="mb-auto rounded-md px-2 py-1"
           >
-            {profileData && profileData.signupType?.toUpperCase() === "EMAIL" && (
-              <Link to="/mypage/changepw">비밀번호 변경</Link>
-            )}
+            {profileData &&
+              profileData.signupType?.toUpperCase() === "EMAIL" && (
+                <Link to="/mypage/changepw">비밀번호 변경</Link>
+              )}
           </motion.button>
           <motion.button
             whileTap={{ scale: 0.95, backgroundColor: "#90909030" }}
@@ -222,7 +213,7 @@ const RestInfo = observer(() => {
             className="rounded-md px-2 py-1"
             onClick={() =>
               modalStore.openModal("twoBtn", {
-                message: () => <DeleteID/>,
+                message: () => <DeleteID />,
                 onConfirm: () => {
                   modalStore.openModal("twoBtn", {
                     message: "정말로 탈퇴 하시겠습니까?",
@@ -241,7 +232,7 @@ const RestInfo = observer(() => {
                               "Content-Type": "application/json",
                               Authorization: `Bearer ${accessToken}`,
                             },
-                          }
+                          },
                         );
                         if (response.status === 200) {
                           modalStore.openModal("oneBtn", {
@@ -277,7 +268,7 @@ const RestInfo = observer(() => {
 const EditableField = ({ label, field, maxLength }) => {
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-[15px] flex items-center justify-between">
+      <div className="flex items-center justify-between text-[15px]">
         <span className="font-bold">{label}</span>
         {field.isEditing ? (
           <motion.button
@@ -290,20 +281,19 @@ const EditableField = ({ label, field, maxLength }) => {
         ) : (
           <motion.button
             whileTap={{ scale: 0.95 }}
-            className="text-[#909090] rounded-md border border-[#909090] px-1.5"
+            className="rounded-md border border-[#909090] px-1.5 text-[#909090]"
             onClick={field.changeField}
           >
             수정
           </motion.button>
         )}
       </div>
-      <div
-        className="relative flex h-10 justify-between items-center text-[15px] text-left border-b border-b-[#EAEAEA] bg-[#F8F8F8]">
+      <div className="relative flex h-10 items-center justify-between border-b border-b-[#EAEAEA] bg-[#F8F8F8] text-left text-[15px]">
         {field.isEditing ? (
           <>
             <input
               type="text"
-              className="flex-1 text-left outline-none pl-2 py-2 bg-inherit rounded-lg"
+              className="flex-1 rounded-lg bg-inherit py-2 pl-2 text-left outline-none"
               value={field.value}
               onChange={field.handleInputChange}
               autoFocus
@@ -316,9 +306,7 @@ const EditableField = ({ label, field, maxLength }) => {
             )}
           </>
         ) : (
-          <span className="flex-1 pl-2 py-2 text-[#909090]">
-            {field.value}
-          </span>
+          <span className="flex-1 py-2 pl-2 text-[#909090]">{field.value}</span>
         )}
       </div>
     </div>
