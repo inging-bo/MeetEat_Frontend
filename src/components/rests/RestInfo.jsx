@@ -151,62 +151,68 @@ const RestInfo = observer(() => {
     );
   }, [profileData?.matchingCount]);
   return (
-    <div className="flex max-w-[300px] flex-col justify-start gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg min-[400px]:min-w-[380px] min-[760px]:max-w-[380px]">
-      <h1 className="text-left text-[28px] font-bold">내 정보</h1>
+    <div className="flex max-w-[300px] flex-col rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg min-[400px]:min-w-[380px] min-[760px]:max-w-[380px]">
+      <h1 className="mb-10 text-left text-[28px] font-bold">내 정보</h1>
+      <div className="flex h-fit flex-col justify-between overflow-scroll">
+        <div className="flex flex-col gap-5">
+          {/* 닉네임 수정 */}
+          <EditableField label="닉네임" field={nicknameField} maxLength={8} />
 
-      {/* 닉네임 수정 */}
-      <EditableField label="닉네임" field={nicknameField} maxLength={8} />
+          {/* 한 줄 소개 수정 */}
+          <EditableField label="짧은 소개" field={introduceField} />
 
-      {/* 한 줄 소개 수정 */}
-      <EditableField label="짧은 소개" field={introduceField} />
-
-      {/* 메달 표시 */}
-      <div>
-        <div className="flex items-center gap-1 border-b-gray-300 text-left text-[15px]">
-          <p className="font-bold">메달</p>
-          <div className="group relative flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-[#CDCDCD] text-gray-400">
-            <span className="-mr-5 cursor-pointer pr-5 text-sm text-white">
-              ?
-            </span>
-            {/* 도움말 박스 */}
-            <div className="absolute bottom-[-10px] left-full ml-3 hidden min-w-min cursor-default flex-col gap-1 rounded-md border border-gray-300 bg-white p-4 text-base text-black group-hover:block">
-              <h3 className="pb-1 text-center">식사 횟수별 메달 안내</h3>
-              <div className="flex flex-col">
-                <div className="flex items-center text-nowrap text-sm">
-                  <GoldMedal />
-                  <span>연간 누적 참여 5회</span>
-                </div>
-                <div className="flex items-center text-nowrap text-sm">
-                  <SilverMedal />
-                  <span>연간 누적 참여 3회</span>
-                </div>
-                <div className="flex items-center text-nowrap text-sm">
-                  <BronzeMedal />
-                  <span>연간 누적 참여 1회</span>
+          {/* 메달 표시 */}
+          <div>
+            <div className="flex items-center gap-1 border-b-gray-300 text-left text-[15px]">
+              <p className="mt-5 font-bold">메달</p>
+              <div className="group relative flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-[#CDCDCD] text-gray-400">
+                <span className="-mr-5 cursor-pointer pr-5 text-sm text-white">
+                  ?
+                </span>
+                {/* 도움말 박스 */}
+                <div className="absolute bottom-[-10px] left-full ml-3 hidden min-w-min cursor-default flex-col gap-1 rounded-md border border-gray-300 bg-white p-4 text-base text-black group-hover:block">
+                  <h3 className="pb-1 text-center">식사 횟수별 메달 안내</h3>
+                  <div className="flex flex-col">
+                    <div className="flex items-center text-nowrap text-sm">
+                      <GoldMedal />
+                      <span>연간 누적 참여 5회</span>
+                    </div>
+                    <div className="flex items-center text-nowrap text-sm">
+                      <SilverMedal />
+                      <span>연간 누적 참여 3회</span>
+                    </div>
+                    <div className="flex items-center text-nowrap text-sm">
+                      <BronzeMedal />
+                      <span>연간 누적 참여 1회</span>
+                    </div>
+                  </div>
+                  {/* 화살표 모양 */}
+                  <div className="absolute bottom-3 right-[calc(100%-0.35rem)] h-3 w-3 rotate-45 border-b border-l border-gray-300 bg-white"></div>
                 </div>
               </div>
-              {/* 화살표 모양 */}
-              <div className="absolute bottom-3 right-[calc(100%-0.35rem)] h-3 w-3 rotate-45 border-b border-l border-gray-300 bg-white"></div>
+            </div>
+            <div className="flex items-start text-sm">{viewMedal}</div>
+          </div>
+
+          {/* 계정 정보 */}
+          <div className="flex flex-col gap-2">
+            <p className="mt-5 text-left text-[15px] font-bold">계정 정보</p>
+            <div className="flex h-full flex-col items-start text-[15px] text-[#909090]">
+              <motion.button
+                whileTap={{ scale: 0.95, backgroundColor: "#90909030" }}
+                transition={{ duration: 0.1 }}
+                className="mb-auto rounded-md px-2 py-1"
+              >
+                {profileData &&
+                  profileData.signupType?.toUpperCase() === "EMAIL" && (
+                    <Link to="/mypage/changepw">비밀번호 변경</Link>
+                  )}
+              </motion.button>
             </div>
           </div>
         </div>
-        <div className="flex items-start text-sm">{viewMedal}</div>
-      </div>
 
-      {/* 계정 정보 */}
-      <div className="flex h-full flex-col gap-2">
-        <p className="text-left text-[15px] font-bold">계정 정보</p>
-        <div className="flex h-full flex-col items-start text-[15px] text-[#909090]">
-          <motion.button
-            whileTap={{ scale: 0.95, backgroundColor: "#90909030" }}
-            transition={{ duration: 0.1 }}
-            className="mb-auto rounded-md px-2 py-1"
-          >
-            {profileData &&
-              profileData.signupType?.toUpperCase() === "EMAIL" && (
-                <Link to="/mypage/changepw">비밀번호 변경</Link>
-              )}
-          </motion.button>
+        <div className="flex items-start text-left text-[13px] text-[#b0b0b0]">
           <motion.button
             whileTap={{ scale: 0.95, backgroundColor: "#90909030" }}
             transition={{ duration: 0.1 }}
