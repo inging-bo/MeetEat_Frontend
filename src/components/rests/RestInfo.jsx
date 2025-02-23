@@ -141,7 +141,7 @@ const RestInfo = observer(() => {
 
   const nicknameField = useEditableField("nickname");
   const introduceField = useEditableField("introduce");
-
+  console.log("매칭 카운트 확인" , profileData);
   const viewMedal = useMemo(() => {
     const count = profileData?.matchingCount || 0;
     if (count >= 5) return <GoldMedal/>;
@@ -166,7 +166,7 @@ const RestInfo = observer(() => {
           {/* 메달 표시 */}
           <div>
             <div className="flex items-center gap-1 border-b-gray-300 text-left text-[15px]">
-              <p className="mt-5 font-bold">메달</p>
+              <p className="font-bold">메달</p>
               <div
                 className="group relative flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-[#CDCDCD] text-gray-400">
                 <span className="-mr-5 cursor-pointer pr-5 text-sm text-white">
