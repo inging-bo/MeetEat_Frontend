@@ -285,19 +285,19 @@ const RestReviews = observer(() => {
 
   // 매칭 횟수별 메달 표시 함수
   const viewMedal = (count) => {
-    if (count >= 5) return <GoldMedal width="16px" height="16px" />;
-    if (count >= 3) return <SilverMedal width="16px" height="16px" />;
-    if (count >= 1) return <BronzeMedal width="16px" height="16px" />;
+    if (count >= 5) return <GoldMedal width="16px" height="16px"/>;
+    if (count >= 3) return <SilverMedal width="16px" height="16px"/>;
+    if (count >= 1) return <BronzeMedal width="16px" height="16px"/>;
     return null;
   };
 
   // 리뷰 작성 페이지로 이동
-  const writeReview = (restsId, restsName, matching) => {
+  const writeReview = (restsId, restsName, matchingId) => {
     navigate(`/rests/write/${restsId}`, {
       state: {
         restId: `${restsId}`,
         restName: `${restsName}`,
-        matching: `${matching}`,
+        matching: `${matchingId}`,
       },
     });
   };
@@ -320,7 +320,7 @@ const RestReviews = observer(() => {
       if (response.status === 200) {
         const reviewData = response.data;
         modalStore.openModal("oneBtn", {
-          message: <RestReviewItem review={reviewData} />, // 모달 메시지 설정
+          message: <RestReviewItem review={reviewData}/>, // 모달 메시지 설정
           onConfirm: async () => {
             await modalStore.closeModal();
           },
@@ -339,7 +339,8 @@ const RestReviews = observer(() => {
 
   console.log(Object.values(historyData));
   return (
-    <div className="mb-5 flex flex-col gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg max-[760px]:max-w-[300px] min-[400px]:w-full min-[400px]:min-w-[380px] min-[760px]:h-full">
+    <div
+      className="mb-5 flex flex-col gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg max-[760px]:max-w-[300px] min-[400px]:w-full min-[400px]:min-w-[380px] min-[760px]:h-full">
       <p className="text-left text-[28px] font-bold">나의 매칭 히스토리</p>
       <ul className="flex flex-1 flex-col gap-4 min-[760px]:overflow-y-scroll min-[760px]:scrollbar-hide">
         {Object.values(historyData) && Object.values(historyData).length > 0 ? (
@@ -353,35 +354,43 @@ const RestReviews = observer(() => {
                   <span className="flex text-left text-wrap break-all text-xs text-gray-400">
                     {item.matching.restaurant.category_name.slice(
                       item.matching.restaurant.category_name.lastIndexOf(">") +
-                        2,
+                      2,
                     )}
                   </span>
                 </div>
                 <span className="flex justify-end">
-                  {!item.matching.userList
-                    .find((user) => user.id === item.userId)
-                    ?.review?.description?.trim() ? (
-                    <div
-                      onClick={() =>
-                        writeReview(
-                          item.id,
-                          item.matching.restaurant.name,
-                          item.matching,
-                        )
-                      }
-                      className="flex cursor-pointer rounded-md border border-[#909090] px-2 py-1 text-xs text-[#909090] min-[600px]:text-sm"
-                    >
-                      리뷰 작성하기
-                    </div>
-                  ) : (
+                  {item.matchingStatus !== 'CANCELLED' ? (
                     <>
-                      <div
-                        onClick={() => myReviewChk(item.id)}
-                        className="flex flex-shrink-0 cursor-pointer rounded-md border border-[#909090] px-2 py-1 text-xs text-[#909090] min-[600px]:text-sm"
-                      >
-                        리뷰 확인하기
-                      </div>
+                      {!item.matching.userList
+                        .find((user) => user.id === item.userId)
+                        ?.review?.description?.trim() ? (
+                        <div
+                          onClick={() =>
+                            writeReview(
+                              item.matching.restaurant.id,
+                              item.matching.restaurant.name,
+                              item.matching.id,
+                            )
+                          }
+                          className="flex cursor-pointer rounded-md border border-[#909090] px-2 py-1 text-xs text-[#909090] min-[600px]:text-sm"
+                        >
+                          리뷰 작성하기
+                        </div>
+                      ) : (
+                        <div
+                          onClick={() => myReviewChk(item.matching.id)}
+                          className="flex flex-shrink-0 cursor-pointer rounded-md border border-[#909090] px-2 py-1 text-xs text-[#909090] min-[600px]:text-sm"
+                        >
+                          리뷰 확인하기
+                        </div>
+                      )}
                     </>
+                  ) : (
+                    <div
+                      className="flex flex-shrink-0 rounded-md  bg-secondary  px-2 py-1 text-xs text-white min-[600px]:text-sm"
+                    >
+                      취소된 매칭
+                    </div>
                   )}
                 </span>
               </div>
@@ -447,7 +456,8 @@ const RestReviews = observer(() => {
                               신고하기
                             </button>
                           )}
-                          <div className="absolute -bottom-1.5 right-3 h-2.5 w-2.5 rotate-45 border-r border-b border-gray-300 bg-white"></div>
+                          <div
+                            className="absolute -bottom-1.5 right-3 h-2.5 w-2.5 rotate-45 border-r border-b border-gray-300 bg-white"></div>
                         </div>
                       )}
                     </div>
