@@ -60,11 +60,11 @@
     {
       "id": 21,
       "userId": 24,
-      "matchingStatus": "MATCHED",
+      "matchingStatus": "CANCELLED",
       "matching": {
         "id": 21,
         "count": 1,
-        "status": "MATCHED",
+        "status": "CANCELLED",
         "restaurant": {
           "id": 38,
           "kakaomapsId": null,
