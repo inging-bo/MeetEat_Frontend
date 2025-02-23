@@ -24,12 +24,36 @@ const RestReviews = observer(() => {
   });
   const [isLoading, setIsLoading] = useState(true);
   // ✅ 매칭 히스토리 가져오기 (4개씩 추가)
-  const fetchHistory = async () => {
-    if (page > totalPage) {
+  const initialFetchHistory = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BE_API_URL}/matching/history?page=0&size=4`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      setHistoryData(data.content);
+      setTotalPage(data.page.totalPages);
+      setHasMore(data.page.totalPages > 1);
+    } catch (error) {
+      console.error(
+        "초기 매칭 히스토리 정보를 불러오는데 실패했습니다.",
+        error,
+      );
+      setHasMore(false);
+    }
+  };
+
+  const fetchMoreHistory = async () => {
+    if (page >= totalPage) {
       setHasMore(false);
       return;
     }
-
+    console.log(page, "page");
+    setIsLoading(true);
     try {
       const { data } = await axios.get(
         `${import.meta.env.VITE_BE_API_URL}/matching/history?page=${page}&size=4`,
@@ -40,7 +64,6 @@ const RestReviews = observer(() => {
           },
         },
       );
-      setIsLoading(true);
       setHistoryData((prevData) => {
         const newContent = { ...prevData };
         Object.keys(data.content).forEach((key) => {
@@ -48,22 +71,26 @@ const RestReviews = observer(() => {
         });
         return newContent;
       });
-      setTotalPage(data.page.totalPages);
       setPage((prevPage) => prevPage + 1);
+      setHasMore(page + 1 < data.page.totalPages);
     } catch (error) {
-      console.error("매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
+      console.error(
+        "추가 매칭 히스토리 정보를 불러오는데 실패했습니다.",
+        error,
+      );
       setHasMore(false);
     } finally {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
-    fetchHistory();
+    initialFetchHistory();
   }, []);
 
   useEffect(() => {
     if (inView && hasMore) {
-      fetchHistory();
+      fetchMoreHistory();
     }
   }, [inView, hasMore]);
   console.log(historyData);
@@ -94,7 +121,7 @@ const RestReviews = observer(() => {
   }, [activePopOver]);
 
   // ✅ 모달 열고 닫기 함수
-  const toggleModal = async (type, userId) => {
+  const toggleModal = async (type, userId, matchingId) => {
     console.log(typeof userId);
     try {
       let modalMessage = "";
@@ -144,7 +171,7 @@ const RestReviews = observer(() => {
               );
             } else if (type === "report") {
               response = await axios.post(
-                `${import.meta.env.VITE_BE_API_URL}/report?reportedId=${userId}`,
+                `${import.meta.env.VITE_BE_API_URL}/report?reportedId=${userId}&matchingId=${matchingId}`,
                 {},
                 {
                   headers: {
@@ -155,7 +182,7 @@ const RestReviews = observer(() => {
               );
             } else if (type === "unReport") {
               response = await axios.delete(
-                `${import.meta.env.VITE_BE_API_URL}/report?reportedId=${userId}`,
+                `${import.meta.env.VITE_BE_API_URL}/report?reportedId=${userId}&matchingId=${matchingId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,
@@ -189,8 +216,12 @@ const RestReviews = observer(() => {
                   await modalStore.closeModal();
                 },
               });
-              // 매칭 히스토리 정보를 갱신합니다.
-              await fetchHistory();
+              // 매칭 히스토리 정보 갱신
+              const updatedHistoryData = await fetchUpdatedHistory();
+              setHistoryData((prevData) => ({
+                ...prevData,
+                ...updatedHistoryData,
+              }));
             }
           } catch (error) {
             console.error("서버 요청 실패:", error);
@@ -201,6 +232,28 @@ const RestReviews = observer(() => {
       console.error("모달 열기 실패:", error);
     }
     setActivePopOver(null);
+  };
+
+  // 차단, 신고 변경 시 함수: 업데이트된 히스토리 데이터 가져오기
+  const fetchUpdatedHistory = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BE_API_URL}/matching/history?page=0&size=${Object.keys(historyData).length}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      return data.content;
+    } catch (error) {
+      console.error(
+        "업데이트된 매칭 히스토리 정보를 불러오는데 실패했습니다.",
+        error,
+      );
+      return {};
+    }
   };
 
   // ✅ 신고 , 차단 위치 모호해서 주석주석
@@ -254,9 +307,6 @@ const RestReviews = observer(() => {
       const response = await axios.get(
         `${import.meta.env.VITE_BE_API_URL}/restaurants/myreview?matchingHistoryId=${matchingHistoryId}`,
         {
-          params: {
-            matchingHistoryId: matchingHistoryId, // 쿼리 파라미터 설정
-          },
           headers: {
             "Content-Type": "application/json", // Content-Type 설정
             Authorization: `Bearer ${token}`, // Authorization 설정
@@ -424,6 +474,11 @@ const RestReviews = observer(() => {
             />
           </div>
         )}
+        {/*{isLoading && (*/}
+        {/*  <div className="relative h-30 w-full">*/}
+        {/*    */}
+        {/*  </div>*/}
+        {/*)}*/}
       </ul>
     </div>
   );
