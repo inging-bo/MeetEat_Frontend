@@ -45,13 +45,13 @@ export default function MatchingComplete() {
     // ); // 시작 날짜
     const firstDay = new Date(
       JSON.parse(
-        window.sessionStorage.getItem("matchedData")
+        window.sessionStorage.getItem("matchedData"),
       ).matching.createdAt.slice(
         0,
         JSON.parse(
-          window.sessionStorage.getItem("matchedData")
-        ).matching.createdAt.indexOf(".")
-      )
+          window.sessionStorage.getItem("matchedData"),
+        ).matching.createdAt.indexOf("."),
+      ),
     ); // 시작 날짜
     console.log("firstDay");
     console.log(firstDay);
@@ -102,7 +102,7 @@ export default function MatchingComplete() {
 
     // 저장된 매칭데이터 저장
     const jsonCurData = JSON.parse(
-      window.sessionStorage.getItem("matchedData")
+      window.sessionStorage.getItem("matchedData"),
     );
     setDate(jsonCurData.matching.createdAt);
     setUserList(jsonCurData.matching.userList);
@@ -175,7 +175,7 @@ export default function MatchingComplete() {
         }
       },
       gpsError,
-      geolocationOptions
+      geolocationOptions,
     );
 
     navigator.geolocation.watchPosition(
@@ -188,7 +188,7 @@ export default function MatchingComplete() {
         }
       },
       gpsError,
-      geolocationOptions
+      geolocationOptions,
     );
   }, []);
 
@@ -229,7 +229,7 @@ export default function MatchingComplete() {
       position.lat,
       position.lng,
       positionTo.lat,
-      positionTo.lng
+      positionTo.lng,
     );
     setDistance(distance);
   }, [position, positionTo]);
@@ -246,7 +246,7 @@ export default function MatchingComplete() {
         },
         heartbeatTimeout: 120000,
         withCredentials: true,
-      }
+      },
     );
     eventSource.onopen = () => {
       // 연결시 할 일
@@ -296,7 +296,7 @@ export default function MatchingComplete() {
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       )
       .then(() => {
         window.sessionStorage.removeItem("isMatched");
@@ -321,7 +321,7 @@ export default function MatchingComplete() {
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       )
       .then(() => {
         navigate("/");
@@ -340,43 +340,27 @@ export default function MatchingComplete() {
     const now = new Date();
     const firstDay = new Date(
       JSON.parse(
-        window.sessionStorage.getItem("matchedData")
+        window.sessionStorage.getItem("matchedData"),
       ).matching.createdAt.slice(
         0,
         JSON.parse(
-          window.sessionStorage.getItem("matchedData")
-        ).matching.createdAt.indexOf(".")
-      )
+          window.sessionStorage.getItem("matchedData"),
+        ).matching.createdAt.indexOf("."),
+      ),
     );
     const toNow = now.getTime();
     const toFirst = firstDay.getTime();
     const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000;
     console.log(passedTimeMin + "min");
-    // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
-    if (passedTimeMin >= 60) {
-      const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
-        .matching.restaurant.id;
-      const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
-        .matching.restaurant.name;
-      const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
-        .matching.id;
-      return navigate(`/rests/write/${restsId}`, {
-        state: {
-          restId: `${restsId}`,
-          restName: `${restsName}`,
-          matchedId: `${matchedId}`,
-        },
-      });
-    }
     if (passedTimeMin >= 3) {
       alert("매칭 3분 이후 취소로 패널티가 부과됩니다.");
       return apiPOSTCancelIllegal(
-        JSON.parse(window.sessionStorage.getItem("matchedData")).matching.id
+        JSON.parse(window.sessionStorage.getItem("matchedData")).matching.id,
       );
     }
     alert("매칭 3분 이전 취소로 패널티가 부과되지 않습니다.");
     return apiPOSTCancel(
-      JSON.parse(window.sessionStorage.getItem("matchedData")).matching.id
+      JSON.parse(window.sessionStorage.getItem("matchedData")).matching.id,
     );
   };
 
