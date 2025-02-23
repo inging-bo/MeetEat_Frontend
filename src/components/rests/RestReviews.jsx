@@ -16,7 +16,7 @@ const RestReviews = observer(() => {
   const navigate = useNavigate();
 
   // 무한 스크롤 관련
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [moreHistory, inView] = useInView({
