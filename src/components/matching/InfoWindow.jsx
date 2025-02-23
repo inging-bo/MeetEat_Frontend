@@ -14,8 +14,8 @@ export default function InfoWindow({
 
   // 인원 버튼 함수
   const minus = () => {
-    if (choicedNumber >= 2) setChoicedNumber(choicedNumber - 1);
-    else setChoicedNumber(1);
+    if (choicedNumber >= 3) setChoicedNumber(choicedNumber - 1);
+    else setChoicedNumber(2);
   };
   const plus = () => {
     if (choicedNumber === 5) {
@@ -64,40 +64,40 @@ export default function InfoWindow({
     <>
       {window.innerWidth > 767 ? (
         <>
-          <div className="drop-shadow-lg fixed">
-            <div className="bg-white p-5 rounded-lg w-[320px]">
+          <div className="fixed drop-shadow-lg">
+            <div className="w-[320px] rounded-lg bg-white p-5">
               <div className="text-left">
-                <div className="flex flex-row justify-between items-start pb-[8px]">
-                  <p className="font-bold text-base max-w-[200px] whitespace-normal">
+                <div className="flex flex-row items-start justify-between pb-[8px]">
+                  <p className="max-w-[200px] whitespace-normal text-base font-bold">
                     {marker.place_name}
                   </p>
                   <p className="text-sm text-[#555555]">
                     {marker.category_name.slice(
-                      marker.category_name.lastIndexOf(">") + 2
+                      marker.category_name.lastIndexOf(">") + 2,
                     )}
                   </p>
                 </div>
                 <p className="text-sm text-[#555555]">
                   {marker.road_address_name}
                 </p>
-                <p className="text-sm pb-1 text-[#555555]">{marker.phone}</p>
+                <p className="pb-1 text-sm text-[#555555]">{marker.phone}</p>
                 <a
                   href={marker.place_url}
-                  className="block text-sm text-[#555555] pb-2"
+                  className="block pb-2 text-sm text-[#555555]"
                 >
                   가게 정보 더보기
                 </a>
-                <p className="text-sm pb-5 text-[#909090]">
+                <p className="pb-5 text-sm text-[#909090]">
                   내 위치에서 {marker.distance}m
                 </p>
                 <hr className="pb-5" />
                 <div>
-                  <p className="font-bold text-base whitespace-normal pb-4">
+                  <p className="whitespace-normal pb-4 text-base font-bold">
                     방문할 인원을 선택해주세요.
                   </p>
-                  <div className="flex flex-row justify-between text-sm ">
+                  <div className="flex flex-row justify-between text-sm">
                     <p>인원</p>
-                    <div className="flex flex-row items-center justify-between border border-[#E8E8E8] w-[100px] h-[30px] rounded-lg text-[#909090]">
+                    <div className="flex h-[30px] w-[100px] flex-row items-center justify-between rounded-lg border border-[#E8E8E8] text-[#909090]">
                       <button
                         className="w-[30px] text-center text-2xl"
                         onClick={minus}
@@ -117,7 +117,7 @@ export default function InfoWindow({
               </div>
               <button
                 id="choiceBtn"
-                className="bg-[#FF6445] w-full rounded-lg py-2 mt-5 text-white"
+                className="mt-5 w-full rounded-lg bg-[#FF6445] py-2 text-white"
                 onClick={() => {
                   choicePlace(marker);
                 }}
@@ -129,40 +129,40 @@ export default function InfoWindow({
         </>
       ) : (
         <>
-          <div className="drop-shadow-lg fixed w-[250px]">
-            <div className="bg-white p-4 rounded-lg">
+          <div className="fixed w-[250px] drop-shadow-lg">
+            <div className="rounded-lg bg-white p-4">
               <div className="text-left">
-                <div className="flex flex-row justify-between items-start pb-[8px]">
-                  <p className="font-bold text-sm max-w-[200px] whitespace-normal">
+                <div className="flex flex-row items-start justify-between pb-[8px]">
+                  <p className="max-w-[200px] whitespace-normal text-sm font-bold">
                     {marker.place_name}
                   </p>
                   <p className="text-xs text-[#555555]">
                     {marker.category_name.slice(
-                      marker.category_name.lastIndexOf(">") + 2
+                      marker.category_name.lastIndexOf(">") + 2,
                     )}
                   </p>
                 </div>
                 <p className="text-xs text-[#555555]">
                   {marker.road_address_name}
                 </p>
-                <p className="text-xs pb-1 text-[#555555]">{marker.phone}</p>
+                <p className="pb-1 text-xs text-[#555555]">{marker.phone}</p>
                 <a
                   href={marker.place_url}
-                  className="block text-xs text-[#555555] pb-2"
+                  className="block pb-2 text-xs text-[#555555]"
                 >
                   가게 정보 더보기
                 </a>
-                <p className="text-xs pb-4 text-[#909090]">
+                <p className="pb-4 text-xs text-[#909090]">
                   내 위치에서 {marker.distance}m
                 </p>
                 <hr className="pb-4" />
                 <div>
-                  <p className="font-bold text-sm whitespace-normal pb-4">
+                  <p className="whitespace-normal pb-4 text-sm font-bold">
                     방문할 인원을 선택해주세요.
                   </p>
                   <div className="flex flex-row justify-between text-xs">
                     <p>인원</p>
-                    <div className="flex flex-row items-center justify-between border border-[#E8E8E8] w-[100px] h-[30px] rounded-lg text-[#909090]">
+                    <div className="flex h-[30px] w-[100px] flex-row items-center justify-between rounded-lg border border-[#E8E8E8] text-[#909090]">
                       <button
                         className="w-[30px] text-center text-2xl"
                         onClick={minus}
@@ -182,7 +182,7 @@ export default function InfoWindow({
               </div>
               <button
                 id="choiceBtn"
-                className="bg-[#FF6445] w-full rounded-lg py-[6px] mt-4 text-white  text-xs"
+                className="mt-4 w-full rounded-lg bg-[#FF6445] py-[6px] text-xs text-white"
                 onClick={() => {
                   choicePlace(marker);
                 }}

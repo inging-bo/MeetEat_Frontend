@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
-import axios from "axios";
+import { callApi } from "../hooks/useAxios";
 import { useNavigate } from "react-router-dom";
 import { StaticMap } from "react-kakao-maps-sdk";
 import CheckTitle from "../../assets/check-title.svg?react";
@@ -12,47 +12,35 @@ import { EventSourcePolyfill } from "event-source-polyfill";
 
 export default function CheckPlace() {
   const navigate = useNavigate();
-  const [isLoggedIn, setLoggedIn] = useState();
-  const [isMatching, setIsMatching] = useState(false);
-  const [isMatched, setIsMatched] = useState(false);
   const [profile, setProfile] = useState("");
+  const position = JSON.parse(window.sessionStorage.getItem("tempPosition"));
+  const [matchingData, setMatchingData] = useState([]);
+  const [user, setUser] = useState(new Map());
 
-  // 로그인, 매칭 여부 확인
-  useLayoutEffect(() => {
+  useEffect(() => {
     authStore.checkLoggedIn();
-    setLoggedIn(authStore.loggedIn);
     matchingStore.checkMatching();
     matchingStore.checkMatched();
-    setIsMatching(matchingStore.isMatching);
-    setIsMatched(matchingStore.isMatched);
 
     // 유저가 매칭된 상태가 아니라면 메인페이지로 이동
     if (!window.sessionStorage.getItem("matchingData")) {
       return navigate("/");
     }
-    if (!isMatched) {
-      if (isMatching) {
+    if (!matchingStore.isMatched) {
+      if (matchingStore.isMatching) {
         window.sessionStorage.removeItem("isMatching");
         matchingStore.checkMatching();
+        return navigate("/");
       }
       return navigate("/");
-    }
-    if (!isMatching) {
+    } else if (!matchingStore.isMatching) {
       alert("잘못된 접근입니다.");
       return navigate("/");
-    }
-    if (!isLoggedIn) {
+    } else if (!authStore.loggedIn) {
       alert("로그인 후 이용해주세요 :)");
-      navigate("/");
+      return navigate("/");
     }
-  }, []);
 
-  const position = JSON.parse(window.sessionStorage.getItem("tempPosition"));
-  const [matchingData, setMatchingData] = useState([]);
-  const [user, setUser] = useState(new Map());
-  const [agree, setAgree] = useState(false);
-  // SSE 재연결
-  useEffect(() => {
     // Get Profile
     const apiGetProfile = async () => {
       const resProfile = await callApi("/users/profile", "GET");
@@ -249,7 +237,6 @@ export default function CheckPlace() {
         .querySelector(`#${profile.nickname}-check`)
         .classList.remove("hidden");
       document.querySelector(`#agreeBtn`).classList.add("hidden");
-      setAgree(true);
       setUser((prev) => {
         const newState = new Map(prev);
         newState.set(profile.nickname, true);
@@ -280,9 +267,6 @@ export default function CheckPlace() {
       window.sessionStorage.removeItem("matchingData");
       matchingStore.setIsMatched(false);
       matchingStore.setIsMatching(false);
-      setAgree(false);
-      setIsMatching(false);
-      setIsMatched(false);
       window.location.replace("/");
     }
   };
