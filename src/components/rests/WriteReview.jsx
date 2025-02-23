@@ -26,6 +26,8 @@ export default function WriteReview() {
 
     if (postFiles.length > 7) {
       setPostImageList(postFiles.slice(0, 7));
+    } else {
+      setPostImageList(postFiles);
     }
 
     let imageUrlLists = [...imageList];
