@@ -22,13 +22,11 @@ export default function Header() {
   const loggedIn = authStore.loggedIn; // 로그인 상태값
 
   return (
-    <header
-      className="fixed top-0 left-0 right-0 z-10 shadow-lg justify-center flex min-h-[77px] bg-white"
-    >
-      <div className="flex w-full justify-between max-w-screen-xl">
+    <header className="fixed left-0 right-0 top-0 z-10 flex min-h-[77px] justify-center bg-white shadow-lg">
+      <div className="flex w-full max-w-screen-xl justify-between">
         <div>
-          <Link to="/" className="h-full px-4 flex items-center">
-            <HeaderLogo/>
+          <Link to="/" className="flex h-full items-center px-4">
+            <HeaderLogo />
           </Link>
         </div>
 
@@ -48,7 +46,7 @@ export default function Header() {
                             window.localStorage.getItem("token"); // 저장된 토큰 가져오기
                           if (!accessToken) {
                             console.error(
-                              "로그아웃 요청 실패: 토큰이 없습니다."
+                              "로그아웃 요청 실패: 토큰이 없습니다.",
                             );
                             return;
                           }
@@ -60,9 +58,10 @@ export default function Header() {
                                 Authorization: `Bearer ${accessToken}`, // Authorization 헤더에 토큰 추가
                                 "Content-Type": "application/json",
                               },
-                            }
+                            },
                           );
-                          const oauth_state = window.sessionStorage.getItem("oauth_state");
+                          const oauth_state =
+                            window.sessionStorage.getItem("oauth_state");
                           console.log(oauth_state, "state확인");
                           if (response.status === 200) {
                             window.localStorage.removeItem("token"); // token 삭제
@@ -74,10 +73,10 @@ export default function Header() {
                             modalStore.openModal("oneBtn", {
                               message: "로그아웃 되었습니다.",
                               onConfirm: async () => {
-                                await modalStore.closeModal()
-                              }
+                                await modalStore.closeModal();
+                              },
                             });
-                            console.log("로그아웃 완료")
+                            console.log("로그아웃 완료");
                           }
                         } catch (error) {
                           console.error("로그아웃 요청 실패!:", error);
@@ -85,7 +84,7 @@ export default function Header() {
                       },
                     })
                   }
-                  className="h-full px-4 flex items-center"
+                  className="flex h-full items-center px-4"
                 >
                   로그아웃
                 </button>
@@ -94,14 +93,14 @@ export default function Header() {
               // 그렇지 않으면 마이페이지 링크 표시
               <Link
                 to="/mypage"
-                className="h-full px-4 flex items-center cursor-pointer"
+                className="flex h-full cursor-pointer items-center px-4"
               >
                 마이페이지
               </Link>
             )
           ) : (
             // 로그인하지 않은 경우 로그인 링크 표시
-            <Link to="/account" className="h-full px-4 flex items-center">
+            <Link to="/account" className="flex h-full items-center px-4">
               로그인
             </Link>
           )}

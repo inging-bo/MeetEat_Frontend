@@ -23,7 +23,6 @@ export default function WriteReview() {
   const handleAddImages = (e) => {
     const postFiles = Array.from(e.target.files);
     const files = e.target.files;
-
     if (postFiles.length > 7) {
       setPostImageList(postFiles.slice(0, 7));
     } else {
@@ -31,7 +30,6 @@ export default function WriteReview() {
     }
 
     let imageUrlLists = [...imageList];
-
     for (let i = 0; i < files.length; i++) {
       const currentImageUrl = URL.createObjectURL(files[i]);
       imageUrlLists.push(currentImageUrl);
