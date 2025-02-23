@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import GoldMedal from "../../assets/Medal-Gold.svg?react";
@@ -8,6 +8,7 @@ import modalStore from "../../store/modalStore.js";
 import axios from "axios";
 import { useInView } from 'react-intersection-observer';
 import RestReviewItem from "./RestReviewItem.jsx";
+import ReactLoading from "react-loading";
 
 const RestReviews = observer(() => {
   const [historyData, setHistoryData] = useState([]);
@@ -17,13 +18,17 @@ const RestReviews = observer(() => {
   // 무한 스크롤 관련
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
-  const [hasMore, setHasMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [moreHistory, inView] = useInView({
-    threshold: 0,
+    threshold: 1,
   });
-
+  const [isLoading, setIsLoading] = useState(true);
   // ✅ 매칭 히스토리 가져오기 (4개씩 추가)
   const fetchHistory = async () => {
+    if (page > totalPage) {
+      setHasMore(false);
+      return;
+    }
 
     try {
       const { data } = await axios.get(
@@ -35,39 +40,42 @@ const RestReviews = observer(() => {
           },
         },
       );
-
-      await setHistoryData({ ...historyData, ...data.content });
-      await setTotalPage(data.page.totalPages)
-      console.log(totalPage)
-
-      if (historyData && Array.isArray(historyData.content)) {
-        // content 배열의 모든 항목에 matching이 없는지 확인
-        const hasNoMatching = historyData.content.every(item => !item?.matching);
-
-        if (hasNoMatching) {
-          console.log("매칭 데이터가 없습니다:", historyData);
-          setHasMore(false);
-          console.log("더 이상 데이터가 없습니다");
-        } else if (historyData.last === true) {
-          setHasMore(false);
-        }
-      }
+      setIsLoading(true)
+      setHistoryData(prevData => {
+        const newContent = { ...prevData };
+        Object.keys(data.content).forEach(key => {
+          newContent[Object.keys(newContent).length] = data.content[key];
+        });
+        return newContent;
+      });
+      setTotalPage(data.page.totalPages);
+      setPage(prevPage => prevPage + 1);
     } catch (error) {
       console.error("매칭 히스토리 정보를 불러오는데 실패했습니다.", error);
       setHasMore(false);
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
   useEffect(() => {
     fetchHistory();
   }, [])
 
+  useEffect(() => {
+    if (inView && hasMore) {
+      fetchHistory();
+    }
+  }, [inView, hasMore]);
+  console.log(historyData);
+  console.log(page, totalPage);
   // ✅ 신고하기/차단하기 팝오버 관련 상태 및 ref
   const [activePopOver, setActivePopOver] = useState(null);
   const popOverRef = useRef(null);
 
   // 팝오버 토글 함수
-  const popOver = (id) => {
-    setActivePopOver(activePopOver === id ? null : id);
+  const popOver = (itemId, userId) => {
+    const uniqueId = `${itemId}-${userId}`;
+    setActivePopOver(activePopOver === uniqueId ? null : uniqueId);
   };
 
   // 외부 클릭 시 팝오버 닫기
@@ -87,6 +95,7 @@ const RestReviews = observer(() => {
 
   // ✅ 모달 열고 닫기 함수
   const toggleModal = async (type, userId) => {
+    console.log(typeof userId)
     try {
       let modalMessage = "";
       switch (type) {
@@ -275,13 +284,12 @@ const RestReviews = observer(() => {
     }
   };
 
-
   console.log(Object.values(historyData))
   return (
     <div className="h-[inherit] flex flex-col basis-full gap-10 border md:flex-1 border-[#ff6445] bg-white drop-shadow-lg rounded-2xl px-7 py-7">
       <p className="font-bold text-[28px] text-left">나의 매칭 히스토리</p>
       <ul className="flex flex-col flex-1 gap-4 overflow-y-scroll scrollbar-hide">
-        {Object.values(historyData) ? (
+        {Object.values(historyData) && Object.values(historyData).length > 0 ? (
           Object.values(historyData).map((item) => (
             <li key={item.id} className="flex flex-col gap-4 rounded-2xl">
               <div className="flex justify-between items-center">
@@ -317,9 +325,9 @@ const RestReviews = observer(() => {
                 </span>
               </div>
               <ul className="flex flex-col gap-2.5">
-                {item.matching.userList.map((user) => (
+                {item.matching.userList.map((user, idx) => (
                   <li
-                    key={user.id}
+                    key={idx}
                     className="relative flex text-sm justify-between items-center bg-[#F8F8F8] p-3 rounded-lg"
                   >
                     <div className="w-full flex flex-col gap-1">
@@ -338,12 +346,12 @@ const RestReviews = observer(() => {
                       {item.userId !== user.id && (
                         <p
                           className="font-bold rotate-90 tracking-[-0.15rem] cursor-pointer"
-                          onClick={() => popOver(user.id)}
+                          onClick={() => popOver(user.id, item.id)}
                         >
                           ···
                         </p>
                       )}
-                      {activePopOver === user.id && (
+                      {activePopOver === `${user.id}-${item.id}` && (
                         <div
                           ref={popOverRef}
                           className="absolute flex flex-col gap-1 z-50 top-10 right-1 bg-white p-2 border border-gray-300 rounded-lg"
@@ -392,7 +400,22 @@ const RestReviews = observer(() => {
             매칭 히스토리가 없습니다.
           </div>
         )}
-        {hasMore && <div ref={moreHistory}>Loading more...</div>}
+        {page !== totalPage && hasMore && (
+          <div ref={moreHistory} className="relative pb-8 w-full h-8">
+           더 보기
+          </div>
+        )}
+        {isLoading && (
+          <div className="relative h-30 w-full">
+            <ReactLoading
+              type={"spokes"}
+              color={"#000000"}
+              height={25}
+              width={25}
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+            />
+          </div>
+        )}
       </ul>
     </div>
   );
