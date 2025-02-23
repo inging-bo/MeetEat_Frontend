@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useRef, useLayoutEffect } from "react";
 import { Link } from "react-router-dom";
 import { Map, MapMarker, Circle, CustomOverlayMap } from "react-kakao-maps-sdk";
-import { debounce, findLastIndex } from "lodash";
+import { debounce } from "lodash";
 import axios from "axios";
 import { callApi } from "../hooks/useAxios";
 import AccIcon from "../../assets/acc-icon.svg?react";
