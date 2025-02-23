@@ -15,6 +15,7 @@ import authStore from "../../store/authStore";
 import matchingStore from "../../store/matchingStore";
 import { BottomSheet } from "react-spring-bottom-sheet";
 import "../../customBottomSheet.css";
+import { callApi } from "../hooks/useAxios";
 
 export default function MainMatching() {
   const navigate = useNavigate();
@@ -26,49 +27,60 @@ export default function MainMatching() {
 
   // 로그인, 매칭 확인
   useLayoutEffect(() => {
-    authStore.loggedIn &&
-      axios
-        .get(`${import.meta.env.VITE_BE_API_URL}/users/profile`, {
-          headers: {
-            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-        })
-        .then((res) => {
-          res.data.isPenalty
-            ? window.sessionStorage.setItem("isPenalty", true)
-            : window.sessionStorage.setItem("isPenalty", false);
-          !res.data.isPenalty &&
-            axios
-              .get(`${import.meta.env.VITE_BE_API_URL}/matching`, {
-                headers: {
-                  Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-                  "Content-Type": "application/json",
-                },
-              })
-              .then((res) => {
-                console.log("MainMatching 36");
-                console.log(res.data);
-                if (
-                  res.data !== null &&
-                  res.data.matching.status !== "CANCELLED"
-                ) {
-                  matchingStore.setIsCompleted(true);
-                  window.sessionStorage.setItem("isCompleted", "true");
-                  window.sessionStorage.setItem(
-                    "matchedData",
-                    JSON.stringify(res.data),
-                  );
-                  completed();
-                } else matchingStore.setIsCompleted(false);
-              })
-              .catch(function (error) {
-                console.log(error);
-              });
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+    // const resProfile = callApi("/users/profile", "GET");
+    const getProfile = async () => {
+      const resProfile = await callApi("/users/profile", "GET");
+      console.log(resProfile.data);
+      if (resProfile.data !== undefined) {
+        if (resProfile.data.penalty)
+          window.sessionStorage.setItem("isPenalty", true);
+        else {
+          window.sessionStorage.setItem("isPenalty", false);
+          getMatching();
+        }
+      }
+    };
+    const getMatching = async () => {
+      const resMatching = await callApi("/matching", "GET");
+      console.log("MainMatching 36");
+      console.log(resMatching.data);
+      if (
+        resMatching.data !== null &&
+        resMatching.data.matching.status !== "CANCELLED"
+      ) {
+        matchingStore.setIsCompleted(true);
+        window.sessionStorage.setItem("isCompleted", "true");
+        window.sessionStorage.setItem(
+          "matchedData",
+          JSON.stringify(resMatching.data),
+        );
+        completed();
+      } else matchingStore.setIsCompleted(false);
+    };
+    getProfile();
+    // console.log(resProfile);
+    // if (resProfile !== undefined) {
+    //   resProfile.penalty
+    //     ? window.sessionStorage.setItem("isPenalty", true)
+    //     : window.sessionStorage.setItem("isPenalty", false);
+    //   if (!resProfile.penalty) {
+    //     const resMatching = callApi("/matching", "GET");
+    //     console.log("MainMatching 36");
+    //     console.log(resMatching);
+    //     if (
+    //       resMatching !== null &&
+    //       resMatching.matching.status !== "CANCELLED"
+    //     ) {
+    //       matchingStore.setIsCompleted(true);
+    //       window.sessionStorage.setItem("isCompleted", "true");
+    //       window.sessionStorage.setItem(
+    //         "matchedData",
+    //         JSON.stringify(resMatching),
+    //       );
+    //       completed();
+    //     } else matchingStore.setIsCompleted(false);
+    //   }
+    // }
     authStore.checkLoggedIn();
     setLoggedIn(authStore.loggedIn);
     matchingStore.checkMatching();
