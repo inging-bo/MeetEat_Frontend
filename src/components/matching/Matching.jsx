@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Map, Circle } from "react-kakao-maps-sdk";
 import ReactLoading from "react-loading";
-import axios from "axios";
 import modalStore from "../../store/modalStore.js";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import matchingStore from "../../store/matchingStore";
@@ -88,11 +87,10 @@ export default function Matching({
           matchingStartTime: time,
           place: placeInfo,
         });
-        if (resPostReq.status === 200) {
-          console.log(resPostReq.data);
-          setIsMatching("true");
-          window.sessionStorage.setItem("isMatching", true);
-        }
+        console.log("resPostReq");
+        console.log(resPostReq);
+        setIsMatching("true");
+        window.sessionStorage.setItem("isMatching", true);
       };
 
       // 임시 모임 생성 Event 발생
