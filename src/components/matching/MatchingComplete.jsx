@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Map, MapMarker, Polyline } from "react-kakao-maps-sdk";
 import { useNavigate } from "react-router-dom";
+import useInterval from "../hooks/useInterval";
 import axios from "axios";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import matchingStore from "../../store/matchingStore";
@@ -58,7 +59,7 @@ export default function MatchingComplete() {
     const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
     const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
     const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
-    if (passedTimeMin >= 60) {
+    if (passedTimeMin >= 2) {
       const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.restaurant.id;
       const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
@@ -128,6 +129,40 @@ export default function MatchingComplete() {
     //     [10000]
     //   );
   }, []);
+
+  // 60초마다 반복실행
+  useInterval(() => {
+    console.log("interval 실행");
+    const now = new Date(); // 오늘 날짜
+    const firstDay = new Date(
+      JSON.parse(
+        window.sessionStorage.getItem("matchedData"),
+      ).matching.createdAt.slice(
+        0,
+        JSON.parse(
+          window.sessionStorage.getItem("matchedData"),
+        ).matching.createdAt.indexOf("."),
+      ),
+    ); // 시작 날짜
+    const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
+    const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
+    const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
+    if (passedTimeMin >= 2) {
+      const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.restaurant.id;
+      const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.restaurant.name;
+      const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
+        .matching.id;
+      return navigate(`/rests/write/${restsId}`, {
+        state: {
+          restId: `${restsId}`,
+          restName: `${restsName}`,
+          matchedId: `${matchedId}`,
+        },
+      });
+    }
+  }, 60000);
 
   // 거리계산
   const getDistance = (lat1, lng1, lat2, lng2) => {
@@ -380,24 +415,24 @@ export default function MatchingComplete() {
 
   return (
     <>
-      <div className="bg-map relative w-full h-full">
-        <div className="bg-black/40 absolute w-full h-full z-10"></div>
-        <Map id="map" className="w-full h-full" center={position} level={5} />
+      <div className="bg-map relative h-full w-full">
+        <div className="absolute z-10 h-full w-full bg-black/40"></div>
+        <Map id="map" className="h-full w-full" center={position} level={5} />
       </div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[350px] md:w-[790px] h-[600px] md:h-[520px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center py-[40px] flex flex-col gap-5">
-        <div className="title-container text-base md:text-xl flex flex-col  font-semibold">
+      <div className="absolute left-1/2 top-1/2 z-20 flex h-[600px] w-[350px] -translate-x-1/2 -translate-y-1/2 transform flex-col place-items-center gap-5 rounded-lg bg-white py-[40px] drop-shadow-2xl md:h-[520px] md:w-[790px]">
+        <div className="title-container flex flex-col text-base font-semibold md:text-xl">
           <h1>{pickedRest.name}에서</h1>
           <h1>
             한시간 뒤 {Number(date.slice(11, 13)) + 1}시 {date.slice(14, 16)}
             분에 만나요 !
           </h1>
-          <div className="font-normal text-sm md:text-base pt-2">
+          <div className="pt-2 text-sm font-normal md:text-base">
             {pickedRest.road_address_name}까지 내 위치에서 {distance}분
           </div>
         </div>
-        <div className="center-container max-w-[340px] md:w-full md:h-[300px] flex flex-col md:flex-row gap-5 md:gap-10 justify-center">
+        <div className="center-container flex max-w-[340px] flex-col justify-center gap-5 md:h-[300px] md:w-full md:flex-row md:gap-10">
           <Map
-            className="map-container min-h-[200px] md:min-w-[300px] md:h-full"
+            className="map-container min-h-[200px] md:h-full md:min-w-[300px]"
             id="map"
             center={position}
             level={5}
@@ -424,10 +459,10 @@ export default function MatchingComplete() {
               strokeStyle={"solid"} // 선의 스타일입니다
             />
           </Map>
-          <div className="people-container flex flex-col gap-2 min-w-[340px] h-[180px] md:min-w-[370px] md:h-full overflow-y-scroll scrollbar-hide">
+          <div className="people-container flex h-[180px] min-w-[340px] flex-col gap-2 overflow-y-scroll scrollbar-hide md:h-full md:min-w-[370px]">
             {userList.map((user) => (
               <>
-                <div className="people-item border border-slate-200 text-left rounded-lg p-3">
+                <div className="people-item rounded-lg border border-slate-200 p-3 text-left">
                   <div className="flex flex-row">
                     <p>{user.nickname}</p>
                   </div>
@@ -437,7 +472,7 @@ export default function MatchingComplete() {
             ))}
           </div>
         </div>
-        <div className="flex flex-row fixed bottom-0 max-w-3xl w-full h-[60px] justify-center text-[#555555] z-50">
+        <div className="fixed bottom-0 z-50 flex h-[60px] w-full max-w-3xl flex-row justify-center text-[#555555]">
           <button onClick={() => setIsModalOpen(true)}>
             매칭을 취소하시겠습니까?
           </button>
@@ -445,30 +480,30 @@ export default function MatchingComplete() {
       </div>
       {isModalOpen && (
         <>
-          <div className="absolute w-full h-full z-50">
+          <div className="absolute z-50 h-full w-full">
             <div
               id={"modalBg"}
-              className="bg-black/30 absolute top-0 left-0 w-full h-full z-10"
+              className="absolute left-0 top-0 z-10 h-full w-full bg-black/30"
             ></div>
           </div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 drop-shadow-lg z-50">
-            <div className="bg-white p-4 md:p-7 rounded-lg w-[300px] md:w-[420px] text-left">
-              <p className="font-bold text-[15px] md:text-[18px] text-center max-w-[420px]">
+          <div className="absolute left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 transform drop-shadow-lg">
+            <div className="w-[300px] rounded-lg bg-white p-4 text-left md:w-[420px] md:p-7">
+              <p className="max-w-[420px] text-center text-[15px] font-bold md:text-[18px]">
                 매칭 취소시 패널티가 부과될 수 있습니다.
               </p>
-              <p className="font-bold text-[15px] md:text-[18px] text-center max-w-[420px] pb-5">
+              <p className="max-w-[420px] pb-5 text-center text-[15px] font-bold md:text-[18px]">
                 매칭을 취소하시겠습니까?
               </p>
-              <p className="font-semibold text-sm md:text-base max-w-[200px]">
+              <p className="max-w-[200px] text-sm font-semibold md:text-base">
                 매칭 완료 3분 이내 취소
               </p>
-              <p className="text-xs md:text-sm max-w-[200px] pb-2">
+              <p className="max-w-[200px] pb-2 text-xs md:text-sm">
                 → 패널티 없음
               </p>
-              <p className="font-semibold text-sm md:text-base max-w-[200px]">
+              <p className="max-w-[200px] text-sm font-semibold md:text-base">
                 매칭 완료 3분 이후 취소
               </p>
-              <p className="text-xs md:text-sm max-w-[200px]">
+              <p className="max-w-[200px] text-xs md:text-sm">
                 → 일주일간 매칭 불가
               </p>
               <div className="flex flex-row justify-center gap-24 pt-6 text-sm md:text-base">
