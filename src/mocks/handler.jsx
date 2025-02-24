@@ -22,11 +22,16 @@ const matching = new Map();
 const userListDB = [...userList];
 const reviewList = [...restReviewList];
 let profileData = { ...profile }; // profile을 객체로 유지
-let matchingHistory = { ...myMatchingHistory};
+let matchingHistory = { ...myMatchingHistory };
 export const handlers = [
   // 처음에 구글, cdn등의 경고가 뜨는걸 막기위해 해당 응답들에대한 지연추가
   http.all("*", async () => {
     await delay(100);
+  }),
+
+  // 가야하는 매칭
+  http.get("/matching", () => {
+    return HttpResponse.json(null, { status: 200 });
   }),
 
   // 매칭 성사
@@ -52,11 +57,79 @@ export const handlers = [
 
   // SSE 구독
   http.get("/sse/subscribe", () => {
-    return HttpResponse.json(
+    const customEventJoin2 = new CustomEvent("Join", {
+      datail: {
+        message: "수락 알림이 도착했습니다.",
+        user: {
+          id: "2",
+          nickname: "맛집사냥꾼",
+          join: true,
+        },
+      },
+    });
+    const customEventJoin3 = new CustomEvent("Join", {
+      datail: {
+        message: "수락 알림이 도착했습니다.",
+        user: {
+          id: "3",
+          nickname: "석류먹고싶다",
+          join: true,
+        },
+      },
+    });
+    const customEventTeam = new CustomEvent("Team", {
+      datail: {
+        message: "모임이 생성되었습니다",
+        matching: {
+          restaurant: {
+            id: "5",
+            name: "에버그릭",
+            lat: "126.937320",
+            lon: "37.484824",
+            road_address_name: "서울 관악구 은천로 178 1층",
+            category_name: "그릭요거트",
+            rating: "4",
+          },
+          userList: [
+            {
+              id: "1",
+              nickname: "테스트계정",
+              introduce: "반갑습니다. 테스트 중입니다.",
+              join: true,
+            },
+            {
+              id: "2",
+              nickname: "맛집사냥꾼",
+              introduce: "맛집 컬렉터 XD",
+              join: true,
+            },
+            {
+              id: "3",
+              nickname: "석류먹고싶다",
+              introduce:
+                "미녀는 석류를 좋아해~ 자꾸자꾸 예뻐지면 나는 어떡해~ 미녀는~ 미녀는 석류를 좋아해~",
+              join: true,
+            },
+          ],
+          createdAt: new Date().toISOString(),
+          id: 45,
+        },
+      },
+    });
+    if (window.location.href.includes("/matching/check-place")) {
+      setTimeout(window.dispatchEvent(customEventJoin2), 3000);
+      setTimeout(window.dispatchEvent(customEventJoin3), 8000);
+      setTimeout(window.dispatchEvent(customEventTeam), 8000);
+    }
+    return new HttpResponse(
       {
         message: "SSE Subscribed",
       },
-      { status: 200 }
+      {
+        headers: {
+          "Content-Type": "text/event-stream",
+        },
+      },
     );
   }),
 
@@ -64,6 +137,61 @@ export const handlers = [
   http.post("/matching/request", async ({ request }) => {
     const newPost = await request.json();
     matching.set(newPost.id, newPost);
+    const customEventTempTeam = new CustomEvent("TempTeam", {
+      datail: {
+        teamId: "1",
+        message: "임시 모임이 생성되었습니다.",
+        restaurantList: [
+          {
+            user: {
+              id: "1",
+              nickname: "테스트계정",
+            },
+            place: {
+              id: newPost.place.id,
+              name: newPost.place.name,
+              category_name: newPost.place.category_name,
+              road_address_name: newPost.place.road_address_name,
+              phone: newPost.place.phone,
+              lon: newPost.place.lon,
+              lat: newPost.place.lat,
+            },
+          },
+          {
+            user: {
+              id: "2",
+              nickname: "맛집사냥꾼",
+            },
+            place: {
+              id: "5",
+              name: "에버그릭",
+              category_name: "그릭요거트",
+              road_address_name: "서울 관악구 은천로 178 1층",
+              phone: "02-738-5688",
+              lon: "37.484824",
+              lat: "126.937320",
+            },
+          },
+          {
+            user: {
+              id: "3",
+              nickname: "석류먹고싶다",
+            },
+            place: {
+              id: "8",
+              name: "미자네",
+              category_name: "곱창",
+              road_address_name:
+                "서울 관악구 신림로 59길 14 원조민속 순대타운 3층 31 7호, 318호",
+              phone: "02-738-5688",
+              lon: "37.485107",
+              lat: "126.928925",
+            },
+          },
+        ],
+      },
+    });
+    setTimeout(window.dispatchEvent(customEventTempTeam), 5000);
 
     return HttpResponse.json(postMatching, { status: 200 });
   }),
@@ -89,7 +217,7 @@ export const handlers = [
       {
         message: "Matching canceled",
       },
-      { status: 200 }
+      { status: 200 },
     );
   }),
 
@@ -99,7 +227,7 @@ export const handlers = [
       {
         message: "Matching canceled",
       },
-      { status: 200 }
+      { status: 200 },
     );
   }),
 
@@ -109,7 +237,7 @@ export const handlers = [
       {
         message: "모임이 취소되었습니다",
       },
-      { status: 200 }
+      { status: 200 },
     );
   }),
 
@@ -121,7 +249,7 @@ export const handlers = [
     if (email === "500" || password === "500" || nickname === "500") {
       return HttpResponse.json(
         "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-        { status: 500, statusText: "INTERNAL_SERVER_ERROR" }
+        { status: 500, statusText: "INTERNAL_SERVER_ERROR" },
       );
     }
 
@@ -140,13 +268,13 @@ export const handlers = [
     if (!passwordRegex.test(password)) {
       return HttpResponse.json(
         "비밀번호는 최소 8자 이상이며, 영문, 숫자, 특수문자를 각각 하나 이상 포함해야 합니다.",
-        { status: 400, statusText: "VALIDATION_FAILED" }
+        { status: 400, statusText: "VALIDATION_FAILED" },
       );
     }
 
     // 닉네임 중복 검사
     const nicknameExists = userListDB.some(
-      (user) => user.nickname === nickname
+      (user) => user.nickname === nickname,
     );
     if (nicknameExists) {
       return HttpResponse.json("이미 사용 중인 닉네임입니다.", {
@@ -167,7 +295,7 @@ export const handlers = [
         success: true,
         data: { email, nickname },
       },
-      { status: 200 }
+      { status: 200 },
     );
   }),
 
@@ -200,7 +328,7 @@ export const handlers = [
     if (!user) {
       return HttpResponse.json(
         { message: "사용자를 찾을 수 없습니다." },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -208,7 +336,7 @@ export const handlers = [
     if (user.password !== password) {
       return HttpResponse.json(
         { message: "이메일 또는 비밀번호가 잘못되었습니다." },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -216,7 +344,7 @@ export const handlers = [
     if (!email || !password) {
       return HttpResponse.json(
         { message: "이메일, 비밀번호를 입력하세요." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -226,7 +354,7 @@ export const handlers = [
         accessToken: "ecdedfa14edc1dse4",
         needProfileUpdate: true,
       },
-      { status: 200 }
+      { status: 200 },
     );
   }),
 
@@ -241,7 +369,7 @@ export const handlers = [
     if (!code) {
       return HttpResponse.json(
         "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -253,7 +381,7 @@ export const handlers = [
         accessToken: accessToken,
         needProfileUpdate: true, // 요청값 반영
       },
-      { status: 200 }
+      { status: 200 },
     );
   }),
 
@@ -266,7 +394,7 @@ export const handlers = [
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return HttpResponse.json(
           { message: "토큰이 없거나 잘못된 형식입니다." },
-          { status: 401 }
+          { status: 401 },
         );
       }
 
@@ -280,7 +408,7 @@ export const handlers = [
     } catch (error) {
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
-        { status: 500 }
+        { status: 500 },
       );
     }
   }),
@@ -356,16 +484,16 @@ export const handlers = [
       if (!bannedId) {
         return HttpResponse.json(
           { message: "bannedId가 필요합니다." },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       const content = matchingHistory.content;
       let isUpdated = false;
 
-      content.forEach(item => {
+      content.forEach((item) => {
         const userList = item.matching.userList;
-        const userToBan = userList.find(user => user.id === Number(bannedId));
+        const userToBan = userList.find((user) => user.id === Number(bannedId));
         if (userToBan && userToBan.ban === false) {
           userToBan.ban = true;
           isUpdated = true;
@@ -373,17 +501,25 @@ export const handlers = [
       });
 
       if (isUpdated) {
-        return HttpResponse.json({ message: "사용자가 성공적으로 차단되었습니다." }, { status: 200 });
+        return HttpResponse.json(
+          { message: "사용자가 성공적으로 차단되었습니다." },
+          { status: 200 },
+        );
       } else {
-        return HttpResponse.json({ message: "차단할 사용자를 찾을 수 없거나 이미 차단되었습니다." }, { status: 404 });
+        return HttpResponse.json(
+          { message: "차단할 사용자를 찾을 수 없거나 이미 차단되었습니다." },
+          { status: 404 },
+        );
       }
     } catch (error) {
-      return HttpResponse.json({ message: "서버 오류가 발생했습니다." }, { status: 500 });
+      return HttpResponse.json(
+        { message: "서버 오류가 발생했습니다." },
+        { status: 500 },
+      );
     }
   }),
 
-
-// ✅ 차단 API 핸들러 (DELETE 요청)
+  // ✅ 차단 API 핸들러 (DELETE 요청)
   http.delete("/ban", async ({ request }) => {
     try {
       const url = new URL(request.url);
@@ -392,18 +528,20 @@ export const handlers = [
       if (!bannedId) {
         return HttpResponse.json(
           { message: "bannedId가 필요합니다." },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       const content = matchingHistory.content;
       let isUpdated = false;
 
-      content.forEach(item => {
+      content.forEach((item) => {
         const userList = item.matching.userList;
-        const userToUnban = userList.find(user => user.id === Number(bannedId))
+        const userToUnban = userList.find(
+          (user) => user.id === Number(bannedId),
+        );
 
-        if (userToUnban && userToUnban.hasOwnProperty('ban')) {
+        if (userToUnban && userToUnban.hasOwnProperty("ban")) {
           userToUnban.ban = false;
           isUpdated = true;
         }
@@ -412,18 +550,18 @@ export const handlers = [
       if (!isUpdated) {
         return HttpResponse.json(
           { message: "잘못된 요청입니다." },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       return HttpResponse.json(
         { message: "차단 상태가 해제되었습니다.", data: matchingHistory },
-        { status: 200 }
+        { status: 200 },
       );
     } catch (error) {
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
-        { status: 500 }
+        { status: 500 },
       );
     }
   }),
@@ -437,16 +575,18 @@ export const handlers = [
       if (!reportedId) {
         return HttpResponse.json(
           { message: "reportedId가 필요합니다." },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       const content = matchingHistory.content;
       let isUpdated = false;
 
-      content.forEach(item => {
+      content.forEach((item) => {
         const userList = item.matching.userList;
-        const userToReported = userList.find(user => user.id === Number(reportedId));
+        const userToReported = userList.find(
+          (user) => user.id === Number(reportedId),
+        );
 
         if (userToReported) {
           if (userToReported.report === false) {
@@ -459,18 +599,18 @@ export const handlers = [
       if (!isUpdated) {
         return HttpResponse.json(
           { message: "해당 ID의 방문자를 찾을 수 없습니다." },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
       return HttpResponse.json(
         { message: "신고 상태가 추가되었습니다.", data: matchingHistory },
-        { status: 200 }
+        { status: 200 },
       );
     } catch (error) {
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
-        { status: 500 }
+        { status: 500 },
       );
     }
   }),
@@ -484,18 +624,20 @@ export const handlers = [
       if (!reportedId) {
         return HttpResponse.json(
           { message: "reportedId가 필요합니다." },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       const content = matchingHistory.content;
       let isUpdated = false;
 
-      content.forEach(item => {
+      content.forEach((item) => {
         const userList = item.matching.userList;
-        const userToUnReported = userList.find(user => user.id === Number(reportedId));
+        const userToUnReported = userList.find(
+          (user) => user.id === Number(reportedId),
+        );
 
-        if (userToUnReported && userToUnReported.hasOwnProperty('report')) {
+        if (userToUnReported && userToUnReported.hasOwnProperty("report")) {
           userToUnReported.report = false;
           isUpdated = true;
         }
@@ -504,18 +646,18 @@ export const handlers = [
       if (!isUpdated) {
         return HttpResponse.json(
           { message: "해당 ID의 방문자를 찾을 수 없습니다." },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
       return HttpResponse.json(
         { message: "신고 상태가 해제되었습니다.", data: matchingHistory },
-        { status: 200 }
+        { status: 200 },
       );
     } catch (error) {
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
-        { status: 500 }
+        { status: 500 },
       );
     }
   }),
@@ -523,27 +665,29 @@ export const handlers = [
   // 나의 모임 기록 조회
   http.get("/matching/history", async ({ request }) => {
     const url = new URL(request.url);
-    const pageId = url.searchParams.get('page');
-    if (pageId === '0') {
+    const pageId = url.searchParams.get("page");
+    if (pageId === "0") {
       return HttpResponse.json(myMatchingHistory, { status: 200 });
     }
     if (pageId === "1") {
       return HttpResponse.json(myMatchingHistory2, { status: 200 });
     }
-
   }),
 
   // 나의 식당 후기 조회
-  http.get(`${import.meta.env.VITE_BE_API_URL}/restaurants/myreview`, async ({ request }) => {
-    // 쿼리 파라미터에서 matchingHistoryId 추출
-    const url = new URL(request.url);
-    const matchingHistoryId = url.searchParams.get('matchingHistoryId');
+  http.get(
+    `${import.meta.env.VITE_BE_API_URL}/restaurants/myreview`,
+    async ({ request }) => {
+      // 쿼리 파라미터에서 matchingHistoryId 추출
+      const url = new URL(request.url);
+      const matchingHistoryId = url.searchParams.get("matchingHistoryId");
 
-    console.log("Requested matchingHistoryId:", matchingHistoryId);
+      console.log("Requested matchingHistoryId:", matchingHistoryId);
 
-    // 항상 리뷰 데이터 반환
-    return HttpResponse.json(myReviewHistory, { status: 200 });
-  }),
+      // 항상 리뷰 데이터 반환
+      return HttpResponse.json(myReviewHistory, { status: 200 });
+    },
+  ),
 
   // 식당 리뷰 조회
   http.post("/restaurants/review", async ({ request }) => {
@@ -553,7 +697,7 @@ export const handlers = [
       if (!matchingHistoryId || !restaurantId || !starRate || !description) {
         return HttpResponse.json(
           { message: "입력 형식이 유효하지 않습니다." },
-          { status: 400 }
+          { status: 400 },
         );
       }
       const newReview = {
@@ -570,12 +714,12 @@ export const handlers = [
         {
           message: "성공적으로 업로드 어쩌구",
         },
-        { status: 200 }
+        { status: 200 },
       );
     } catch (e) {
       return HttpResponse.json(
         { message: "서버에 오류발생 어쩌구" },
-        { status: 500 }
+        { status: 500 },
       );
     }
   }),
@@ -604,7 +748,7 @@ export const handlers = [
       ) {
         return HttpResponse.json(
           { message: "입력 형식이 유효하지 않습니다." },
-          { status: 400 }
+          { status: 400 },
         );
       }
       if (page === "0") {
@@ -614,7 +758,7 @@ export const handlers = [
           const temp = { ...restList };
           const tempContent = temp.content;
           const filtered = tempContent.filter((item) =>
-            item.place_name.includes(placeName)
+            item.place_name.includes(placeName),
           );
           temp.content = filtered;
           return HttpResponse.json(temp, { status: 200 });
@@ -626,7 +770,7 @@ export const handlers = [
         else {
           const contents = restList2.content;
           const filtered = contents.filter((item) =>
-            item.place_name.includes(placeName)
+            item.place_name.includes(placeName),
           );
           return HttpResponse.json(restList2.replace("content", filtered), {
             status: 200,
@@ -639,7 +783,7 @@ export const handlers = [
         else {
           const contents = restList3.content;
           const filtered = contents.filter((item) =>
-            item.place_name.includes(placeName)
+            item.place_name.includes(placeName),
           );
           return HttpResponse.json(restList3.replace("content", filtered), {
             status: 200,
@@ -648,12 +792,12 @@ export const handlers = [
       }
       return HttpResponse.json(
         { message: "잘못된 페이지 번호입니다." },
-        { status: 500 }
+        { status: 500 },
       );
     } catch (e) {
       return HttpResponse.json(
         { message: "서버에 오류발생 어쩌구" },
-        { status: 500 }
+        { status: 500 },
       );
     }
   }),
@@ -669,7 +813,7 @@ export const handlers = [
       console.error("OAuth 로그인 처리 중 오류 발생:", error);
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
-        { status: 500 }
+        { status: 500 },
       );
     }
   }),
@@ -689,7 +833,7 @@ export const handlers = [
       console.error(error);
       return HttpResponse.json(
         { message: "서버에 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
-        { status: 500 }
+        { status: 500 },
       );
     }
   }),

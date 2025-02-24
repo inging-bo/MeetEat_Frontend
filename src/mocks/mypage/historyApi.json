@@ -11,8 +11,8 @@
         "restaurant": {
           "id": 39,
           "kakaomapsId": null,
-          "name": "서울 금천구 독산로 194fsfsdfsdfsdfsdafdsfsdfsdf",
-          "category_name": "음식점 > 카페ㄴㅇㄹㅇㄴㄹㅇㄴㄹsdflsdfsdfㄴㅇㄹㅇㄴㄹ니란fdsfsdf",
+          "name": "매머드",
+          "category_name": "음식점 > 카페",
           "road_address_name": "서울 금천구 독산로 194",
           "phone": "",
           "lon": 126.903193791302,
@@ -68,7 +68,7 @@
         "restaurant": {
           "id": 38,
           "kakaomapsId": null,
-          "name": "미진솔테크서울 금천구 독산로독산로독산로",
+          "name": "미진솔테크서울",
           "category_name": "서비스,산업 > 제조업 > 산업용품 > 공구,공작기계",
           "road_address_name": "서울 금천구 가산디지털1로 19",
           "phone": "02-2108-5800",

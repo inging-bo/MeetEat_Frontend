@@ -104,6 +104,7 @@ export default function Matching({
       });
 
       eventSource.onerror = () => {
+        console.log("eventsource 에러");
         apiPOSTCancel();
         eventSource.close();
       };

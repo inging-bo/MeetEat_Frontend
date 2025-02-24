@@ -1,13 +1,13 @@
 {
-    "id": 1,
-    "email": "user@example.com",
-    "nickname": "Nickname",
-    "introduce": "안녕하세요",
-    "role": "USER",
-    "signupType": "EMAIL",
-    "matchingCount": 7,
-    "isPenalty": false,
-    "bannedAt": null,
-    "createAt": "2025-01-23T12:00:00",
-    "updateAt": "2025-01-23T14:00:00"
+  "id": 1,
+  "email": "user@example.com",
+  "nickname": "테스트계정",
+  "introduce": "안녕하세요",
+  "role": "USER",
+  "signupType": "EMAIL",
+  "matchingCount": 7,
+  "isPenalty": false,
+  "bannedAt": null,
+  "createAt": "2025-01-23T12:00:00",
+  "updateAt": "2025-01-23T14:00:00"
 }
