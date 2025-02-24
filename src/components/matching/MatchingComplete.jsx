@@ -130,9 +130,7 @@ export default function MatchingComplete() {
     //   );
   }, []);
 
-  // 60초마다 반복실행
-  useInterval(() => {
-    console.log("interval 실행");
+  const getTime = () => {
     const now = new Date(); // 오늘 날짜
     const firstDay = new Date(
       JSON.parse(
@@ -162,6 +160,10 @@ export default function MatchingComplete() {
         },
       });
     }
+  };
+  // 60초마다 반복실행
+  useInterval(() => {
+    getTime;
   }, 60000);
 
   // 거리계산
