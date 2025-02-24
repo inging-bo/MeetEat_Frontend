@@ -292,10 +292,10 @@ const RestReviews = observer(() => {
   };
 
   // 리뷰 작성 페이지로 이동
-  const writeReview = (restsId, restsName, matchingId) => {
-    navigate(`/rests/write/${restsId}`, {
+  const writeReview = (contentId, restsName, matchingId) => {
+    navigate(`/rests/write/${contentId}`, {
       state: {
-        restId: `${restsId}`,
+        restId: `${contentId}`,
         restName: `${restsName}`,
         matchedId: `${matchingId}`,
       },
@@ -366,7 +366,7 @@ const RestReviews = observer(() => {
                         <div
                           onClick={() =>
                             writeReview(
-                              item.matching.restaurant.id,
+                              item.id,
                               item.matching.restaurant.name,
                               item.matching.id,
                             )
@@ -377,7 +377,7 @@ const RestReviews = observer(() => {
                         </div>
                       ) : (
                         <div
-                          onClick={() => myReviewChk(item.matching.id)}
+                          onClick={() => myReviewChk(item.id)}
                           className="flex flex-shrink-0 cursor-pointer rounded-md border border-[#909090] px-2 py-1 text-xs text-[#909090] min-[600px]:text-sm"
                         >
                           리뷰 확인하기

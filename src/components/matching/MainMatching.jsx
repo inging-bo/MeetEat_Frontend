@@ -50,7 +50,7 @@ export default function MainMatching() {
         window.sessionStorage.setItem("isCompleted", "true");
         window.sessionStorage.setItem(
           "matchedData",
-          JSON.stringify(resMatching.data),
+          JSON.stringify(resMatching.data.matching),
         );
         completed();
       } else matchingStore.setIsCompleted(false);

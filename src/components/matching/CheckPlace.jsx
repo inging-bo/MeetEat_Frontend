@@ -87,6 +87,7 @@ export default function CheckPlace() {
 
       eventSource.addEventListener("Team", (e) => {
         console.log("Team Event 발생");
+        console.log(JSON.parse(e.data));
         window.sessionStorage.setItem("matchedData", e.data);
         window.sessionStorage.removeItem("isMatching");
         window.sessionStorage.removeItem("isMatched");

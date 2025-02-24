@@ -66,7 +66,7 @@ export default function MatchingComplete() {
         .matching.restaurant.name;
       const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.id;
-      return navigate(`/rests/write/${restsId}`, {
+      return navigate(`/rests/write/${matchedId}`, {
         state: {
           restId: `${restsId}`,
           restName: `${restsName}`,
@@ -153,7 +153,7 @@ export default function MatchingComplete() {
         .matching.restaurant.name;
       const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.id;
-      return navigate(`/rests/write/${restsId}`, {
+      return navigate(`/rests/write/${matchedId}`, {
         state: {
           restId: `${restsId}`,
           restName: `${restsName}`,
