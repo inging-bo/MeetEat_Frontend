@@ -56,9 +56,9 @@ export default function MainMatching() {
       } else matchingStore.setIsCompleted(false);
     };
 
-    getProfile();
-
     authStore.checkLoggedIn();
+    authStore.loggedIn && getProfile();
+
     setLoggedIn(authStore.loggedIn);
     matchingStore.checkMatching();
     matchingStore.checkMatched();
