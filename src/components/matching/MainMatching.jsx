@@ -80,7 +80,7 @@ export default function MainMatching() {
     const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
     console.log(passedTimeMin);
     // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
-    if (passedTimeMin >= 1) {
+    if (passedTimeMin >= 2) {
       const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.restaurant.id;
       const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
