@@ -74,7 +74,7 @@ export default function WriteReview() {
   const handleWriteNext = () => {
     axios
       .post(
-        `${import.meta.env.VITE_BE_API_URL}/matching/hisotry/${info.matchedId}`,
+        `${import.meta.env.VITE_BE_API_URL}/matching/history/${info.matchedId}`,
         {},
         {
           headers: {
@@ -106,6 +106,8 @@ export default function WriteReview() {
       rating: starScore,
       description: textareaValue,
     };
+    console.log("reviewData");
+    console.log(reviewData);
     const jsonReviewData = JSON.stringify(reviewData);
     const reviewInfo = new Blob([jsonReviewData], { type: "application/json" });
     const formData = new FormData();
@@ -167,11 +169,11 @@ export default function WriteReview() {
 
   return (
     <>
-      <div className="bg-map relative w-full h-svh">
-        <div className="bg-black/40 absolute w-full h-svh z-10"></div>
-        <Map id="map" className="w-full h-svh" center={position} level={5} />
+      <div className="bg-map relative h-svh w-full">
+        <div className="absolute z-10 h-svh w-full bg-black/40"></div>
+        <Map id="map" className="h-svh w-full" center={position} level={5} />
       </div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[350px] md:w-[790px] h-[550px] bg-white rounded-lg drop-shadow-2xl z-20 place-items-center flex flex-col gap-3 pt-14">
+      <div className="absolute left-1/2 top-1/2 z-20 flex h-[550px] w-[350px] -translate-x-1/2 -translate-y-1/2 transform flex-col place-items-center gap-3 rounded-lg bg-white pt-14 drop-shadow-2xl md:w-[790px]">
         <h1 className="text-2xl font-bold">{info.restName}</h1>
         <div>
           <div className="stars flex flex-row justify-center pb-2">
@@ -180,13 +182,13 @@ export default function WriteReview() {
         </div>
         <textarea
           id="textarea"
-          className="w-[300px] md:w-[400px] h-[100px] resize-none border p-2"
+          className="h-[100px] w-[300px] resize-none border p-2 md:w-[400px]"
           placeholder="방문후기를 작성해주세요
 다른 사용자들의 식당 선정시 도움이 됩니다"
         ></textarea>
 
         <label htmlFor="inputFile">
-          <div className="w-[300px] md:w-[400px] h-[35px] content-center border p-1 px-4 rounded-lg">
+          <div className="h-[35px] w-[300px] content-center rounded-lg border p-1 px-4 md:w-[400px]">
             사진 첨부
           </div>
           <input
@@ -198,12 +200,12 @@ export default function WriteReview() {
             onChange={handleAddImages}
           />
         </label>
-        <div className="img-container flex flex-row gap-3 w-[300px] md:w-[400px] relative">
-          <div className="flex flex-row max-w-[300px] md:max-w-[400px] gap-3 overflow-x-scroll scrollbar-hide">
+        <div className="img-container relative flex w-[300px] flex-row gap-3 md:w-[400px]">
+          <div className="flex max-w-[300px] flex-row gap-3 overflow-x-scroll scrollbar-hide md:max-w-[400px]">
             {imageList.length === 0 && (
               <>
                 <label htmlFor="inputFile">
-                  <div className="w-[100px] h-[100px] content-center rounded-lg border border-slate-200 text-slate-200 text-3xl ">
+                  <div className="h-[100px] w-[100px] content-center rounded-lg border border-slate-200 text-3xl text-slate-200">
                     +
                   </div>
                   <input
@@ -219,19 +221,19 @@ export default function WriteReview() {
             )}
             {imageList.map((image, idx) => (
               <div
-                className="relative min-w-[100px] min-h-[100px]"
+                className="relative min-h-[100px] min-w-[100px]"
                 key={"image_" + idx}
               >
                 <button
                   onClick={() => handleDeleteImage(idx)}
-                  className="absolute top-[2px] right-[5px] text-white text-[15px] font-thin drop-shadow-lg"
+                  className="absolute right-[5px] top-[2px] text-[15px] font-thin text-white drop-shadow-lg"
                 >
                   ×
                 </button>
                 <img
                   src={image}
                   alt={`미리보기${idx}`}
-                  className="w-[100px] h-[100px] object-cover rounded-lg border border-slate-200"
+                  className="h-[100px] w-[100px] rounded-lg border border-slate-200 object-cover"
                 />
               </div>
             ))}
@@ -239,13 +241,13 @@ export default function WriteReview() {
         </div>
         <button
           onClick={handleWriteComplete}
-          className="w-[300px] md:w-[400px] p-2 bg-[#FF6445] text-white rounded-lg"
+          className="w-[300px] rounded-lg bg-[#FF6445] p-2 text-white md:w-[400px]"
         >
           작성완료
         </button>
         <button
           onClick={handleWriteNext}
-          className="absolute bottom-2 w-[300px] md:w-[400px] p-2  text-[#555555] text-sm"
+          className="absolute bottom-2 w-[300px] p-2 text-sm text-[#555555] md:w-[400px]"
         >
           다음에 작성할게요.
         </button>
