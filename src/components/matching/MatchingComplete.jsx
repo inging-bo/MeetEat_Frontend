@@ -66,11 +66,15 @@ export default function MatchingComplete() {
         .matching.restaurant.name;
       const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.id;
+      const matchingHistoryId = JSON.parse(
+        window.sessionStorage.getItem("matchedData"),
+      ).id;
       return navigate(`/rests/write/${matchedId}`, {
         state: {
           restId: `${restsId}`,
           restName: `${restsName}`,
           matchedId: `${matchedId}`,
+          matchingHistoryId: `${matchingHistoryId}`,
         },
       });
     }

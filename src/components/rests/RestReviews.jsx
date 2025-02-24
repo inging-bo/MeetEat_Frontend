@@ -292,12 +292,13 @@ const RestReviews = observer(() => {
   };
 
   // 리뷰 작성 페이지로 이동
-  const writeReview = (contentId, restsName, matchingId) => {
-    navigate(`/rests/write/${contentId}`, {
+  const writeReview = (restId, restsName, matchingId, matchingHistoryId) => {
+    navigate(`/rests/write/${restId}`, {
       state: {
-        restId: `${contentId}`,
+        restId: `${restId}`,
         restName: `${restsName}`,
         matchedId: `${matchingId}`,
+        matchingHistoryId: `${matchingHistoryId}`,
       },
     });
   };
@@ -366,9 +367,10 @@ const RestReviews = observer(() => {
                         <div
                           onClick={() =>
                             writeReview(
-                              item.id,
+                              item.matching.restaurant.id,
                               item.matching.restaurant.name,
                               item.matching.id,
+                              item.id,
                             )
                           }
                           className="flex cursor-pointer rounded-md border border-[#909090] px-2 py-1 text-xs text-[#909090] min-[600px]:text-sm"
