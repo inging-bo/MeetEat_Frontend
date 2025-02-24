@@ -8,6 +8,7 @@ import authStore from "../../store/authStore";
 
 export default function WriteReview() {
   const location = useLocation();
+  const navigate = useNavigate();
   const info = { ...location.state };
 
   // 로그인 확인
@@ -16,37 +17,6 @@ export default function WriteReview() {
     !authStore.loggedIn && window.location.replace("/");
     if (Object.keys(info).length === 0) return window.location.replace("/");
   }, []);
-
-  // 이미지 핸들러
-  const [imageList, setImageList] = useState([]);
-  const [postImageList, setPostImageList] = useState([]);
-  const handleAddImages = (e) => {
-    const postFiles = Array.from(e.target.files);
-    const files = e.target.files;
-    if (postFiles.length > 7) {
-      setPostImageList(postFiles.slice(0, 7));
-    } else {
-      setPostImageList(postFiles);
-    }
-
-    let imageUrlLists = [...imageList];
-    for (let i = 0; i < files.length; i++) {
-      const currentImageUrl = URL.createObjectURL(files[i]);
-      imageUrlLists.push(currentImageUrl);
-    }
-
-    if (imageUrlLists.length > 7) {
-      imageUrlLists = imageUrlLists.slice(0, 7);
-      alert("사진은 최대 7장까지 첨부 가능합니다.");
-    }
-    setImageList(imageUrlLists);
-  };
-
-  // 이미지 삭제 핸들러
-  const handleDeleteImage = (idx) => {
-    const tempArr = [...imageList].filter((_, index) => index !== idx);
-    return setImageList(tempArr);
-  };
 
   // 초기 빈 별 그리기
   const [starScore, setStarScore] = useState(1);
@@ -70,11 +40,42 @@ export default function WriteReview() {
     return result;
   };
 
-  const navigate = useNavigate();
+  // 이미지 핸들러
+  const [imageList, setImageList] = useState([]);
+  const [postImageList, setPostImageList] = useState([]);
+
+  const handleAddImages = (e) => {
+    const files = e.target.files;
+    let imageUrlLists = [...imageList];
+    let postImageLists = [...postImageList];
+    for (let i = 0; i < files.length; i++) {
+      const currentImageUrl = URL.createObjectURL(files[i]);
+      imageUrlLists.push(currentImageUrl);
+      postImageLists.push(files[i]);
+    }
+
+    if (imageUrlLists.length > 7) {
+      imageUrlLists = imageUrlLists.slice(0, 7);
+      postImageLists = postImageLists.slice(0, 7);
+      alert("사진은 최대 7장까지 첨부 가능합니다.");
+    }
+    setImageList(imageUrlLists);
+    setPostImageList(postImageLists);
+  };
+
+  // 이미지 삭제 핸들러
+  const handleDeleteImage = (idx) => {
+    const tempArr = [...imageList].filter((_, index) => index !== idx);
+    const tempPostArr = [...postImageList].filter((_, index) => index !== idx);
+    setImageList(tempArr);
+    setPostImageList(tempPostArr);
+  };
+
+  // 이미지 다음에 작성
   const handleWriteNext = () => {
     axios
       .post(
-        `${import.meta.env.VITE_BE_API_URL}/matching/history/${info.matchedId}`,
+        `${import.meta.env.VITE_BE_API_URL}/matching/history/${info.matchingHistoryId}`,
         {},
         {
           headers: {
@@ -101,18 +102,11 @@ export default function WriteReview() {
   };
 
   async function apiRestReviewWrite(matchedId, textareaValue) {
-    const reviewData = {
-      matchingHistoryId: matchedId,
-      rating: starScore,
-      description: textareaValue,
-    };
-    console.log("reviewData");
-    console.log(reviewData);
-    const jsonReviewData = JSON.stringify(reviewData);
-    const reviewInfo = new Blob([jsonReviewData], { type: "application/json" });
     const formData = new FormData();
     formData.append("files", postImageList);
-    formData.append("review", reviewInfo);
+    formData.append("matchingHistoryId", matchedId); // matchinghistory 숫자타입으로 전송
+    formData.append("rating", starScore);
+    formData.append("description", textareaValue);
 
     for (const x of formData.entries()) {
       console.log(x);
