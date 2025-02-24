@@ -66,11 +66,15 @@ export default function MatchingComplete() {
         .matching.restaurant.name;
       const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.id;
-      return navigate(`/rests/write/${restsId}`, {
+      const matchingHistoryId = JSON.parse(
+        window.sessionStorage.getItem("matchedData"),
+      ).id;
+      return navigate(`/rests/write/${matchedId}`, {
         state: {
           restId: `${restsId}`,
           restName: `${restsName}`,
           matchedId: `${matchedId}`,
+          matchingHistoryId: `${matchingHistoryId}`,
         },
       });
     }
@@ -153,7 +157,7 @@ export default function MatchingComplete() {
         .matching.restaurant.name;
       const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.id;
-      return navigate(`/rests/write/${restsId}`, {
+      return navigate(`/rests/write/${matchedId}`, {
         state: {
           restId: `${restsId}`,
           restName: `${restsName}`,
