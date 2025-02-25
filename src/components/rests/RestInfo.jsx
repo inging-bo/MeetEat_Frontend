@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import authStore from "../../store/authStore.js";
@@ -98,6 +98,20 @@ const RestInfo = observer(() => {
         setIsEditing(false);
         return;
       }
+      if (value === "") {
+        modalStore.openModal("oneBtn", {
+          message: (
+            <>
+              <p>내용을 작성해주세요!.</p>
+            </>
+          ),
+          onConfirm: async () => {
+            modalStore.closeModal();
+          },
+        });
+          return;
+      }
+
       try {
         const url =
           fieldKey === "nickname"
@@ -119,9 +133,7 @@ const RestInfo = observer(() => {
         // 수정 후 최신 프로필 정보 가져오기
         await fetchProfile();
         setIsEditing(false);
-        // } catch (error) {
-        //     console.error("업데이트 실패", error);
-        // }
+
       } catch (error) {
         console.error("[Error] 프로필 업데이트 실패:", error);
 
