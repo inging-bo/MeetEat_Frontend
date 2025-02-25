@@ -378,14 +378,14 @@ const RestReviews = observer(() => {
                           }
                           className="flex cursor-pointer rounded-md border border-[#909090] px-2 py-1 text-xs text-[#909090] min-[600px]:text-sm"
                         >
-                          리뷰 작성하기
+                          리뷰 작성
                         </div>
                       ) : (
                         <div
                           onClick={() => myReviewChk(item.id)}
                           className="flex flex-shrink-0 cursor-pointer rounded-md border border-[#909090] px-2 py-1 text-xs text-[#909090] min-[600px]:text-sm"
                         >
-                          리뷰 확인하기
+                          리뷰 확인
                         </div>
                       )}
                     </>
