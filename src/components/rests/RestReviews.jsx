@@ -20,7 +20,8 @@ const RestReviews = observer(() => {
   const [totalPage, setTotalPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [moreHistory, inView] = useInView({
-    threshold: 1,
+    threshold: 0.9, // 90% 가시성
+    rootMargin: '20px',
   });
   const [isLoading, setIsLoading] = useState(true);
   // ✅ 매칭 히스토리 가져오기 (4개씩 추가)
@@ -41,6 +42,7 @@ const RestReviews = observer(() => {
       if (page >= totalPage) {
         setIsLoading(false);
       }
+
     } catch (error) {
       console.error(
         "초기 매칭 히스토리 정보를 불러오는데 실패했습니다.",
@@ -96,15 +98,14 @@ const RestReviews = observer(() => {
       fetchMoreHistory();
     }
   }, [inView, hasMore]);
-  console.log(historyData);
-  console.log(page, totalPage);
+
   // ✅ 신고하기/차단하기 팝오버 관련 상태 및 ref
   const [activePopOver, setActivePopOver] = useState(null);
   const popOverRef = useRef(null);
 
   // 팝오버 토글 함수
-  const popOver = (itemId, userId) => {
-    const uniqueId = `${itemId}-${userId}`;
+  const popOver = (userId, itemId) => {
+    const uniqueId = `${userId}-${itemId}`;
     setActivePopOver(activePopOver === uniqueId ? null : uniqueId);
   };
 
@@ -122,7 +123,6 @@ const RestReviews = observer(() => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [activePopOver]);
-
   // ✅ 모달 열고 닫기 함수
   const toggleModal = async (type, userId, matchingId) => {
     try {
@@ -257,7 +257,7 @@ const RestReviews = observer(() => {
       return {};
     }
   };
-
+  console.log(historyData)
   // ✅ 신고 , 차단 위치 모호해서 주석주석
   const banOrReport = (user) => {
     if (user.ban && user.report) {
@@ -278,21 +278,25 @@ const RestReviews = observer(() => {
           신고 유저
         </span>
       );
+    } else {
+      return (
+        <span className="ml-2 whitespace-nowrap rounded-md px-1.5 py-0.5"></span>
+      );
     }
-    return null;
   };
+
 
   // 매칭 횟수별 메달 표시 함수
   const viewMedal = (count) => {
-    if (count >= 5) return <GoldMedal width="16px" height="16px" />;
-    if (count >= 3) return <SilverMedal width="16px" height="16px" />;
-    if (count >= 1) return <BronzeMedal width="16px" height="16px" />;
+    if (count >= 5) return <GoldMedal width="16px" height="16px"/>;
+    if (count >= 3) return <SilverMedal width="16px" height="16px"/>;
+    if (count >= 1) return <BronzeMedal width="16px" height="16px"/>;
     return null;
   };
 
   // 리뷰 작성 페이지로 이동
   const writeReview = (restId, restsName, matchingId, matchingHistoryId) => {
-    navigate(`/rests/write/${restId}`, {
+    navigate(`/rests/write/${matchingHistoryId}`, {
       state: {
         restId: `${restId}`,
         restName: `${restsName}`,
@@ -320,7 +324,7 @@ const RestReviews = observer(() => {
       if (response.status === 200) {
         const reviewData = response.data;
         modalStore.openModal("oneBtn", {
-          message: <RestReviewItem review={reviewData} />, // 모달 메시지 설정
+          message: <RestReviewItem review={reviewData}/>, // 모달 메시지 설정
           onConfirm: async () => {
             await modalStore.closeModal();
           },
@@ -337,9 +341,9 @@ const RestReviews = observer(() => {
     }
   };
 
-  console.log(Object.values(historyData));
   return (
-    <div className="mb-5 flex flex-col gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg max-[760px]:max-w-[300px] min-[400px]:w-full min-[400px]:min-w-[380px] min-[760px]:h-full">
+    <div
+      className="mb-5 flex flex-col gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg max-[760px]:max-w-[300px] min-[400px]:w-full min-[400px]:min-w-[380px] min-[760px]:h-full">
       <p className="text-left text-[28px] font-bold">나의 매칭 히스토리</p>
       <ul className="flex flex-1 flex-col gap-4 min-[760px]:overflow-y-scroll min-[760px]:scrollbar-hide">
         {Object.values(historyData) && Object.values(historyData).length > 0 ? (
@@ -353,7 +357,7 @@ const RestReviews = observer(() => {
                   <span className="flex text-wrap break-all text-left text-xs text-gray-400">
                     {item.matching.restaurant.category_name.slice(
                       item.matching.restaurant.category_name.lastIndexOf(">") +
-                        2,
+                      2,
                     )}
                   </span>
                 </div>
@@ -386,7 +390,8 @@ const RestReviews = observer(() => {
                       )}
                     </>
                   ) : (
-                    <div className="flex flex-shrink-0 rounded-md bg-secondary px-2 py-1 text-xs text-white min-[600px]:text-sm">
+                    <div
+                      className="flex flex-shrink-0 rounded-md bg-secondary px-2 py-1 text-xs text-white min-[600px]:text-sm">
                       취소된 매칭
                     </div>
                   )}
@@ -454,7 +459,8 @@ const RestReviews = observer(() => {
                               신고하기
                             </button>
                           )}
-                          <div className="absolute top-1/2 transform -translate-y-1/2 -right-1.5 h-2.5 w-2.5 rotate-45 border-t border-r border-gray-300 bg-white"></div>
+                          <div
+                            className="absolute top-1/2 transform -translate-y-1/2 -right-1.5 h-2.5 w-2.5 rotate-45 border-t border-r border-gray-300 bg-white"></div>
                         </div>
                       )}
                     </div>
@@ -464,26 +470,24 @@ const RestReviews = observer(() => {
             </li>
           ))
         ) : (
-          <div className="text-2xl text-gray-500">
+          <div className="text-sm sm:text-2xl text-gray-500">
             매칭 히스토리가 없습니다.
           </div>
         )}
         {page < totalPage && hasMore && (
-          <div ref={moreHistory} className="relative h-8 w-full pb-8">
-            더 보기
+          <div ref={moreHistory} className="relative my-2 h-8 w-full pb-8">
+            {isLoading && (
+              <ReactLoading
+                type={"spokes"}
+                color={"#000000"}
+                height={25}
+                width={25}
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform"
+              />
+            )}
           </div>
         )}
-        {isLoading && (
-          <div className="h-30 relative h-8 w-full">
-            <ReactLoading
-              type={"spokes"}
-              color={"#000000"}
-              height={25}
-              width={25}
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform"
-            />
-          </div>
-        )}
+
       </ul>
     </div>
   );
