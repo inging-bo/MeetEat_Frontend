@@ -21,7 +21,7 @@ const RestReviews = observer(() => {
   const [hasMore, setHasMore] = useState(true);
   const [moreHistory, inView] = useInView({
     threshold: 0.9, // 90% 가시성
-    rootMargin: '20px',
+    rootMargin: "20px",
   });
   const [isLoading, setIsLoading] = useState(true);
   // ✅ 매칭 히스토리 가져오기 (4개씩 추가)
@@ -42,7 +42,6 @@ const RestReviews = observer(() => {
       if (page >= totalPage) {
         setIsLoading(false);
       }
-
     } catch (error) {
       console.error(
         "초기 매칭 히스토리 정보를 불러오는데 실패했습니다.",
@@ -257,7 +256,7 @@ const RestReviews = observer(() => {
       return {};
     }
   };
-  console.log(historyData)
+  console.log(historyData);
   // ✅ 신고 , 차단 위치 모호해서 주석주석
   const banOrReport = (user) => {
     if (user.ban && user.report) {
@@ -285,12 +284,11 @@ const RestReviews = observer(() => {
     }
   };
 
-
   // 매칭 횟수별 메달 표시 함수
   const viewMedal = (count) => {
-    if (count >= 5) return <GoldMedal width="16px" height="16px"/>;
-    if (count >= 3) return <SilverMedal width="16px" height="16px"/>;
-    if (count >= 1) return <BronzeMedal width="16px" height="16px"/>;
+    if (count >= 5) return <GoldMedal width="16px" height="16px" />;
+    if (count >= 3) return <SilverMedal width="16px" height="16px" />;
+    if (count >= 1) return <BronzeMedal width="16px" height="16px" />;
     return null;
   };
 
@@ -315,8 +313,8 @@ const RestReviews = observer(() => {
         `${import.meta.env.VITE_BE_API_URL}/restaurants/myreview?matchingHistoryId=${matchingHistoryId}`,
         {
           headers: {
-            "Content-Type": "application/json", // Content-Type 설정
             Authorization: `Bearer ${token}`, // Authorization 설정
+            "Content-Type": "application/json", // Content-Type 설정
           },
         },
       );
@@ -324,7 +322,7 @@ const RestReviews = observer(() => {
       if (response.status === 200) {
         const reviewData = response.data;
         modalStore.openModal("oneBtn", {
-          message: <RestReviewItem review={reviewData}/>, // 모달 메시지 설정
+          message: <RestReviewItem review={reviewData} />, // 모달 메시지 설정
           onConfirm: async () => {
             await modalStore.closeModal();
           },
@@ -342,8 +340,7 @@ const RestReviews = observer(() => {
   };
 
   return (
-    <div
-      className="mb-5 flex flex-col gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg max-[760px]:max-w-[300px] min-[400px]:w-full min-[400px]:min-w-[380px] min-[760px]:h-full">
+    <div className="mb-5 flex flex-col gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg max-[760px]:max-w-[300px] min-[400px]:w-full min-[400px]:min-w-[380px] min-[760px]:h-full">
       <p className="text-left text-[28px] font-bold">나의 매칭 히스토리</p>
       <ul className="flex flex-1 flex-col gap-4 min-[760px]:overflow-y-scroll min-[760px]:scrollbar-hide">
         {Object.values(historyData) && Object.values(historyData).length > 0 ? (
@@ -357,7 +354,7 @@ const RestReviews = observer(() => {
                   <span className="flex text-wrap break-all text-left text-xs text-gray-400">
                     {item.matching.restaurant.category_name.slice(
                       item.matching.restaurant.category_name.lastIndexOf(">") +
-                      2,
+                        2,
                     )}
                   </span>
                 </div>
@@ -390,8 +387,7 @@ const RestReviews = observer(() => {
                       )}
                     </>
                   ) : (
-                    <div
-                      className="flex flex-shrink-0 rounded-md bg-secondary px-2 py-1 text-xs text-white min-[600px]:text-sm">
+                    <div className="flex flex-shrink-0 rounded-md bg-secondary px-2 py-1 text-xs text-white min-[600px]:text-sm">
                       취소된 매칭
                     </div>
                   )}
@@ -427,7 +423,7 @@ const RestReviews = observer(() => {
                       {activePopOver === `${user.id}-${item.id}` && (
                         <div
                           ref={popOverRef}
-                          className="absolute top-1/2 transform -translate-y-1/2 right-10 z-50 flex flex-col gap-1 rounded-lg border border-gray-300 bg-white p-2"
+                          className="absolute right-10 top-1/2 z-50 flex -translate-y-1/2 transform flex-col gap-1 rounded-lg border border-gray-300 bg-white p-2"
                         >
                           {user.ban ? (
                             <button
@@ -446,21 +442,28 @@ const RestReviews = observer(() => {
                           )}
                           {user.report ? (
                             <button
-                              onClick={() => toggleModal("unReport", user.id, item.matching.id)}
+                              onClick={() =>
+                                toggleModal(
+                                  "unReport",
+                                  user.id,
+                                  item.matching.id,
+                                )
+                              }
                               className="rounded-lg px-2 py-1 hover:bg-gray-200"
                             >
                               신고해제
                             </button>
                           ) : (
                             <button
-                              onClick={() => toggleModal("report", user.id, item.matching.id)}
+                              onClick={() =>
+                                toggleModal("report", user.id, item.matching.id)
+                              }
                               className="rounded-lg px-2 py-1 hover:bg-gray-200"
                             >
                               신고하기
                             </button>
                           )}
-                          <div
-                            className="absolute top-1/2 transform -translate-y-1/2 -right-1.5 h-2.5 w-2.5 rotate-45 border-t border-r border-gray-300 bg-white"></div>
+                          <div className="absolute -right-1.5 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rotate-45 transform border-r border-t border-gray-300 bg-white"></div>
                         </div>
                       )}
                     </div>
@@ -470,7 +473,7 @@ const RestReviews = observer(() => {
             </li>
           ))
         ) : (
-          <div className="text-sm sm:text-2xl text-gray-500">
+          <div className="text-sm text-gray-500 sm:text-2xl">
             매칭 히스토리가 없습니다.
           </div>
         )}
@@ -487,7 +490,6 @@ const RestReviews = observer(() => {
             )}
           </div>
         )}
-
       </ul>
     </div>
   );
