@@ -107,6 +107,7 @@ export default function WriteReview() {
       postImageList.forEach((file) => {
         formData.append("files", file);
       });
+    }
     formData.append("matchingHistoryId", matchingHistoryId);
     formData.append("rating", starScore);
     formData.append("description", textareaValue);
