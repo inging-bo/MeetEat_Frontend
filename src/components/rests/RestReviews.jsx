@@ -125,7 +125,6 @@ const RestReviews = observer(() => {
 
   // ✅ 모달 열고 닫기 함수
   const toggleModal = async (type, userId, matchingId) => {
-    console.log(typeof userId);
     try {
       let modalMessage = "";
       switch (type) {
@@ -423,7 +422,7 @@ const RestReviews = observer(() => {
                       {activePopOver === `${user.id}-${item.id}` && (
                         <div
                           ref={popOverRef}
-                          className="absolute bottom-12 right-1 z-50 flex flex-col gap-1 rounded-lg border border-gray-300 bg-white p-2"
+                          className="absolute top-1/2 transform -translate-y-1/2 right-10 z-50 flex flex-col gap-1 rounded-lg border border-gray-300 bg-white p-2"
                         >
                           {user.ban ? (
                             <button
@@ -442,20 +441,20 @@ const RestReviews = observer(() => {
                           )}
                           {user.report ? (
                             <button
-                              onClick={() => toggleModal("unReport", user.id)}
+                              onClick={() => toggleModal("unReport", user.id, item.matching.id)}
                               className="rounded-lg px-2 py-1 hover:bg-gray-200"
                             >
                               신고해제
                             </button>
                           ) : (
                             <button
-                              onClick={() => toggleModal("report", user.id)}
+                              onClick={() => toggleModal("report", user.id, item.matching.id)}
                               className="rounded-lg px-2 py-1 hover:bg-gray-200"
                             >
                               신고하기
                             </button>
                           )}
-                          <div className="absolute -bottom-1.5 right-3 h-2.5 w-2.5 rotate-45 border-b border-r border-gray-300 bg-white"></div>
+                          <div className="absolute top-1/2 transform -translate-y-1/2 -right-1.5 h-2.5 w-2.5 rotate-45 border-t border-r border-gray-300 bg-white"></div>
                         </div>
                       )}
                     </div>
