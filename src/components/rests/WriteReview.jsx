@@ -103,7 +103,10 @@ export default function WriteReview() {
 
   async function apiRestReviewWrite(matchingHistoryId, textareaValue) {
     const formData = new FormData();
-    formData.append("files", postImageList);
+    if (postImageList && postImageList.length > 0) {
+      postImageList.forEach((file) => {
+        formData.append("files", file);
+      });
     formData.append("matchingHistoryId", matchingHistoryId);
     formData.append("rating", starScore);
     formData.append("description", textareaValue);
