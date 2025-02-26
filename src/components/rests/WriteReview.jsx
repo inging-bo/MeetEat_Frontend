@@ -5,12 +5,12 @@ import EmptyStar from "../../assets/empty-star.svg?react";
 import FullStar from "../../assets/full-star.svg?react";
 import { Map } from "react-kakao-maps-sdk";
 import authStore from "../../store/authStore";
+import modalStore from "../../store/modalStore.js";
 
 export default function WriteReview() {
   const location = useLocation();
   const navigate = useNavigate();
   const info = { ...location.state };
-
   // 로그인 확인
   useEffect(() => {
     !authStore.loggedIn && alert("로그인 후 이용해주세요!");
@@ -70,7 +70,7 @@ export default function WriteReview() {
     setImageList(tempArr);
     setPostImageList(tempPostArr);
   };
-
+  console.log("매칭 완료 후 넘어오는 state의 info", info)
   // 이미지 다음에 작성
   const handleWriteNext = () => {
     axios
@@ -85,11 +85,21 @@ export default function WriteReview() {
         },
       )
       .then(() => {
-        alert("해당 리뷰는 마이페이지에서 다시 작성하실 수 있습니다.");
-        window.sessionStorage.removeItem("isCompleted");
-        window.sessionStorage.removeItem("isMatched");
-        window.sessionStorage.removeItem("matchedData");
-        navigate("/");
+        modalStore.openModal("twoBtn", {
+          message: (
+            <>
+              <p>해당 리뷰는 마이페이지에서</p>
+              <p>다시 작성하실 수 있습니다.</p>
+            </>
+          ),
+          onConfirm: async () => {
+            window.sessionStorage.removeItem("isCompleted");
+            window.sessionStorage.removeItem("isMatched");
+            window.sessionStorage.removeItem("matchedData");
+            navigate("/")
+            modalStore.closeModal();
+          },
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -108,6 +118,7 @@ export default function WriteReview() {
         formData.append("files", file);
       });
     }
+    console.log(matchingHistoryId, textareaValue)
     formData.append("matchingHistoryId", matchingHistoryId);
     formData.append("rating", starScore);
     formData.append("description", textareaValue);
@@ -124,15 +135,33 @@ export default function WriteReview() {
         },
       })
       .then(() => {
-        alert("작성 완료되었습니다.");
-        window.sessionStorage.removeItem("isCompleted");
-        window.sessionStorage.removeItem("isMatched");
-        window.sessionStorage.removeItem("matchedData");
-        navigate("/");
+        modalStore.openModal("oneBtn", {
+          message: (
+            <>
+              <p>작성 완료되었습니다.</p>
+            </>
+          ),
+          onConfirm: async () => {
+            window.sessionStorage.removeItem("isCompleted");
+            window.sessionStorage.removeItem("isMatched");
+            window.sessionStorage.removeItem("matchedData");
+            navigate("/")
+            modalStore.closeModal();
+          },
+        });
       })
       .catch((err) => {
         console.log(err);
-        alert("방문 후기를 작성해주세요!");
+        modalStore.openModal("oneBtn", {
+          message: (
+            <>
+              <p>방문 후기를 작성해주세요!</p>
+            </>
+          ),
+          onConfirm: async () => {
+            modalStore.closeModal();
+          },
+        });
       });
   }
 
