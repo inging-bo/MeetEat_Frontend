@@ -403,12 +403,6 @@ export default function RestList() {
                     </span>
                     <span>{rest.rating}</span>
                   </div>
-                  <div className="flex h-6 gap-1">
-                    <span className="flex items-center justify-center">
-                      <Review className="mt-0.5" width="20px" height="20px" />
-                    </span>
-                    <span>{rest.reviews}</span>
-                  </div>
                 </div>
               </li>
             ) : (
