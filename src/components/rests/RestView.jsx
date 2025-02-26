@@ -193,6 +193,11 @@ export default function RestView({ center, close, pickedRest, star }) {
                       </>
                     ),
                   )}
+                  {reviews.length === 0 && (
+                    <div className="text-xs text-gray-500">
+                      아직 등록된 방문자 리뷰가 없습니다.
+                    </div>
+                  )}
                 </ul>
               </div>
             </div>
@@ -212,21 +217,21 @@ export default function RestView({ center, close, pickedRest, star }) {
             <div className="-shadow-lg absolute bottom-4 left-4 right-4 top-4 overflow-scroll rounded-lg bg-white shadow-[inset_0_15px_5px_-5px_rgba(0,0,0,0.03),inset_0_-15px_5px_-5px_rgba(0,0,0,0.03)]">
               <div className="flex flex-col items-start gap-5">
                 <div className="relative flex w-full flex-row gap-3">
-                  <div className="h-[100px] w-[140px] basis-1/2 content-center justify-items-center rounded-lg bg-gray-300 text-left">
+                  <div className="h-[128px] max-h-[128px] w-[140px] basis-1/2 content-center justify-items-center rounded-lg bg-gray-300 text-left">
                     {pickedRest.thumbnail ? (
                       <>
                         {pickedRest.thumbnail.indexOf(",") !== -1 ? (
                           <>
                             <img
                               src={`${import.meta.env.VITE_IMG_URL}${pickedRest.thumbnail.split(",")[0]}`}
-                              className="h-[100px] w-full rounded-lg object-cover"
+                              className="h-[128px] w-full rounded-lg object-cover"
                             ></img>
                           </>
                         ) : (
                           <>
                             <img
                               src={`${import.meta.env.VITE_IMG_URL}${pickedRest.thumbnail}`}
-                              className="h-[100px] w-full rounded-lg object-cover"
+                              className="h-[128px] w-full rounded-lg object-cover"
                             ></img>
                           </>
                         )}
@@ -294,6 +299,11 @@ export default function RestView({ center, close, pickedRest, star }) {
                           <RestReviewItem review={review} />
                         </>
                       ),
+                    )}
+                    {reviews.length === 0 && (
+                      <div className="text-xs text-gray-500">
+                        아직 등록된 방문자 리뷰가 없습니다.
+                      </div>
                     )}
                   </ul>
                 </div>
