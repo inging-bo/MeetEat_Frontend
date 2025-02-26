@@ -40,7 +40,7 @@ export default function MainMatching() {
 
     const getMatching = async () => {
       const resMatching = await callApi("/matching", "GET");
-      console.log("MainMatching 36");
+      console.log("/matching");
       console.log(resMatching.data);
       if (
         resMatching.data !== null &&
@@ -54,6 +54,16 @@ export default function MainMatching() {
         );
         completed();
       } else matchingStore.setIsCompleted(false);
+    };
+
+    const getConnectionCheck = async () => {
+      const resConnectionCheck = await callApi("/sse/connection-check", "GET");
+      console.log("/sse/connection-check");
+      console.log(resConnectionCheck.data);
+      if (resConnectionCheck.data.response) {
+        matchingStore.setIsMatching(true);
+        window.sessionStorage.setItem("isMatching", "true");
+      }
     };
 
     authStore.checkLoggedIn();

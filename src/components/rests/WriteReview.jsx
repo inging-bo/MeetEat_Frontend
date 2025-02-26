@@ -98,13 +98,17 @@ export default function WriteReview() {
 
   const handleWriteComplete = () => {
     const textareaValue = document.getElementById("textarea").value;
-    apiRestReviewWrite(info.matchedId, textareaValue);
+    apiRestReviewWrite(info.matchingHistoryId, textareaValue);
   };
 
-  async function apiRestReviewWrite(matchedId, textareaValue) {
+  async function apiRestReviewWrite(matchingHistoryId, textareaValue) {
     const formData = new FormData();
-    formData.append("files", postImageList);
-    formData.append("matchingHistoryId", matchedId); // matchinghistory 숫자타입으로 전송
+    if (postImageList && postImageList.length > 0) {
+      postImageList.forEach((file) => {
+        formData.append("files", file);
+      });
+    }
+    formData.append("matchingHistoryId", matchingHistoryId);
     formData.append("rating", starScore);
     formData.append("description", textareaValue);
 

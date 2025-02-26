@@ -25,7 +25,6 @@ export default function Matching({
       matchingStore.setIsMatched(false);
       setIsMatching(false);
       setInfo(false);
-      window.location.replace("/");
     }
   };
 
@@ -110,7 +109,23 @@ export default function Matching({
       };
     };
 
-    fetchSSE(position.lng, position.lat, number, new Date(), place);
+    const getConnectionCheck = async () => {
+      const resConnectionCheck = await callApi("/sse/connection-check", "GET");
+      console.log("/sse/connection-check");
+      console.log(resConnectionCheck.data);
+      if (resConnectionCheck.data) {
+        window.sessionStorage.removeItem("isMatching");
+        window.sessionStorage.removeItem("isMatched");
+        matchingStore.setIsMatching(false);
+        matchingStore.setIsMatched(false);
+        setIsMatching(false);
+        setInfo(false);
+        return alert("매칭중인 세션이 존재하여 서비스 이용이 불가능합니다.");
+      } else {
+        fetchSSE(position.lng, position.lat, number, new Date(), place);
+      }
+    };
+    getConnectionCheck();
   }, []);
 
   // // POST

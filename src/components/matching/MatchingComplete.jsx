@@ -68,7 +68,7 @@ export default function MatchingComplete() {
         .matching.id;
       const matchingHistoryId = JSON.parse(
         window.sessionStorage.getItem("matchedData"),
-      ).id;
+      ).matchingHistoryId;
       return navigate(`/rests/write/${matchedId}`, {
         state: {
           restId: `${restsId}`,
