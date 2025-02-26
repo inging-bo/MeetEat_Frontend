@@ -161,7 +161,7 @@ export default function MatchingComplete() {
         state: {
           restId: `${restsId}`,
           restName: `${restsName}`,
-          matchedId: `${matchedId}`,
+          matchingHistoryId: `${matchedId}`,
         },
       });
     }

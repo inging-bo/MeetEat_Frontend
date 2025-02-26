@@ -10,7 +10,6 @@ export default function WriteReview() {
   const location = useLocation();
   const navigate = useNavigate();
   const info = { ...location.state };
-
   // 로그인 확인
   useEffect(() => {
     !authStore.loggedIn && alert("로그인 후 이용해주세요!");
@@ -70,7 +69,7 @@ export default function WriteReview() {
     setImageList(tempArr);
     setPostImageList(tempPostArr);
   };
-
+  console.log("매칭 완료 후 넘어오는 state의 info", info)
   // 이미지 다음에 작성
   const handleWriteNext = () => {
     axios
@@ -108,6 +107,7 @@ export default function WriteReview() {
         formData.append("files", file);
       });
     }
+    console.log(matchingHistoryId, textareaValue)
     formData.append("matchingHistoryId", matchingHistoryId);
     formData.append("rating", starScore);
     formData.append("description", textareaValue);

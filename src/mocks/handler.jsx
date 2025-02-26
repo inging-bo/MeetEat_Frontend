@@ -676,7 +676,7 @@ export const handlers = [
 
   // 나의 식당 후기 조회
   http.get(
-    `${import.meta.env.VITE_BE_API_URL}/restaurants/myreview`,
+    `/restaurants/myreview`,
     async ({ request }) => {
       // 쿼리 파라미터에서 matchingHistoryId 추출
       const url = new URL(request.url);
