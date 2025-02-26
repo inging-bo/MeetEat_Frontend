@@ -56,16 +56,6 @@ export default function MainMatching() {
       } else matchingStore.setIsCompleted(false);
     };
 
-    const getConnectionCheck = async () => {
-      const resConnectionCheck = await callApi("/sse/connection-check", "GET");
-      console.log("/sse/connection-check");
-      console.log(resConnectionCheck.data);
-      if (resConnectionCheck.data.response) {
-        matchingStore.setIsMatching(true);
-        window.sessionStorage.setItem("isMatching", "true");
-      }
-    };
-
     authStore.checkLoggedIn();
     authStore.loggedIn && getProfile();
 
@@ -90,7 +80,7 @@ export default function MainMatching() {
     const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
     console.log(passedTimeMin);
     // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
-    if (passedTimeMin >= 2) {
+    if (passedTimeMin >= 5) {
       const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.restaurant.id;
       const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))

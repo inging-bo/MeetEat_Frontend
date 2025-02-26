@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Map, MapMarker, Polyline } from "react-kakao-maps-sdk";
 import { useNavigate } from "react-router-dom";
 import useInterval from "../hooks/useInterval";
@@ -26,7 +26,7 @@ export default function MatchingComplete() {
   const [distance, setDistance] = useState("");
 
   // 초기 설정
-  useEffect(() => {
+  useLayoutEffect(() => {
     // 유저가 매칭된 상태가 아니라면 메인페이지로 이동
     if (window.sessionStorage.getItem("isCompleted") !== "true") {
       alert("잘못된 접근입니다.");
@@ -59,7 +59,7 @@ export default function MatchingComplete() {
     const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
     const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
     const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
-    if (passedTimeMin >= 2) {
+    if (passedTimeMin >= 5) {
       const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.restaurant.id;
       const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
@@ -134,8 +134,8 @@ export default function MatchingComplete() {
     //   );
   }, []);
 
-  const getTime = () => {
-    console.log("getTime 실행");
+  const getPassedTime = () => {
+    console.log("getPassedTime 실행");
     const now = new Date(); // 오늘 날짜
     const firstDay = new Date(
       JSON.parse(
@@ -150,25 +150,29 @@ export default function MatchingComplete() {
     const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
     const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
     const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
-    if (passedTimeMin >= 2) {
+    if (passedTimeMin >= 50) {
       const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.restaurant.id;
       const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.restaurant.name;
       const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.id;
+      const matchingHistoryId = JSON.parse(
+        window.sessionStorage.getItem("matchedData"),
+      ).matchingHistoryId;
       return navigate(`/rests/write/${matchedId}`, {
         state: {
           restId: `${restsId}`,
           restName: `${restsName}`,
-          matchingHistoryId: `${matchedId}`,
+          matchedId: `${matchedId}`,
+          matchingHistoryId: `${matchingHistoryId}`,
         },
       });
     }
   };
   // 60초마다 반복실행
   useInterval(() => {
-    getTime();
+    getPassedTime();
   }, 60000);
 
   // 거리계산
@@ -286,7 +290,7 @@ export default function MatchingComplete() {
           Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           "Content-Type": "application/json",
         },
-        heartbeatTimeout: 120000,
+        heartbeatTimeout: 60 * 60 * 1000,
         withCredentials: true,
       },
     );
@@ -309,7 +313,7 @@ export default function MatchingComplete() {
       console.log(e.data);
       // 3분후 취소 핸들링
       console.log(userList);
-      const tempUser = userList.filter((item) => item.id !== e.data);
+      const tempUser = [...userList].filter((item) => item.id !== e.data);
       console.log("tempUser");
       console.log(tempUser);
       setUserList(tempUser);

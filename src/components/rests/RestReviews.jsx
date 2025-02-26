@@ -304,39 +304,34 @@ const RestReviews = observer(() => {
     });
   };
 
-  const myReviewChk = async (thisID) => {
-    try {
-      const matchingHistoryId = thisID;
-      const token = window.localStorage.getItem("token");
-
-      const response = await axios.get(
+  const myReviewChk = async (matchingHistoryId) => {
+    await axios
+      .get(
         `${import.meta.env.VITE_BE_API_URL}/restaurants/myreview?matchingHistoryId=${matchingHistoryId}`,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Authorization 설정
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`, // Authorization 설정
             "Content-Type": "application/json", // Content-Type 설정
           },
         },
-      );
-
-      if (response.status === 200) {
-        const reviewData = response.data;
+      )
+      .then((response) => {
         modalStore.openModal("oneBtn", {
-          message: <RestReviewItem review={reviewData} />, // 모달 메시지 설정
+          message: <RestReviewItem review={response.data} />, // 모달 메시지 설정
           onConfirm: async () => {
             await modalStore.closeModal();
           },
         });
-      }
-    } catch (error) {
-      console.error("Error fetching review:", error);
-      modalStore.openModal("oneBtn", {
-        message: "리뷰를 불러오는 데 실패했습니다.",
-        onConfirm: async () => {
-          await modalStore.closeModal();
-        },
+      })
+      .catch((e) => {
+        console.error("Error fetching review:", e);
+        modalStore.openModal("oneBtn", {
+          message: "리뷰를 불러오는 데 실패했습니다.",
+          onConfirm: async () => {
+            await modalStore.closeModal();
+          },
+        });
       });
-    }
   };
 
   return (

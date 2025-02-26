@@ -40,22 +40,22 @@ export default function RestReviewItem({ review }) {
                 <>
                   <FullStar width="24px" className="text-[#9ca3af]" />
                 </>
-              )
+              ),
             )}
           </div>
-          <span className="text-gray-400 text-sm">{review.createdAt}</span>
+          <span className="text-sm text-gray-400">{review.createdAt}</span>
         </div>
-        <p className="text-sm text-gray-500 text-left pb-2">
+        <p className="pb-2 text-left text-sm text-gray-500">
           {review.description}
         </p>
-        <ul className="flex gap-2 max-w-[554px] overflow-x-scroll scrollbar-hide">
+        <ul className="flex max-w-[554px] gap-2 overflow-x-scroll scrollbar-hide">
           {imgs !== "" &&
             imgs.map((img) => (
               <>
                 <li className="shrink-0">
                   <img
-                    src={`https://meeteat.s3.ap-northeast-2.amazonaws.com/${img}`}
-                    className=" w-[100px] h-[100px]  rounded-lg object-cover"
+                    src={`${import.meta.env.VITE_IMG_URL}${img}`}
+                    className="h-[100px] w-[100px] rounded-lg object-cover"
                   />
                 </li>
               </>
