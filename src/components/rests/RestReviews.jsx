@@ -123,21 +123,21 @@ const RestReviews = observer(() => {
     };
   }, [activePopOver]);
   // ✅ 모달 열고 닫기 함수
-  const toggleModal = async (type, userId, matchingId) => {
+  const toggleModal = async (type, userId, matchingId, userNickName) => {
     try {
       let modalMessage = "";
       switch (type) {
         case "ban":
-          modalMessage = `${userId}를 차단하시겠습니까?`;
+          modalMessage = `${userNickName}를 차단하시겠습니까?`;
           break;
         case "unBan":
-          modalMessage = `${userId}를 차단 해제하시겠습니까?`;
+          modalMessage = `${userNickName}를 차단 해제하시겠습니까?`;
           break;
         case "report":
-          modalMessage = `${userId}를 신고하시겠습니까?`;
+          modalMessage = `${userNickName}를 신고하시겠습니까?`;
           break;
         case "unReport":
-          modalMessage = `${userId}를 신고 해제하시겠습니까?`;
+          modalMessage = `${userNickName}를 신고 해제하시겠습니까?`;
           break;
         default:
           modalMessage = "해당 작업을 진행하시겠습니까?";
@@ -197,16 +197,16 @@ const RestReviews = observer(() => {
               let successMsg = "";
               switch (type) {
                 case "ban":
-                  successMsg = `${userId}를 차단했습니다.`;
+                  successMsg = `${userNickName}를 차단했습니다.`;
                   break;
                 case "unBan":
-                  successMsg = `${userId}를 차단 해제했습니다.`;
+                  successMsg = `${userNickName}를 차단 해제했습니다.`;
                   break;
                 case "report":
-                  successMsg = `${userId}를 신고했습니다.`;
+                  successMsg = `${userNickName}를 신고했습니다.`;
                   break;
                 case "unReport":
-                  successMsg = `${userId}를 신고 해제했습니다.`;
+                  successMsg = `${userNickName}를 신고 해제했습니다.`;
                   break;
                 default:
                   break;
@@ -286,9 +286,9 @@ const RestReviews = observer(() => {
 
   // 매칭 횟수별 메달 표시 함수
   const viewMedal = (count) => {
-    if (count >= 5) return <GoldMedal width="16px" height="16px" />;
-    if (count >= 3) return <SilverMedal width="16px" height="16px" />;
-    if (count >= 1) return <BronzeMedal width="16px" height="16px" />;
+    if (count >= 5) return <GoldMedal width="16px" height="16px"/>;
+    if (count >= 3) return <SilverMedal width="16px" height="16px"/>;
+    if (count >= 1) return <BronzeMedal width="16px" height="16px"/>;
     return null;
   };
 
@@ -317,7 +317,7 @@ const RestReviews = observer(() => {
       )
       .then((response) => {
         modalStore.openModal("oneBtn", {
-          message: <RestReviewItem review={response.data} />, // 모달 메시지 설정
+          message: <RestReviewItem review={response.data}/>, // 모달 메시지 설정
           onConfirm: async () => {
             await modalStore.closeModal();
           },
@@ -335,7 +335,8 @@ const RestReviews = observer(() => {
   };
 
   return (
-    <div className="mb-5 flex flex-col gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg max-[760px]:max-w-[300px] min-[400px]:w-full min-[400px]:min-w-[380px] min-[760px]:h-full">
+    <div
+      className="mb-5 flex flex-col gap-10 rounded-2xl border border-[#ff6445] bg-white px-7 py-7 drop-shadow-lg max-[760px]:max-w-[300px] min-[400px]:w-full min-[400px]:min-w-[380px] min-[760px]:h-full">
       <p className="text-left text-[28px] font-bold">나의 매칭 히스토리</p>
       <ul className="flex flex-1 flex-col gap-4 min-[760px]:overflow-y-scroll min-[760px]:scrollbar-hide">
         {Object.values(historyData) && Object.values(historyData).length > 0 ? (
@@ -349,7 +350,7 @@ const RestReviews = observer(() => {
                   <span className="flex text-wrap break-all text-left text-xs text-gray-400">
                     {item.matching.restaurant.category_name.slice(
                       item.matching.restaurant.category_name.lastIndexOf(">") +
-                        2,
+                      2,
                     )}
                   </span>
                 </div>
@@ -382,7 +383,8 @@ const RestReviews = observer(() => {
                       )}
                     </>
                   ) : (
-                    <div className="flex flex-shrink-0 rounded-md bg-secondary px-2 py-1 text-xs text-white min-[600px]:text-sm">
+                    <div
+                      className="flex flex-shrink-0 rounded-md bg-secondary px-2 py-1 text-xs text-white min-[600px]:text-sm">
                       취소된 매칭
                     </div>
                   )}
@@ -422,14 +424,14 @@ const RestReviews = observer(() => {
                         >
                           {user.ban ? (
                             <button
-                              onClick={() => toggleModal("unBan", user.id)}
+                              onClick={() => toggleModal("unBan", user.id, item.matching.id, user.nickname)}
                               className="rounded-lg px-2 py-1 hover:bg-gray-200"
                             >
                               차단해제
                             </button>
                           ) : (
                             <button
-                              onClick={() => toggleModal("ban", user.id)}
+                              onClick={() => toggleModal("ban", user.id, item.matching.id, user.nickname)}
                               className="rounded-lg px-2 py-1 hover:bg-gray-200"
                             >
                               차단하기
@@ -442,6 +444,7 @@ const RestReviews = observer(() => {
                                   "unReport",
                                   user.id,
                                   item.matching.id,
+                                  user.nickname
                                 )
                               }
                               className="rounded-lg px-2 py-1 hover:bg-gray-200"
@@ -451,14 +454,20 @@ const RestReviews = observer(() => {
                           ) : (
                             <button
                               onClick={() =>
-                                toggleModal("report", user.id, item.matching.id)
+                                toggleModal(
+                                  "report",
+                                  user.id,
+                                  item.matching.id,
+                                  user.nickname
+                                )
                               }
                               className="rounded-lg px-2 py-1 hover:bg-gray-200"
                             >
                               신고하기
                             </button>
                           )}
-                          <div className="absolute -right-1.5 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rotate-45 transform border-r border-t border-gray-300 bg-white"></div>
+                          <div
+                            className="absolute -right-1.5 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rotate-45 transform border-r border-t border-gray-300 bg-white"></div>
                         </div>
                       )}
                     </div>
