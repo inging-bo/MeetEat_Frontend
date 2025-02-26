@@ -39,7 +39,6 @@ export default function MatchingComplete() {
       return navigate("/");
     }
     // apiSSESub();
-    fetchSSE();
     const now = new Date(); // 오늘 날짜
     // const firstDay = new Date(
     //   JSON.parse(window.sessionStorage.getItem("matchedData")).createdAt
@@ -116,7 +115,12 @@ export default function MatchingComplete() {
       lat: jsonCurData.matching.restaurant.lat,
       lng: jsonCurData.matching.restaurant.lon,
     });
-
+    window.sessionStorage.setItem(
+      "tempUser",
+      JSON.stringify(
+        jsonCurData.matching.userList.filter((item) => item.join === true),
+      ),
+    );
     // 매칭 취소 발생
     //   setTimeout(
     //     () =>
@@ -132,6 +136,66 @@ export default function MatchingComplete() {
     //         }),
     //     [10000]
     //   );
+  }, []);
+
+  useEffect(() => {
+    // SSE fetch
+    const fetchSSE = () => {
+      // header 보내기 위해 EventSourcePolyfill 사용
+      const eventSource = new EventSourcePolyfill(
+        `${import.meta.env.VITE_BE_API_URL}/sse/subscribe`,
+        {
+          headers: {
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          heartbeatTimeout: 60 * 60 * 1000,
+          withCredentials: true,
+        },
+      );
+      eventSource.onopen = () => {
+        // 연결시 할 일
+      };
+
+      eventSource.addEventListener("cancel", (e) => {
+        console.log("3분전 취소");
+        console.log(e.data);
+        alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
+        window.sessionStorage.clear();
+        matchingStore.setIsCompleted(false);
+        matchingStore.setIsMatched(false);
+        eventSource.close();
+        window.location.replace("/");
+      });
+      eventSource.addEventListener("escape", (e) => {
+        console.log("3분후 취소");
+        console.log("e.data : " + e.data);
+
+        const tempUser = [
+          ...JSON.parse(window.sessionStorage.getItem("tempUser")),
+        ].filter((item) => {
+          console.log(item);
+          return item.id !== Number(e.data);
+        });
+
+        console.log("tempUser");
+        console.log(tempUser);
+        window.sessionStorage.setItem("tempUser", JSON.stringify(tempUser));
+        setUserList(tempUser);
+      });
+
+      eventSource.onerror = (e) => {
+        // 종료 또는 에러 발생 시 할 일
+        eventSource.close();
+        if (e.error) {
+          // 에러 발생 시 할 일
+        }
+        if (e.target.readyState === EventSource.CLOSED) {
+          // 종료 시 할 일
+        }
+      };
+    };
+    fetchSSE();
   }, []);
 
   const getPassedTime = () => {
@@ -280,57 +344,6 @@ export default function MatchingComplete() {
     setDistance(distance);
   }, [position, positionTo]);
 
-  // SSE fetch
-  const fetchSSE = () => {
-    // header 보내기 위해 EventSourcePolyfill 사용
-    const eventSource = new EventSourcePolyfill(
-      `${import.meta.env.VITE_BE_API_URL}/sse/subscribe`,
-      {
-        headers: {
-          Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-        heartbeatTimeout: 60 * 60 * 1000,
-        withCredentials: true,
-      },
-    );
-    eventSource.onopen = () => {
-      // 연결시 할 일
-    };
-
-    eventSource.addEventListener("cancel", (e) => {
-      console.log("3분전 취소");
-      console.log(e.data);
-      alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
-      window.sessionStorage.clear();
-      matchingStore.setIsCompleted(false);
-      matchingStore.setIsMatched(false);
-      eventSource.close();
-      window.location.replace("/");
-    });
-    eventSource.addEventListener("escape", (e) => {
-      console.log("3분후 취소");
-      console.log(e.data);
-      // 3분후 취소 핸들링
-      console.log(userList);
-      const tempUser = [...userList].filter((item) => item.id !== e.data);
-      console.log("tempUser");
-      console.log(tempUser);
-      setUserList(tempUser);
-    });
-
-    eventSource.onerror = (e) => {
-      // 종료 또는 에러 발생 시 할 일
-      eventSource.close();
-      if (e.error) {
-        // 에러 발생 시 할 일
-      }
-      if (e.target.readyState === EventSource.CLOSED) {
-        // 종료 시 할 일
-      }
-    };
-  };
-
   // 3분 전 매칭취소
   async function apiPOSTCancel(matchingId) {
     await axios
@@ -471,16 +484,19 @@ export default function MatchingComplete() {
             />
           </Map>
           <div className="people-container flex h-[180px] min-w-[340px] flex-col gap-2 overflow-y-scroll scrollbar-hide md:h-full md:min-w-[370px]">
-            {userList.map((user) => (
-              <>
-                <div className="people-item rounded-lg border border-slate-200 p-3 text-left">
-                  <div className="flex flex-row">
-                    <p>{user.nickname}</p>
-                  </div>
-                  <p>{user.introduce}</p>
-                </div>
-              </>
-            ))}
+            {userList.map(
+              (user) =>
+                user.join === true && (
+                  <>
+                    <div className="people-item rounded-lg border border-slate-200 p-3 text-left">
+                      <div className="flex flex-row">
+                        <p>{user.nickname}</p>
+                      </div>
+                      <p>{user.introduce}</p>
+                    </div>
+                  </>
+                ),
+            )}
           </div>
         </div>
         <div className="fixed bottom-0 z-50 flex h-[60px] w-full max-w-3xl flex-row justify-center text-[#555555]">
