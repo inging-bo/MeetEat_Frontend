@@ -3,7 +3,6 @@ import FullStar from "../../assets/full-star.svg?react";
 
 export default function RestReviewItem({ review }) {
   const [star, setStar] = useState(new Array(5).fill(false));
-  console.log(review, "ㅎㅎㅎ");
   let imgs = "";
   if (review.imgUrl === null) {
     imgs = "";
