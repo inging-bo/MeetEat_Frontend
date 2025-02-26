@@ -100,7 +100,7 @@ export default function MainMatching() {
       const matchingHistoryId = JSON.parse(
         window.sessionStorage.getItem("matchedData"),
       ).id;
-      return navigate(`/rests/write/${restsId}`, {
+      return navigate(`/rests/write/${matchingHistoryId}`, {
         state: {
           restId: `${restsId}`,
           restName: `${restsName}`,
