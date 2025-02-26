@@ -98,7 +98,7 @@ const RestInfo = observer(() => {
         setIsEditing(false);
         return;
       }
-      if (value === "") {
+      if (value.trim() === "") {
         modalStore.openModal("oneBtn", {
           message: (
             <>
