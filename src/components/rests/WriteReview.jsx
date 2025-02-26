@@ -106,6 +106,7 @@ export default function WriteReview() {
       });
   };
 
+  // 작성 완료
   const handleWriteComplete = () => {
     const textareaValue = document.getElementById("textarea").value;
     apiRestReviewWrite(info.matchingHistoryId, textareaValue);
@@ -134,6 +135,16 @@ export default function WriteReview() {
         },
       })
       .then(() => {
+        axios.post(
+          `${import.meta.env.VITE_BE_API_URL}/matching/history/${info.matchingHistoryId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
         modalStore.openModal("oneBtn", {
           message: (
             <>
