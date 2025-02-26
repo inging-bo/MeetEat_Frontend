@@ -3,16 +3,15 @@ import FullStar from "../../assets/full-star.svg?react";
 
 export default function RestReviewItem({ review }) {
   const [star, setStar] = useState(new Array(5).fill(false));
-  console.log(review);
   let imgs = "";
-  if (review.imgUrl === null) {
+  if (review.imageUrl === null) {
     imgs = "";
-  } else if (review.imgUrl.indexOf(",") !== -1) {
-    imgs = review.imgUrl.split(",");
-  } else if (review.imgUrl === "") {
+  } else if (review.imageUrl.indexOf(",") !== -1) {
+    imgs = review.imageUrl.split(",");
+  } else if (review.imageUrl === "") {
     imgs = "";
   } else {
-    imgs = [review.imgUrl];
+    imgs = [review.imageUrl];
   }
 
   useEffect(() => {
@@ -25,9 +24,20 @@ export default function RestReviewItem({ review }) {
     }
   }, []);
 
+  const dateObj = new Date(review.createdAt);
+
+  const formattedDateTime = dateObj.toLocaleString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).replace(/\. /g, '-').replace(',', '');
+
   return (
     <>
-      <li className="flex flex-col items-start pb-4">
+      <li key={review.id} className="flex flex-col items-start pb-4">
         <p className="font-bold">{review.nickname}</p>
         <div className="flex gap-1 pb-1">
           <div className="flex">
@@ -43,7 +53,7 @@ export default function RestReviewItem({ review }) {
               )
             )}
           </div>
-          <span className="text-gray-400 text-sm">{review.createdAt}</span>
+          <span className="text-gray-400 text-sm">{formattedDateTime}</span>
         </div>
         <p className="text-sm text-gray-500 text-left pb-2">
           {review.description}
