@@ -4,14 +4,14 @@ import FullStar from "../../assets/full-star.svg?react";
 export default function RestReviewItem({ review }) {
   const [star, setStar] = useState(new Array(5).fill(false));
   let imgs = "";
-  if (review.imageUrl === null) {
+  if (review.imgUrl === null) {
     imgs = "";
-  } else if (review.imageUrl.indexOf(",") !== -1) {
-    imgs = review.imageUrl.split(",");
-  } else if (review.imageUrl === "") {
+  } else if (review.imgUrl.indexOf(",") !== -1) {
+    imgs = review.imgUrl.split(",");
+  } else if (review.imgUrl === "") {
     imgs = "";
   } else {
-    imgs = [review.imageUrl];
+    imgs = [review.imgUrl];
   }
 
   useEffect(() => {
