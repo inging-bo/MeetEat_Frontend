@@ -193,6 +193,11 @@ export default function RestView({ center, close, pickedRest, star }) {
                       </>
                     ),
                   )}
+                  {reviews.length === 0 && (
+                    <div className="text-xs text-gray-500">
+                      아직 등록된 방문자 리뷰가 없습니다.
+                    </div>
+                  )}
                 </ul>
               </div>
             </div>

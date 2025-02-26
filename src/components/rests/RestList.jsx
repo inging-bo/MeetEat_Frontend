@@ -3,7 +3,6 @@ import axios from "axios";
 import Arrow from "../../assets/updown-arrow-icon.svg?react";
 import FullStar from "../../assets/full-star.svg?react";
 import Logo from "../../assets/header-logo.svg?react";
-import Review from "../../assets/review.svg?react";
 import RestView from "./RestView.jsx";
 
 export default function RestList() {
@@ -444,12 +443,6 @@ export default function RestList() {
                       />
                     </span>
                     <span>{rest.rating}</span>
-                  </div>
-                  <div className="flex h-6 gap-1">
-                    <span className="flex items-center justify-center">
-                      <Review className="mt-0.5" width="20px" height="20px" />
-                    </span>
-                    <span>{rest.reviews}</span>
                   </div>
                 </div>
               </li>
