@@ -120,6 +120,11 @@ export default function RestList() {
 
   const openSearchFilter = (filter) => {
     setSearchFilter(searchFilter === "" ? filter : "");
+    document.addEventListener("click", (e) => {
+      if (!e.target.classList.contains("toggle")) {
+        return setSearchFilter("");
+      }
+    });
   };
 
   const category = ["전체", "한식", "중식", "일식", "양식"];
@@ -346,17 +351,17 @@ export default function RestList() {
         <div className="mb-3 mr-2 flex justify-end gap-2 min-[750px]:w-[700px] min-[1150px]:w-[1100px]">
           <ul
             onClick={() => openSearchFilter("category")}
-            className={`relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "category" && "rounded-b-none border-b-[transparent]"}`}
+            className={`toggle relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "category" && "rounded-b-none border-b-[transparent]"}`}
           >
-            <li className="flex items-center justify-center gap-2">
+            <li className="toggle flex items-center justify-center gap-2">
               {categoryName}
               <Arrow
-                className={`${searchFilter === "category" ? "rotate-180 duration-300 ease-in-out" : "duration-300"} `}
+                className={`${searchFilter === "category" ? "toggle rotate-180 duration-300 ease-in-out" : "toggle duration-300"} `}
               />
             </li>
             {searchFilter === "category" && (
               <>
-                <ul className="absolute top-[105%] z-10 flex w-[67.41px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
+                <ul className="toggle absolute top-[105%] z-10 flex w-[67.41px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
                   {category
                     .filter((item) => categoryName !== item)
                     .map((item) => (
@@ -373,17 +378,17 @@ export default function RestList() {
           </ul>
           <ul
             onClick={() => openSearchFilter("region")}
-            className={`relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "region" && "rounded-b-none border-b-[transparent]"}`}
+            className={`toggle relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "region" && "rounded-b-none border-b-[transparent]"}`}
           >
-            <li className="flex items-center justify-center gap-2">
+            <li className="toggle flex items-center justify-center gap-2">
               {regionName}
               <Arrow
-                className={`${searchFilter === "region" ? "rotate-180 duration-300 ease-in-out" : "duration-300"} `}
+                className={`${searchFilter === "region" ? "toggle rotate-180 duration-300 ease-in-out" : "toggle duration-300"} `}
               />
             </li>
             {searchFilter === "region" && (
               <>
-                <ul className="absolute top-[105%] z-10 flex w-[67.41px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
+                <ul className="toggle absolute top-[105%] z-10 flex w-[67.41px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
                   {region
                     .filter((item) => regionName !== item)
                     .sort()
@@ -401,17 +406,17 @@ export default function RestList() {
           </ul>
           <ul
             onClick={() => openSearchFilter("option")}
-            className={`relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "option" && "rounded-b-none border-b-[transparent]"}`}
+            className={`toggle relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "option" && "rounded-b-none border-b-[transparent]"}`}
           >
-            <li className="flex items-center justify-center gap-2">
+            <li className="toggle flex items-center justify-center gap-2">
               {sortedName}
               <Arrow
-                className={`${searchFilter === "option" ? "rotate-180 duration-300 ease-in-out" : "duration-300"} `}
+                className={`${searchFilter === "option" ? "toggle rotate-180 duration-300 ease-in-out" : "toggle duration-300"} `}
               />
             </li>
             {searchFilter === "option" && (
               <>
-                <ul className="absolute top-[105%] z-10 flex w-[82.1px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
+                <ul className="toggle absolute top-[105%] z-10 flex w-[82.1px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
                   {sorted
                     .filter((item) => sortedName !== item)
                     .sort()
