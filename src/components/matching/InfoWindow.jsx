@@ -30,7 +30,7 @@ export default function InfoWindow({
 
   const choicePlace = async (marker) => {
     if (!isLoggedIn)
-      return modalStore.openModal("twoBtn", {
+      return modalStore.openModal("oneBtn", {
         message: (
           <>
             <div>로그인 후 이용할 수 있습니다.</div>
@@ -42,19 +42,19 @@ export default function InfoWindow({
           modalStore.closeModal();
         },
       });
-    if (!window.sessionStorage.getItem("isPenalty"))
-      return modalStore.openModal("twoBtn", {
+    if (!window.sessionStorage.getItem("isPenalty")) {
+      return modalStore.openModal("oneBtn", {
         message: (
           <>
             <div>매칭 3분 후 취소로</div>
             <div>패널티가 부여된 계정입니다.</div>
           </>
         ),
-        onConfirm: async () => {
-          await navigate("/");
+        onConfirm: () => {
           modalStore.closeModal();
         },
       });
+    }
     setIsMatching("true");
     setSelectedMarker(marker);
     setNumber(choicedNumber);

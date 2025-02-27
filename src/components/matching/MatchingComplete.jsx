@@ -224,7 +224,7 @@ export default function MatchingComplete() {
     const toNow = now.getTime(); // 오늘까지 지난 시간(밀리 초)
     const toFirst = firstDay.getTime(); // 첫날까지 지난 시간(밀리 초)
     const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000; // 첫날부터 오늘까지 지난 시간(밀리 초)
-    if (passedTimeMin >= 50) {
+    if (passedTimeMin >= 5) {
       const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
         .matching.restaurant.id;
       const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
