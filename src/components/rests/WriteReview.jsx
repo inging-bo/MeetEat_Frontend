@@ -261,9 +261,10 @@ export default function WriteReview() {
                 className="relative min-h-[100px] min-w-[100px]"
                 key={"image_" + idx}
               >
+
                 <button
                   onClick={() => handleDeleteImage(idx)}
-                  className="absolute right-[5px] top-[2px] text-[15px] font-thin text-white drop-shadow-lg"
+                  className="absolute right-[5px] top-[5px] text-[15px] font-bold text-black w-[15px] h-[15px] bg-white flex justify-center items-center rounded-full p-2.5"
                 >
                   ×
                 </button>
