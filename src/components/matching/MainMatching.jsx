@@ -29,7 +29,7 @@ export default function MainMatching() {
       const resProfile = await callApi("/users/profile", "GET");
       console.log(resProfile.data);
       if (resProfile.data !== undefined) {
-        if (resProfile.data.penalty)
+        if (resProfile.data.isPenalty)
           window.sessionStorage.setItem("isPenalty", true);
         else {
           window.sessionStorage.setItem("isPenalty", false);
@@ -40,6 +40,7 @@ export default function MainMatching() {
 
     const getMatching = async () => {
       const resMatching = await callApi("/matching", "GET");
+      console.log()
       console.log("/matching");
       console.log(resMatching.data);
       if (
