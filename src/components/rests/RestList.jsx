@@ -10,7 +10,7 @@ export default function RestList() {
   const [restaurants, setRestaurants] = useState([]);
   const [maxPage, setMaxPage] = useState(0);
   const [page, setPage] = useState("1");
-  const [regionName, setRegionName] = useState("경기");
+  const [regionName, setRegionName] = useState("");
   const [categoryName, setCategoryName] = useState("전체");
   const [sortedName, setSortedName] = useState("거리순");
   const [placeName, setPlaceName] = useState("");
@@ -39,6 +39,27 @@ export default function RestList() {
           pos.coords.longitude !== position.lng
         ) {
           setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          let geocoder = new window.kakao.maps.services.Geocoder();
+          let callback = function (result) {
+            console.log(result);
+            regionName !==
+              result[0].address.address_name.slice(
+                0,
+                result[0].address.address_name.indexOf(" "),
+              ) &&
+              setRegionName(
+                result[0].address.address_name.slice(
+                  0,
+                  result[0].address.address_name.indexOf(" "),
+                ),
+              );
+          };
+
+          geocoder.coord2Address(
+            pos.coords.longitude,
+            pos.coords.latitude,
+            callback,
+          );
         }
       },
       gpsError,
@@ -52,6 +73,26 @@ export default function RestList() {
           pos.coords.longitude !== position.lng
         ) {
           setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          let geocoder = new window.kakao.maps.services.Geocoder();
+          let callback = function (result) {
+            regionName !==
+              result[0].address.address_name.slice(
+                0,
+                result[0].address.address_name.indexOf(" "),
+              ) &&
+              setRegionName(
+                result[0].address.address_name.slice(
+                  0,
+                  result[0].address.address_name.indexOf(" "),
+                ),
+              );
+          };
+
+          geocoder.coord2Address(
+            pos.coords.longitude,
+            pos.coords.latitude,
+            callback,
+          );
         }
       },
       gpsError,
@@ -66,11 +107,24 @@ export default function RestList() {
     let sort = "DISTANCE";
     if (sortedName === "거리순") sort = "DISTANCE";
     else if (sortedName === "평점순") sort = "RATING";
-    apiPOSTRestsLists(regionName, categoryName, placeName, position, sort, "0");
+    regionName !== "" &&
+      apiPOSTRestsLists(
+        regionName,
+        categoryName,
+        placeName,
+        position,
+        sort,
+        "1",
+      );
   }, [regionName, categoryName, sortedName]);
 
   const openSearchFilter = (filter) => {
     setSearchFilter(searchFilter === "" ? filter : "");
+    document.addEventListener("click", (e) => {
+      if (!e.target.classList.contains("toggle")) {
+        return setSearchFilter("");
+      }
+    });
   };
 
   const category = ["전체", "한식", "중식", "일식", "양식"];
@@ -111,7 +165,7 @@ export default function RestList() {
           placeName,
           position,
           sort,
-          "0",
+          "1",
         );
       }, 1000); // 디바운스 지연 시간
       return () => clearTimeout(delayDebounceTimer);
@@ -297,21 +351,24 @@ export default function RestList() {
         <div className="mb-3 mr-2 flex justify-end gap-2 min-[750px]:w-[700px] min-[1150px]:w-[1100px]">
           <ul
             onClick={() => openSearchFilter("category")}
-            className={`relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "category" && "rounded-b-none border-b-[transparent]"}`}
+            className={`toggle relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "category" && "rounded-b-none border-b-[transparent]"}`}
           >
-            <li className="flex items-center justify-center gap-2">
+            <li className="toggle flex items-center justify-center gap-2">
               {categoryName}
               <Arrow
-                className={`${searchFilter === "category" ? "rotate-180 duration-300 ease-in-out" : "duration-300"} `}
+                className={`${searchFilter === "category" ? "toggle rotate-180 duration-300 ease-in-out" : "toggle duration-300"} `}
               />
             </li>
             {searchFilter === "category" && (
               <>
-                <ul className="absolute top-[105%] z-10 flex w-[67.41px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
+                <ul className="toggle absolute top-[105%] z-10 flex w-[67.41px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
                   {category
                     .filter((item) => categoryName !== item)
                     .map((item) => (
-                      <li key={item} onClick={() => setCategoryName(item)}>
+                      <li
+                        key={`${item}category`}
+                        onClick={() => setCategoryName(item)}
+                      >
                         {item}
                       </li>
                     ))}
@@ -321,22 +378,25 @@ export default function RestList() {
           </ul>
           <ul
             onClick={() => openSearchFilter("region")}
-            className={`relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "region" && "rounded-b-none border-b-[transparent]"}`}
+            className={`toggle relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "region" && "rounded-b-none border-b-[transparent]"}`}
           >
-            <li className="flex items-center justify-center gap-2">
+            <li className="toggle flex items-center justify-center gap-2">
               {regionName}
               <Arrow
-                className={`${searchFilter === "region" ? "rotate-180 duration-300 ease-in-out" : "duration-300"} `}
+                className={`${searchFilter === "region" ? "toggle rotate-180 duration-300 ease-in-out" : "toggle duration-300"} `}
               />
             </li>
             {searchFilter === "region" && (
               <>
-                <ul className="absolute top-[105%] z-10 flex w-[67.41px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
+                <ul className="toggle absolute top-[105%] z-10 flex w-[67.41px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
                   {region
                     .filter((item) => regionName !== item)
                     .sort()
                     .map((item) => (
-                      <li key={item} onClick={() => setRegionName(item)}>
+                      <li
+                        key={`${item}region`}
+                        onClick={() => setRegionName(item)}
+                      >
                         {item}
                       </li>
                     ))}
@@ -346,22 +406,25 @@ export default function RestList() {
           </ul>
           <ul
             onClick={() => openSearchFilter("option")}
-            className={`relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "option" && "rounded-b-none border-b-[transparent]"}`}
+            className={`toggle relative flex flex-col items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-2 py-1 ${searchFilter === "option" && "rounded-b-none border-b-[transparent]"}`}
           >
-            <li className="flex items-center justify-center gap-2">
+            <li className="toggle flex items-center justify-center gap-2">
               {sortedName}
               <Arrow
-                className={`${searchFilter === "option" ? "rotate-180 duration-300 ease-in-out" : "duration-300"} `}
+                className={`${searchFilter === "option" ? "toggle rotate-180 duration-300 ease-in-out" : "toggle duration-300"} `}
               />
             </li>
             {searchFilter === "option" && (
               <>
-                <ul className="absolute top-[105%] z-10 flex w-[82.1px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
+                <ul className="toggle absolute top-[105%] z-10 flex w-[82.1px] flex-col gap-2 rounded-b-md border border-t-0 bg-[#eeeeee] py-1">
                   {sorted
                     .filter((item) => sortedName !== item)
                     .sort()
                     .map((item) => (
-                      <li key={item} onClick={() => setSortedName(item)}>
+                      <li
+                        key={`${item}sorted`}
+                        onClick={() => setSortedName(item)}
+                      >
                         {item}
                       </li>
                     ))}
