@@ -114,7 +114,7 @@ export default function RestList() {
         placeName,
         position,
         sort,
-        "0",
+        "1",
       );
   }, [regionName, categoryName, sortedName]);
 
@@ -165,7 +165,7 @@ export default function RestList() {
           placeName,
           position,
           sort,
-          "0",
+          "1",
         );
       }, 1000); // 디바운스 지연 시간
       return () => clearTimeout(delayDebounceTimer);
