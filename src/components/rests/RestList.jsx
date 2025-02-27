@@ -10,7 +10,7 @@ export default function RestList() {
   const [restaurants, setRestaurants] = useState([]);
   const [maxPage, setMaxPage] = useState(0);
   const [page, setPage] = useState("1");
-  const [regionName, setRegionName] = useState("경기");
+  const [regionName, setRegionName] = useState("");
   const [categoryName, setCategoryName] = useState("전체");
   const [sortedName, setSortedName] = useState("거리순");
   const [placeName, setPlaceName] = useState("");
@@ -39,6 +39,27 @@ export default function RestList() {
           pos.coords.longitude !== position.lng
         ) {
           setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          let geocoder = new window.kakao.maps.services.Geocoder();
+          let callback = function (result) {
+            console.log(result);
+            regionName !==
+              result[0].address.address_name.slice(
+                0,
+                result[0].address.address_name.indexOf(" "),
+              ) &&
+              setRegionName(
+                result[0].address.address_name.slice(
+                  0,
+                  result[0].address.address_name.indexOf(" "),
+                ),
+              );
+          };
+
+          geocoder.coord2Address(
+            pos.coords.longitude,
+            pos.coords.latitude,
+            callback,
+          );
         }
       },
       gpsError,
@@ -52,6 +73,26 @@ export default function RestList() {
           pos.coords.longitude !== position.lng
         ) {
           setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          let geocoder = new window.kakao.maps.services.Geocoder();
+          let callback = function (result) {
+            regionName !==
+              result[0].address.address_name.slice(
+                0,
+                result[0].address.address_name.indexOf(" "),
+              ) &&
+              setRegionName(
+                result[0].address.address_name.slice(
+                  0,
+                  result[0].address.address_name.indexOf(" "),
+                ),
+              );
+          };
+
+          geocoder.coord2Address(
+            pos.coords.longitude,
+            pos.coords.latitude,
+            callback,
+          );
         }
       },
       gpsError,
@@ -66,7 +107,15 @@ export default function RestList() {
     let sort = "DISTANCE";
     if (sortedName === "거리순") sort = "DISTANCE";
     else if (sortedName === "평점순") sort = "RATING";
-    apiPOSTRestsLists(regionName, categoryName, placeName, position, sort, "0");
+    regionName !== "" &&
+      apiPOSTRestsLists(
+        regionName,
+        categoryName,
+        placeName,
+        position,
+        sort,
+        "0",
+      );
   }, [regionName, categoryName, sortedName]);
 
   const openSearchFilter = (filter) => {
@@ -311,7 +360,10 @@ export default function RestList() {
                   {category
                     .filter((item) => categoryName !== item)
                     .map((item) => (
-                      <li key={item} onClick={() => setCategoryName(item)}>
+                      <li
+                        key={`${item}category`}
+                        onClick={() => setCategoryName(item)}
+                      >
                         {item}
                       </li>
                     ))}
@@ -336,7 +388,10 @@ export default function RestList() {
                     .filter((item) => regionName !== item)
                     .sort()
                     .map((item) => (
-                      <li key={item} onClick={() => setRegionName(item)}>
+                      <li
+                        key={`${item}region`}
+                        onClick={() => setRegionName(item)}
+                      >
                         {item}
                       </li>
                     ))}
@@ -361,7 +416,10 @@ export default function RestList() {
                     .filter((item) => sortedName !== item)
                     .sort()
                     .map((item) => (
-                      <li key={item} onClick={() => setSortedName(item)}>
+                      <li
+                        key={`${item}sorted`}
+                        onClick={() => setSortedName(item)}
+                      >
                         {item}
                       </li>
                     ))}
