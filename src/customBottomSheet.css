@@ -84,7 +84,7 @@
   left: 50%;
   transform: translateX(-50%);
   border-radius: 2px;
-  background-color: var(--rsbs-handle-bg);
+  background-color: #d0d0d0;
 }
 @media (min-resolution: 2dppx) {
   [data-rsbs-header]:before {

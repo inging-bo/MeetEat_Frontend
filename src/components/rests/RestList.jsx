@@ -9,7 +9,7 @@ export default function RestList() {
   // ✅ 확인용 식당 리스트
   const [restaurants, setRestaurants] = useState([]);
   const [maxPage, setMaxPage] = useState(0);
-  const [page, setPage] = useState("1");
+  const [page, setPage] = useState("0");
   const [regionName, setRegionName] = useState("");
   const [categoryName, setCategoryName] = useState("전체");
   const [sortedName, setSortedName] = useState("거리순");
@@ -100,10 +100,23 @@ export default function RestList() {
     );
   }, []);
 
-  // 필터 적용시 다시 불러오기
+  // 필터 적용시 다시 불러오기 ( 키워드 공백 변경 )
   useEffect(() => {
     setRestaurants([]);
-    setPage("1");
+    setPage("0");
+    setPlaceName("");
+    document.getElementById("keyword").value = "";
+    let sort = "DISTANCE";
+    if (sortedName === "거리순") sort = "DISTANCE";
+    else if (sortedName === "평점순") sort = "RATING";
+    regionName !== "" &&
+      apiPOSTRestsLists(regionName, categoryName, "", position, sort, "0");
+  }, [regionName, categoryName]);
+
+  // 필터 적용시 다시 불러오기 ( 키워드 유지 in sorted변경 )
+  useEffect(() => {
+    setRestaurants([]);
+    setPage("0");
     let sort = "DISTANCE";
     if (sortedName === "거리순") sort = "DISTANCE";
     else if (sortedName === "평점순") sort = "RATING";
@@ -114,9 +127,9 @@ export default function RestList() {
         placeName,
         position,
         sort,
-        "1",
+        "0",
       );
-  }, [regionName, categoryName, sortedName]);
+  }, [sortedName]);
 
   const openSearchFilter = (filter) => {
     setSearchFilter(searchFilter === "" ? filter : "");
@@ -155,7 +168,7 @@ export default function RestList() {
     if (isMounted.current) {
       const delayDebounceTimer = setTimeout(() => {
         setRestaurants([]);
-        setPage("1");
+        setPage("0");
         let sort = "DISTANCE";
         if (sortedName === "거리순") sort = "DISTANCE";
         else if (sortedName === "평점순") sort = "RATING";
@@ -165,7 +178,7 @@ export default function RestList() {
           placeName,
           position,
           sort,
-          "1",
+          "0",
         );
       }, 1000); // 디바운스 지연 시간
       return () => clearTimeout(delayDebounceTimer);
