@@ -167,8 +167,7 @@ export default function MatchingComplete() {
               <p>매칭 이탈자가 발생하여 매칭을 종료합니다.</p>
             </>
           ),
-          onConfirm: async () => {
-            await navigate("/mypage");
+          onConfirm: () => {
             window.sessionStorage.clear();
             matchingStore.setIsCompleted(false);
             matchingStore.setIsMatched(false);
