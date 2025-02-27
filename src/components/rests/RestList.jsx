@@ -100,7 +100,20 @@ export default function RestList() {
     );
   }, []);
 
-  // 필터 적용시 다시 불러오기
+  // 필터 적용시 다시 불러오기 ( 키워드 공백 변경 )
+  useEffect(() => {
+    setRestaurants([]);
+    setPage("0");
+    setPlaceName("");
+    document.getElementById("keyword").value = "";
+    let sort = "DISTANCE";
+    if (sortedName === "거리순") sort = "DISTANCE";
+    else if (sortedName === "평점순") sort = "RATING";
+    regionName !== "" &&
+      apiPOSTRestsLists(regionName, categoryName, "", position, sort, "0");
+  }, [regionName, categoryName]);
+
+  // 필터 적용시 다시 불러오기 ( 키워드 유지 in sorted변경 )
   useEffect(() => {
     setRestaurants([]);
     setPage("0");
@@ -116,7 +129,7 @@ export default function RestList() {
         sort,
         "0",
       );
-  }, [regionName, categoryName, sortedName]);
+  }, [sortedName]);
 
   const openSearchFilter = (filter) => {
     setSearchFilter(searchFilter === "" ? filter : "");
