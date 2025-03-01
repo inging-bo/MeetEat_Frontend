@@ -49,10 +49,20 @@ const RestInfo = observer(() => {
       }
 
       if (error.response?.status === 403) {
-        alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-        localStorage.removeItem("token");
-        authStore.setLoggedIn(false);
-        window.location.replace("/");
+        modalStore.openModal("oneBtn", {
+          message: (
+            <>
+              <p>세션이 만료되었습니다. 다시 로그인해주세요!.</p>
+            </>
+          ),
+          onConfirm: async () => {
+            modalStore.closeModal();
+            localStorage.removeItem("token");
+            authStore.setLoggedIn(false);
+            window.location.replace("/");
+          },
+          backgroundClickNoClose: true
+        });
       }
     }
   };
@@ -109,7 +119,7 @@ const RestInfo = observer(() => {
             modalStore.closeModal();
           },
         });
-          return;
+        return;
       }
 
       try {
@@ -153,7 +163,7 @@ const RestInfo = observer(() => {
 
   const nicknameField = useEditableField("nickname");
   const introduceField = useEditableField("introduce");
-  console.log("매칭 카운트 확인" , profileData);
+  console.log("매칭 카운트 확인", profileData);
   const viewMedal = useMemo(() => {
     const count = profileData?.matchingCount || 0;
     if (count >= 5) return <GoldMedal/>;
@@ -266,6 +276,7 @@ const RestInfo = observer(() => {
                               authStore.setLoggedIn(false);
                               navigate("/");
                             },
+                            backgroundClickNoClose: true
                           });
                           console.log("탈퇴하기 완료");
                         }
