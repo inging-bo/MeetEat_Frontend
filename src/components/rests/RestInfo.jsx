@@ -281,7 +281,36 @@ const RestInfo = observer(() => {
                           console.log("탈퇴하기 완료");
                         }
                       } catch (error) {
-                        console.error("탈퇴하기 요청 실패!:", error);
+                        console.log(error)
+                        if (error.status === 400) {
+                          modalStore.openModal("oneBtn", {
+                            message: (
+                              <>
+                                <p>현재 진행 중인 매칭이 있어</p>
+                                <p>탈퇴할 수 없습니다.</p>
+                              </>
+                            ),
+                            onConfirm: async () => {
+                              await modalStore.closeModal();
+                            },
+                            backgroundClickNoClose: true
+                          });
+                          console.error("탈퇴하기 요청 실패!:", error);
+                        } else {
+                          modalStore.openModal("oneBtn", {
+                            message: (
+                              <>
+                                <p>서버에 오류가 발생했습니다.</p>
+                                <p>잠시 후 다시 시도해주세요.</p>
+                              </>
+                            ),
+                            onConfirm: async () => {
+                              await modalStore.closeModal();
+                            },
+                            backgroundClickNoClose: true
+                          });
+                          console.error("탈퇴하기 요청 실패!:", error);
+                        }
                       }
                     },
                     reverseOrder: true, // 두 번째 모달의 버튼 순서를 뒤집습니다.
