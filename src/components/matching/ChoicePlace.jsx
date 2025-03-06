@@ -13,13 +13,31 @@ export default function CheckPlace() {
     matchingStore.checkCompleted();
 
     if (!authStore.loggedIn) {
-      alert("로그인 후 이용해주세요 :)");
-      navigate("/");
+      return modalStore.openModal("oneBtn", {
+        message: (
+          <>
+            <div>로그인 후 이용해주세요!</div>
+          </>
+        ),
+        onConfirm: async () => {
+          modalStore.closeModal();
+          window.location.replace("/");
+        },
+      });
     }
     // 유저가 매칭된 상태가 아니라면 메인페이지로 이동
     if (!matchingStore.isCompleted) {
-      alert("잘못된 접근입니다.");
-      return navigate("/");
+      return modalStore.openModal("oneBtn", {
+        message: (
+          <>
+            <div>잘못된 접근입니다!</div>
+          </>
+        ),
+        onConfirm: async () => {
+          modalStore.closeModal();
+          window.location.replace("/");
+        },
+      });
     }
     // 매칭 정보가 없으면 메인 페이지로 이동
     if (window.sessionStorage.getItem("matchingData") === null) {

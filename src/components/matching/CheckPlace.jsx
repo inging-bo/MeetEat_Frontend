@@ -34,11 +34,29 @@ export default function CheckPlace() {
       }
       return navigate("/");
     } else if (!matchingStore.isMatching) {
-      alert("잘못된 접근입니다.");
-      return navigate("/");
+      return modalStore.openModal("oneBtn", {
+        message: (
+          <>
+            <div>잘못된 접근입니다.</div>
+          </>
+        ),
+        onConfirm: async () => {
+          modalStore.closeModal();
+          window.location.replace("/");
+        },
+      });
     } else if (!authStore.loggedIn) {
-      alert("로그인 후 이용해주세요 :)");
-      return navigate("/");
+      return modalStore.openModal("oneBtn", {
+        message: (
+          <>
+            <div>로그인 후 이용해주세요.</div>
+          </>
+        ),
+        onConfirm: async () => {
+          modalStore.closeModal();
+          window.location.replace("/");
+        },
+      });
     }
 
     // Get Profile
@@ -74,9 +92,18 @@ export default function CheckPlace() {
         console.log("Join Event 발생");
         console.log(JSON.parse(e.data));
         if (JSON.parse(e.data).user.join === false) {
-          alert("매칭 인원 중 누군가가 거절하였습니다");
-          window.sessionStorage.clear();
-          return window.location.replace("/");
+          return modalStore.openModal("oneBtn", {
+            message: (
+              <>
+                <div>매칭 인원 중 누군가가 거절하였습니다</div>
+              </>
+            ),
+            onConfirm: async () => {
+              modalStore.closeModal();
+              window.sessionStorage.clear();
+              window.location.replace("/");
+            },
+          });
         }
         setUser((prev) => {
           const newState = new Map(prev);
@@ -207,12 +234,21 @@ export default function CheckPlace() {
 
     if (timeLeft <= 0) {
       clearInterval(timer);
-      alert("선택 시간이 초과되어 매칭이 종료됩니다");
-      window.sessionStorage.removeItem("tempPosition");
-      window.sessionStorage.removeItem("isMatching");
-      window.sessionStorage.removeItem("isMatched");
-      window.sessionStorage.removeItem("matchingData");
-      navigate("/");
+      modalStore.openModal("oneBtn", {
+        message: (
+          <>
+            <div>선택 시간이 초과되어 매칭이 종료됩니다.</div>
+          </>
+        ),
+        onConfirm: async () => {
+          window.sessionStorage.removeItem("tempPosition");
+          window.sessionStorage.removeItem("isMatching");
+          window.sessionStorage.removeItem("isMatched");
+          window.sessionStorage.removeItem("matchingData");
+          modalStore.closeModal();
+          window.location.replace("/");
+        },
+      });
       modalStore.isOpen && modalStore.closeModal();
     }
 
@@ -271,133 +307,6 @@ export default function CheckPlace() {
       window.location.replace("/");
     }
   };
-
-  // async function apiGetU2() {
-  //   setTimeout(() => {
-  //     console.log("3초 지남");
-  //     axios
-  //       .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname2`, {
-  //         headers: {
-  //           Authorization: `${window.localStorage.getItem("token")}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       })
-  //       .then((res) => {
-  //         if (res.data.user.join === false) {
-  //           alert("매칭 인원 중 누군가가 거절하였습니다");
-  //           window.sessionStorage.clear();
-  //           return navigate("/");
-  //         }
-  //         setUser((prev) => {
-  //           const newState = new Map(prev);
-  //           newState.set(res.data.user.nickname, true);
-  //           return newState;
-  //         });
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       });
-  //   }, [3000]);
-  // }
-
-  // async function apiGetU3() {
-  //   setTimeout(() => {
-  //     console.log("9초 지남");
-  //     axios
-  //       .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname3`, {
-  //         headers: {
-  //           Authorization: `${window.localStorage.getItem("token")}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       })
-  //       .then((res) => {
-  //         if (res.data.user.join === false) {
-  //           alert("매칭 인원 중 누군가가 거절하였습니다");
-  //           window.sessionStorage.clear();
-  //           return navigate("/");
-  //         }
-  //         setUser((prev) => {
-  //           const newState = new Map(prev);
-  //           newState.set(res.data.user.nickname, true);
-  //           return newState;
-  //         });
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       });
-  //   }, [9000]);
-  // }
-
-  // async function apiGetU4() {
-  //   setTimeout(() => {
-  //     console.log("7초 지남");
-  //     axios
-  //       .get(`${import.meta.env.VITE_BE_API_URL}/matching/nickname4`, {
-  //         headers: {
-  //           Authorization: `${window.localStorage.getItem("token")}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       })
-  //       .then((res) => {
-  //         if (res.data.user.join === false) {
-  //           alert("매칭 인원 중 누군가가 거절하였습니다");
-  //           window.sessionStorage.clear();
-  //           return navigate("/");
-  //         }
-  //         setUser((prev) => {
-  //           const newState = new Map(prev);
-  //           newState.set(res.data.user.nickname, true);
-  //           return newState;
-  //         });
-  //       })
-  //       .catch(function (error) {
-  //         console.log(error);
-  //       });
-  //   }, [7000]);
-  // }
-
-  // async function apiPOSTCancel() {
-  //   await axios
-  //     .post(
-  //       `${import.meta.env.VITE_BE_API_URL}/matching/cancel`,
-  //       {},
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       },
-  //     )
-  //     .then((res) => {
-  //       console.log(res);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }
-
-  // async function apiCompleted() {
-  //   axios
-  //     .get(`${import.meta.env.VITE_BE_API_URL}/matching/completed`, {
-  //       headers: {
-  //         Authorization: `${window.localStorage.getItem("token")}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     })
-  //     .then((res) => {
-  //       window.sessionStorage.setItem("matchedData", JSON.stringify(res));
-  //       window.sessionStorage.removeItem("isMatching");
-  //       window.sessionStorage.removeItem("isMatched");
-  //       window.sessionStorage.setItem("isCompleted", "true");
-  //       navigate(`/matching/choice-place/${res.data.id}`);
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-  // }
-
-  ///////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////
 
   return (
     <>

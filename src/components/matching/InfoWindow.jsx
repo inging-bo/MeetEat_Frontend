@@ -19,8 +19,17 @@ export default function InfoWindow({
   };
   const plus = () => {
     if (choicedNumber === 5) {
-      alert("높은 매칭률을 위해 최대 5명까지 매칭 가능합니다 :)");
-      setChoicedNumber(5);
+      return modalStore.openModal("oneBtn", {
+        message: (
+          <>
+            <div>높은 매칭률을 위해 최대 5명까지 매칭 가능합니다.</div>
+          </>
+        ),
+        onConfirm: async () => {
+          setChoicedNumber(5);
+          modalStore.closeModal();
+        },
+      });
     } else {
       setChoicedNumber(choicedNumber + 1);
     }
