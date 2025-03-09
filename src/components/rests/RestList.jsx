@@ -66,38 +66,38 @@ export default function RestList() {
       geolocationOptions,
     );
 
-    navigator.geolocation.watchPosition(
-      (pos) => {
-        if (
-          pos.coords.latitude !== position.lat ||
-          pos.coords.longitude !== position.lng
-        ) {
-          setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-          let geocoder = new window.kakao.maps.services.Geocoder();
-          let callback = function (result) {
-            regionName !==
-              result[0].address.address_name.slice(
-                0,
-                result[0].address.address_name.indexOf(" "),
-              ) &&
-              setRegionName(
-                result[0].address.address_name.slice(
-                  0,
-                  result[0].address.address_name.indexOf(" "),
-                ),
-              );
-          };
+    // navigator.geolocation.watchPosition(
+    //   (pos) => {
+    //     if (
+    //       pos.coords.latitude !== position.lat ||
+    //       pos.coords.longitude !== position.lng
+    //     ) {
+    //       setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+    //       let geocoder = new window.kakao.maps.services.Geocoder();
+    //       let callback = function (result) {
+    //         regionName !==
+    //           result[0].address.address_name.slice(
+    //             0,
+    //             result[0].address.address_name.indexOf(" "),
+    //           ) &&
+    //           setRegionName(
+    //             result[0].address.address_name.slice(
+    //               0,
+    //               result[0].address.address_name.indexOf(" "),
+    //             ),
+    //           );
+    //       };
 
-          geocoder.coord2Address(
-            pos.coords.longitude,
-            pos.coords.latitude,
-            callback,
-          );
-        }
-      },
-      gpsError,
-      geolocationOptions,
-    );
+    //       geocoder.coord2Address(
+    //         pos.coords.longitude,
+    //         pos.coords.latitude,
+    //         callback,
+    //       );
+    //     }
+    //   },
+    //   gpsError,
+    //   geolocationOptions,
+    // );
   }, []);
 
   // 필터 적용시 다시 불러오기 ( 키워드 공백 변경 )

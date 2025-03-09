@@ -32,10 +32,19 @@ export default function Matching({
   history.pushState(null, null, "/");
   useEffect(() => {
     const popStateFunc = () => {
-      alert("페이지를 이동하여 자동으로 매칭이 취소됩니다.");
-      window.sessionStorage.removeItem("tempPosition");
-      window.sessionStorage.removeItem("isMatching");
-      apiPOSTCancel();
+      return modalStore.openModal("oneBtn", {
+        message: (
+          <>
+            <div>페이지를 이동하여 자동으로 매칭이 취소됩니다.</div>
+          </>
+        ),
+        onConfirm: async () => {
+          window.sessionStorage.removeItem("tempPosition");
+          window.sessionStorage.removeItem("isMatching");
+          apiPOSTCancel();
+          modalStore.closeModal();
+        },
+      });
     };
 
     window.addEventListener("popstate", () => {
@@ -120,81 +129,22 @@ export default function Matching({
         matchingStore.setIsMatched(false);
         setIsMatching(false);
         setInfo(false);
-        return alert("매칭중인 세션이 존재하여 서비스 이용이 불가능합니다.");
+        return modalStore.openModal("oneBtn", {
+          message: (
+            <>
+              <div>매칭중인 세션이 존재하여 서비스 이용이 불가능합니다.</div>
+            </>
+          ),
+          onConfirm: async () => {
+            modalStore.closeModal();
+          },
+        });
       } else {
         fetchSSE(position.lng, position.lat, number, new Date(), place);
       }
     };
     getConnectionCheck();
   }, []);
-
-  // // POST
-  // async function apiPOSTMatching(lng, lat, size, time, placeInfo) {
-  //   await axios
-  //     .get(`${import.meta.env.VITE_BE_API_URL}/sse/subscribe`, {
-  //       headers: {
-  //         Authorization: `${window.localStorage.getItem("token")}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //     })
-  //     .then(() => {
-  //       console.log("SSE구독");
-  //       axios
-  //         .post(
-  //           `${import.meta.env.VITE_BE_API_URL}/matching/request`,
-  //           {
-  //             userLon: lng,
-  //             userLat: lat,
-  //             groupSize: size,
-  //             matchingStartTime: time,
-  //             place: placeInfo,
-  //           },
-  //           {
-  //             headers: {
-  //               Authorization: `${window.localStorage.getItem("token")}`,
-  //               "Content-Type": "application/json",
-  //             },
-  //           }
-  //         )
-  //         .then((res) => {
-  //           console.log(res.data);
-  //           setIsMatching("true");
-  //           window.sessionStorage.setItem("isMatching", true);
-  //           setTimeout(
-  //             () =>
-  //               axios
-  //                 .get(`${import.meta.env.VITE_BE_API_URL}/matching/complete`, {
-  //                   headers: {
-  //                     Authorization: `${window.localStorage.getItem("token")}`,
-  //                   },
-  //                 })
-  //                 .then((res) => {
-  //                   setIsMatched(true);
-  //                   window.sessionStorage.setItem(
-  //                     "tempPosition",
-  //                     JSON.stringify(position)
-  //                   );
-  //                   window.sessionStorage.setItem("isMatched", true);
-  //                   window.sessionStorage.setItem(
-  //                     "matchingData",
-  //                     JSON.stringify(res)
-  //                   );
-  //                   navigate(`/matching/check-place/${res.data.teamId}`);
-  //                 })
-  //                 .catch(function (error) {
-  //                   console.log(error);
-  //                 }),
-  //             [5000]
-  //           );
-  //         })
-  //         .catch((err) => {
-  //           console.log(err);
-  //         });
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-  // }
 
   // 타이머
   const MINUTES_IN_MS = 10 * 60 * 1000;

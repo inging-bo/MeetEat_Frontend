@@ -13,8 +13,19 @@ export default function WriteReview() {
   const info = { ...location.state };
   // 로그인 확인
   useEffect(() => {
-    !authStore.loggedIn && alert("로그인 후 이용해주세요!");
-    !authStore.loggedIn && window.location.replace("/");
+    if (!authStore.loggedIn) {
+      modalStore.openModal("oneBtn", {
+        message: (
+          <>
+            <div>로그인 후 이용해주세요!</div>
+          </>
+        ),
+        onConfirm: async () => {
+          modalStore.closeModal();
+          window.location.replace("/");
+        },
+      });
+    }
     if (Object.keys(info).length === 0) return window.location.replace("/");
   }, []);
 
@@ -57,7 +68,16 @@ export default function WriteReview() {
     if (imageUrlLists.length > 7) {
       imageUrlLists = imageUrlLists.slice(0, 7);
       postImageLists = postImageLists.slice(0, 7);
-      alert("사진은 최대 7장까지 첨부 가능합니다.");
+      modalStore.openModal("oneBtn", {
+        message: (
+          <>
+            <div>사진은 최대 7장까지 첨부 가능합니다.</div>
+          </>
+        ),
+        onConfirm: async () => {
+          modalStore.closeModal();
+        },
+      });
     }
     setImageList(imageUrlLists);
     setPostImageList(postImageLists);
@@ -261,10 +281,9 @@ export default function WriteReview() {
                 className="relative min-h-[100px] min-w-[100px]"
                 key={"image_" + idx}
               >
-
                 <button
                   onClick={() => handleDeleteImage(idx)}
-                  className="absolute right-[5px] top-[5px] text-[15px] font-bold text-black w-[15px] h-[15px] bg-white flex justify-center items-center rounded-full p-2.5"
+                  className="absolute right-[5px] top-[5px] flex h-[15px] w-[15px] items-center justify-center rounded-full bg-white p-2.5 text-[15px] font-bold text-black"
                 >
                   ×
                 </button>

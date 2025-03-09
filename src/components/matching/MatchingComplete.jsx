@@ -29,21 +29,23 @@ export default function MatchingComplete() {
   // 초기 설정
   useLayoutEffect(() => {
     // 유저가 매칭된 상태가 아니라면 메인페이지로 이동
-    if (window.sessionStorage.getItem("isCompleted") !== "true") {
-      alert("잘못된 접근입니다.");
-      console.log("매칭완료된 상태가 아닙니다.");
-      return navigate("/");
+    if (
+      window.sessionStorage.getItem("isCompleted") !== "true" ||
+      window.sessionStorage.getItem("matchedData") === undefined
+    ) {
+      return modalStore.openModal("oneBtn", {
+        message: (
+          <>
+            <div>잘못된 접근입니다.</div>
+          </>
+        ),
+        onConfirm: async () => {
+          modalStore.closeModal();
+          window.location.replace("/");
+        },
+      });
     }
-    if (window.sessionStorage.getItem("matchedData") === undefined) {
-      alert("잘못된 접근입니다.");
-      console.log("매칭완료된 데이터가 없습니다.");
-      return navigate("/");
-    }
-    // apiSSESub();
     const now = new Date(); // 오늘 날짜
-    // const firstDay = new Date(
-    //   JSON.parse(window.sessionStorage.getItem("matchedData")).createdAt
-    // ); // 시작 날짜
     const firstDay = new Date(
       JSON.parse(
         window.sessionStorage.getItem("matchedData"),
@@ -78,32 +80,6 @@ export default function MatchingComplete() {
         },
       });
     }
-    // const goReviewPage = () => {
-    //   const restsId = JSON.parse(window.sessionStorage.getItem("matchedData"))
-    //     .matching.restaurant.id;
-    //   const restsName = JSON.parse(window.sessionStorage.getItem("matchedData"))
-    //     .matching.restaurant.placeName;
-    //   const matchedId = JSON.parse(window.sessionStorage.getItem("matchedData"))
-    //     .matching.id;
-    //   return navigate(`/rests/write/${restsId}`, {
-    //     state: {
-    //       restId: `${restsId}`,
-    //       restName: `${restsName}`,
-    //       matchedId: `${matchedId}`,
-    //     },
-    //   });
-    // };
-
-    // // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
-    // let timer = setTimeout(() => {
-    //   goReviewPage;
-    // }, [360000]);
-
-    // // 매칭 완료된 이후 60분 경과 후에는 리뷰페이지로 이동
-    // if (passedTimeMin >= 60) {
-    //   clearTimeout(timer);
-    //   goReviewPage();
-    // }
 
     // 저장된 매칭데이터 저장
     const jsonCurData = JSON.parse(
@@ -122,21 +98,6 @@ export default function MatchingComplete() {
         jsonCurData.matching.userList.filter((item) => item.join === true),
       ),
     );
-    // 매칭 취소 발생
-    //   setTimeout(
-    //     () =>
-    //       axios
-    //         .get(`${import.meta.env.VITE_BE_API_URL}/matching/complete`)
-    //         .then(() => {
-    //           alert("매칭 이탈자가 발생하여 매칭을 종료합니다.");
-    //           window.sessionStorage.clear();
-    //           navigate("/");
-    //         })
-    //         .catch(function (error) {
-    //           console.log(error);
-    //         }),
-    //     [10000]
-    //   );
   }, []);
 
   useEffect(() => {
@@ -422,15 +383,34 @@ export default function MatchingComplete() {
     const passedTimeMin = (Number(toNow) - Number(toFirst)) / 60000;
     console.log(passedTimeMin + "min");
     if (passedTimeMin >= 3) {
-      alert("매칭 3분 이후 취소로 패널티가 부과됩니다.");
-      return apiPOSTCancelIllegal(
-        JSON.parse(window.sessionStorage.getItem("matchedData")).matching.id,
-      );
+      return modalStore.openModal("oneBtn", {
+        message: (
+          <>
+            <div>매칭 3분 이후 취소로 패널티가 부과됩니다</div>
+          </>
+        ),
+        onConfirm: async () => {
+          modalStore.closeModal();
+          apiPOSTCancelIllegal(
+            JSON.parse(window.sessionStorage.getItem("matchedData")).matching
+              .id,
+          );
+        },
+      });
     }
-    alert("매칭 3분 이전 취소로 패널티가 부과되지 않습니다.");
-    return apiPOSTCancel(
-      JSON.parse(window.sessionStorage.getItem("matchedData")).matching.id,
-    );
+    return modalStore.openModal("oneBtn", {
+      message: (
+        <>
+          <div>"매칭 3분 이전 취소로 패널티가 부과되지 않습니다.</div>
+        </>
+      ),
+      onConfirm: async () => {
+        modalStore.closeModal();
+        apiPOSTCancel(
+          JSON.parse(window.sessionStorage.getItem("matchedData")).matching.id,
+        );
+      },
+    });
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
